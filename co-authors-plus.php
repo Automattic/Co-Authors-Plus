@@ -668,33 +668,47 @@ class coauthors_plus {
 	 * Get matching authors based on a search value
 	 */	
 	function search_authors( $search = '' ) {
-		
-		$args = array(
-			'search' => sprintf( '*%s*',  $search ), // Enable wildcard searching
-			'who' => 'authors',
-			'fields' => array(
+
+		// Getting all of the users with one query style should allow us to cache it better
+		$all_users = get_users( array( 'count_total' => false, 'fields' => 'all_with_meta' ) );
+
+		// Go through all of the users associated with the site and see which match our query
+		// We allow our search query to match against a number of fields
+		$found_users = array();
+		$search_fields = array(
 				'ID',
 				'display_name',
+				'first_name',
+				'last_name',
+				'nickname',
+				'user_email',
 				'user_login',
-				'user_email'
-			),
-		);
-		add_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
-		$authors = get_users( $args );
-		remove_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
-		
-		return (array) $authors;
+			);
+		$search_fields = apply_filters( 'coauthors_edit_search_fields', $search_fields );
+		foreach( $all_users as $blog_user ) {
+
+			$search_results = array();
+			foreach( $search_fields as $search_field ) {
+				if ( false !== stripos( $blog_user->$search_field, $search ) )
+					$search_results[$search_field] = true;
+				else
+					$search_results[$search_field] = false;
+			}
+			// Don't include the user if 0 of the search fields were true
+			if ( !in_array( true, $search_results ) )
+				continue;
+
+			// Make sure the user is contributor and above (or a custom cap)
+			if ( $blog_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
+				$found_users[] = $blog_user;
+
+		}
+
+		// Allow users to always filter out certain users if needed (e.g. administrators)
+		$found_users = apply_filters( 'coauthors_edit_found_users', $found_users );
+		return (array) $found_users;
 	}
 
-	/**
-	 * Modify get_users() to search display_name instead of user_nicename
-	 */
-	function filter_pre_user_query( &$user_query ) {
-		if ( is_object( $user_query ) )
-			$user_query->query_where = str_replace( "user_nicename LIKE", "display_name LIKE", $user_query->query_where );
-		return $user_query;
-	}
-	
 	/**
 	 * Functions to add scripts and css
 	 */
