@@ -26,9 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 define( 'COAUTHORS_PLUS_VERSION', '2.6.1' );
 
-if( ! defined( 'COAUTHORS_PLUS_DEBUG' ) )
-	define( 'COAUTHORS_PLUS_DEBUG', false );
-
 define( 'COAUTHORS_PLUS_PATH', dirname( __FILE__ ) );
 define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
 
@@ -662,14 +659,9 @@ class coauthors_plus {
 		foreach( $authors as $author ) {
 			echo $author->ID ." | ". $author->user_login ." | ". $author->display_name ." | ". $author->user_email ."\n";		
 		}
-		
-		if( COAUTHORS_PLUS_DEBUG ) {		
-			echo 'queries:' . get_num_queries() ."\n";
-			echo 'timer: ' . timer_stop(1) . "sec\n";
-		}
-		
+
 		die();
-			
+
 	}
 
 	/**
@@ -849,16 +841,7 @@ class coauthors_plus {
 		$message_headers .= "\n";
 		return $message_headers;
 	}
-	
-	function debug($msg, $object) {
-		if( COAUTHORS_PLUS_DEBUG ) {
-			echo '<hr />';
-			echo sprintf('<p>%s</p>', $msg);
-			echo '<pre>';
-			var_dump($object);
-			echo '</pre>';
-		}
-	}
+
 }
 
 global $coauthors_plus;
