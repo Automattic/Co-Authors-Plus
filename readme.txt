@@ -1,8 +1,8 @@
 === Co-Authors Plus ===
-Contributors: batmoo, danielbachhuber
+Contributors: batmoo, danielbachhuber, automattic
 Donate link: http://digitalize.ca/donate
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.3
+Tested up to: 3.3.1
 Requires at least: 3.1
 Stable tag: 2.6.1
 
