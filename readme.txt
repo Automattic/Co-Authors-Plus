@@ -20,6 +20,9 @@ The extended version incorporates search-as-you-type functionality for adding us
 
 == Changelog ==
 
+= 2012-02-?? / 2.6.2 =
+* Bug fix: Allow output constants to be defined in a theme's functions.php file and include filters you can use instead
+
 = 2011-12-30 / 2.6.1 =
 
 * Fix mangled usernames because of sanitize_key http://wordpress.org/support/topic/plugin-co-authors-plus-26-not-working-with-wp-33

@@ -29,18 +29,6 @@ define( 'COAUTHORS_PLUS_VERSION', '2.6.1' );
 if( ! defined( 'COAUTHORS_PLUS_DEBUG' ) )
 	define( 'COAUTHORS_PLUS_DEBUG', false );
 
-if( ! defined( 'COAUTHORS_DEFAULT_BEFORE' ) )
-	define( 'COAUTHORS_DEFAULT_BEFORE', '' );
-
-if( ! defined( 'COAUTHORS_DEFAULT_BETWEEN' ) )
-	define( 'COAUTHORS_DEFAULT_BETWEEN', ', ' );
-
-if( ! defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) )
-	define( 'COAUTHORS_DEFAULT_BETWEEN_LAST', __( ' and ', 'co-authors-plus' ) );
-
-if( ! defined( 'COAUTHORS_DEFAULT_AFTER' ) )
-	define( 'COAUTHORS_DEFAULT_AFTER', '' );
-
 define( 'COAUTHORS_PLUS_PATH', dirname( __FILE__ ) );
 define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
 

@@ -117,15 +117,23 @@ class CoAuthorsIterator {
 
 //Helper function for the following new template tags
 function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args = null, $echo = true ) {
-	if( ! isset( $separators['between'] ) || $separators['between'] === NULL )
-		$separators['between'] = COAUTHORS_DEFAULT_BETWEEN;
-	if( ! isset( $separators['betweenLast'] ) || $separators['betweenLast'] === NULL )
-		$separators['betweenLast'] = COAUTHORS_DEFAULT_BETWEEN_LAST;
+
+	// Define the standard output separator. Constant support is for backwards compat.
+	// @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/12
+	$default_before = ( defined( 'COAUTHORS_DEFAULT_BEFORE' ) ) ? COAUTHORS_DEFAULT_BEFORE : '';
+	$default_between = ( defined( 'COAUTHORS_DEFAULT_BETWEEN' ) ) ? COAUTHORS_DEFAULT_BETWEEN : ', ';
+	$default_between_last = ( defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) ) ? COAUTHORS_DEFAULT_BETWEEN_LAST :  __( ' and ', 'co-authors-plus' );
+	$default_after = ( defined( 'COAUTHORS_DEFAULT_AFTER' ) ) ? COAUTHORS_DEFAULT_AFTER : '';
+
 	if( ! isset( $separators['before'] ) || $separators['before'] === NULL )
-		$separators['before'] = COAUTHORS_DEFAULT_BEFORE;
+		$separators['before'] = apply_filters( 'coauthors_default_before', $default_before );
+	if( ! isset( $separators['between'] ) || $separators['between'] === NULL )
+		$separators['between'] = apply_filters( 'coauthors_default_between', $default_between );
+	if( ! isset( $separators['betweenLast'] ) || $separators['betweenLast'] === NULL )
+		$separators['betweenLast'] = apply_filters( 'coauthors_default_between_last', $default_between_last );
 	if( ! isset( $separators['after'] ) || $separators['after'] === NULL )
-		$separators['after'] = COAUTHORS_DEFAULT_AFTER;
-	
+		$separators['after'] = apply_filters( 'coauthors_default_after', $default_after );
+
 	$output = '';
 	
 	$i = new CoAuthorsIterator();
