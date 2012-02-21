@@ -653,8 +653,9 @@ class coauthors_plus {
 			die();
 
 		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
-		
-		$authors = $this->search_authors( $search );
+		$ignore = array_map( 'sanitize_user', explode( ',', $_REQUEST['existing_authors'] ) );
+
+		$authors = $this->search_authors( $search, $ignore );
 				
 		foreach( $authors as $author ) {
 			echo $author->ID ." | ". $author->user_login ." | ". $author->display_name ." | ". $author->user_email ."\n";		
@@ -667,7 +668,7 @@ class coauthors_plus {
 	/**
 	 * Get matching authors based on a search value
 	 */	
-	function search_authors( $search = '' ) {
+	function search_authors( $search = '', $ignored_authors = array() ) {
 
 		// Getting all of the users with one query style should allow us to cache it better
 		$all_users = get_users( array( 'count_total' => false, 'fields' => 'all_with_meta' ) );
@@ -705,7 +706,11 @@ class coauthors_plus {
 		}
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
-		$found_users = apply_filters( 'coauthors_edit_found_users', $found_users );
+		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
+		foreach( $found_users as $key => $found_user ) {
+			if ( in_array( $found_user->user_login, $ignored_authors ) )
+				unset( $found_users[$key] );
+		}
 		return (array) $found_users;
 	}
 

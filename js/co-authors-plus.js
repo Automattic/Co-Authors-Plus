@@ -10,7 +10,7 @@ jQuery(document).ready(function () {
 		}
 		return false;
 	};
-	
+
 	function coauthors_delete( elem ) {
 		
 		var $coauthor_row = jQuery(elem).closest('.coauthor-row');
@@ -432,6 +432,11 @@ jQuery(document).ready(function () {
 	// Show laoding cursor for autocomplete ajax requests
 	jQuery(document).ajaxSend(function(e, xhr, settings) {
 		if( settings.url.indexOf(coAuthorsPlus_ajax_suggest_link) != -1 ) {
+			// Including existing authors on the AJAX suggest link
+			// allows us to filter them out of the search request
+			var existing_authors = jQuery('input[name="coauthors[]"]').map(function(){return jQuery(this).val();}).get();
+			settings.url = settings.url.split('&existing_authors')[0];
+			settings.url += '&existing_authors=' + existing_authors.join(',');
 			show_loading();
 		}
 	});
