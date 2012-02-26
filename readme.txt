@@ -24,6 +24,7 @@ The extended version incorporates search-as-you-type functionality for adding us
 * AJAX user search matches against first name, last name, and nickname fields too, in addition to display name, user login, and email address
 * Filter required capability for user to be returned in an AJAX search with 'coauthors_edit_author_cap'
 * Filter out administrators and other non-authors from AJAX search with 'coauthors_edit_ignored_authors'
+* Bug fix: Properly cc other co-authors on new comment email notifications
 * Bug fix: If a user has already been added as an author to a post, don't show them in the AJAX search again
 * Bug fix: Allow output constants to be defined in a theme's functions.php file and include filters you can use instead
 

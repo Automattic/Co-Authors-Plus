@@ -79,6 +79,7 @@ class coauthors_plus {
 		// Filter to allow coauthors to edit posts
 		add_filter( 'user_has_cap', array( $this, 'add_coauthor_cap' ), 10, 3 );
 		
+		// cc other co-authors on new comment notifications
 		add_filter( 'comment_notification_headers', array( $this, 'notify_coauthors' ), 10, 3 );
 		
 		// Handle the custom author meta box
@@ -839,25 +840,24 @@ class coauthors_plus {
 	}
 	
 	/**
-	 * Emails all coauthors when comment added instead of the main author
-	 * 
+	 * Emails all coauthors when comment added
+	 * This works by adding a 'cc' header to the new comment approved
+	 * email notification. It would be better if we sent individual emails,
+	 * however we'd have to replace wp_notify_postauthor()
 	 */
 	function notify_coauthors( $message_headers, $comment_id ) {
-		// TODO: this is broken!
-		$comment = get_comment($comment_id);
-		$post = get_post($comment->comment_post_ID);
-		$coauthors = get_coauthors($comment->comment_post_ID);
+
+		$comment = get_comment( $comment_id );
+		$post = get_post( $comment->comment_post_ID );
+		$coauthors = get_coauthors( $comment->comment_post_ID );
 	
-		$message_headers .= 'cc: ';
-		$count = 0;
-		foreach($coauthors as $author) {
-			$count++;
-			if($author->ID != $post->post_author){
-				$message_headers .= $author->user_email;
-				if($count < count($coauthors)) $message_headers .= ',';
-			}
+		$cc_headers = 'cc: ';
+		foreach( $coauthors as $author ) {
+			if ( $author->ID == $post->post_author )
+				continue;
+			$cc_headers .= $author->user_email . ', ';
 		}
-		$message_headers .= "\n";
+		$message_headers .= rtrim( $cc_headers, ', ' ) . "\r\n";
 		return $message_headers;
 	}
 
