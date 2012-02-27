@@ -95,6 +95,9 @@ class coauthors_plus {
 		// Fix for author info not properly displaying on author pages
 		add_action( 'the_post', array( $this, 'fix_author_page' ) );
 
+		// Support for Edit Flow's calendar and story budget
+		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
+
 	}
 
 	function coauthors_plus() {
@@ -859,6 +862,28 @@ class coauthors_plus {
 		}
 		$message_headers .= rtrim( $cc_headers, ', ' ) . "\r\n";
 		return $message_headers;
+	}
+
+	/**
+	 * Filter Edit Flow's 'ef_calendar_item_information_fields' to add co-authors
+	 *
+	 * @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/2
+	 */
+	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
+
+		// Don't add the author row again if another plugin has removed
+		if ( !array_key_exists( 'author', $information_fields ) )
+			return $information_fields;
+
+		$co_authors = get_coauthors( $post_id );
+		if ( count( $co_authors ) > 1 )
+			$information_fields['author']['label'] = __( 'Authors', 'co-authors-plus' );
+		$co_authors_names = '';
+		foreach( $co_authors as $co_author ) {
+			$co_authors_names .= $co_author->display_name . ', ';
+		}
+		$information_fields['author']['value'] = rtrim( $co_authors_names, ', ' );
+		return $information_fields;
 	}
 
 }
