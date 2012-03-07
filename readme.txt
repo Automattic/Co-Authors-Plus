@@ -18,7 +18,7 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 == Changelog ==
 
-= 2012-03-?? / 2.6.2 =
+= 2012-03-06 / 2.6.2 =
 * AJAX user search matches against first name, last name, and nickname fields too, in addition to display name, user login, and email address
 * Comment moderation and approved notifications are properly sent to all co-authors with the correct caps
 * Filter required capability for user to be returned in an AJAX search with 'coauthors_edit_author_cap'
