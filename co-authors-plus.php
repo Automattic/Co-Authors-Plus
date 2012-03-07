@@ -97,6 +97,7 @@ class coauthors_plus {
 
 		// Support for Edit Flow's calendar and story budget
 		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
+		add_filter( 'ef_story_budget_term_column_value', array( $this, 'filter_ef_story_budget_term_column_value' ), 10, 3 );
 
 	}
 
@@ -884,6 +885,25 @@ class coauthors_plus {
 		}
 		$information_fields['author']['value'] = rtrim( $co_authors_names, ', ' );
 		return $information_fields;
+	}
+
+	/**
+	 * Filter Edit Flow's 'ef_story_budget_term_column_value' to add co-authors to the story budget
+	 *
+	 * @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/2
+	 */
+	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
+
+		// We only want to modify the 'author' column
+		if ( 'author' != $column_name )
+			return $column_name;
+
+		$co_authors = get_coauthors( $post->ID );
+		$co_authors_names = '';
+		foreach( $co_authors as $co_author ) {
+			$co_authors_names .= $co_author->display_name . ', ';
+		}
+		return rtrim( $co_authors_names, ', ' );
 	}
 
 }
