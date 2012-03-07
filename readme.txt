@@ -10,7 +10,7 @@ Allows multiple authors to be assigned to posts, pages, and custom post types vi
 
 == Description ==
 
-Allows multiple authors to be assigned to posts, pagesges, or custom post types via the search-as-you-type inputs. Template tags allow listing of co-authors anywhere you'd normally list the author. Co-authored posts appear on a co-author's archive page and in their feed. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
+Allows multiple authors to be assigned to posts, pages, or custom post types via the search-as-you-type inputs. Template tags allow listing of co-authors anywhere you'd normally list the author. Co-authored posts appear on a co-author's archive page and in their feed. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
 
 This plugin is an almost complete rewrite of the Co-Authors plugin originally developed at [Shepherd Interactive](http://www.shepherd-interactive.com/) (2007). The original plugin was inspired by the 'Multiple Authors' plugin by Mark Jaquith (2005).
 
