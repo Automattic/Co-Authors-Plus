@@ -6,15 +6,13 @@ Tested up to: 3.3.1
 Requires at least: 3.1
 Stable tag: 2.6.1
 
-Allows multiple authors to be assigned to any post type via a search-as-you-type input box
+Allows multiple authors to be assigned to posts, pages, and custom post types via a search-as-you-type input box
 
 == Description ==
 
-Allows multiple authors to be assigned to a Post, Pages, or Custom Post Types via the search-as-you-type inputs. Co-authored posts appear on a co-author's posts page and feed. New template tags allow listing of co-authors. Editors and Administrators may assign co-authors to a post. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is usual).
+Allows multiple authors to be assigned to posts, pagesges, or custom post types via the search-as-you-type inputs. Template tags allow listing of co-authors anywhere you'd normally list the author. Co-authored posts appear on a co-author's archive page and in their feed. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
 
 This plugin is an almost complete rewrite of the Co-Authors plugin originally developed at [Shepherd Interactive](http://www.shepherd-interactive.com/) (2007). The original plugin was inspired by the 'Multiple Authors' plugin by Mark Jaquith (2005).
-
-The extended version incorporates search-as-you-type functionality for adding users, which aims to make easy the task of adding multiple users to posts and pages, especially when dealing with a system with hundreds of users (typical of newspaper and magazine sites).
 
 > *See "Other Notes" section for Template Tags and usage information*
 
@@ -138,8 +136,7 @@ The extended version incorporates search-as-you-type functionality for adding us
 
 == Basic Usage and Other Notes ==
 
-* Contributor-level and above can be added as co-authors. An option added as of 2.0 allows subscribers to be added as coauthors as well.
-* As per WordPress design, only Editor-level and above users can change Post Authors. Authors cannot change authors or add co-authors (yet).
+* Contributor-level and above can be added as co-authors.
 * As per WordPress design, when an editor creates a new Post or Page, they are by default added as an author. However, they can be replaced by clicking on their name and typing in the name of the new author.
 * The search-as-you-type box starts searching once two letters have been added, and executes a new search with every subsequent letter.
 * The search-as-you-type box searches through the following user fields: a) user login; b) user nicename; c) display name; d) user email; e) first name; f) last name; and g) nickname. 
