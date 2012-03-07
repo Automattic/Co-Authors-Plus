@@ -20,10 +20,11 @@ The extended version incorporates search-as-you-type functionality for adding us
 
 == Changelog ==
 
-= 2012-02-?? / 2.6.2 =
+= 2012-03-?? / 2.6.2 =
 * AJAX user search matches against first name, last name, and nickname fields too, in addition to display name, user login, and email address
 * Filter required capability for user to be returned in an AJAX search with 'coauthors_edit_author_cap'
 * Filter out administrators and other non-authors from AJAX search with 'coauthors_edit_ignored_authors'
+* Automatically adds co-authors to Edit Flow's story budget and calendar views
 * Bug fix: Properly cc other co-authors on new comment email notifications
 * Bug fix: If a user has already been added as an author to a post, don't show them in the AJAX search again
 * Bug fix: Allow output constants to be defined in a theme's functions.php file and include filters you can use instead
