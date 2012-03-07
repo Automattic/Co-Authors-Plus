@@ -25,6 +25,7 @@ The extended version incorporates search-as-you-type functionality for adding us
 * Filter required capability for user to be returned in an AJAX search with 'coauthors_edit_author_cap'
 * Filter out administrators and other non-authors from AJAX search with 'coauthors_edit_ignored_authors'
 * Automatically adds co-authors to Edit Flow's story budget and calendar views
+* Bug fix: Don't set post_author value to current user when quick editing a post. This doesn't appear in the UI anywhere, but adds the post to the current user's list of posts
 * Bug fix: Properly cc other co-authors on new comment email notifications
 * Bug fix: If a user has already been added as an author to a post, don't show them in the AJAX search again
 * Bug fix: Allow output constants to be defined in a theme's functions.php file and include filters you can use instead

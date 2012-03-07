@@ -66,7 +66,7 @@ class coauthors_plus {
 		// Action to set users when a post is saved
 		add_action( 'save_post', array( $this, 'coauthors_update_post' ), 10, 2 );
 		// Filter to set the post_author field when wp_insert_post is called
-		add_filter( 'wp_insert_post_data', array( $this, 'coauthors_set_post_author_field' ) );
+		add_filter( 'wp_insert_post_data', array( $this, 'coauthors_set_post_author_field' ), 10, 2 );
 		
 		// Action to reassign posts when a user is deleted
 		add_action( 'delete_user',  array( $this, 'delete_user_action' ) );
@@ -444,7 +444,7 @@ class coauthors_plus {
 	/**
 	 * Filters post data before saving to db to set post_author
 	 */
-	function coauthors_set_post_author_field( $data ) {
+	function coauthors_set_post_author_field( $data, $postarr ) {
 		
 		// Bail on autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && !DOING_AUTOSAVE )
@@ -462,6 +462,15 @@ class coauthors_plus {
 				$author_data = get_user_by( 'login', $author );
 				$data['post_author'] = $author_data->ID;
 			}
+		}
+
+		// Restore the co-author when quick editing because we don't
+		// allow changing the co-author on quick edit. In wp_insert_post(),
+		// 'post_author' is set to current user if the $_REQUEST value doesn't exist
+		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
+			$coauthors = get_coauthors( $postarr['ID'] );
+			if ( is_array( $coauthors ) )
+				$data['post_author'] = $coauthors[0]->ID;
 		}
 
 		// If for some reason we don't have the coauthors fields set
