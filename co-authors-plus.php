@@ -815,7 +815,11 @@ class coauthors_plus {
 			return $allcaps;
 		
 		$post_type_object = get_post_type_object( $post->post_type );
-		
+
+		// Bail out if there's no post type object
+		if ( ! is_object( $post_type_object ) )
+			return $allcaps;
+
 		// Bail out if we're not asking about a post
 		if ( ! in_array( $args[0], array( $post_type_object->cap->edit_post, $post_type_object->cap->edit_others_posts ) ) )
 			return $allcaps;
