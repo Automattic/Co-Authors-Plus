@@ -21,6 +21,7 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 = 2012-03-06 / 2.6.3 =
 * AJAX user search is back to searching against first name, last name, display name, email address and user ID. The method introduced in v2.6.2 didn't scale well
 * French translation courtesy of Sylvain Bérubé
+* Spanish translation courtesy of Alejandro Arcos
 
 = 2012-03-06 / 2.6.2 =
 * AJAX user search matches against first name, last name, and nickname fields too, in addition to display name, user login, and email address
