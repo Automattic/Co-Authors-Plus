@@ -681,48 +681,39 @@ class coauthors_plus {
 	 */	
 	function search_authors( $search = '', $ignored_authors = array() ) {
 
-		// Getting all of the users with one query style should allow us to cache it better
-		$all_users = get_users( array( 'count_total' => false, 'fields' => 'all_with_meta' ) );
-
-		// Go through all of the users associated with the site and see which match our query
-		// We allow our search query to match against a number of fields
-		$found_users = array();
-		$search_fields = array(
-				'ID',
-				'display_name',
-				'first_name',
-				'last_name',
-				'nickname',
-				'user_email',
-				'user_login',
+		$args = array(
+				'count_total' => false,
+				'search' => sprintf( '*%s*', $search ),
+				'search_fields' => array(
+					'ID',
+					'display_name',
+					'user_email',
+					'user_login',
+				),
+				'fields' => 'all_with_meta',
 			);
-		$search_fields = apply_filters( 'coauthors_edit_search_fields', $search_fields );
-		foreach( $all_users as $blog_user ) {
-
-			$search_results = array();
-			foreach( $search_fields as $search_field ) {
-				if ( false !== stripos( $blog_user->$search_field, $search ) )
-					$search_results[$search_field] = true;
-				else
-					$search_results[$search_field] = false;
-			}
-			// Don't include the user if 0 of the search fields were true
-			if ( !in_array( true, $search_results ) )
-				continue;
-
-			// Make sure the user is contributor and above (or a custom cap)
-			if ( $blog_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
-				$found_users[] = $blog_user;
-
-		}
+		$found_users = get_users( $args );
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
 		foreach( $found_users as $key => $found_user ) {
+			// Make sure the user is contributor and above (or a custom cap)
 			if ( in_array( $found_user->user_login, $ignored_authors ) )
+				unset( $found_users[$key] );
+			else if ( false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
 				unset( $found_users[$key] );
 		}
 		return (array) $found_users;
+	}
+
+	/**
+	 * Modify get_users() to search display_name instead of user_nicename
+	 */
+	function filter_pre_user_query( &$user_query ) {
+
+		if ( is_object( $user_query ) )
+			$user_query->query_where = str_replace( "user_nicename LIKE", "display_name LIKE", $user_query->query_where );
+		return $user_query;
 	}
 
 	/**
