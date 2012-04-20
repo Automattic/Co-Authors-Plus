@@ -48,10 +48,8 @@ class coauthors_plus {
 	 */
 	function __construct() {
 
-		$plugin_dir = dirname( plugin_basename( __FILE__ ) ) . '/languages/';
-		load_plugin_textdomain( 'co-authors-plus', null, $plugin_dir );
+		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
 		
