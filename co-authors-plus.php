@@ -829,7 +829,7 @@ class coauthors_plus {
 			return $allcaps;
 		
 		// Bail out for users who can't publish posts if the post is already published
-		if ( 'publish' == $post->post_status && ( ! isset( $allcaps[$post_type_object->cap->publish_posts] ) || ! $allcaps[$post_type_object->cap->publish_posts] ) )
+		if ( 'publish' == $post->post_status && ( ! isset( $allcaps[$post_type_object->cap->edit_published_posts] ) || ! $allcaps[$post_type_object->cap->edit_published_posts] ) )
 			return $allcaps;
 		
 		// Finally, double check that the user is a coauthor of the post
