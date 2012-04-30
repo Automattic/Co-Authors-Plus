@@ -2,7 +2,7 @@
 Contributors: batmoo, danielbachhuber, automattic
 Donate link: http://digitalize.ca/donate
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.3.1
+Tested up to: 3.3.2
 Requires at least: 3.1
 Stable tag: 2.6.2
 
@@ -22,6 +22,7 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 * AJAX user search is back to searching against first name, last name, display name, email address and user ID. The method introduced in v2.6.2 didn't scale well
 * French translation courtesy of Sylvain Bérubé
 * Spanish translation courtesy of Alejandro Arcos
+* Bug fix: Resolved incorrect caps check against user editing an already published post. [See forum thread](http://wordpress.org/support/topic/multiple-authors-cant-edit-pages?replies=17#post-2741243)
 
 = 2012-03-06 / 2.6.2 =
 * AJAX user search matches against first name, last name, and nickname fields too, in addition to display name, user login, and email address
