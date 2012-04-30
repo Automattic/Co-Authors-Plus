@@ -1,0 +1,94 @@
+# Copyright (C) 2010 Co-Authors Plus
+# This file is distributed under the same license as the Co-Authors Plus package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Co-Authors Plus 2.6.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/co-authors-plus\n"
+"POT-Creation-Date: 2011-12-30 05:00:31+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-03-12 01:24-0600\n"
+"Last-Translator: AA\n"
+"Language-Team: LANGUAGE es-ES <LL@li.org>\n"
+"X-Poedit-Language: Spanish\n"
+"X-Poedit-Country: Mexico\n"
+
+#: co-authors-plus.php:39
+msgid " and "
+msgstr "y"
+
+#: co-authors-plus.php:216
+msgid "Post Authors"
+msgstr "Autores de la entrada"
+
+#: co-authors-plus.php:254
+msgid "<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser"
+msgstr "<strong>Nota:</strong> Para editar autores de la entrada, por favor habilite javascript o use un programa de consulta que soporte javascript"
+
+#: co-authors-plus.php:261
+#: co-authors-plus.php:743
+msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
+msgstr "Click en el autor para cambiarlo. Arrastrarlo para cambiar el orden. Click en <strong>Remover</strong> para eliminarlos."
+
+#: co-authors-plus.php:291
+msgid "Authors"
+msgstr "Autores"
+
+#: co-authors-plus.php:327
+msgid "Posts"
+msgstr "Entradas"
+
+#: co-authors-plus.php:343
+msgid "View posts by this author"
+msgstr "Ver entradas por este autor"
+
+#: co-authors-plus.php:738
+msgid "Edit"
+msgstr "Editar"
+
+#: co-authors-plus.php:739
+msgid "Remove"
+msgstr "Remover"
+
+#: co-authors-plus.php:740
+msgid "Are you sure you want to remove this author?"
+msgstr "¿Está seguro de remover este autor?"
+
+#: co-authors-plus.php:741
+msgid "Click to change this author, or drag to change their position"
+msgstr "Click para cambiar este autor, o arrastrar para cambiar la posición"
+
+#: co-authors-plus.php:742
+msgid "Search for an author"
+msgstr "Buscar un autor"
+
+#: template-tags.php:71
+msgid "No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?"
+msgstr "Sin ID de entrada para el contructor de  CoAuthorsIterator. ¿no se encuentra en un loop o la entrada $post no está configurada?"
+
+#: template-tags.php:189
+#: template-tags.php:329
+msgid "Posts by %s"
+msgstr "Entradas por %s"
+
+#: template-tags.php:230
+msgid "Visit %s&#8217;s website"
+msgstr "Visite el sitio web %s&#8217;s "
+
+#. Plugin Name of the plugin/theme
+msgid "Co-Authors Plus"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/co-authors-plus/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
+msgstr "Permite que varios autores sean asignados a una entrada. Este plugin es una versión extendida del plugin Co-Authors desarrolada por Weston Ruter."
+
+#. Author of the plugin/theme
+msgid "Mohammad Jangda, Daniel Bachhuber"
+msgstr ""
+

@@ -5,28 +5,32 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 	
 	$coauthors = array();
 	$post_id = (int)$post_id;
-	if(!$post_id && $post_ID) $post_id = $post_ID;
-	if(!$post_id && $post) $post_id = $post->ID;
+	if ( !$post_id && $post_ID )
+		$post_id = $post_ID;
+	if ( !$post_id && $post )
+		$post_id = $post->ID;
 
 	$defaults = array('orderby'=>'term_order', 'order'=>'ASC');
 	$args = wp_parse_args( $args, $defaults );
 	
-	if($post_id) {
+	if ( $post_id ) {
 		$coauthor_terms = wp_get_post_terms( $post_id, $coauthors_plus->coauthor_taxonomy, $args );
 		
-		if(is_array($coauthor_terms) && !empty($coauthor_terms)) {
-			foreach($coauthor_terms as $coauthor) {
+		if ( is_array( $coauthor_terms ) && !empty( $coauthor_terms ) ) {
+			foreach( $coauthor_terms as $coauthor ) {
 				$post_author =  get_user_by( 'login', $coauthor->name );
 				// In case the user has been deleted while plugin was deactivated
-				if(!empty($post_author)) $coauthors[] = $post_author;
+				if ( !empty( $post_author ) )
+					$coauthors[] = $post_author;
 			}
 		} else {
-			if($post) {
-				$post_author = get_userdata($post->post_author);
+			if ( $post ) {
+				$post_author = get_userdata( $post->post_author );
 			} else {
-				$post_author = get_userdata($wpdb->get_var($wpdb->prepare("SELECT post_author FROM $wpdb->posts WHERE ID = %d", $post_id)));
+				$post_author = get_userdata( $wpdb->get_var( $wpdb->prepare("SELECT post_author FROM $wpdb->posts WHERE ID = %d", $post_id ) ) );
 			}
-			if(!empty($post_author)) $coauthors[] = $post_author;
+			if ( !empty( $post_author ) )
+				$coauthors[] = $post_author;
 		}
 	}
 	return $coauthors;
@@ -40,17 +44,20 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 function is_coauthor_for_post( $user, $post_id = 0 ) {
 	global $post;
 	
-	if( ! $post_id && $post ) $post_id = $post->ID;
-	if( ! $post_id ) return false;
+	if( ! $post_id && $post )
+		$post_id = $post->ID;
+	if( ! $post_id )
+		return false;
 	
 	$coauthors = get_coauthors( $post_id );
-	if( is_numeric( $user ) ) {
+	if ( is_numeric( $user ) ) {
 		$user = get_userdata( $user );
 		$user = $user->user_login;
 	}
 	
 	foreach( $coauthors as $coauthor ) {
-		if( $user == $coauthor->user_login ) return true;
+		if ( $user == $coauthor->user_login )
+			return true;
 	}
 	return false;
 }
@@ -62,16 +69,16 @@ class CoAuthorsIterator {
 	var $authordata_array;
 	var $count;
 	
-	function CoAuthorsIterator($postID = 0){
+	function CoAuthorsIterator( $postID = 0 ){
 		global $post, $authordata, $wpdb;
 		$postID = (int)$postID;
-		if(!$postID && $post)
+		if( !$postID && $post )
 			$postID = (int)$post->ID;
-		if(!$postID)
+		if( !$postID )
 			trigger_error(__('No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus')); //return null;
 
 		$this->original_authordata = $this->current_author = $authordata;
-		$this->authordata_array = get_coauthors($postID);
+		$this->authordata_array = get_coauthors( $postID );
 		
 		$this->count = count($this->authordata_array);
 	}
@@ -81,14 +88,14 @@ class CoAuthorsIterator {
 		$this->position++;
 		
 		//At the end of the loop
-		if($this->position > $this->count-1){
+		if( $this->position > $this->count-1 ){
 			$authordata = $this->current_author = $this->original_authordata;
 			$this->position = -1;
 			return false;
 		}
 		
 		//At the beginning of the loop
-		if($this->position == 0 && !empty($authordata))
+		if( $this->position == 0 && !empty( $authordata ) )
 			$this->original_authordata = $authordata;
 		
 		$authordata = $this->current_author = $this->authordata_array[$this->position];
@@ -97,7 +104,7 @@ class CoAuthorsIterator {
 	}
 	
 	function get_position(){
-		if($this->position === -1)
+		if ( $this->position === -1 )
 			return false;
 		return $this->position;
 	}

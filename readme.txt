@@ -2,21 +2,27 @@
 Contributors: batmoo, danielbachhuber, automattic
 Donate link: http://digitalize.ca/donate
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.3.1
+Tested up to: 3.3.2
 Requires at least: 3.1
-Stable tag: 2.6.2
+Stable tag: 2.6.3
 
 Allows multiple authors to be assigned to posts, pages, and custom post types via a search-as-you-type input box
 
 == Description ==
 
-Allows multiple authors to be assigned to posts, pagesges, or custom post types via the search-as-you-type inputs. Template tags allow listing of co-authors anywhere you'd normally list the author. Co-authored posts appear on a co-author's archive page and in their feed. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
+Allows multiple authors to be assigned to posts, pages, or custom post types via the search-as-you-type inputs. Template tags allow listing of co-authors anywhere you'd normally list the author. Co-authored posts appear on a co-author's archive page and in their feed. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
 
 This plugin is an almost complete rewrite of the Co-Authors plugin originally developed at [Shepherd Interactive](http://www.shepherd-interactive.com/) (2007). The original plugin was inspired by the 'Multiple Authors' plugin by Mark Jaquith (2005).
 
 > *See "Other Notes" section for Template Tags and usage information*
 
 == Changelog ==
+
+= 2012-03-06 / 2.6.3 =
+* AJAX user search is back to searching against first name, last name, display name, email address and user ID. The method introduced in v2.6.2 didn't scale well
+* French translation courtesy of Sylvain Bérubé
+* Spanish translation courtesy of Alejandro Arcos
+* Bug fix: Resolved incorrect caps check against user editing an already published post. [See forum thread](http://wordpress.org/support/topic/multiple-authors-cant-edit-pages?replies=17#post-2741243)
 
 = 2012-03-06 / 2.6.2 =
 * AJAX user search matches against first name, last name, and nickname fields too, in addition to display name, user login, and email address

@@ -3,7 +3,7 @@
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 2.6.2
+Version: 2.6.3
 Author: Mohammad Jangda, Daniel Bachhuber, Automattic
 Copyright: 2008-2011 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
 
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '2.6.2' );
+define( 'COAUTHORS_PLUS_VERSION', '2.6.3' );
 
 define( 'COAUTHORS_PLUS_PATH', dirname( __FILE__ ) );
 define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
@@ -48,10 +48,8 @@ class coauthors_plus {
 	 */
 	function __construct() {
 
-		$plugin_dir = dirname( plugin_basename( __FILE__ ) ) . '/languages/';
-		load_plugin_textdomain( 'co-authors-plus', null, $plugin_dir );
+		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
 		
@@ -583,7 +581,7 @@ class coauthors_plus {
 		$orderby = 'ORDER BY tr.term_order'; 
 		$order = 'ASC';
 		$object_ids = (int)$object_ids;
-		$query = $wpdb->prepare( "SELECT t.slug, t.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN ($taxonomies) AND tr.object_id IN ($object_ids) $orderby $order" );
+		$query = $wpdb->prepare( "SELECT t.slug, t.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $taxonomies, $object_ids );
 		$raw_coauthors = $wpdb->get_results( $query ); 
 		$terms = array();
 		foreach( $raw_coauthors as $author ) { 
@@ -681,48 +679,39 @@ class coauthors_plus {
 	 */	
 	function search_authors( $search = '', $ignored_authors = array() ) {
 
-		// Getting all of the users with one query style should allow us to cache it better
-		$all_users = get_users( array( 'count_total' => false, 'fields' => 'all_with_meta' ) );
-
-		// Go through all of the users associated with the site and see which match our query
-		// We allow our search query to match against a number of fields
-		$found_users = array();
-		$search_fields = array(
-				'ID',
-				'display_name',
-				'first_name',
-				'last_name',
-				'nickname',
-				'user_email',
-				'user_login',
+		$args = array(
+				'count_total' => false,
+				'search' => sprintf( '*%s*', $search ),
+				'search_fields' => array(
+					'ID',
+					'display_name',
+					'user_email',
+					'user_login',
+				),
+				'fields' => 'all_with_meta',
 			);
-		$search_fields = apply_filters( 'coauthors_edit_search_fields', $search_fields );
-		foreach( $all_users as $blog_user ) {
-
-			$search_results = array();
-			foreach( $search_fields as $search_field ) {
-				if ( false !== stripos( $blog_user->$search_field, $search ) )
-					$search_results[$search_field] = true;
-				else
-					$search_results[$search_field] = false;
-			}
-			// Don't include the user if 0 of the search fields were true
-			if ( !in_array( true, $search_results ) )
-				continue;
-
-			// Make sure the user is contributor and above (or a custom cap)
-			if ( $blog_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
-				$found_users[] = $blog_user;
-
-		}
+		$found_users = get_users( $args );
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
 		foreach( $found_users as $key => $found_user ) {
+			// Make sure the user is contributor and above (or a custom cap)
 			if ( in_array( $found_user->user_login, $ignored_authors ) )
+				unset( $found_users[$key] );
+			else if ( false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
 				unset( $found_users[$key] );
 		}
 		return (array) $found_users;
+	}
+
+	/**
+	 * Modify get_users() to search display_name instead of user_nicename
+	 */
+	function filter_pre_user_query( &$user_query ) {
+
+		if ( is_object( $user_query ) )
+			$user_query->query_where = str_replace( "user_nicename LIKE", "display_name LIKE", $user_query->query_where );
+		return $user_query;
 	}
 
 	/**
@@ -826,7 +815,11 @@ class coauthors_plus {
 			return $allcaps;
 		
 		$post_type_object = get_post_type_object( $post->post_type );
-		
+
+		// Bail out if there's no post type object
+		if ( ! is_object( $post_type_object ) )
+			return $allcaps;
+
 		// Bail out if we're not asking about a post
 		if ( ! in_array( $args[0], array( $post_type_object->cap->edit_post, $post_type_object->cap->edit_others_posts ) ) )
 			return $allcaps;
@@ -836,7 +829,7 @@ class coauthors_plus {
 			return $allcaps;
 		
 		// Bail out for users who can't publish posts if the post is already published
-		if ( 'publish' == $post->post_status && ( ! isset( $allcaps[$post_type_object->cap->publish_posts] ) || ! $allcaps[$post_type_object->cap->publish_posts] ) )
+		if ( 'publish' == $post->post_status && ( ! isset( $allcaps[$post_type_object->cap->edit_published_posts] ) || ! $allcaps[$post_type_object->cap->edit_published_posts] ) )
 			return $allcaps;
 		
 		// Finally, double check that the user is a coauthor of the post
