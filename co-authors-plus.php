@@ -30,14 +30,20 @@ define( 'COAUTHORS_PLUS_PATH', dirname( __FILE__ ) );
 define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
 
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
+require_once( dirname( __FILE__ ) . '/php/class-coauthors-wp-list-table.php' );
 
 class coauthors_plus {
 	
-	// Name for the taxonomy we're using to store coauthors
+	// Name for the taxonomy we're using to store relationships
+	// and the post type we're using to store co-authors
 	var $coauthor_taxonomy = 'author';
+	var $coauthor_post_type = 'co-author';
 	
 	var $coreauthors_meta_box_name = 'authordiv';
 	var $coauthors_meta_box_name = 'coauthorsdiv';
+
+	// Caps we use within Co-Authors Plus
+	var $list_users_cap = 'list_users';
 	
 	var $gravatar_size = 25;
 	
@@ -50,16 +56,27 @@ class coauthors_plus {
 
 		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
+		// Register our models
+		add_action( 'init', array( $this, 'register_models' ) );
+
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
-		
-		// Register new taxonomy so that we can store all our authors
-		register_taxonomy( $this->coauthor_taxonomy, 'post', array('hierarchical' => false, 'update_count_callback' => array( &$this, '_update_users_posts_count' ), 'label' => false, 'query_var' => false, 'rewrite' => false, 'sort' => true, 'show_ui' => false ) );
+
+		// Add the author management menu
+		add_action( 'admin_menu', array( $this, 'action_admin_menu' ) );
+
+		// Add metaboxes for our author management interface
+		add_action( 'add_meta_boxes', array( $this, 'action_add_meta_boxes' ), 10, 2 );
+		add_action( 'wp_insert_post_data', array( $this, 'manage_coauthor_filter_post_data' ), 10, 2 );
+		add_action( 'save_post', array( $this, 'manage_coauthor_save_meta_fields' ), 10, 2 );
 		
 		// Modify SQL queries to include coauthors
 		add_filter( 'posts_where', array( $this, 'posts_where_filter' ) );
 		add_filter( 'posts_join', array( $this, 'posts_join_filter' ) );
 		add_filter( 'posts_groupby', array( $this, 'posts_groupby_filter' ) );
+
+		// Filter author links and such
+		add_filter( 'author_link', array( $this, 'filter_author_link' ), 10, 3 );
 		
 		// Action to set users when a post is saved
 		add_action( 'save_post', array( $this, 'coauthors_update_post' ), 10, 2 );
@@ -98,7 +115,65 @@ class coauthors_plus {
 
 	function coauthors_plus() {
 		$this->__construct();
-	}	
+	}
+
+	/**
+	 * Register the taxonomy used to managing relationships,
+	 * and the custom post type to store our author data
+	 */
+	function register_models() {
+
+		// Register new taxonomy so that we can store all of the relationships
+		$args = array(
+			'hierarchical' => false,
+			'update_count_callback' => array( $this, '_update_users_posts_count' ),
+			'label' => false,
+			'query_var' => false,
+			'rewrite' => false,
+			'sort' => true,
+			'show_ui' => false
+		);
+		$supported_post_types = array(
+				'post',
+				'page',
+			);
+		register_taxonomy( $this->coauthor_taxonomy, apply_filters( 'coauthors_supported_post_types', $supported_post_types ), $args );
+
+		// Register a post type to store our authors that aren't WP.com users
+		$args = array(
+				'label' => __( 'Co-Authors', 'co-authors-plus' ),
+				'labels' => array(
+						'name' => __( 'Co-Authors', 'co-authors-plus' ),
+						'singular_name' => __( 'Co-Author', 'co-authors-plus' ),
+						'add_new' => _x( 'Add New', 'co-authors-plus' ),
+						'all_items' => __( 'All Co-Authors', 'co-authors-plus' ),
+						'add_new_item' => __( 'Add New Co-Author', 'co-authors-plus' ),
+						'edit_item' => __( 'Edit Co-Author', 'co-authors-plus' ),
+						'new_item' => __( 'New Co-Author', 'co-authors-plus' ),
+						'view_item' => __( 'View Co-Author', 'co-authors-plus' ),
+						'search_items' => __( 'Search Co-Authors', 'co-authors-plus' ),
+						'not_found' => __( 'No co-authors found', 'co-authors-plus' ),
+						'not_found_in_trash' => __( 'No co-authors found in Trash', 'co-authors-plus' ),
+					),
+				'public' => true,
+				'publicly_queryable' => false,
+				'exclude_from_search' => true,
+				'show_in_menu' => false,
+				'taxonomies' => array(
+						$this->coauthor_taxonomy,
+					),
+				'rewrite' => false,
+				'query_var' => false,
+				'capability_type' => 'user',
+				'map_meta_cap' => true,
+			);
+		register_post_type( $this->coauthor_post_type, $args );
+
+		// Hacky way to remove the title and the editor
+		remove_post_type_support( $this->coauthor_post_type, 'title' );
+		remove_post_type_support( $this->coauthor_post_type, 'editor' );
+
+	}
 	
 	/**
 	 * Initialize the plugin for the admin 
@@ -121,6 +196,158 @@ class coauthors_plus {
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
 		add_filter( 'manage_users_custom_column', array( &$this, '_filter_manage_users_custom_column' ), 10, 3 );
 		
+	}
+
+	/**
+	 * Add the admin menus for seeing all co-authors
+	 */
+	function action_admin_menu() {
+
+		add_submenu_page( 'users.php', __( 'Co-Authors', 'co-authors-plus' ), __( 'Co-Authors', 'co-authors-plus' ), $this->list_users_cap, 'view-co-authors', array( $this, 'view_coauthors_list' ) );
+
+	}
+
+	/**
+	 * Register the various metaboxes used by the plugin
+	 */
+	function action_add_meta_boxes() {
+		$post_type = $this->get_current_post_type();
+		
+		if ( $post_type == $this->coauthor_post_type ) {
+			// Remove the submitpost metabox because we have our own
+			remove_meta_box( 'submitdiv', $post_type, 'side' );
+			remove_meta_box( 'slugdiv', $post_type, 'normal' );
+			add_meta_box( 'coauthors-manage-coauthor-save', __( 'Save', 'co-authors-plus'), array( $this, 'metabox_manage_coauthor_save' ), $post_type, 'side', 'default' );
+			// Our metaboxes with co-author details
+			add_meta_box( 'coauthors-manage-coauthor-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_coauthor_name' ), $post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-coauthor-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_coauthor_contact_info' ), $post_type, 'normal', 'default' );
+		}
+	}
+
+	/**
+	 *
+	 */
+	function view_coauthors_list() {
+
+		echo '<div class="wrap">';
+		echo '<div class="icon32" id="icon-users"><br/></div>';
+		echo '<h2>' . __( 'Co-Authors', 'co-authors-plus' );
+		// @todo caps check for creating a new user
+		$add_new_link = admin_url( "post-new.php?post_type=$this->coauthor_post_type" );
+		echo '<a href="' . $add_new_link . '" class="add-new-h2">' . esc_html( 'Add New', 'co-authors-plus' ) . '</a>';
+		echo '</h2>';
+		$cap_list_table = new CoAuthors_WP_List_Table();
+		$cap_list_table->prepare_items();
+		$cap_list_table->display();
+		echo '</div>';
+
+	}
+
+	/**
+	 * Metabox for saving or updating a Co-Author
+	 */
+	function metabox_manage_coauthor_save() {
+		global $post;
+
+		if ( $post->post_status == 'publish' )
+			$button_text = __( 'Add New Co-Author', 'co-authors-plus' );
+		else
+			$button_text = __( 'Update Co-Author', 'co-authors-plus' );
+		submit_button( $button_text, 'primary', 'publish', false );
+
+	}
+
+	/**
+	 * Metabox to display all of the pertient names for a Co-Author without a user account
+	 */
+	function metabox_manage_coauthor_name() {
+		global $post;
+
+		$fields = $this->get_coauthor_fields( 'name' );
+		echo '<table class="form-table"><tbody>';
+		foreach( $fields as $field ) {
+			$pm_key = $this->get_post_meta_key( $field['key'] );
+			$value = get_post_meta( $post->ID, $pm_key, true );
+			echo '<tr><th>';
+			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
+			echo '</th><td>';
+			echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			echo '</td></tr>';
+		}
+		echo '</tbody></table>';
+
+	}
+
+	/**
+	 * Metabox to display all of the pertient contact details for a Co-Author without a user account
+	 */
+	function metabox_manage_coauthor_contact_info() {
+		global $post;
+
+		$fields = $this->get_coauthor_fields( 'contact-info' );
+		echo '<table class="form-table"><tbody>';
+		foreach( $fields as $field ) {
+			$pm_key = $this->get_post_meta_key( $field['key'] );
+			$value = get_post_meta( $post->ID, $pm_key, true );
+			echo '<tr><th>';
+			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
+			echo '</th><td>';
+			echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			echo '</td></tr>';
+		}
+		echo '</tbody></table>';
+
+	}
+
+	/**
+	 * When a co-author is created or updated, we need to properly create
+	 * the post_name based on some data provided by the user
+	 */
+	function manage_coauthor_filter_post_data( $post_data, $original_args ) {
+
+		if ( $post_data['post_type'] != $this->coauthor_post_type )
+			return $post_data;
+
+		// @todo nonce and caps check
+
+		$post_data['post_title'] = sanitize_text_field( $_POST['cap-display_name'] );
+		$post_data['post_name'] = $this->get_post_meta_key( sanitize_title( $_POST['cap-slug'] ) );
+		return $post_data;
+
+	}
+
+	/**
+	 * Save the various meta fields associated with our author model
+	 */
+	function manage_coauthor_save_meta_fields( $post_id, $post ) {
+
+		if ( $post->post_type != $this->coauthor_post_type )
+			return;
+
+		// @todo nonce and caps check
+
+		// Ensure there's a proper 'author' term for this coauthor
+		// Add user as a term if they don't exist
+		if( !term_exists( $post->post_name, $this->coauthor_taxonomy ) ) {
+			$args = array( 'slug' => $post->post_name );
+			wp_insert_term( $post->post_name, $this->coauthor_taxonomy, $args );
+		}
+		// Add the author as a post term
+		wp_set_post_terms( $post_id, array( $post->post_name ), $this->coauthor_taxonomy, false );
+
+		// Save our data to post meta
+		$author_fields = $this->get_coauthor_fields();
+		foreach( $author_fields as $author_field ) {
+			$key = $this->get_post_meta_key( $author_field['key'] );
+			if ( !isset( $_POST[$key] ) )
+				continue;
+			$value = sanitize_text_field( $_POST[$key] );
+			update_post_meta( $post_id, $key, $value );
+		}
+
+		// @todo save some amount of data to the term description field so
+		// it can be searchable
+
 	}
 	
 	function admin_load_page() {
@@ -150,6 +377,154 @@ class coauthors_plus {
 		
 		return false;
 	}
+
+	/**
+	 * Get one or more co-authors based on arguments
+	 *
+	 * @todo full argument support
+	 * @todo cache based on query args
+	 */
+	function get_coauthors( $args = array() ) {
+
+		$term_args = array(
+				'get' => 'all',
+			);
+		if ( isset( $args['per_page'] ) )
+			$term_args['number'] = (int)$args['per_page'];
+		if ( isset( $args['paged'] ) )
+			$term_args['offset'] = absint( $args['paged'] - 1 );
+
+		$matching_terms = get_terms( $this->coauthor_taxonomy, $term_args );
+		if ( empty( $matching_terms ) )
+			return array();
+
+		$coauthors = array();
+		foreach( $matching_terms as $matching_term ) {
+			$matching_user = $this->get_coauthor_by( 'slug', $matching_term->name );
+			if ( $matching_user )
+				$coauthors[] = $matching_user;
+		}
+		return $coauthors;
+
+	}
+
+	/**
+	 * Get all of the meta fields that can be associated with an author
+	 */
+	function get_coauthor_fields( $groups = 'all' ) {
+
+		$groups = (array)$groups;
+		$global_fields = array(
+				// Hidden (included in object, no UI elements)
+				array(
+						'key'      => 'ID',
+						'label'    => __( 'ID', 'co-authors-plus' ),
+						'group'    => 'hidden',
+					),
+				// Name
+				array(
+						'key'      => 'first_name',
+						'label'    => __( 'First Name', 'co-authors-plus'),
+						'group'    => 'name',
+					),
+				array(
+						'key'      => 'last_name',
+						'label'    => __( 'Last Name', 'co-authors-plus'),
+						'group'    => 'name',
+					),
+				array(
+						'key'      => 'display_name',
+						'label'    => __( 'Display Name', 'co-authors-plus'),
+						'group'    => 'name',
+					),
+				array(
+						'key'      => 'slug',
+						'label'    => __( 'Slug', 'co-authors-plus'),
+						'group'    => 'name',
+					),
+				// Contact info
+				array(
+						'key'      => 'user_email',
+						'label'    => __( 'E-mail', 'co-authors-plus' ),
+						'group'    => 'contact-info',
+					),
+				array(
+						'key'      => 'website',
+						'label'    => __( 'Website', 'co-authors-plus' ),
+						'group'    => 'contact-info',
+					),
+				array(
+						'key'      => 'aim',
+						'label'    => __( 'AIM', 'co-authors-plus' ),
+						'group'    => 'contact-info',
+					),
+				array(
+						'key'      => 'yahooim',
+						'label'    => __( 'Yahoo IM', 'co-authors-plus' ),
+						'group'    => 'contact-info',
+					),
+				array(
+						'key'      => 'jabber',
+						'label'    => __( 'Jabber / Google Talk', 'co-authors-plus' ),
+						'group'    => 'contact-info',
+					),
+			);
+		$fields_to_return = array();
+		foreach( $global_fields as $single_field ) {
+			if ( in_array( $single_field['group'], $groups ) || $groups[0] == 'all' && $single_field['key'] != 'hidden' )
+				$fields_to_return[] = $single_field;
+		}
+		return $fields_to_return;
+
+	}
+
+	/**
+	 * Get a co-author object by a specific type of key
+	 *
+	 * @param string $key Key to search by (slug,email)
+	 */
+	function get_coauthor_by( $key, $value ) {
+		global $wpdb;
+
+		// Check to see if there's a co-author bio for this user
+		// @todo look for a more performant way of gathering this data
+		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
+		$result = $wpdb->get_results( $query );
+		if ( !empty( $result ) ) {
+			$id = $result[0]->ID;
+			$fields = $this->get_coauthor_fields();
+			$coauthor = array(
+					'ID' => $id,
+					// Hack to model the WP_User object
+					'user_login' => $value,
+					'user_nicename' => $this->get_post_meta_key( $value ),
+				);
+			foreach( $fields as $field ) {
+				$key = $field['key'];
+				$pm_key = $this->get_post_meta_key( $field['key'] );
+				$coauthor[$key] = get_post_meta( $id, $pm_key, true );
+			}
+			$coauthor['type'] = 'coauthor';
+			return (object)$coauthor;
+		}
+
+		// otherwise default to get_user_by()
+		if ( $user = get_user_by( 'login', $value ) ) {
+			$user->type = 'wpuser';
+			return $user;
+		}
+		return false;
+
+	}
+
+	/**
+	 * Count co-authors based on arguments
+	 *
+	 * @todo argument support
+	 */
+	function count_coauthors( $args = array() ) {
+		return 100;
+	}
 	
 	/**
 	 * Gets the current global post type if one is set
@@ -176,6 +551,20 @@ class coauthors_plus {
 			$this->_current_post_type = $post_type;
 		
 		return $post_type;
+	}
+
+	/**
+	 * Gets a postmeta key by prefixing it with 'cap-'
+	 * if not yet prefixed
+	 *
+	 * @since 0.7
+	 */
+	function get_post_meta_key( $key ) {
+
+		if ( false === stripos( $key, 'cap-' ) )
+			$key = 'cap-' . $key;
+
+		return $key;
 	}
 	
 	/**
@@ -293,7 +682,7 @@ class coauthors_plus {
 			$count = 1;
 			foreach( $authors as $author ) :
 				?>
-				<a href="<?php echo esc_url( get_admin_url( null, 'edit.php?author=' . $author->ID ) ); ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
+				<a href="<?php echo esc_url( get_admin_url( null, 'edit.php?author_name=' . $author->user_login ) ); ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
 			endforeach;
@@ -364,6 +753,10 @@ class coauthors_plus {
 			$term_slug = $wpdb->get_var( $query );
 			$author = get_user_by( 'login', $term_slug );
 
+			// If there's no author object, then we're probably editing a coauthor w/o a user
+			if ( empty( $author ) )
+				continue;
+
 			// Get all of the post IDs where the user is the primary author
 			$query = $wpdb->prepare( "SELECT $wpdb->posts.ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_type IN ('" . implode("', '", $object_types ) . "') AND post_author = %d;", $author->ID );
 			$all_author_posts = $wpdb->get_results( $query );
@@ -411,14 +804,17 @@ class coauthors_plus {
 	 */
 	function posts_where_filter( $where ){
 		global $wpdb, $wp_query;
-		
-		if( is_author() ) {
-			$author = get_userdata( $wp_query->query_vars['author'] );
-			$term = get_term_by( 'name', $author->user_login, $this->coauthor_taxonomy );
-				
-			if( $author ) {
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '($1 OR (' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\'))', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
 
+		if( is_author() ) {
+			
+			if ( 0 === stripos( get_query_var( 'author_name' ), 'cap-' ) )
+				$author_name = sanitize_key( get_query_var( 'author_name' ) );
+			else
+				$author_name = get_userdata( $wp_query->query_vars['author'] )->user_login;
+			$term = get_term_by( 'name', $author_name, $this->coauthor_taxonomy );
+			
+			if( $term ) {
+				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '($1 OR (' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\'))', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
 			}
 		}
 		return $where;
@@ -434,6 +830,29 @@ class coauthors_plus {
 			$groupby = $wpdb->posts .'.ID';
 		}
 		return $groupby;
+	}
+
+	function filter_author_link( $link, $author_id, $author_nicename ) {
+
+		if ( $author_id ) {
+			return $link;
+		}
+
+		if ( 0 === stripos( $author_nicename, 'cap-' ) ) {
+			global $wp_rewrite;
+			$auth_ID = (int) $author_id;
+			$link = $wp_rewrite->get_author_permastruct();
+
+			if ( empty($link) ) {
+				$file = home_url( '/' );
+				$link = $file . '?author_name=' . $author_nicename;
+			} else {
+				$link = str_replace('%author%', $author_nicename, $link);
+				$link = home_url( user_trailingslashit( $link ) );
+			}
+		}
+		return $link;
+
 	}
 	
 	/**
@@ -680,17 +1099,21 @@ class coauthors_plus {
 	function search_authors( $search = '', $ignored_authors = array() ) {
 
 		$args = array(
-				'count_total' => false,
-				'search' => sprintf( '*%s*', $search ),
-				'search_fields' => array(
-					'ID',
-					'display_name',
-					'user_email',
-					'user_login',
-				),
-				'fields' => 'all_with_meta',
+				'search' => $search,
+				'get' => 'all',
+				'number' => 10,
 			);
-		$found_users = get_users( $args );
+		$found_terms = get_terms( $this->coauthor_taxonomy, $args );
+		if ( empty( $found_terms ) )
+			return array();
+
+		// Get the co-author objects
+		$found_users = array();
+		foreach( $found_terms as $found_term ) {
+			$found_user = $this->get_coauthor_by( 'slug', $found_term->name );
+			if ( !empty( $found_user ) )
+				$found_users[] = $found_user;
+		}
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
@@ -698,7 +1121,7 @@ class coauthors_plus {
 			// Make sure the user is contributor and above (or a custom cap)
 			if ( in_array( $found_user->user_login, $ignored_authors ) )
 				unset( $found_users[$key] );
-			else if ( false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
+			else if ( $found_user->type == 'wpuser' && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
 				unset( $found_users[$key] );
 		}
 		return (array) $found_users;
