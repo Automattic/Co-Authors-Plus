@@ -37,7 +37,7 @@ class coauthors_plus {
 	// Name for the taxonomy we're using to store relationships
 	// and the post type we're using to store co-authors
 	var $coauthor_taxonomy = 'author';
-	var $coauthor_post_type = 'co-author';
+	var $coauthor_post_type = 'guest-author';
 	
 	var $coreauthors_meta_box_name = 'authordiv';
 	var $coauthors_meta_box_name = 'coauthorsdiv';
@@ -65,10 +65,10 @@ class coauthors_plus {
 		// Add the author management menu
 		add_action( 'admin_menu', array( $this, 'action_admin_menu' ) );
 
-		// Add metaboxes for our author management interface
+		// Add metaboxes for our guest author management interface
 		add_action( 'add_meta_boxes', array( $this, 'action_add_meta_boxes' ), 10, 2 );
-		add_action( 'wp_insert_post_data', array( $this, 'manage_coauthor_filter_post_data' ), 10, 2 );
-		add_action( 'save_post', array( $this, 'manage_coauthor_save_meta_fields' ), 10, 2 );
+		add_action( 'wp_insert_post_data', array( $this, 'manage_guest_author_filter_post_data' ), 10, 2 );
+		add_action( 'save_post', array( $this, 'manage_guest_author_save_meta_fields' ), 10, 2 );
 		
 		// Modify SQL queries to include coauthors
 		add_filter( 'posts_where', array( $this, 'posts_where_filter' ) );
@@ -141,19 +141,19 @@ class coauthors_plus {
 
 		// Register a post type to store our authors that aren't WP.com users
 		$args = array(
-				'label' => __( 'Co-Authors', 'co-authors-plus' ),
+				'label' => __( 'Guest Author', 'co-authors-plus' ),
 				'labels' => array(
-						'name' => __( 'Co-Authors', 'co-authors-plus' ),
-						'singular_name' => __( 'Co-Author', 'co-authors-plus' ),
+						'name' => __( 'Guest Authors', 'co-authors-plus' ),
+						'singular_name' => __( 'Guest Author', 'co-authors-plus' ),
 						'add_new' => _x( 'Add New', 'co-authors-plus' ),
-						'all_items' => __( 'All Co-Authors', 'co-authors-plus' ),
-						'add_new_item' => __( 'Add New Co-Author', 'co-authors-plus' ),
-						'edit_item' => __( 'Edit Co-Author', 'co-authors-plus' ),
-						'new_item' => __( 'New Co-Author', 'co-authors-plus' ),
-						'view_item' => __( 'View Co-Author', 'co-authors-plus' ),
-						'search_items' => __( 'Search Co-Authors', 'co-authors-plus' ),
-						'not_found' => __( 'No co-authors found', 'co-authors-plus' ),
-						'not_found_in_trash' => __( 'No co-authors found in Trash', 'co-authors-plus' ),
+						'all_items' => __( 'All Guest Authors', 'co-authors-plus' ),
+						'add_new_item' => __( 'Add New Guest Author', 'co-authors-plus' ),
+						'edit_item' => __( 'Edit Guest Author', 'co-authors-plus' ),
+						'new_item' => __( 'New Guest Author', 'co-authors-plus' ),
+						'view_item' => __( 'View Guest Author', 'co-authors-plus' ),
+						'search_items' => __( 'Search Guest Authors', 'co-authors-plus' ),
+						'not_found' => __( 'No guest author found', 'co-authors-plus' ),
+						'not_found_in_trash' => __( 'No guest authors found in Trash', 'co-authors-plus' ),
 					),
 				'public' => true,
 				'publicly_queryable' => false,
@@ -181,10 +181,10 @@ class coauthors_plus {
 	function admin_init() {
 		global $pagenow;
 
-		// Hook into load to initialize custom columns
-		if( $this->is_valid_page() ) {
-			add_action( 'load-' . $pagenow, array( $this, 'admin_load_page' ) );
-		}
+		// Add the main JS script and CSS file
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		// Add necessary JS variables
+		add_action( 'admin_print_scripts', array( $this, 'js_vars' ) );
 
 		// Hooks to add additional coauthors to author column to Edit page
 		add_filter( 'manage_posts_columns', array( $this, '_filter_manage_posts_columns' ) );
@@ -203,7 +203,7 @@ class coauthors_plus {
 	 */
 	function action_admin_menu() {
 
-		add_submenu_page( 'users.php', __( 'Co-Authors', 'co-authors-plus' ), __( 'Co-Authors', 'co-authors-plus' ), $this->list_users_cap, 'view-co-authors', array( $this, 'view_coauthors_list' ) );
+		add_submenu_page( 'users.php', __( 'Guest Authors', 'co-authors-plus' ), __( 'Guest Authors', 'co-authors-plus' ), $this->list_users_cap, 'view-guest-authors', array( $this, 'view_guest_authors_list' ) );
 
 	}
 
@@ -217,21 +217,21 @@ class coauthors_plus {
 			// Remove the submitpost metabox because we have our own
 			remove_meta_box( 'submitdiv', $post_type, 'side' );
 			remove_meta_box( 'slugdiv', $post_type, 'normal' );
-			add_meta_box( 'coauthors-manage-coauthor-save', __( 'Save', 'co-authors-plus'), array( $this, 'metabox_manage_coauthor_save' ), $post_type, 'side', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-save', __( 'Save', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_save' ), $post_type, 'side', 'default' );
 			// Our metaboxes with co-author details
-			add_meta_box( 'coauthors-manage-coauthor-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_coauthor_name' ), $post_type, 'normal', 'default' );
-			add_meta_box( 'coauthors-manage-coauthor-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_coauthor_contact_info' ), $post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_name' ), $post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_contact_info' ), $post_type, 'normal', 'default' );
 		}
 	}
 
 	/**
 	 *
 	 */
-	function view_coauthors_list() {
+	function view_guest_authors_list() {
 
 		echo '<div class="wrap">';
 		echo '<div class="icon32" id="icon-users"><br/></div>';
-		echo '<h2>' . __( 'Co-Authors', 'co-authors-plus' );
+		echo '<h2>' . __( 'Guest Authors', 'co-authors-plus' );
 		// @todo caps check for creating a new user
 		$add_new_link = admin_url( "post-new.php?post_type=$this->coauthor_post_type" );
 		echo '<a href="' . $add_new_link . '" class="add-new-h2">' . esc_html( 'Add New', 'co-authors-plus' ) . '</a>';
@@ -244,26 +244,26 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Metabox for saving or updating a Co-Author
+	 * Metabox for saving or updating a Guest Author
 	 */
-	function metabox_manage_coauthor_save() {
+	function metabox_manage_guest_author_save() {
 		global $post;
 
 		if ( $post->post_status == 'publish' )
-			$button_text = __( 'Add New Co-Author', 'co-authors-plus' );
+			$button_text = __( 'Update Guest Author', 'co-authors-plus' );
 		else
-			$button_text = __( 'Update Co-Author', 'co-authors-plus' );
+			$button_text = __( 'Add New Guest Author', 'co-authors-plus' );
 		submit_button( $button_text, 'primary', 'publish', false );
 
 	}
 
 	/**
-	 * Metabox to display all of the pertient names for a Co-Author without a user account
+	 * Metabox to display all of the pertient names for a Guest Author without a user account
 	 */
-	function metabox_manage_coauthor_name() {
+	function metabox_manage_guest_author_name() {
 		global $post;
 
-		$fields = $this->get_coauthor_fields( 'name' );
+		$fields = $this->get_guest_author_fields( 'name' );
 		echo '<table class="form-table"><tbody>';
 		foreach( $fields as $field ) {
 			$pm_key = $this->get_post_meta_key( $field['key'] );
@@ -279,12 +279,12 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Metabox to display all of the pertient contact details for a Co-Author without a user account
+	 * Metabox to display all of the pertient contact details for a Guest Author without a user account
 	 */
-	function metabox_manage_coauthor_contact_info() {
+	function metabox_manage_guest_author_contact_info() {
 		global $post;
 
-		$fields = $this->get_coauthor_fields( 'contact-info' );
+		$fields = $this->get_guest_author_fields( 'contact-info' );
 		echo '<table class="form-table"><tbody>';
 		foreach( $fields as $field ) {
 			$pm_key = $this->get_post_meta_key( $field['key'] );
@@ -300,10 +300,10 @@ class coauthors_plus {
 	}
 
 	/**
-	 * When a co-author is created or updated, we need to properly create
+	 * When a guest author is created or updated, we need to properly create
 	 * the post_name based on some data provided by the user
 	 */
-	function manage_coauthor_filter_post_data( $post_data, $original_args ) {
+	function manage_guest_author_filter_post_data( $post_data, $original_args ) {
 
 		if ( $post_data['post_type'] != $this->coauthor_post_type )
 			return $post_data;
@@ -317,9 +317,9 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Save the various meta fields associated with our author model
+	 * Save the various meta fields associated with our guest author model
 	 */
-	function manage_coauthor_save_meta_fields( $post_id, $post ) {
+	function manage_guest_author_save_meta_fields( $post_id, $post ) {
 
 		if ( $post->post_type != $this->coauthor_post_type )
 			return;
@@ -336,7 +336,7 @@ class coauthors_plus {
 		wp_set_post_terms( $post_id, array( $post->post_name ), $this->coauthor_taxonomy, false );
 
 		// Save our data to post meta
-		$author_fields = $this->get_coauthor_fields();
+		$author_fields = $this->get_guest_author_fields();
 		foreach( $author_fields as $author_field ) {
 			$key = $this->get_post_meta_key( $author_field['key'] );
 			if ( !isset( $_POST[$key] ) )
@@ -347,16 +347,6 @@ class coauthors_plus {
 
 		// @todo save some amount of data to the term description field so
 		// it can be searchable
-
-	}
-	
-	function admin_load_page() {
-		
-		// Add the main JS script and CSS file
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		
-		// Add necessary JS variables
-		add_action( 'admin_print_scripts', array( $this, 'js_vars' ) );
 
 	}
 	
@@ -409,9 +399,9 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Get all of the meta fields that can be associated with an author
+	 * Get all of the meta fields that can be associated with a guest author
 	 */
-	function get_coauthor_fields( $groups = 'all' ) {
+	function get_guest_author_fields( $groups = 'all' ) {
 
 		$groups = (array)$groups;
 		$global_fields = array(
@@ -471,7 +461,7 @@ class coauthors_plus {
 			);
 		$fields_to_return = array();
 		foreach( $global_fields as $single_field ) {
-			if ( in_array( $single_field['group'], $groups ) || $groups[0] == 'all' && $single_field['key'] != 'hidden' )
+			if ( in_array( $single_field['group'], $groups ) || $groups[0] == 'all' && $single_field['group'] != 'hidden' )
 				$fields_to_return[] = $single_field;
 		}
 		return $fields_to_return;
@@ -486,26 +476,12 @@ class coauthors_plus {
 	function get_coauthor_by( $key, $value ) {
 		global $wpdb;
 
-		// Check to see if there's a co-author bio for this user
+		// Check to see if there's a guest author profile for this user
 		// @todo look for a more performant way of gathering this data
 		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
 		$result = $wpdb->get_results( $query );
 		if ( !empty( $result ) ) {
-			$id = $result[0]->ID;
-			$fields = $this->get_coauthor_fields();
-			$coauthor = array(
-					'ID' => $id,
-					// Hack to model the WP_User object
-					'user_login' => $value,
-					'user_nicename' => $this->get_post_meta_key( $value ),
-				);
-			foreach( $fields as $field ) {
-				$key = $field['key'];
-				$pm_key = $this->get_post_meta_key( $field['key'] );
-				$coauthor[$key] = get_post_meta( $id, $pm_key, true );
-			}
-			$coauthor['type'] = 'coauthor';
-			return (object)$coauthor;
+			return $this->get_guest_author( $result[0]->ID );
 		}
 
 		// otherwise default to get_user_by()
@@ -518,14 +494,37 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Count co-authors based on arguments
+	 * Return a simulated WP_User object based on the post ID
+	 * of a guest author
 	 *
-	 * @todo argument support
 	 */
-	function count_coauthors( $args = array() ) {
-		return 100;
+	function get_guest_author( $post_or_id ) {
+
+		// Load the post object if we're just given an ID
+		if ( is_numeric( $post_or_id ) )
+			$post_or_id = get_post( $post_or_id );
+		if ( is_object( $post_or_id ) )
+			$post = $post_or_id;
+		else
+			return false;
+
+		$guest_author = array(
+			'ID' => $post->ID,
+			// Hack to model the WP_User object
+			'user_login' => $post->post_name,
+			'user_nicename' => $post->post_name,
+		);
+		// Load the rest 
+		$fields = $this->get_guest_author_fields( 'all' );
+		foreach( $fields as $field ) {
+			$key = $field['key'];
+			$pm_key = $this->get_post_meta_key( $field['key'] );
+			$guest_author[$key] = get_post_meta( $post->ID, $pm_key, true );
+		}
+		$guest_author['type'] = 'guest-author';
+		return (object)$guest_author;
 	}
-	
+
 	/**
 	 * Gets the current global post type if one is set
 	 */
@@ -1142,6 +1141,11 @@ class coauthors_plus {
 	 */
 	function enqueue_scripts($hook_suffix) {
 		global $pagenow, $post;
+
+		// Enqueue our guest author CSS on the related pages
+		if ( 'users.php' == $pagenow && isset( $_GET['page'] ) && $_GET['page'] == 'view-guest-authors' ) {
+			wp_enqueue_style( 'guest-authors-css', COAUTHORS_PLUS_URL . 'css/guest-authors.css', false, COAUTHORS_PLUS_VERSION );
+		}
 		
 		$post_type = $this->get_current_post_type();
 		

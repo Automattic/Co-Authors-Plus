@@ -31,12 +31,19 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$per_page = 20;
 
 		$args = array(
-				'paged' => $paged,
-				'per_page' => $per_page,
+				'paged'          => ( $paged - 1 ) * $per_page,
+				'numberposts'    => $per_page,
+				'post_type'      => $coauthors_plus->coauthor_post_type,
+				'post_status'    => 'any',
+				'orderby'        => 'post_title',
+				'order'          => 'ASC',
 			);
-		$this->items = $coauthors_plus->get_coauthors( $args );
-
-		// $users_per_page = $this->get_items_per_page( $per_page );
+		$author_posts = get_posts( $args );
+		$items = array();
+		foreach( $author_posts as $author_post ) {
+			$items[] = $coauthors_plus->get_guest_author( $author_post );
+		}
+		$this->items = $items;
 
 		$this->set_pagination_args( array(
 			'total_items' => 20,
@@ -44,8 +51,11 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			) );
 	}
 
+	/**
+	 * Either there are no guest authors, or the search doesn't match any
+	 */
 	function no_items() {
-		_e( 'No matching co-authors were found.', 'co-authors-plus' );
+		_e( 'No matching guest authors were found.', 'co-authors-plus' );
 	}
 
 	/**
@@ -59,7 +69,6 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'first_name'     => __( 'First Name', 'co-authors-plus' ),
 				'last_name'      => __( 'Last Name', 'co-authors-plus' ),
 				'user_email'     => __( 'E-mail', 'co-authors-plus' ),
-				'type'           => __( 'Type', 'co-authors-plus' ),
 			);
 		return $columns;
 	}
@@ -70,9 +79,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function single_row( $item ) {
 		static $alternate_class = '';
 		$alternate_class = ( $alternate_class == '' ? ' alternate' : '' );
-		$row_class = ' class="coauthor-static' . $alternate_class . '"';
+		$row_class = ' class="guest-author-static' . $alternate_class . '"';
 
-		echo '<tr id="coauthor-' . $item->ID . '"' . $row_class . '>';
+		echo '<tr id="guest-author-' . $item->ID . '"' . $row_class . '>';
 		echo $this->single_row_columns( $item );
 		echo '</tr>';
 	}
@@ -92,30 +101,19 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	function column_display_name( $item ) {
-		$output = esc_html( $item->display_name );
 
-		return $output;
-	}
+		$item_edit_link = get_edit_post_link( $item->ID );
 
-	/**
-	 * Display the type of user object this is
-	 */
-	function column_type( $item ) {
-		
-		switch( $item->type ) {
-			case 'coauthor':
-				$output = __( 'Co-Author', 'co-authors-plus' );
-				break;
-			case 'wpuser':
-				$output = __( 'WordPress User', 'co-authors-plus' );
-				break;
-			case 'both':
-				$output = __( 'Co-Author & User', 'co-authors-plus' );
-				break;
-			default:
-				$output = '';
-				break;
-		}
+		$output = get_avatar( $item->user_email, 32 );
+		// @todo caps check to see whether the user can edit. Otherwise, just show the name
+		$output .= '<a href="' . esc_url( $item_edit_link ) . '">' . esc_html( $item->display_name ) . '</a>';
+
+		$actions = array();
+		$actions['edit'] = '<a href="' . esc_url( $item_edit_link ) . '">' . __( 'Edit', 'co-authors-plus' ) . '</a>';
+		$actions['delete'] = '<a href="#">' . __( 'Delete', 'co-authors-plus' ) . '</a>';
+		$actions = apply_filters( 'coauthors_guest_author_row_actions', $actions, $item );
+		$output .= $this->row_actions( $actions, false );
+
 		return $output;
 	}
 
