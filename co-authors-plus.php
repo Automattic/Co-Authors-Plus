@@ -304,6 +304,9 @@ class coauthors_plus {
 			$button_text = __( 'Add New Guest Author', 'co-authors-plus' );
 		submit_button( $button_text, 'primary', 'publish', false );
 
+		// Secure all of our requests
+		wp_nonce_field( 'guest-author-nonce', 'guest-author-nonce' );
+
 	}
 
 	/**
@@ -357,7 +360,9 @@ class coauthors_plus {
 		if ( $post_data['post_type'] != $this->coauthor_post_type )
 			return $post_data;
 
-		// @todo nonce and caps check
+		// @todo caps check
+		if ( !isset( $_POST['guest-author-nonce'] ) || !wp_verify_nonce( $_POST['guest-author-nonce'], 'guest-author-nonce' ) )
+			return $post_data;
 
 		$post_data['post_title'] = sanitize_text_field( $_POST['cap-display_name'] );
 		$post_data['post_name'] = $this->get_post_meta_key( sanitize_title( $_POST['cap-slug'] ) );
@@ -373,7 +378,10 @@ class coauthors_plus {
 		if ( $post->post_type != $this->coauthor_post_type )
 			return;
 
-		// @todo nonce and caps check
+		// @todo caps check
+		if ( !isset( $_POST['guest-author-nonce'] ) || !wp_verify_nonce( $_POST['guest-author-nonce'], 'guest-author-nonce' ) )
+			return;
+
 
 		// Ensure there's a proper 'author' term for this coauthor
 		// Add user as a term if they don't exist
