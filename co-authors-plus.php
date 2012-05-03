@@ -62,8 +62,12 @@ class coauthors_plus {
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
 
-		// Add the author management menu
+		// Add the guest author management menu
 		add_action( 'admin_menu', array( $this, 'action_admin_menu' ) );
+
+		// Add support for featured thumbnails that we can use for guest author avatars
+		add_action( 'after_setup_theme', array( $this, 'action_after_setup_theme' ) );
+		add_filter( 'get_avatar', array( $this, 'filter_get_avatar' ),10 ,5 );
 
 		// Add metaboxes for our guest author management interface
 		add_action( 'add_meta_boxes', array( $this, 'action_add_meta_boxes' ), 10, 2 );
@@ -162,6 +166,9 @@ class coauthors_plus {
 				'taxonomies' => array(
 						$this->coauthor_taxonomy,
 					),
+				'supports' => array(
+						'thumbnail',
+					),
 				'rewrite' => false,
 				'query_var' => false,
 				'capability_type' => 'user',
@@ -196,6 +203,48 @@ class coauthors_plus {
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
 		add_filter( 'manage_users_custom_column', array( &$this, '_filter_manage_users_custom_column' ), 10, 3 );
 		
+	}
+
+	/**
+	 * Anything to do after the theme has been set up
+	 */
+	function action_after_setup_theme() {
+		add_theme_support( 'post-thumbnails', array( $this->coauthor_post_type ) );
+
+		// @todo identify a few of the common image sizes used by get_avatar()
+		add_image_size( 'guest-author-32', 32, 32, true );
+	}
+
+	/**
+	 * Filter 'get_avatar' to replace with our own avatar if one exists
+	 *
+	 * @todo support for multiple avatar sizes
+	 */
+	function filter_get_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
+
+		if ( !is_email( $id_or_email ) )
+			return $avatar;
+
+		// @todo we need a better way of looking to see whether this email exists in our system to override
+		// it probably should be cached too. maybe produce a URL that's a HTTP request against the site, and then serve
+		// the image from that?
+		global $wpdb;
+		$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key='cap-user_email' AND meta_value=%s", $id_or_email );
+		$results = $wpdb->get_results( $query );
+		if ( empty( $results ) )
+			return $avatar;
+
+		$post_id = $results[0]->post_id;
+		if ( !has_post_thumbnail( $post_id ) )
+			return $avatar;
+
+		$args = array(
+				'class' => 'avatar avatar-32 photo',
+				'alt' => $alt,
+			);
+		$avatar = get_the_post_thumbnail( $post_id, 'guest-author-32', $args );
+
+		return $avatar;
 	}
 
 	/**
