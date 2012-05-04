@@ -147,6 +147,7 @@ class CoAuthors_Guest_Authors
 			remove_meta_box( 'submitdiv', $post_type, 'side' );
 			remove_meta_box( 'slugdiv', $post_type, 'normal' );
 			add_meta_box( 'coauthors-manage-guest-author-save', __( 'Save', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_save' ), $post_type, 'side', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-slug', __( 'Unique Slug', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_slug' ), $post_type, 'side', 'default' );
 			// Our metaboxes with co-author details
 			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_name' ), $post_type, 'normal', 'default' );
 			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_contact_info' ), $post_type, 'normal', 'default' );
@@ -188,6 +189,18 @@ class CoAuthors_Guest_Authors
 		// Secure all of our requests
 		wp_nonce_field( 'guest-author-nonce', 'guest-author-nonce' );
 
+	}
+
+	/**
+	 * Metabox for editing this guest author's slug
+	 */
+	function metabox_manage_guest_author_slug() {
+		global $post;
+
+		$pm_key = $this->get_post_meta_key( 'user_login' );
+		$existing_slug = get_post_meta( $post->ID, $pm_key, true );
+
+		echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $existing_slug ) . '" />';
 	}
 
 	/**
@@ -266,8 +279,10 @@ class CoAuthors_Guest_Authors
 		if ( !isset( $_POST['guest-author-nonce'] ) || !wp_verify_nonce( $_POST['guest-author-nonce'], 'guest-author-nonce' ) )
 			return $post_data;
 
+		global $post;
+
 		$post_data['post_title'] = sanitize_text_field( $_POST['cap-display_name'] );
-		$post_data['post_name'] = $this->get_post_meta_key( sanitize_title( $_POST['cap-slug'] ) );
+		$post_data['post_name'] = $this->get_post_meta_key( get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true ) );
 		return $post_data;
 
 	}
@@ -285,18 +300,13 @@ class CoAuthors_Guest_Authors
 		if ( !isset( $_POST['guest-author-nonce'] ) || !wp_verify_nonce( $_POST['guest-author-nonce'], 'guest-author-nonce' ) )
 			return;
 
-		// Ensure there's a proper 'author' term for this coauthor
-		// Add user as a term if they don't exist
-		if( !term_exists( $post->post_name, $coauthors_plus->coauthor_taxonomy ) ) {
-			$args = array( 'slug' => $post->post_name );
-			wp_insert_term( $post->post_name, $coauthors_plus->coauthor_taxonomy, $args );
-		}
-		// Add the author as a post term
-		wp_set_post_terms( $post_id, array( $post->post_name ), $coauthors_plus->coauthor_taxonomy, false );
-
 		// Save our data to post meta
 		$author_fields = $this->get_guest_author_fields();
 		foreach( $author_fields as $author_field ) {
+			// 'user_login' (the slug) isn't ever saved on save_meta_fields
+			if ( 'user_login' == $author_field['key'] )
+				continue;
+
 			$key = $this->get_post_meta_key( $author_field['key'] );
 			if ( !isset( $_POST[$key] ) )
 				continue;
@@ -307,9 +317,26 @@ class CoAuthors_Guest_Authors
 			update_post_meta( $post_id, $key, $value );
 		}
 
-		// @todo save some amount of data to the term description field so
-		// it can be searchable
+		// Ensure there's a proper 'author' term for this coauthor
+		$author_slug = get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true );
+		if( !term_exists( $author_slug, $coauthors_plus->coauthor_taxonomy ) ) {
+			$args = array( 'slug' => $author_slug );
+			wp_insert_term( $author_slug, $coauthors_plus->coauthor_taxonomy, $args );
+		}
+		// Add the author as a post term
+		wp_set_post_terms( $post_id, array( $author_slug ), $coauthors_plus->coauthor_taxonomy, false );
 
+		// Update the taxonomy term to include details about the user for searching
+		$search_values = array();
+		$guest_author = $this->get_guest_author_by( 'id', $post_id );
+		$term = get_term_by( 'slug', $guest_author->user_login, $coauthors_plus->coauthor_taxonomy );
+		foreach( $coauthors_plus->ajax_search_fields as $search_field ) {
+			$search_values[] = $guest_author->$search_field;
+		}
+		$args = array(
+				'description' => implode( ' ', $search_values ),
+			);
+		wp_update_term( $term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
 	}
 
 	/**
@@ -324,6 +351,7 @@ class CoAuthors_Guest_Authors
 		} else if ( 'login' == $key || 'post_name' == $key ) {
 			global $wpdb;
 			// @todo look for a more performant way of gathering this data
+			$value = $this->get_post_meta_key( $value );
 			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
 			$result = $wpdb->get_results( $query );
 			if ( empty( $result ) )
@@ -336,17 +364,16 @@ class CoAuthors_Guest_Authors
 
 		$guest_author = array(
 			'ID' => $post->ID,
-			// Hack to model the WP_User object
-			'user_login' => $post->post_name,
-			'user_nicename' => $post->post_name,
 		);
-		// Load the rest 
-		$fields = $this->get_guest_author_fields( 'all' );
+		// Load the guest author fields
+		$fields = $this->get_guest_author_fields();
 		foreach( $fields as $field ) {
 			$key = $field['key'];
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$guest_author[$key] = get_post_meta( $post->ID, $pm_key, true );
 		}
+		// Hack to model the WP_User object
+		$guest_author['user_nicename'] = $guest_author['user_login'];
 		$guest_author['type'] = 'guest-author';
 		return (object)$guest_author;
 	}
@@ -381,9 +408,9 @@ class CoAuthors_Guest_Authors
 						'group'    => 'name',
 					),
 				array(
-						'key'      => 'slug',
+						'key'      => 'user_login',
 						'label'    => __( 'Slug', 'co-authors-plus'),
-						'group'    => 'name',
+						'group'    => 'slug',
 					),
 				// Contact info
 				array(
@@ -445,15 +472,20 @@ class CoAuthors_Guest_Authors
 	 * Create a guest author from an existing WordPress user
 	 */
 	function create_guest_author_from_user_id( $user_id ) {
+		global $coauthors_plus;
 
 		$user = get_user_by( 'id', $user_id );
 		if ( !$user )
 			return new WP_Error( 'invalid-user', __( 'No user exists with that ID', 'co-authors-plus' ) );
 
+		$post_name = $this->get_post_meta_key( $user->user_login );
+		if ( $this->get_guest_author_by( 'login', $post_name ) )
+			return new WP_Error( 'profile-exists', __( "Guest author profile already exists for {$user->user_login}", 'co-authors-plus' ) );
+
 		// Create the user as a new guest 
 		$new_post = array(
 				'post_title' => $user->display_name,
-				'post_name' => $user->user_login,
+				'post_name' => $post_name,
 				'post_type' => $this->post_type,
 			);
 		$post_id = wp_insert_post( $new_post, true );
@@ -466,6 +498,29 @@ class CoAuthors_Guest_Authors
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			update_post_meta( $post_id, $pm_key, $user->$key );
 		}
+
+		// Ensure there's an 'author' term for this user/guest author
+		if( !term_exists( $user->user_login, $coauthors_plus->coauthor_taxonomy ) ) {
+			$args = array(
+				'slug' => $user->user_login
+			);
+			wp_insert_term( $user->user_login, $coauthors_plus->coauthor_taxonomy, $args );
+		}
+		// Add the author as a post term
+		wp_set_post_terms( $post_id, array( $user->user_login ), $coauthors_plus->coauthor_taxonomy, false );
+
+		// Update the taxonomy term to include details about the user for searching
+		$search_values = array();
+		$guest_author = $this->get_guest_author_by( 'id', $post_id );
+		$term = get_term_by( 'slug', $user->user_login, $coauthors_plus->coauthor_taxonomy );
+		foreach( $coauthors_plus->ajax_search_fields as $search_field ) {
+			$search_values[] = $guest_author->$search_field;
+		}
+		$args = array(
+				'description' => implode( ' ', $search_values ),
+			);
+		wp_update_term( $term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
+
 		return $post_id;
 	}
 

@@ -43,6 +43,8 @@ class coauthors_plus {
 	var $gravatar_size = 25;
 	
 	var $_pages_whitelist = array( 'post.php', 'post-new.php' );
+
+	var $ajax_search_fields = array( 'display_name', 'first_name', 'last_name', 'user_login', 'ID', 'user_email' );
 		
 	/**
 	 * __construct()
@@ -786,12 +788,52 @@ class coauthors_plus {
 	 */	
 	function search_authors( $search = '', $ignored_authors = array() ) {
 
+		// Since 2.7, we're searching against the term description for the fields
+		// instead of the user details. If the term is missing, we probably need to 
+		// backfill with user details. Let's do this first... easier than running
+		// an upgrade script that could break on a lot of users
+		$args = array(
+				'count_total' => false,
+				'search' => sprintf( '*%s*', $search ),
+				'search_fields' => array(
+					'ID',
+					'display_name',
+					'user_email',
+					'user_login',
+				),
+				'fields' => 'all_with_meta',
+			);
+		add_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
+		$found_users = get_users( $args );
+		remove_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
+		foreach( $found_users as $found_user ) {
+			$term = get_term_by( 'slug', $found_user->user_login, $this->coauthor_taxonomy );
+			if ( empty( $term ) || empty( $term->description ) ) {
+				// Create the term and/or fill the details used for searching
+				$search_values = array();
+				foreach( $this->ajax_search_fields as $search_field ) {
+					$search_values[] = $found_user->$search_field;
+				}
+				$args = array(
+					'name' => $found_user->user_login,
+					'description' => implode( ' ', $search_values ),
+				);
+				if ( empty( $term ) )
+					wp_insert_term( $found_user->user_login, $this->coauthor_taxonomy, $args );
+				else
+					wp_update_term( $term->term_id, $this->coauthor_taxonomy, $args );
+			}
+		}
+
+
 		$args = array(
 				'search' => $search,
 				'get' => 'all',
 				'number' => 10,
 			);
+		add_filter( 'terms_clauses', array( $this, 'filter_terms_clauses' ) );
 		$found_terms = get_terms( $this->coauthor_taxonomy, $args );
+		remove_filter( 'terms_clauses', array( $this, 'filter_terms_clauses' ) );
 		if ( empty( $found_terms ) )
 			return array();
 
@@ -823,6 +865,17 @@ class coauthors_plus {
 		if ( is_object( $user_query ) )
 			$user_query->query_where = str_replace( "user_nicename LIKE", "display_name LIKE", $user_query->query_where );
 		return $user_query;
+	}
+
+	/**
+	 * Modify get_terms() to LIKE against the term description instead of the term name
+	 *
+	 * @since 0.7
+	 */
+	function filter_terms_clauses( $pieces ) {
+
+		$pieces['where'] = str_replace( 't.name LIKE', 'tt.description LIKE', $pieces['where'] );
+		return $pieces;
 	}
 
 	/**
