@@ -17,6 +17,7 @@ class CoAuthors_Guest_Authors
 	 * Initialize our Guest Authors class and establish common hooks
 	 */
 	function __construct() {
+		global $coauthors_plus;
 
 		// Add the guest author management menu
 		add_action( 'admin_menu', array( $this, 'action_admin_menu' ) );
@@ -64,6 +65,9 @@ class CoAuthors_Guest_Authors
 				'show_in_menu' => false,
 				'supports' => array(
 						'thumbnail',
+					),
+				'taxonomies' => array(
+						$coauthors_plus->coauthor_taxonomy,
 					),
 				'rewrite' => false,
 				'query_var' => false,

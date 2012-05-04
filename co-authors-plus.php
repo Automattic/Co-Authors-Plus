@@ -54,12 +54,6 @@ class coauthors_plus {
 		// Register our models
 		add_action( 'init', array( $this, 'register_models' ) );
 
-		// Load the Guest Authors functionality if needed
-		if ( apply_filters( 'coauthors_guest_authors_enabled', true ) ) {
-			require_once( dirname( __FILE__ ) . '/php/class-coauthors-guest-authors.php' );
-			$this->guest_authors = new CoAuthors_Guest_Authors;
-		}
-
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
 
@@ -131,6 +125,12 @@ class coauthors_plus {
 				'page',
 			);
 		register_taxonomy( $this->coauthor_taxonomy, apply_filters( 'coauthors_supported_post_types', $supported_post_types ), $args );
+
+		// Load the Guest Authors functionality if needed
+		if ( apply_filters( 'coauthors_guest_authors_enabled', true ) ) {
+			require_once( dirname( __FILE__ ) . '/php/class-coauthors-guest-authors.php' );
+			$this->guest_authors = new CoAuthors_Guest_Authors;
+		}
 
 	}
 	
