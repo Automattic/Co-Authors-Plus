@@ -33,7 +33,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$args = array(
 				'paged'          => ( $paged - 1 ) * $per_page,
 				'numberposts'    => $per_page,
-				'post_type'      => $coauthors_plus->coauthor_post_type,
+				'post_type'      => $coauthors_plus->guest_authors->post_type,
 				'post_status'    => 'any',
 				'orderby'        => 'post_title',
 				'order'          => 'ASC',
@@ -41,7 +41,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$author_posts = get_posts( $args );
 		$items = array();
 		foreach( $author_posts as $author_post ) {
-			$items[] = $coauthors_plus->get_guest_author_by( 'id', $author_post->ID );
+			$items[] = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $author_post->ID );
 		}
 		$this->items = $items;
 
