@@ -146,6 +146,7 @@ class CoAuthors_Guest_Authors
 			// Our metaboxes with co-author details
 			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_name' ), $post_type, 'normal', 'default' );
 			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_contact_info' ), $post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-bio', __( 'About the guest author', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_bio' ), $post_type, 'normal', 'default' );
 		}
 	}
 
@@ -228,6 +229,27 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
+	 * Metabox to edit the bio and other biographical details of the Guest Author
+	 */
+	function metabox_manage_guest_author_bio() {
+		global $post;
+
+		$fields = $this->get_guest_author_fields( 'about' );
+		echo '<table class="form-table"><tbody>';
+		foreach( $fields as $field ) {
+			$pm_key = $this->get_post_meta_key( $field['key'] );
+			$value = get_post_meta( $post->ID, $pm_key, true );
+			echo '<tr><th>';
+			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
+			echo '</th><td>';
+			echo '<textarea style="width:300px;margin-bottom:6px;" name="' . esc_attr( $pm_key ) . '">' . esc_textarea( $value ) . '</textarea>';
+			echo '</td></tr>';
+		}
+		echo '</tbody></table>';
+
+	}
+
+	/**
 	 * When a guest author is created or updated, we need to properly create
 	 * the post_name based on some data provided by the user
 	 */
@@ -274,7 +296,10 @@ class CoAuthors_Guest_Authors
 			$key = $this->get_post_meta_key( $author_field['key'] );
 			if ( !isset( $_POST[$key] ) )
 				continue;
-			$value = sanitize_text_field( $_POST[$key] );
+			if ( isset( $author_field['sanitize_function'] ) && function_exists( $author_field['sanitize_function'] ) )
+				$value = $author_field['sanitize_function']( $_POST[$key] );
+			else
+				$value = sanitize_text_field( $_POST[$key] );
 			update_post_meta( $post_id, $key, $value );
 		}
 
@@ -382,13 +407,19 @@ class CoAuthors_Guest_Authors
 						'label'    => __( 'Jabber / Google Talk', 'co-authors-plus' ),
 						'group'    => 'contact-info',
 					),
+				array(
+						'key'      => 'description',
+						'label'    => __( 'Biographical Info', 'co-authors-plus' ),
+						'group'    => 'about',
+						'sanitize_function' => 'wp_filter_post_kses',
+					),
 			);
 		$fields_to_return = array();
 		foreach( $global_fields as $single_field ) {
 			if ( in_array( $single_field['group'], $groups ) || $groups[0] == 'all' && $single_field['group'] != 'hidden' )
 				$fields_to_return[] = $single_field;
 		}
-		return $fields_to_return;
+		return apply_filters( 'coauthors_guest_author_fields', $fields_to_return, $groups );
 
 	}
 
