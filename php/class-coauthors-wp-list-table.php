@@ -41,7 +41,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$author_posts = get_posts( $args );
 		$items = array();
 		foreach( $author_posts as $author_post ) {
-			$items[] = $coauthors_plus->get_guest_author( $author_post );
+			$items[] = $coauthors_plus->get_guest_author_by( 'id', $author_post->ID );
 		}
 		$this->items = $items;
 

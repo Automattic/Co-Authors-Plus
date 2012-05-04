@@ -65,6 +65,12 @@ class coauthors_plus {
 		// Add the guest author management menu
 		add_action( 'admin_menu', array( $this, 'action_admin_menu' ) );
 
+		// Handle actions to create or delete guest author accounts
+		add_action( 'admin_init', array( $this, 'handle_create_guest_author_action' ) );
+
+		// Allow admins to create or edit guest author profiles from the Manage Users listing
+		add_filter( 'user_row_actions', array( $this, 'filter_user_row_actions' ), 10, 2 );
+
 		// Add support for featured thumbnails that we can use for guest author avatars
 		add_action( 'after_setup_theme', array( $this, 'action_after_setup_theme' ) );
 		add_filter( 'get_avatar', array( $this, 'filter_get_avatar' ),10 ,5 );
@@ -245,6 +251,67 @@ class coauthors_plus {
 		$avatar = get_the_post_thumbnail( $post_id, 'guest-author-32', $args );
 
 		return $avatar;
+	}
+
+	/**
+	 * Handle the admin action to create a guest author based
+	 * on an existing WordPress user
+	 *
+	 * @since 2.7
+	 */
+	function handle_create_guest_author_action() {
+
+		if ( !isset( $_GET['action'], $_GET['nonce'], $_GET['user_id'] ) || $_GET['action'] != 'cap-create-guest-author' )
+			return;
+
+		if ( !wp_verify_nonce( $_GET['nonce'], 'create-guest-author' ) )
+			wp_die( __( "Doin' something fishy, huh?", 'co-authors-plus' ) );
+
+		// @todo permissions check
+
+		// @todo Check to see if the user already has a guest profile
+		$user_id = intval( $_GET['user_id'] );
+
+		// Create the guest author
+		$post_id = $this->create_guest_author_from_user( $user_id );
+		if ( is_wp_error( $post_id ) )
+			wp_die( $post_id->get_error_message() );
+
+		// Redirect to the edit Guest Author screen
+		$edit_link = get_edit_post_link( $post_id, 'redirect' );
+		$redirect_to = add_query_arg( 'message', 'guest-author-created', $edit_link );
+		wp_safe_redirect( $redirect_to );
+		exit;
+
+	}
+
+	/**
+	 * On the User Management view, add action links to create or edit
+	 * guest author profiles
+	 *
+	 * @todo The text of these links is definitely up in the air
+	 *
+	 * @param array $actions The existing actions to perform on a user
+	 * @param object $user_object A WP_User object
+	 * @return array $actions Modified actions
+	 */
+	function filter_user_row_actions( $actions, $user_object ) {
+
+		$new_actions = array();
+		if ( $guest_author = $this->get_guest_author_by( 'login', $user_object->user_login ) ) {
+			$edit_guest_author_link = get_edit_post_link( $guest_author->ID );
+			$new_actions['edit-guest-author'] = '<a href="' . esc_url( $edit_guest_author_link ) . '">' . __( 'Edit CA+ Profile', 'co-authors-plus' ) . '</a>';
+		} else {
+			$query_args = array(
+					'action' => 'cap-create-guest-author',
+					'user_id' => $user_object->ID,
+					'nonce' => wp_create_nonce( 'create-guest-author' ),
+				);
+			$create_guest_author_link = add_query_arg( $query_args, admin_url( 'users.php' ) );
+			$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create CA+ Profile', 'co-authors-plus' ) . '</a>';
+		}
+
+		return $new_actions + $actions;
 	}
 
 	/**
@@ -531,15 +598,11 @@ class coauthors_plus {
 	 * @param string $key Key to search by (slug,email)
 	 */
 	function get_coauthor_by( $key, $value ) {
-		global $wpdb;
 
 		// Check to see if there's a guest author profile for this user
-		// @todo look for a more performant way of gathering this data
-		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
-		$result = $wpdb->get_results( $query );
-		if ( !empty( $result ) ) {
-			return $this->get_guest_author( $result[0]->ID );
-		}
+		$guest_author = $this->get_guest_author_by( 'login', $value );
+		if ( is_object( $guest_author ) )
+			return $guest_author;
 
 		// otherwise default to get_user_by()
 		if ( $user = get_user_by( 'login', $value ) ) {
@@ -555,14 +618,21 @@ class coauthors_plus {
 	 * of a guest author
 	 *
 	 */
-	function get_guest_author( $post_or_id ) {
+	function get_guest_author_by( $key, $value ) {
 
-		// Load the post object if we're just given an ID
-		if ( is_numeric( $post_or_id ) )
-			$post_or_id = get_post( $post_or_id );
-		if ( is_object( $post_or_id ) )
-			$post = $post_or_id;
-		else
+		if ( 'id' == $key ) {
+			$post = get_post( $value );
+		} else if ( 'login' == $key || 'post_name' == $key ) {
+			global $wpdb;
+			// @todo look for a more performant way of gathering this data
+			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
+			$result = $wpdb->get_results( $query );
+			if ( empty( $result ) )
+				return false;
+			$post = get_post( $result[0]->ID );
+		}
+
+		if ( !$post )
 			return false;
 
 		$guest_author = array(
@@ -580,6 +650,34 @@ class coauthors_plus {
 		}
 		$guest_author['type'] = 'guest-author';
 		return (object)$guest_author;
+	}
+
+	/**
+	 * Create a guest author from an existing WordPress user
+	 */
+	function create_guest_author_from_user( $user_id ) {
+
+		$user = get_user_by( 'id', $user_id );
+		if ( !$user )
+			return new WP_Error( 'invalid-user', __( 'No user exists with that ID', 'co-authors-plus' ) );
+
+		// Create the user as a new guest 
+		$new_post = array(
+				'post_title' => $user->display_name,
+				'post_name' => $user->user_login,
+				'post_type' => $this->coauthor_post_type,
+			);
+		$post_id = wp_insert_post( $new_post, true );
+		if ( is_wp_error( $post_id ) )
+			return $post_id;
+
+		$fields = $this->get_guest_author_fields();
+		foreach( $fields as $field ) {
+			$key = $field['key'];
+			$pm_key = $this->get_post_meta_key( $field['key'] );
+			update_post_meta( $post_id, $pm_key, $user->$key );
+		}
+		return $post_id;
 	}
 
 	/**
