@@ -200,7 +200,7 @@ class CoAuthors_Guest_Authors
 		$pm_key = $this->get_post_meta_key( 'user_login' );
 		$existing_slug = get_post_meta( $post->ID, $pm_key, true );
 
-		echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $existing_slug ) . '" />';
+		echo '<input type="text" disabled="disabled" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $existing_slug ) . '" />';
 	}
 
 	/**
@@ -282,7 +282,10 @@ class CoAuthors_Guest_Authors
 		global $post;
 
 		$post_data['post_title'] = sanitize_text_field( $_POST['cap-display_name'] );
-		$post_data['post_name'] = $this->get_post_meta_key( get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true ) );
+		$slug = get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true );
+		if ( !$slug )
+			$slug = sanitize_title( $_POST['cap-display_name'] );
+		$post_data['post_name'] = $this->get_post_meta_key( $slug );
 		return $post_data;
 
 	}
@@ -303,11 +306,15 @@ class CoAuthors_Guest_Authors
 		// Save our data to post meta
 		$author_fields = $this->get_guest_author_fields();
 		foreach( $author_fields as $author_field ) {
-			// 'user_login' (the slug) isn't ever saved on save_meta_fields
-			if ( 'user_login' == $author_field['key'] )
-				continue;
 
 			$key = $this->get_post_meta_key( $author_field['key'] );
+			// 'user_login' should only be saved on post update if it doesn't exist
+			if ( 'user_login' == $author_field['key'] && !get_post_meta( $post_id, $key, true ) ) {
+				$display_name_key = $this->get_post_meta_key( 'display_name' );
+				$temp_slug = sanitize_title( $_POST[$display_name_key] );
+				update_post_meta( $post_id, $key, $temp_slug );
+				continue;
+			}
 			if ( !isset( $_POST[$key] ) )
 				continue;
 			if ( isset( $author_field['sanitize_function'] ) && function_exists( $author_field['sanitize_function'] ) )
@@ -319,6 +326,8 @@ class CoAuthors_Guest_Authors
 
 		// Ensure there's a proper 'author' term for this coauthor
 		$author_slug = get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true );
+		if ( empty( $author_slug ) && isset( $temp_slug ) )
+			$author_slug = $temp_slug;
 		if( !term_exists( $author_slug, $coauthors_plus->coauthor_taxonomy ) ) {
 			$args = array( 'slug' => $author_slug );
 			wp_insert_term( $author_slug, $coauthors_plus->coauthor_taxonomy, $args );
@@ -393,6 +402,11 @@ class CoAuthors_Guest_Authors
 					),
 				// Name
 				array(
+						'key'      => 'display_name',
+						'label'    => __( 'Display Name', 'co-authors-plus'),
+						'group'    => 'name',
+					),
+				array(
 						'key'      => 'first_name',
 						'label'    => __( 'First Name', 'co-authors-plus'),
 						'group'    => 'name',
@@ -400,11 +414,6 @@ class CoAuthors_Guest_Authors
 				array(
 						'key'      => 'last_name',
 						'label'    => __( 'Last Name', 'co-authors-plus'),
-						'group'    => 'name',
-					),
-				array(
-						'key'      => 'display_name',
-						'label'    => __( 'Display Name', 'co-authors-plus'),
 						'group'    => 'name',
 					),
 				array(
