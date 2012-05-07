@@ -180,7 +180,7 @@ class CoAuthors_Guest_Authors
 	function metabox_manage_guest_author_save() {
 		global $post;
 
-		if ( $post->post_status == 'publish' )
+		if ( $post->post_status == 'pending' )
 			$button_text = __( 'Update Guest Author', 'co-authors-plus' );
 		else
 			$button_text = __( 'Add New Guest Author', 'co-authors-plus' );
