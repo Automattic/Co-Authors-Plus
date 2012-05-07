@@ -20,6 +20,7 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 = 2012-05-07 / 2.6.4 =
 * Bug fix: Properly filter the user query so users can AJAX search against the display name field again
+* If https is used for the admin, also use the secure Gravatar URL. Props [rmcfrazier](https://github.com/rmcfrazier)
 
 = 2012-04-30 / 2.6.3 =
 * AJAX user search is back to searching against user login, display name, email address and user ID. The method introduced in v2.6.2 didn't scale well
