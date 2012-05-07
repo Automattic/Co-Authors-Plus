@@ -18,8 +18,11 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 == Changelog ==
 
+= 2012-05-07 / 2.6.4 =
+* Bug fix: Properly filter the user query so users can AJAX search against the display name field again
+
 = 2012-04-30 / 2.6.3 =
-* AJAX user search is back to searching against first name, last name, display name, email address and user ID. The method introduced in v2.6.2 didn't scale well
+* AJAX user search is back to searching against user login, display name, email address and user ID. The method introduced in v2.6.2 didn't scale well
 * French translation courtesy of Sylvain Bérubé
 * Spanish translation courtesy of Alejandro Arcos
 * Bug fix: Resolved incorrect caps check against user editing an already published post. [See forum thread](http://wordpress.org/support/topic/multiple-authors-cant-edit-pages?replies=17#post-2741243)

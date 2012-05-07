@@ -690,7 +690,9 @@ class coauthors_plus {
 				),
 				'fields' => 'all_with_meta',
 			);
+		add_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
 		$found_users = get_users( $args );
+		remove_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
