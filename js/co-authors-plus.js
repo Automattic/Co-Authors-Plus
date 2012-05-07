@@ -283,8 +283,15 @@ jQuery(document).ready(function () {
 	
 	// Adapted from http://www.deluxeblogtips.com/2010/04/get-gravatar-using-only-javascript.html
 	function get_gravatar_link(email, size) {
-		var size = size || 80;
-		return 'http://www.gravatar.com/avatar/' + MD5(email) + '.jpg?s=' + size;
+		var size = size || 80;	
+		
+		// need to check if page is secure or not 
+		var gravatar_url = 'http://www.gravatar.com/avatar/';
+		if ("https:" == document.location.protocol) {
+    			// secure
+			gravatar_url =  'https://secure.gravatar.com/avatar/';
+		}
+		return gravatar_url + MD5(email) + '.jpg?s=' + size;
 	}
 	
 	/*
