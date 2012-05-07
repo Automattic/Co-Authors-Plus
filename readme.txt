@@ -4,7 +4,7 @@ Donate link: http://digitalize.ca/donate
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.3.2
 Requires at least: 3.1
-Stable tag: 2.6.3
+Stable tag: 2.6.4
 
 Allows multiple authors to be assigned to posts, pages, and custom post types via a search-as-you-type input box
 
