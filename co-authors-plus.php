@@ -213,12 +213,14 @@ class coauthors_plus {
 	 * @param string $key Key to search by (slug,email)
 	 */
 	function get_coauthor_by( $key, $value ) {
-
+		global $coauthors_plus;
 		// If Guest Authors are enabled, prioritize those profiles
 		if ( isset( $coauthors_plus->guest_authors ) && method_exists( $coauthors_plus->guest_authors, 'get_guest_author_by' ) ) {
 			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'login', $value );
-			if ( is_object( $guest_author ) )
+			if ( is_object( $guest_author ) ) {
+				$guest_author->slug = $value;
 				return $guest_author;
+			}
 		}
 
 		// otherwise default to get_user_by()
