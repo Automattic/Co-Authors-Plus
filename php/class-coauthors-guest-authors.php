@@ -38,6 +38,7 @@ class CoAuthors_Guest_Authors
 
 		// Allow admins to create or edit guest author profiles from the Manage Users listing
 		add_filter( 'user_row_actions', array( $this, 'filter_user_row_actions' ), 10, 2 );
+		add_filter( 'request', array( $this, 'request' ) );
 
 		// Add support for featured thumbnails that we can use for guest author avatars
 		add_action( 'after_setup_theme', array( $this, 'action_after_setup_theme' ) );
@@ -71,8 +72,6 @@ class CoAuthors_Guest_Authors
 					),
 				'rewrite' => false,
 				'query_var' => false,
-				'capability_type' => 'user',
-				'map_meta_cap' => true,
 			);
 		register_post_type( $this->post_type, $args );
 
@@ -80,6 +79,23 @@ class CoAuthors_Guest_Authors
 		remove_post_type_support( $this->post_type, 'title' );
 		remove_post_type_support( $this->post_type, 'editor' );
 
+	}
+	
+	/**
+	 * If core's /author/$author/ rewrite rule gets hit, catch it and serve up the tag instead.
+	 */
+	function request( $qvs ) {
+		if ( ! is_admin() && isset( $qvs['author_name'] ) ) {
+			$qvs['tax_query'] = array(
+				array(
+					'taxonomy' => 'author',
+					'field' => 'slug',
+					'terms' => $qvs['author_name'],
+				)
+			);
+			unset( $qvs['author_name'] );
+		}
+		return $qvs;
 	}
 
 	/**
@@ -141,7 +157,7 @@ class CoAuthors_Guest_Authors
 		global $coauthors_plus;
 
 		$post_type = $coauthors_plus->get_current_post_type();
-		
+
 		if ( $post_type == $this->post_type ) {
 			// Remove the submitpost metabox because we have our own
 			remove_meta_box( 'submitdiv', $post_type, 'side' );
@@ -201,6 +217,20 @@ class CoAuthors_Guest_Authors
 		$existing_slug = get_post_meta( $post->ID, $pm_key, true );
 
 		echo '<input type="text" disabled="disabled" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $existing_slug ) . '" />';
+		
+		// Taken from grist_authors.
+		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
+		$existing_linked_account = get_post_meta( $post->ID, $linked_account_key, true );
+		
+		echo '<p><label>Linked User</label> ';
+		wp_dropdown_users( array(
+			'show_option_none' => '(No corresponding user)',
+			'name' => esc_attr( $this->get_post_meta_key( 'linked_account' ) ),
+			// If we're adding an author or if there is no post author (0), then use -1 (which is show_option_none).
+			// We then take -1 on save and convert it back to 0. (#blamenacin)
+			'selected' => empty( $existing_linked_account ) ? -1 : $existing_linked_account
+		) );
+		echo '</p>';
 	}
 
 	/**
@@ -287,7 +317,6 @@ class CoAuthors_Guest_Authors
 			$slug = sanitize_title( $_POST['cap-display_name'] );
 		$post_data['post_name'] = $this->get_post_meta_key( $slug );
 		return $post_data;
-
 	}
 
 	/**
@@ -313,6 +342,17 @@ class CoAuthors_Guest_Authors
 				$display_name_key = $this->get_post_meta_key( 'display_name' );
 				$temp_slug = sanitize_title( $_POST[$display_name_key] );
 				update_post_meta( $post_id, $key, $temp_slug );
+				continue;
+			}
+			if ( 'linked_account' == $author_field['key'] ) {
+				$linked_account_key = $this->get_post_meta_key( 'linked_account' );
+				$user_id = intval( $_POST[$linked_account_key] );
+				// If data was passed on save, then use it. But if post_author was -1
+				// (which is what the dropdowns use for nothing selected), we can't store
+				// that in an unsigned int. Clarify we want 0 for no author.
+				if ( $user_id < 0 )
+					$user_id = 0;
+				update_post_meta( $post_id, $key, $user_id );
 				continue;
 			}
 			if ( !isset( $_POST[$key] ) )
@@ -374,6 +414,7 @@ class CoAuthors_Guest_Authors
 		$guest_author = array(
 			'ID' => $post->ID,
 		);
+
 		// Load the guest author fields
 		$fields = $this->get_guest_author_fields();
 		foreach( $fields as $field ) {
@@ -383,6 +424,7 @@ class CoAuthors_Guest_Authors
 		}
 		// Hack to model the WP_User object
 		$guest_author['user_nicename'] = $guest_author['user_login'];
+		$guest_author['guest_author'] = $post;
 		$guest_author['type'] = 'guest-author';
 		return (object)$guest_author;
 	}
@@ -426,6 +468,11 @@ class CoAuthors_Guest_Authors
 						'key'      => 'user_email',
 						'label'    => __( 'E-mail', 'co-authors-plus' ),
 						'group'    => 'contact-info',
+					),
+				array(
+						'key'      => 'linked_account',
+						'label'    => __( 'Linked Account', 'co-authors-plus' ),
+						'group'    => 'slug',
 					),
 				array(
 						'key'      => 'website',
@@ -491,7 +538,7 @@ class CoAuthors_Guest_Authors
 		if ( $this->get_guest_author_by( 'login', $post_name ) )
 			return new WP_Error( 'profile-exists', __( "Guest author profile already exists for {$user->user_login}", 'co-authors-plus' ) );
 
-		// Create the user as a new guest 
+		// Create the user as a new guest
 		$new_post = array(
 				'post_title' => $user->display_name,
 				'post_name' => $post_name,
