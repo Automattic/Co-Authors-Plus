@@ -130,7 +130,7 @@ class coauthors_plus {
 		register_taxonomy( $this->coauthor_taxonomy, apply_filters( 'coauthors_supported_post_types', $supported_post_types ), $args );
 
 		// Load the Guest Authors functionality if needed
-		if ( apply_filters( 'coauthors_guest_authors_enabled', true ) ) {
+		if ( $this->is_guest_authors_enabled() ) {
 			require_once( dirname( __FILE__ ) . '/php/class-coauthors-guest-authors.php' );
 			$this->guest_authors = new CoAuthors_Guest_Authors;
 			if ( apply_filters( 'coauthors_guest_authors_force', false ) ) {
@@ -182,6 +182,17 @@ class coauthors_plus {
 	}
 
 	/**
+	 * Check whether the guest authors functionality is enabled or not
+	 * Guest authors can be disabled entirely with:
+	 *     add_filter( 'coauthors_guest_authors_enabled', '__return_false' )
+	 *
+	 * @since 0.7
+	 */
+	function is_guest_authors_enabled() {
+		return apply_filters( 'coauthors_guest_authors_enabled', true );
+	}
+
+	/**
 	 * Get one or more co-authors based on arguments
 	 *
 	 * @todo full argument support
@@ -219,7 +230,7 @@ class coauthors_plus {
 	function get_coauthor_by( $key, $value ) {
 		global $coauthors_plus;
 		// If Guest Authors are enabled, prioritize those profiles
-		if ( isset( $coauthors_plus->guest_authors ) && method_exists( $coauthors_plus->guest_authors, 'get_guest_author_by' ) ) {
+		if ( $this->is_guest_authors_enabled() ) {
 			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'post_name', $value );
 			if ( is_object( $guest_author ) ) {
 				$guest_author->slug = $value;
@@ -300,7 +311,7 @@ class coauthors_plus {
 		if( !$post_id || $post_id == 0 || !$post->post_author || $post->post_status = 'auto-draft' ) {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
-			if ( isset( $coauthors_plus->guest_authors ) ) {
+			if ( $this->is_guest_authors_enabled() ) {
 				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'user_id', wp_get_current_user() );
 				if ( $coauthor ) {
 					$coauthors[] = $coauthor;
