@@ -238,9 +238,9 @@ class CoAuthors_Guest_Authors
 		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
 		$existing_linked_account = get_post_meta( $post->ID, $linked_account_key, true );
 
-		echo '<p><label>' . __( 'Linked User', 'co-authors-plus' ) . '</label> ';
+		echo '<p><label>' . __( 'WordPress User Mapping', 'co-authors-plus' ) . '</label> ';
 		wp_dropdown_users( array(
-			'show_option_none' => __( '(No corresponding user)', 'co-authors-plus' ),
+			'show_option_none' => __( '-- Not mapped --', 'co-authors-plus' ),
 			'name' => esc_attr( $this->get_post_meta_key( 'linked_account' ) ),
 			// If we're adding an author or if there is no post author (0), then use -1 (which is show_option_none).
 			// We then take -1 on save and convert it back to 0. (#blamenacin)
