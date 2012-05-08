@@ -46,26 +46,35 @@ class CoAuthors_Guest_Authors
 
 		// Set up default labels, but allow themes to modify
 		$this->labels = apply_filters( 'coauthors_guest_author_labels', array(
-			'singular' => 'Guest Author',
-			'plural' => 'Guest Authors',
-			'metabox_about' => 'About the guest author',
+			'singular' => __( 'Guest Author', 'co-authors-plus' ),
+			'plural' => __( 'Guest Authors', 'co-authors-plus' ),
+			'all_items' => __( 'All Guest Authors', 'co-authors-plus' ),
+			'add_new_item' => __( 'Add New Guest Author', 'co-authors-plus' ),
+			'edit_item' => __( 'Edit Guest Author', 'co-authors-plus' ),
+			'new_item' => __( 'New Guest Author', 'co-authors-plus' ),
+			'view_item' => __( 'View Guest Author', 'co-authors-plus' ),
+			'search_items' => __( 'Search Guest Authors', 'co-authors-plus' ),
+			'not_found' => __( 'No guest authors found', 'co-authors-plus' ),
+			'not_found_in_trash' => __( 'No guest authors found in Trash', 'co-authors-plus' ),
+			'update_item' => __( 'Update Guest Author', 'co-authors-plus' ),
+			'metabox_about' => __( 'About the guest author', 'co-authors-plus' ),
 		) );
 
 		// Register a post type to store our authors that aren't WP.com users
 		$args = array(
-				'label' => __( $this->labels['singular'], 'co-authors-plus' ),
+				'label' => $this->labels['singular'],
 				'labels' => array(
-						'name' => __( $this->labels['plural'], 'co-authors-plus' ),
-						'singular_name' => __( $this->labels['singular'], 'co-authors-plus' ),
+						'name' => $this->labels['plural'],
+						'singular_name' => $this->labels['singular'],
 						'add_new' => _x( 'Add New', 'co-authors-plus' ),
-						'all_items' => __( 'All ' . $this->labels['plural'], 'co-authors-plus' ),
-						'add_new_item' => __( 'Add New ' . $this->labels['singular'], 'co-authors-plus' ),
-						'edit_item' => __( 'Edit ' . $this->labels['singular'], 'co-authors-plus' ),
-						'new_item' => __( 'New ' . $this->labels['singular'], 'co-authors-plus' ),
-						'view_item' => __( 'View ' . $this->labels['singular'], 'co-authors-plus' ),
-						'search_items' => __( 'Search ' . $this->labels['plural'], 'co-authors-plus' ),
-						'not_found' => __( 'No ' . strtolower( $this->labels['plural'] ) . ' found', 'co-authors-plus' ),
-						'not_found_in_trash' => __( 'No ' . strtolower( $this->labels['plural'] ) . ' found in Trash', 'co-authors-plus' ),
+						'all_items' => $this->labels['all_items'],
+						'add_new_item' => $this->labels['add_new_item'],
+						'edit_item' => $this->labels['edit_item'],
+						'new_item' => $this->labels['new_item'],
+						'view_item' => $this->labels['view_item'],
+						'search_items' => $this->labels['search_items'],
+						'not_found' => $this->labels['not_found'],
+						'not_found_in_trash' => $this->labels['not_found_in_trash'],
 					),
 				'public' => true,
 				'publicly_queryable' => false,
@@ -142,7 +151,7 @@ class CoAuthors_Guest_Authors
 	 */
 	function action_admin_menu() {
 
-		add_submenu_page( 'users.php', __( $this->labels['plural'], 'co-authors-plus' ), __( $this->labels['plural'], 'co-authors-plus' ), $this->list_guest_authors_cap, 'view-guest-authors', array( $this, 'view_guest_authors_list' ) );
+		add_submenu_page( 'users.php', $this->labels['plural'], $this->labels['plural'], $this->list_guest_authors_cap, 'view-guest-authors', array( $this, 'view_guest_authors_list' ) );
 
 	}
 
@@ -174,7 +183,7 @@ class CoAuthors_Guest_Authors
 			// Our metaboxes with co-author details
 			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_name' ), $post_type, 'normal', 'default' );
 			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_contact_info' ), $post_type, 'normal', 'default' );
-			add_meta_box( 'coauthors-manage-guest-author-bio', __( $this->labels['metabox_about'], 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_bio' ), $post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-bio', $this->labels['metabox_about'], array( $this, 'metabox_manage_guest_author_bio' ), $post_type, 'normal', 'default' );
 		}
 	}
 
@@ -185,10 +194,10 @@ class CoAuthors_Guest_Authors
 
 		echo '<div class="wrap">';
 		echo '<div class="icon32" id="icon-users"><br/></div>';
-		echo '<h2>' . __( $this->labels['plural'], 'co-authors-plus' );
+		echo '<h2>' . $this->labels['plural'];
 		// @todo caps check for creating a new user
 		$add_new_link = admin_url( "post-new.php?post_type=$this->post_type" );
-		echo '<a href="' . $add_new_link . '" class="add-new-h2">' . esc_html( 'Add New', 'co-authors-plus' ) . '</a>';
+		echo '<a href="' . $add_new_link . '" class="add-new-h2">' . esc_html( __( 'Add New', 'co-authors-plus' ) ) . '</a>';
 		echo '</h2>';
 		$cap_list_table = new CoAuthors_WP_List_Table();
 		$cap_list_table->prepare_items();
@@ -203,10 +212,10 @@ class CoAuthors_Guest_Authors
 	function metabox_manage_guest_author_save() {
 		global $post, $coauthors_plus;
 
-		if ( $post->post_status == 'publish' )
-			$button_text = __( 'Update ' . $this->labels['singular'], 'co-authors-plus' );
+		if ( $post->post_status == 'pending' )
+			$button_text = $this->labels['update_item'];
 		else
-			$button_text = __( 'Add New ' . $this->labels['singular'], 'co-authors-plus' );
+			$button_text = $this->labels['add_new_item'];
 		submit_button( $button_text, 'primary', 'publish', false );
 
 		// Secure all of our requests
@@ -561,7 +570,7 @@ class CoAuthors_Guest_Authors
 
 		$post_name = $this->get_post_meta_key( $user->user_login );
 		if ( $this->get_guest_author_by( 'login', $post_name ) )
-			return new WP_Error( 'profile-exists', __( $this->labels['singular'] . " profile already exists for {$user->user_login}", 'co-authors-plus' ) );
+			return new WP_Error( 'profile-exists', __( "Profile already exists for {$user->user_login}", 'co-authors-plus' ) );
 
 		// Create the user as a new guest
 		$new_post = array(
