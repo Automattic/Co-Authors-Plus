@@ -312,7 +312,7 @@ class coauthors_plus {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
 			if ( $this->is_guest_authors_enabled() ) {
-				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'user_id', wp_get_current_user() );
+				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'user_id', wp_get_current_user()->ID );
 				if ( $coauthor ) {
 					$coauthors[] = $coauthor;
 				}
