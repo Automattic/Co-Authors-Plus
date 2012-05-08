@@ -39,6 +39,7 @@ class coauthors_plus {
 	
 	var $coreauthors_meta_box_name = 'authordiv';
 	var $coauthors_meta_box_name = 'coauthorsdiv';
+	var $force_guest_authors = false;
 
 	var $gravatar_size = 25;
 	
@@ -132,6 +133,9 @@ class coauthors_plus {
 		if ( apply_filters( 'coauthors_guest_authors_enabled', true ) ) {
 			require_once( dirname( __FILE__ ) . '/php/class-coauthors-guest-authors.php' );
 			$this->guest_authors = new CoAuthors_Guest_Authors;
+			if ( apply_filters( 'coauthors_guest_authors_force', false ) ) {
+				$this->force_guest_authors = true;
+			}
 		}
 
 	}
@@ -216,7 +220,7 @@ class coauthors_plus {
 		global $coauthors_plus;
 		// If Guest Authors are enabled, prioritize those profiles
 		if ( isset( $coauthors_plus->guest_authors ) && method_exists( $coauthors_plus->guest_authors, 'get_guest_author_by' ) ) {
-			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'login', $value );
+			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'post_name', $value );
 			if ( is_object( $guest_author ) ) {
 				$guest_author->slug = $value;
 				return $guest_author;
@@ -286,14 +290,31 @@ class coauthors_plus {
 	 * Callback for adding the custom author box
 	 */
 	function coauthors_meta_box( $post ) {
-		global $post;
+		global $post, $coauthors_plus;
 		
 		$post_id = $post->ID;
 		
-		if( !$post_id || $post_id == 0 || !$post->post_author )
-			$coauthors = array( wp_get_current_user() );
-		else 
+		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
+		// and the else case below was always able to properly assign users based on wp_posts.post_author,
+		// but that's not possible with force_guest_authors = true.
+		if( !$post_id || $post_id == 0 || !$post->post_author || $post->post_status = 'auto-draft' ) {
+			$coauthors = array();
+			// If guest authors is enabled, try to find a guest author attached to this user ID
+			if ( isset( $coauthors_plus->guest_authors ) ) {
+				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'user_id', wp_get_current_user() );
+				if ( $coauthor ) {
+					$coauthors[] = $coauthor;
+				}
+			}
+			// If the above block was skipped, or if it failed to find a guest author, use the current
+			// logged in user, so long as force_guest_authors is false. If force_guest_authors = true, we are
+			// OK with having an empty authoring box.
+			if ( !$coauthors_plus->force_guest_authors && empty( $coauthors ) ) {
+				$coauthors[] = wp_get_current_user();
+			}
+		} else {
 			$coauthors = get_coauthors();
+		}
 		
 		$count = 0;
 		if( !empty( $coauthors ) ) :
@@ -1148,9 +1169,9 @@ function wp_notify_postauthor( $comment_id, $comment_type = '' ) {
 		if ( isset($reply_to) )
 			$message_headers .= $reply_to . "\n";
 
-		$notify_message = apply_filters('comment_notification_text', $notify_message, $comment_id);
-		$subject = apply_filters('comment_notification_subject', $subject, $comment_id);
-		$message_headers = apply_filters('comment_notification_headers', $message_headers, $comment_id);
+		$notify_message = apply_filters( 'comment_notification_text', $notify_message, $comment_id );
+		$subject = apply_filters( 'comment_notification_subject', $subject, $comment_id );
+		$message_headers = apply_filters( 'comment_notification_headers', $message_headers, $comment_id );
 
 		@wp_mail( $author->user_email, $subject, $notify_message, $message_headers );
 	}

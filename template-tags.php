@@ -23,7 +23,7 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 				if ( !empty( $post_author ) )
 					$coauthors[] = $post_author;
 			}
-		} else {
+		} else if ( !$coauthors_plus->force_guest_authors ) {
 			if ( $post ) {
 				$post_author = get_userdata( $post->post_author );
 			} else {
@@ -31,7 +31,7 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 			}
 			if ( !empty( $post_author ) )
 				$coauthors[] = $post_author;
-		}
+		} // the empty else case is because if we force guest authors, we don't ever care what value wp_posts.post_author has.
 	}
 	return $coauthors;
 }
