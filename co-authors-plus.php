@@ -536,15 +536,27 @@ class coauthors_plus {
 				$author_name = sanitize_key( get_query_var( 'author_name' ) );
 			else
 				$author_name = get_userdata( $wp_query->query_vars['author'] )->user_login;
-			$term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy );
+
+			$terms = array();
+			$terms[] = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy );
+			$coauthor = $this->get_coauthor_by( 'login', $author_name );
+			// If this coauthor has a linked account, we also need to get posts with those terms
+			if ( !empty( $coauthor->linked_account ) ) {
+				$terms[] = get_term_by( 'slug', $coauthor->linked_account, $this->coauthor_taxonomy );
+			}
 
 			// Whether or not to include the original 'post_author' value in the query
 			$maybe_both = '$1 OR';
 			if ( $this->force_guest_authors )
 				$maybe_both = '';
 
-			if( $term ) {
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both . ' (' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\'))', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
+			if ( !empty( $terms ) ) {
+				$terms_implode = '';
+				foreach( $terms as $term ) {
+					$terms_implode .= '(' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\') OR';
+				}
+				$terms_implode = rtrim( $terms_implode, ' OR' );
+				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both . ' ' . $terms_implode . ')', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
 			}
 
 		}
