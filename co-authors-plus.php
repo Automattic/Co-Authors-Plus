@@ -317,18 +317,18 @@ class coauthors_plus {
 	 * Callback for adding the custom author box
 	 */
 	function coauthors_meta_box( $post ) {
-		global $post, $coauthors_plus;
+		global $post, $coauthors_plus, $current_screen;
 		
 		$post_id = $post->ID;
 		
 		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
 		// and the else case below was always able to properly assign users based on wp_posts.post_author,
 		// but that's not possible with force_guest_authors = true.
-		if( !$post_id || $post_id == 0 || !$post->post_author ) {
+		if( !$post_id || $post_id == 0 || ( !$post->post_author && !$coauthors_plus->force_guest_authors ) || ( $current_screen->base == 'post' && $current_screen->action == 'add' ) ) {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
 			if ( $this->is_guest_authors_enabled() ) {
-				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'user_id', wp_get_current_user()->ID );
+				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', wp_get_current_user()->user_login );
 				if ( $coauthor ) {
 					$coauthors[] = $coauthor;
 				}
