@@ -215,7 +215,7 @@ class coauthors_plus {
 
 		$coauthors = array();
 		foreach( $matching_terms as $matching_term ) {
-			$matching_user = $this->get_coauthor_by( 'slug', $matching_term->slug );
+			$matching_user = $this->get_coauthor_by( 'user_login', $matching_term->slug );
 			if ( $matching_user )
 				$coauthors[] = $matching_user;
 		}
@@ -234,15 +234,33 @@ class coauthors_plus {
 		if ( $this->is_guest_authors_enabled() ) {
 			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( $key, $value );
 			if ( is_object( $guest_author ) ) {
-				$guest_author->slug = $value;
 				return $guest_author;
 			}
 		}
 
-		// otherwise default to get_user_by()
-		if ( $user = get_user_by( $key, $value ) ) {
-			$user->type = 'wpuser';
-			return $user;
+		switch( $key ) {
+			case 'id':
+			case 'login':
+			case 'user_login':
+			case 'email':
+			case 'user_email':
+				if ( 'user_login' == $key )
+					$key = 'login';
+				if ( 'user_email' == $key )
+					$key = 'email';
+				$user = get_user_by( $key, $value );
+				if ( !$user )
+					return false;
+				$user->type = 'wpuser';
+				// However, if guest authors are enabled and there's a guest author linked to this
+				// user account, we want to use that instead
+				if ( $this->is_guest_authors_enabled() ) {
+					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
+					if ( is_object( $guest_author ) )
+						$user = $guest_author;
+				}
+				return $user;
+				break;
 		}
 		return false;
 
@@ -902,9 +920,9 @@ class coauthors_plus {
 		// Get the co-author objects
 		$found_users = array();
 		foreach( $found_terms as $found_term ) {
-			$found_user = $this->get_coauthor_by( 'slug', $found_term->slug );
+			$found_user = $this->get_coauthor_by( 'user_login', $found_term->slug );
 			if ( !empty( $found_user ) )
-				$found_users[] = $found_user;
+				$found_users[$found_user->user_login] = $found_user;
 		}
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)

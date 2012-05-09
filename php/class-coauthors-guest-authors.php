@@ -460,6 +460,7 @@ class CoAuthors_Guest_Authors
 				$post = $result[0];
 				break;
 			default:
+				$post = false;
 				break;
 		}
 
