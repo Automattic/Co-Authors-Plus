@@ -65,9 +65,6 @@ class coauthors_plus {
 		add_filter( 'posts_join', array( $this, 'posts_join_filter' ) );
 		add_filter( 'posts_groupby', array( $this, 'posts_groupby_filter' ) );
 
-		// Filter author links and such
-		add_filter( 'author_link', array( $this, 'filter_author_link' ), 10, 3 );
-		
 		// Action to set users when a post is saved
 		add_action( 'save_post', array( $this, 'coauthors_update_post' ), 10, 2 );
 		// Filter to set the post_author field when wp_insert_post is called
@@ -591,29 +588,6 @@ class coauthors_plus {
 			$groupby = $wpdb->posts .'.ID';
 		}
 		return $groupby;
-	}
-
-	function filter_author_link( $link, $author_id, $author_nicename ) {
-
-		if ( $author_id ) {
-			return $link;
-		}
-
-		if ( 0 === stripos( $author_nicename, 'cap-' ) ) {
-			global $wp_rewrite;
-			$auth_ID = (int) $author_id;
-			$link = $wp_rewrite->get_author_permastruct();
-
-			if ( empty($link) ) {
-				$file = home_url( '/' );
-				$link = $file . '?author_name=' . $author_nicename;
-			} else {
-				$link = str_replace('%author%', $author_nicename, $link);
-				$link = home_url( user_trailingslashit( $link ) );
-			}
-		}
-		return $link;
-
 	}
 	
 	/**

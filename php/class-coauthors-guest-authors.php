@@ -34,6 +34,9 @@ class CoAuthors_Guest_Authors
 		// Redirect if the user is mapped to a guest author
 		add_action( 'parse_request', array( $this, 'action_parse_request' ) );
 
+		// Filter author links and such
+		add_filter( 'author_link', array( $this, 'filter_author_link' ), 10, 3 );
+
 		// Add metaboxes for our guest author management interface
 		add_action( 'add_meta_boxes', array( $this, 'action_add_meta_boxes' ), 10, 2 );
 		add_action( 'wp_insert_post_data', array( $this, 'manage_guest_author_filter_post_data' ), 10, 2 );
@@ -705,6 +708,35 @@ class CoAuthors_Guest_Authors
 		$avatar = get_the_post_thumbnail( $post_id, 'guest-author-32', $args );
 
 		return $avatar;
+	}
+
+	/**
+	 * Filter the URL used in functions like the_author_posts_link()
+	 *
+	 * @since 2.7
+	 */
+	function filter_author_link( $link, $author_id, $author_nicename ) {
+
+		if ( $author_id ) {
+			return $link;
+		}
+		// If we're using this at the top of the loop on author.php,
+		// our queried object should be set correctly
+		if ( !$author_nicename && is_author() && get_queried_object() )
+			$author_nicename = get_queried_object()->user_nicename;
+
+		global $wp_rewrite;
+		$link = $wp_rewrite->get_author_permastruct();
+
+		if ( empty($link) ) {
+			$file = home_url( '/' );
+			$link = $file . '?author_name=' . $author_nicename;
+		} else {
+			$link = str_replace('%author%', $author_nicename, $link);
+			$link = home_url( user_trailingslashit( $link ) );
+		}
+		return $link;
+
 	}
 
 }
