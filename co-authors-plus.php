@@ -214,7 +214,7 @@ class coauthors_plus {
 
 		$coauthors = array();
 		foreach( $matching_terms as $matching_term ) {
-			$matching_user = $this->get_coauthor_by( 'slug', $matching_term->name );
+			$matching_user = $this->get_coauthor_by( 'slug', $matching_term->slug );
 			if ( $matching_user )
 				$coauthors[] = $matching_user;
 		}
@@ -308,7 +308,7 @@ class coauthors_plus {
 		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
 		// and the else case below was always able to properly assign users based on wp_posts.post_author,
 		// but that's not possible with force_guest_authors = true.
-		if( !$post_id || $post_id == 0 || !$post->post_author || $post->post_status = 'auto-draft' ) {
+		if( !$post_id || $post_id == 0 || !$post->post_author ) {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
 			if ( $this->is_guest_authors_enabled() ) {
@@ -596,9 +596,10 @@ class coauthors_plus {
 		
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
 			$author = sanitize_user( $_POST['coauthors'][0] );
-			if( $author ) {
-				$author_data = get_user_by( 'login', $author );
-				$data['post_author'] = $author_data->ID;
+			if ( $author ) {
+				$author_data = $this->get_coauthor_by( 'login', $author );
+				if ( $author_data->type == 'wpuser' )
+					$data['post_author'] = $author_data->ID;
 			}
 		}
 
@@ -655,7 +656,7 @@ class coauthors_plus {
 		if ( !is_array( $coauthors ) || 0 == count( $coauthors ) || empty( $coauthors ) ) {
 			$coauthors = array( $current_user->user_login );
 		}
-		
+
 		// Add each co-author to the post meta
 		foreach( array_unique( $coauthors ) as $author ){
 			
@@ -668,7 +669,7 @@ class coauthors_plus {
 				$insert = wp_insert_term( $name, $this->coauthor_taxonomy, $args );
 			}
 		}
-		
+
 		// Add authors as post terms
 		if( !is_wp_error( $insert ) ) {
 			$set = wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, $append );
@@ -874,7 +875,7 @@ class coauthors_plus {
 		// Get the co-author objects
 		$found_users = array();
 		foreach( $found_terms as $found_term ) {
-			$found_user = $this->get_coauthor_by( 'slug', $found_term->name );
+			$found_user = $this->get_coauthor_by( 'slug', $found_term->slug );
 			if ( !empty( $found_user ) )
 				$found_users[] = $found_user;
 		}
