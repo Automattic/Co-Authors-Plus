@@ -537,10 +537,16 @@ class coauthors_plus {
 			else
 				$author_name = get_userdata( $wp_query->query_vars['author'] )->user_login;
 			$term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy );
-			
+
+			// Whether or not to include the original 'post_author' value in the query
+			$maybe_both = '$1 OR';
+			if ( $this->force_guest_authors )
+				$maybe_both = '';
+
 			if( $term ) {
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '($1 OR (' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\'))', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
+				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both . ' (' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\'))', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
 			}
+
 		}
 		return $where;
 	}
@@ -784,7 +790,7 @@ class coauthors_plus {
 
 		if ( !is_author() )
 			return;
-		
+
 		global $wp_query, $authordata;
 
 		// Get the id of the author whose page we're on
