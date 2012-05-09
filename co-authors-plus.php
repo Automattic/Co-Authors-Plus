@@ -95,6 +95,7 @@ class coauthors_plus {
 		add_filter( 'wp_get_object_terms', array( &$this, 'filter_wp_get_object_terms' ), 10, 4 );
 		
 		// Fix for author info not properly displaying on author pages
+		add_action( 'template_redirect', array( $this, 'fix_author_page' ) );
 		add_action( 'the_post', array( $this, 'fix_author_page' ) );
 
 		// Support for Edit Flow's calendar and story budget
@@ -777,20 +778,28 @@ class coauthors_plus {
 	 * the first author is NOT the same as the author for the archive,
 	 * the query_var is changed.
 	 *
+	 * Also, we have to do some hacky WP_Query modification for guest authors
 	 */
-	function fix_author_page( &$post ) {
+	function fix_author_page() {
 
-		if( is_author() ) {
-			global $wp_query, $authordata;
-	
-			// Get the id of the author whose page we're on
-			$author_id = $wp_query->get( 'author' );
-	
-			// Check that the the author matches the first author of the first post
-			if( $author_id != $authordata->ID ) {
-				// The IDs don't match, so we need to force the $authordata to the one we want		
-				$authordata = get_userdata( $author_id );
-			}
+		if ( !is_author() )
+			return;
+		
+		global $wp_query, $authordata;
+
+		// Get the id of the author whose page we're on
+		$author_id = (int)get_query_var( 'author' );
+
+		// If the author ID is set, then we've got a WP user
+		if ( $author_id && is_object( $authordata ) && $author_id != $authordata->ID ) {
+			// The IDs don't match, so we need to force the $authordata to the one we want		
+			$authordata = get_userdata( $author_id );
+		} else if ( $author_name = sanitize_key( get_query_var( 'author_name' ) ) ) {
+			$authordata = $this->get_coauthor_by( 'login', $author_name );
+		}
+		if ( is_object( $authordata ) ) {
+			$wp_query->queried_object = $authordata;
+			$wp_query->queried_object_id = $authordata;
 		}
 	}
 	
