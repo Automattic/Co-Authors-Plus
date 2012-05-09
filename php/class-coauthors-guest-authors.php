@@ -38,7 +38,6 @@ class CoAuthors_Guest_Authors
 
 		// Allow admins to create or edit guest author profiles from the Manage Users listing
 		add_filter( 'user_row_actions', array( $this, 'filter_user_row_actions' ), 10, 2 );
-		add_filter( 'request', array( $this, 'handle_author_request' ) );
 
 		// Add support for featured thumbnails that we can use for guest author avatars
 		add_action( 'after_setup_theme', array( $this, 'action_after_setup_theme' ) );
@@ -95,23 +94,6 @@ class CoAuthors_Guest_Authors
 		remove_post_type_support( $this->post_type, 'title' );
 		remove_post_type_support( $this->post_type, 'editor' );
 
-	}
-
-	/**
-	 * If core's /author/$author/ rewrite rule gets hit, catch it and serve up the tag instead.
-	 */
-	function handle_author_request( $qvs ) {
-		if ( ! is_admin() && isset( $qvs['author_name'] ) ) {
-			$qvs['tax_query'] = array(
-				array(
-					'taxonomy' => 'author',
-					'field' => 'slug',
-					'terms' => sanitize_key( $qvs['author_name'] ),
-				)
-			);
-			unset( $qvs['author_name'] );
-		}
-		return $qvs;
 	}
 
 	/**

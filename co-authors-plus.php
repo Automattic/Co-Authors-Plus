@@ -531,11 +531,11 @@ class coauthors_plus {
 
 		if( is_author() ) {
 			
-			if ( 0 === stripos( get_query_var( 'author_name' ), 'cap-' ) )
+			if ( get_query_var( 'author_name' ) )
 				$author_name = sanitize_key( get_query_var( 'author_name' ) );
 			else
 				$author_name = get_userdata( $wp_query->query_vars['author'] )->user_login;
-			$term = get_term_by( 'name', $author_name, $this->coauthor_taxonomy );
+			$term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy );
 			
 			if( $term ) {
 				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '($1 OR (' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\'))', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
