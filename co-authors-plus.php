@@ -232,7 +232,7 @@ class coauthors_plus {
 		global $coauthors_plus;
 		// If Guest Authors are enabled, prioritize those profiles
 		if ( $this->is_guest_authors_enabled() ) {
-			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'post_name', $value );
+			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( $key, $value );
 			if ( is_object( $guest_author ) ) {
 				$guest_author->slug = $value;
 				return $guest_author;
@@ -240,7 +240,7 @@ class coauthors_plus {
 		}
 
 		// otherwise default to get_user_by()
-		if ( $user = get_user_by( 'login', $value ) ) {
+		if ( $user = get_user_by( $key, $value ) ) {
 			$user->type = 'wpuser';
 			return $user;
 		}

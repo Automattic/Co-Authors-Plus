@@ -141,7 +141,7 @@ class CoAuthors_Guest_Authors
 		if ( !isset( $query->query_vars['author_name'] ) )
 			return $query;
 
-		$coauthor = $this->get_guest_author_by( 'login', sanitize_key( $query->query_vars['author_name'] ) );
+		$coauthor = $this->get_guest_author_by( 'linked_account', sanitize_key( $query->query_vars['author_name'] ) );
 		if ( is_object( $coauthor ) ) {
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
@@ -430,32 +430,37 @@ class CoAuthors_Guest_Authors
 	function get_guest_author_by( $key, $value ) {
 		global $wpdb;
 
-		if ( 'user_id' == $key ) {
-			$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key='cap-linked_account' AND meta_value=%d", intval( $value ) );
-			$result = $wpdb->get_results( $query );
-			if ( empty( $result ) )
-				return false;
-			$post = get_post( $result[0]->post_id );
-		} else if ( 'login' == $key ) {
-			$query = $wpdb->prepare(
-				"SELECT post_id FROM $wpdb->postmeta pm WHERE pm.meta_key='cap-linked_account' AND pm.meta_value=%s",
-				$value
-			);
-			$result = $wpdb->get_results( $query );
-			if ( empty( $result ) )
-				return false;
-			$post = get_post( $result[0]->post_id );
-		} else if ( 'id' == $key ) {
-			$post = get_post( $value );
-		} else if ( 'post_name' == $key ) {
-			global $wpdb;
-			// @todo look for a more performant way of gathering this data
-			$value = $this->get_post_meta_key( $value );
-			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
-			$result = $wpdb->get_results( $query );
-			if ( empty( $result ) )
-				return false;
-			$post = get_post( $result[0]->ID );
+		switch( $key ) {
+			case 'id':
+				$post = get_post( $value );
+				break;
+			case 'post_name':
+				// @todo look for a more performant way of gathering this data
+				$value = $this->get_post_meta_key( $value );
+				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
+				$result = $wpdb->get_results( $query );
+				if ( empty( $result ) )
+					return false;
+				$post = get_post( $result[0]->ID );
+				break;
+			case 'login':
+			case 'user_login':
+			case 'linked_account':
+				if ( 'login' == $key )
+					$key = 'user_login';
+				$args = array(
+						'numberposts' => 1,
+						'post_type' => $this->post_type,
+						'meta_key' => $this->get_post_meta_key( $key ),
+						'meta_value' => $value,
+					);
+				$result = get_posts( $args );
+				if ( empty( $result ) )
+					return false;
+				$post = $result[0];
+				break;
+			default:
+				break;
 		}
 
 		if ( !$post )
@@ -585,7 +590,7 @@ class CoAuthors_Guest_Authors
 			return new WP_Error( 'invalid-user', __( 'No user exists with that ID', 'co-authors-plus' ) );
 
 		$post_name = $this->get_post_meta_key( $user->user_login );
-		if ( $this->get_guest_author_by( 'login', $post_name ) )
+		if ( $this->get_guest_author_by( 'post_name', $post_name ) )
 			return new WP_Error( 'profile-exists', __( "Profile already exists for {$user->user_login}", 'co-authors-plus' ) );
 
 		// Create the user as a new guest
@@ -643,7 +648,7 @@ class CoAuthors_Guest_Authors
 	function filter_user_row_actions( $actions, $user_object ) {
 
 		$new_actions = array();
-		if ( $guest_author = $this->get_guest_author_by( 'login', $user_object->user_login ) ) {
+		if ( $guest_author = $this->get_guest_author_by( 'linked_account', $user_object->user_login ) ) {
 			$edit_guest_author_link = get_edit_post_link( $guest_author->ID );
 			$new_actions['edit-guest-author'] = '<a href="' . esc_url( $edit_guest_author_link ) . '">' . __( 'Edit CA+ Profile', 'co-authors-plus' ) . '</a>';
 		} else {
