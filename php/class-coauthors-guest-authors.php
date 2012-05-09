@@ -31,6 +31,9 @@ class CoAuthors_Guest_Authors
 		// Handle actions to create or delete guest author accounts
 		add_action( 'admin_init', array( $this, 'handle_create_guest_author_action' ) );
 
+		// Redirect if the user is mapped to a guest author
+		add_action( 'parse_request', array( $this, 'action_parse_request' ) );
+
 		// Add metaboxes for our guest author management interface
 		add_action( 'add_meta_boxes', array( $this, 'action_add_meta_boxes' ), 10, 2 );
 		add_action( 'wp_insert_post_data', array( $this, 'manage_guest_author_filter_post_data' ), 10, 2 );
@@ -126,6 +129,35 @@ class CoAuthors_Guest_Authors
 		wp_safe_redirect( $redirect_to );
 		exit;
 
+	}
+
+	/**
+	 * Some redirection we need to do for linked accounts
+	 *
+	 * @todo support author ID query vars
+	 */
+	function action_parse_request( $query ) {
+
+		if ( !isset( $query->query_vars['author_name'] ) )
+			return $query;
+
+		$coauthor = $this->get_guest_author_by( 'login', sanitize_key( $query->query_vars['author_name'] ) );
+		if ( is_object( $coauthor ) ) {
+			global $wp_rewrite;
+			$link = $wp_rewrite->get_author_permastruct();
+
+			if ( empty($link) ) {
+				$file = home_url( '/' );
+				$link = $file . '?author_name=' . $coauthor->user_login;
+			} else {
+				$link = str_replace('%author%', $coauthor->user_login, $link);
+				$link = home_url( user_trailingslashit( $link ) );
+			}
+			wp_safe_redirect( $link );
+			exit;
+		}
+
+		return $query;
 	}
 
 	/**
@@ -406,9 +438,7 @@ class CoAuthors_Guest_Authors
 			$post = get_post( $result[0]->post_id );
 		} else if ( 'login' == $key ) {
 			$query = $wpdb->prepare(
-				"SELECT post_id FROM $wpdb->postmeta pm
-					INNER JOIN $wpdb->users u ON pm.meta_value = u.ID
-				WHERE pm.meta_key='cap-linked_account' AND u.user_login=%s",
+				"SELECT post_id FROM $wpdb->postmeta pm WHERE pm.meta_key='cap-linked_account' AND pm.meta_value=%s",
 				$value
 			);
 			$result = $wpdb->get_results( $query );
