@@ -218,7 +218,11 @@ class CoAuthors_Guest_Authors
 
 		// Taken from grist_authors.
 		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
-		$existing_linked_account = get_post_meta( $post->ID, $linked_account_key, true );
+		$linked_account = get_user_by( 'login', get_post_meta( $post->ID, $linked_account_key, true ) );
+		if ( is_object( $linked_account ) )
+			$linked_account_id = $linked_account->ID;
+		else
+			$linked_account_id = -1;
 
 		echo '<p><label>' . __( 'WordPress User Mapping', 'co-authors-plus' ) . '</label> ';
 		wp_dropdown_users( array(
@@ -226,7 +230,7 @@ class CoAuthors_Guest_Authors
 			'name' => esc_attr( $this->get_post_meta_key( 'linked_account' ) ),
 			// If we're adding an author or if there is no post author (0), then use -1 (which is show_option_none).
 			// We then take -1 on save and convert it back to 0. (#blamenacin)
-			'selected' => empty( $existing_linked_account ) ? -1 : $existing_linked_account
+			'selected' => $linked_account_id,
 		) );
 		echo '</p>';
 	}
@@ -345,12 +349,12 @@ class CoAuthors_Guest_Authors
 			if ( 'linked_account' == $author_field['key'] ) {
 				$linked_account_key = $this->get_post_meta_key( 'linked_account' );
 				$user_id = intval( $_POST[$linked_account_key] );
-				// If data was passed on save, then use it. But if post_author was -1
-				// (which is what the dropdowns use for nothing selected), we can't store
-				// that in an unsigned int. Clarify we want 0 for no author.
-				if ( $user_id < 0 )
-					$user_id = 0;
-				update_post_meta( $post_id, $key, $user_id );
+				$user = get_user_by( 'id', $user_id );
+				if ( $user_id > 0 && is_object( $user ) )
+					$user_login = $user->user_login;
+				else
+					$user_login = '';
+				update_post_meta( $post_id, $key, $user_login );
 				continue;
 			}
 			if ( !isset( $_POST[$key] ) )
