@@ -61,9 +61,9 @@ class coauthors_plus {
 		add_action( 'admin_init', array( $this,'admin_init' ) );
 
 		// Modify SQL queries to include coauthors
-		add_filter( 'posts_where', array( $this, 'posts_where_filter' ) );
-		add_filter( 'posts_join', array( $this, 'posts_join_filter' ) );
-		add_filter( 'posts_groupby', array( $this, 'posts_groupby_filter' ) );
+		add_filter( 'posts_where', array( $this, 'posts_where_filter' ), 10, 2 );
+		add_filter( 'posts_join', array( $this, 'posts_join_filter' ), 10, 2 );
+		add_filter( 'posts_groupby', array( $this, 'posts_groupby_filter' ), 10, 2 );
 
 		// Action to set users when a post is saved
 		add_action( 'save_post', array( $this, 'coauthors_update_post' ), 10, 2 );
@@ -520,10 +520,14 @@ class coauthors_plus {
 	/**
 	 * Modify the author query posts SQL to include posts co-authored
 	 */
-	function posts_join_filter( $join ){
-		global $wpdb, $wp_query;
-				
-		if( is_author() ){
+	function posts_join_filter( $join, $query ){
+		global $wpdb;
+
+		if( $query->is_author() ) {
+
+			if ( !empty( $query->query_vars['post_type'] ) && is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
+				return $where;
+
 			// Check to see that JOIN hasn't already been added. Props michaelingp and nbaxley
 			$term_relationship_join = " INNER JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
 			$term_taxonomy_join = " INNER JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
@@ -542,15 +546,18 @@ class coauthors_plus {
 	/**
 	 * Modify
 	 */
-	function posts_where_filter( $where ){
-		global $wpdb, $wp_query;
+	function posts_where_filter( $where, $query ){
+		global $wpdb;
 
-		if( is_author() ) {
+		if ( $query->is_author() ) {
+
+			if ( !empty( $query->query_vars['post_type'] ) && is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
+				return $where;
 			
 			if ( get_query_var( 'author_name' ) )
 				$author_name = sanitize_key( get_query_var( 'author_name' ) );
 			else
-				$author_name = get_userdata( $wp_query->query_vars['author'] )->user_login;
+				$author_name = get_userdata( $query->query_vars['author'] )->user_login;
 
 			$terms = array();
 			$terms[] = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy );
@@ -568,7 +575,7 @@ class coauthors_plus {
 			if ( !empty( $terms ) ) {
 				$terms_implode = '';
 				foreach( $terms as $term ) {
-					$terms_implode .= '(' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\') OR';
+					$terms_implode .= '(' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\') OR ';
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
 				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both . ' ' . $terms_implode . ')', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
@@ -581,10 +588,14 @@ class coauthors_plus {
 	/**
 	 * 
 	 */
-	function posts_groupby_filter( $groupby ) {
+	function posts_groupby_filter( $groupby, $query ) {
 		global $wpdb;
 		
-		if( is_author() ) {
+		if( $query->is_author() ) {
+
+			if ( !empty( $query->query_vars['post_type'] ) && is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
+				return $groupby;
+
 			$groupby = $wpdb->posts .'.ID';
 		}
 		return $groupby;
