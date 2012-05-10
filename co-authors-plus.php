@@ -820,7 +820,7 @@ class coauthors_plus {
 		}
 		if ( is_object( $authordata ) ) {
 			$wp_query->queried_object = $authordata;
-			$wp_query->queried_object_id = $authordata;
+			$wp_query->queried_object_id = $authordata->ID;
 		}
 	}
 	
