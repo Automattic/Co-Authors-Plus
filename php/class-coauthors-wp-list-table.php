@@ -9,7 +9,12 @@ require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
  */
 class CoAuthors_WP_List_Table extends WP_List_Table {
 
+	var $is_search = false;
+
 	function __construct() {
+		if( !empty( $_POST['s'] ) )
+			$this->is_search = true;
+
 		parent::__construct( array(
 				'plural' => __( 'Co-Authors', 'co-authors-plus' ),
 				'singular' => __( 'Co-Author', 'co-authors-plus' ),
@@ -31,24 +36,39 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$per_page = 20;
 
 		$args = array(
-				'paged'          => ( $paged - 1 ) * $per_page,
-				'numberposts'    => $per_page,
+				'paged'          => $paged,
+				'posts_per_page' => $per_page,
 				'post_type'      => $coauthors_plus->guest_authors->post_type,
 				'post_status'    => 'any',
 				'orderby'        => 'post_title',
 				'order'          => 'ASC',
 			);
-		$author_posts = get_posts( $args );
+
+		if( $this->is_search )
+			add_filter( 'posts_where', array( &$this, 'filter_query_for_search' ) );
+
+		$author_posts = new WP_Query( $args );
 		$items = array();
-		foreach( $author_posts as $author_post ) {
+		foreach( $author_posts->get_posts() as $author_post ) {
 			$items[] = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $author_post->ID );
 		}
+
+		if( $this->is_search )
+			remove_filter( 'posts_where', array( &$this, 'filter_query_for_search' ) );
+
 		$this->items = $items;
 
 		$this->set_pagination_args( array(
-			'total_items' => 20,
+			'total_items' => $author_posts->found_posts,
 			'per_page' => $per_page,
 			) );
+	}
+	
+	function filter_query_for_search( $where ) {
+		global $wpdb;
+		$var = '%' . sanitize_title( $_POST['s'] ) . '%';
+		$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var);
+		return $where;
 	}
 
 	/**
@@ -115,6 +135,13 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$output .= $this->row_actions( $actions, false );
 
 		return $output;
+	}
+
+	function display() {
+		echo '<form method="post">';
+		$this->search_box('search', 'search_id');
+		echo '</form>';
+		parent::display();
 	}
 
 }
