@@ -18,6 +18,9 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 == Changelog ==
 
+= ????-??-?? / 2.7 =
+* Apply query filters to only post_types registered with the taxonomy. Props [Tom Ransom](https://github.com/1bigidea)
+
 = 2012-05-07 / 2.6.4 =
 * Bug fix: Properly filter the user query so users can AJAX search against the display name field again
 * If https is used for the admin, also use the secure Gravatar URL. Props [rmcfrazier](https://github.com/rmcfrazier)
