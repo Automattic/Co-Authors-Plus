@@ -12,7 +12,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	var $is_search = false;
 
 	function __construct() {
-		if( !empty( $_POST['s'] ) )
+		if( !empty( $_GET['s'] ) )
 			$this->is_search = true;
 
 		parent::__construct( array(
@@ -66,7 +66,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	
 	function filter_query_for_search( $where ) {
 		global $wpdb;
-		$var = '%' . sanitize_title( $_POST['s'] ) . '%';
+		$var = '%' . sanitize_title( $_GET['s'] ) . '%';
 		$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var);
 		return $where;
 	}
@@ -138,7 +138,8 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	function display() {
-		echo '<form method="post">';
+		echo '<form>';
+		echo '<input type="hidden" name="page" value="view-guest-authors" />';
 		$this->search_box('search', 'search_id');
 		echo '</form>';
 		parent::display();
