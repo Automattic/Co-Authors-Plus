@@ -45,7 +45,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			);
 
 		if( $this->is_search )
-			add_filter( 'posts_where', array( &$this, 'filter_query_for_search' ) );
+			add_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
 
 		$author_posts = new WP_Query( $args );
 		$items = array();
@@ -54,7 +54,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		}
 
 		if( $this->is_search )
-			remove_filter( 'posts_where', array( &$this, 'filter_query_for_search' ) );
+			remove_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
 
 		$this->items = $items;
 

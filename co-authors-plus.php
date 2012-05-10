@@ -89,7 +89,7 @@ class coauthors_plus {
 		add_action( 'load-edit.php', array( $this, 'remove_quick_edit_authors_box' ) );
 
 		// Restricts WordPress from blowing away term order on bulk edit
-		add_filter( 'wp_get_object_terms', array( &$this, 'filter_wp_get_object_terms' ), 10, 4 );
+		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
 		
 		// Fix for author info not properly displaying on author pages
 		add_action( 'template_redirect', array( $this, 'fix_author_page' ) );
@@ -157,7 +157,7 @@ class coauthors_plus {
 
 		// Hooks to modify the published post number count on the Users WP List Table
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
-		add_filter( 'manage_users_custom_column', array( &$this, '_filter_manage_users_custom_column' ), 10, 3 );
+		add_filter( 'manage_users_custom_column', array( $this, '_filter_manage_users_custom_column' ), 10, 3 );
 		
 	}
 
@@ -310,7 +310,7 @@ class coauthors_plus {
 		$post_type = $this->get_current_post_type();
 		
 		if( $this->authors_supported( $post_type ) && $this->current_user_can_set_authors() )
-			add_meta_box($this->coauthors_meta_box_name, __('Post Authors', 'co-authors-plus'), array( &$this, 'coauthors_meta_box' ), $post_type, 'normal', 'high');
+			add_meta_box($this->coauthors_meta_box_name, __('Post Authors', 'co-authors-plus'), array( $this, 'coauthors_meta_box' ), $post_type, 'normal', 'high');
 	}
 	
 	/**
@@ -857,9 +857,9 @@ class coauthors_plus {
 				),
 				'fields' => 'all_with_meta',
 			);
-		add_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
+		add_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
 		$found_users = get_users( $args );
-		remove_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
+		remove_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
 		foreach( $found_users as $found_user ) {
 			$term = get_term_by( 'slug', $found_user->user_login, $this->coauthor_taxonomy );
 			if ( empty( $term ) || empty( $term->description ) ) {
