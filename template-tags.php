@@ -5,28 +5,32 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 	
 	$coauthors = array();
 	$post_id = (int)$post_id;
-	if(!$post_id && $post_ID) $post_id = $post_ID;
-	if(!$post_id && $post) $post_id = $post->ID;
+	if ( !$post_id && $post_ID )
+		$post_id = $post_ID;
+	if ( !$post_id && $post )
+		$post_id = $post->ID;
 
 	$defaults = array('orderby'=>'term_order', 'order'=>'ASC');
 	$args = wp_parse_args( $args, $defaults );
 	
-	if($post_id) {
+	if ( $post_id ) {
 		$coauthor_terms = wp_get_post_terms( $post_id, $coauthors_plus->coauthor_taxonomy, $args );
 		
-		if(is_array($coauthor_terms) && !empty($coauthor_terms)) {
-			foreach($coauthor_terms as $coauthor) {
+		if ( is_array( $coauthor_terms ) && !empty( $coauthor_terms ) ) {
+			foreach( $coauthor_terms as $coauthor ) {
 				$post_author =  get_user_by( 'login', $coauthor->name );
 				// In case the user has been deleted while plugin was deactivated
-				if(!empty($post_author)) $coauthors[] = $post_author;
+				if ( !empty( $post_author ) )
+					$coauthors[] = $post_author;
 			}
 		} else {
-			if($post) {
-				$post_author = get_userdata($post->post_author);
+			if ( $post ) {
+				$post_author = get_userdata( $post->post_author );
 			} else {
-				$post_author = get_userdata($wpdb->get_var($wpdb->prepare("SELECT post_author FROM $wpdb->posts WHERE ID = %d", $post_id)));
+				$post_author = get_userdata( $wpdb->get_var( $wpdb->prepare("SELECT post_author FROM $wpdb->posts WHERE ID = %d", $post_id ) ) );
 			}
-			if(!empty($post_author)) $coauthors[] = $post_author;
+			if ( !empty( $post_author ) )
+				$coauthors[] = $post_author;
 		}
 	}
 	return $coauthors;
@@ -40,17 +44,20 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 function is_coauthor_for_post( $user, $post_id = 0 ) {
 	global $post;
 	
-	if( ! $post_id && $post ) $post_id = $post->ID;
-	if( ! $post_id ) return false;
+	if( ! $post_id && $post )
+		$post_id = $post->ID;
+	if( ! $post_id )
+		return false;
 	
 	$coauthors = get_coauthors( $post_id );
-	if( is_numeric( $user ) ) {
+	if ( is_numeric( $user ) ) {
 		$user = get_userdata( $user );
 		$user = $user->user_login;
 	}
 	
 	foreach( $coauthors as $coauthor ) {
-		if( $user == $coauthor->user_login ) return true;
+		if ( $user == $coauthor->user_login )
+			return true;
 	}
 	return false;
 }
@@ -62,16 +69,16 @@ class CoAuthorsIterator {
 	var $authordata_array;
 	var $count;
 	
-	function CoAuthorsIterator($postID = 0){
+	function CoAuthorsIterator( $postID = 0 ){
 		global $post, $authordata, $wpdb;
 		$postID = (int)$postID;
-		if(!$postID && $post)
+		if( !$postID && $post )
 			$postID = (int)$post->ID;
-		if(!$postID)
+		if( !$postID )
 			trigger_error(__('No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus')); //return null;
 
 		$this->original_authordata = $this->current_author = $authordata;
-		$this->authordata_array = get_coauthors($postID);
+		$this->authordata_array = get_coauthors( $postID );
 		
 		$this->count = count($this->authordata_array);
 	}
@@ -81,14 +88,14 @@ class CoAuthorsIterator {
 		$this->position++;
 		
 		//At the end of the loop
-		if($this->position > $this->count-1){
+		if( $this->position > $this->count-1 ){
 			$authordata = $this->current_author = $this->original_authordata;
 			$this->position = -1;
 			return false;
 		}
 		
 		//At the beginning of the loop
-		if($this->position == 0 && !empty($authordata))
+		if( $this->position == 0 && !empty( $authordata ) )
 			$this->original_authordata = $authordata;
 		
 		$authordata = $this->current_author = $this->authordata_array[$this->position];
@@ -97,7 +104,7 @@ class CoAuthorsIterator {
 	}
 	
 	function get_position(){
-		if($this->position === -1)
+		if ( $this->position === -1 )
 			return false;
 		return $this->position;
 	}
@@ -117,15 +124,23 @@ class CoAuthorsIterator {
 
 //Helper function for the following new template tags
 function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args = null, $echo = true ) {
-	if( ! isset( $separators['between'] ) || $separators['between'] === NULL )
-		$separators['between'] = COAUTHORS_DEFAULT_BETWEEN;
-	if( ! isset( $separators['betweenLast'] ) || $separators['betweenLast'] === NULL )
-		$separators['betweenLast'] = COAUTHORS_DEFAULT_BETWEEN_LAST;
+
+	// Define the standard output separator. Constant support is for backwards compat.
+	// @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/12
+	$default_before = ( defined( 'COAUTHORS_DEFAULT_BEFORE' ) ) ? COAUTHORS_DEFAULT_BEFORE : '';
+	$default_between = ( defined( 'COAUTHORS_DEFAULT_BETWEEN' ) ) ? COAUTHORS_DEFAULT_BETWEEN : ', ';
+	$default_between_last = ( defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) ) ? COAUTHORS_DEFAULT_BETWEEN_LAST :  __( ' and ', 'co-authors-plus' );
+	$default_after = ( defined( 'COAUTHORS_DEFAULT_AFTER' ) ) ? COAUTHORS_DEFAULT_AFTER : '';
+
 	if( ! isset( $separators['before'] ) || $separators['before'] === NULL )
-		$separators['before'] = COAUTHORS_DEFAULT_BEFORE;
+		$separators['before'] = apply_filters( 'coauthors_default_before', $default_before );
+	if( ! isset( $separators['between'] ) || $separators['between'] === NULL )
+		$separators['between'] = apply_filters( 'coauthors_default_between', $default_between );
+	if( ! isset( $separators['betweenLast'] ) || $separators['betweenLast'] === NULL )
+		$separators['betweenLast'] = apply_filters( 'coauthors_default_between_last', $default_between_last );
 	if( ! isset( $separators['after'] ) || $separators['after'] === NULL )
-		$separators['after'] = COAUTHORS_DEFAULT_AFTER;
-	
+		$separators['after'] = apply_filters( 'coauthors_default_after', $default_after );
+
 	$output = '';
 	
 	$i = new CoAuthorsIterator();

@@ -1,24 +1,43 @@
 === Co-Authors Plus ===
-Contributors: batmoo, danielbachhuber
+Contributors: batmoo, danielbachhuber, automattic
 Donate link: http://digitalize.ca/donate
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.3
+Tested up to: 3.3.2
 Requires at least: 3.1
-Stable tag: 2.6.1
+Stable tag: 2.6.4
 
-Allows multiple authors to be assigned to any post type via a search-as-you-type input box
+Allows multiple authors to be assigned to posts, pages, and custom post types via a search-as-you-type input box
 
 == Description ==
 
-Allows multiple authors to be assigned to a Post, Pages, or Custom Post Types via the search-as-you-type inputs. Co-authored posts appear on a co-author's posts page and feed. New template tags allow listing of co-authors. Editors and Administrators may assign co-authors to a post. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is usual).
+Allows multiple authors to be assigned to posts, pages, or custom post types via the search-as-you-type inputs. Template tags allow listing of co-authors anywhere you'd normally list the author. Co-authored posts appear on a co-author's archive page and in their feed. Additionally, co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
 
 This plugin is an almost complete rewrite of the Co-Authors plugin originally developed at [Shepherd Interactive](http://www.shepherd-interactive.com/) (2007). The original plugin was inspired by the 'Multiple Authors' plugin by Mark Jaquith (2005).
-
-The extended version incorporates search-as-you-type functionality for adding users, which aims to make easy the task of adding multiple users to posts and pages, especially when dealing with a system with hundreds of users (typical of newspaper and magazine sites).
 
 > *See "Other Notes" section for Template Tags and usage information*
 
 == Changelog ==
+
+= 2012-05-07 / 2.6.4 =
+* Bug fix: Properly filter the user query so users can AJAX search against the display name field again
+* If https is used for the admin, also use the secure Gravatar URL. Props [rmcfrazier](https://github.com/rmcfrazier)
+
+= 2012-04-30 / 2.6.3 =
+* AJAX user search is back to searching against user login, display name, email address and user ID. The method introduced in v2.6.2 didn't scale well
+* French translation courtesy of Sylvain Bérubé
+* Spanish translation courtesy of Alejandro Arcos
+* Bug fix: Resolved incorrect caps check against user editing an already published post. [See forum thread](http://wordpress.org/support/topic/multiple-authors-cant-edit-pages?replies=17#post-2741243)
+
+= 2012-03-06 / 2.6.2 =
+* AJAX user search matches against first name, last name, and nickname fields too, in addition to display name, user login, and email address
+* Comment moderation and approved notifications are properly sent to all co-authors with the correct caps
+* Filter required capability for user to be returned in an AJAX search with 'coauthors_edit_author_cap'
+* Filter out administrators and other non-authors from AJAX search with 'coauthors_edit_ignored_authors'
+* Automatically adds co-authors to Edit Flow's story budget and calendar views
+* Bug fix: Don't set post_author value to current user when quick editing a post. This doesn't appear in the UI anywhere, but adds the post to the current user's list of posts
+* Bug fix: Properly cc other co-authors on new comment email notifications
+* Bug fix: If a user has already been added as an author to a post, don't show them in the AJAX search again
+* Bug fix: Allow output constants to be defined in a theme's functions.php file and include filters you can use instead
 
 = 2011-12-30 / 2.6.1 =
 
@@ -128,8 +147,7 @@ The extended version incorporates search-as-you-type functionality for adding us
 
 == Basic Usage and Other Notes ==
 
-* Contributor-level and above can be added as co-authors. An option added as of 2.0 allows subscribers to be added as coauthors as well.
-* As per WordPress design, only Editor-level and above users can change Post Authors. Authors cannot change authors or add co-authors (yet).
+* Contributor-level and above can be added as co-authors.
 * As per WordPress design, when an editor creates a new Post or Page, they are by default added as an author. However, they can be replaced by clicking on their name and typing in the name of the new author.
 * The search-as-you-type box starts searching once two letters have been added, and executes a new search with every subsequent letter.
 * The search-as-you-type box searches through the following user fields: a) user login; b) user nicename; c) display name; d) user email; e) first name; f) last name; and g) nickname. 

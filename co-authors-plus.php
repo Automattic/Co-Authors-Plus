@@ -3,9 +3,9 @@
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 2.6.1
-Author: Mohammad Jangda, Daniel Bachhuber
-Copyright: 2008-2011 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
+Version: 2.6.4
+Author: Mohammad Jangda, Daniel Bachhuber, Automattic
+Copyright: 2008-2012 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
 
 GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
 This program is free software; you can redistribute it and/or modify
@@ -24,22 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '2.6.1' );
-
-if( ! defined( 'COAUTHORS_PLUS_DEBUG' ) )
-	define( 'COAUTHORS_PLUS_DEBUG', false );
-
-if( ! defined( 'COAUTHORS_DEFAULT_BEFORE' ) )
-	define( 'COAUTHORS_DEFAULT_BEFORE', '' );
-
-if( ! defined( 'COAUTHORS_DEFAULT_BETWEEN' ) )
-	define( 'COAUTHORS_DEFAULT_BETWEEN', ', ' );
-
-if( ! defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) )
-	define( 'COAUTHORS_DEFAULT_BETWEEN_LAST', __( ' and ', 'co-authors-plus' ) );
-
-if( ! defined( 'COAUTHORS_DEFAULT_AFTER' ) )
-	define( 'COAUTHORS_DEFAULT_AFTER', '' );
+define( 'COAUTHORS_PLUS_VERSION', '2.6.4' );
 
 define( 'COAUTHORS_PLUS_PATH', dirname( __FILE__ ) );
 define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
@@ -63,10 +48,8 @@ class coauthors_plus {
 	 */
 	function __construct() {
 
-		$plugin_dir = dirname( plugin_basename( __FILE__ ) ) . '/languages/';
-		load_plugin_textdomain( 'co-authors-plus', null, $plugin_dir );
+		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
 		
@@ -81,7 +64,7 @@ class coauthors_plus {
 		// Action to set users when a post is saved
 		add_action( 'save_post', array( $this, 'coauthors_update_post' ), 10, 2 );
 		// Filter to set the post_author field when wp_insert_post is called
-		add_filter( 'wp_insert_post_data', array( $this, 'coauthors_set_post_author_field' ) );
+		add_filter( 'wp_insert_post_data', array( $this, 'coauthors_set_post_author_field' ), 10, 2 );
 		
 		// Action to reassign posts when a user is deleted
 		add_action( 'delete_user',  array( $this, 'delete_user_action' ) );
@@ -93,9 +76,7 @@ class coauthors_plus {
 		
 		// Filter to allow coauthors to edit posts
 		add_filter( 'user_has_cap', array( $this, 'add_coauthor_cap' ), 10, 3 );
-		
-		add_filter( 'comment_notification_headers', array( $this, 'notify_coauthors' ), 10, 3 );
-		
+
 		// Handle the custom author meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_coauthors_box' ) );
 		add_action( 'add_meta_boxes', array( $this, 'remove_authors_box' ) );
@@ -108,6 +89,10 @@ class coauthors_plus {
 		
 		// Fix for author info not properly displaying on author pages
 		add_action( 'the_post', array( $this, 'fix_author_page' ) );
+
+		// Support for Edit Flow's calendar and story budget
+		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
+		add_filter( 'ef_story_budget_term_column_value', array( $this, 'filter_ef_story_budget_term_column_value' ), 10, 3 );
 
 	}
 
@@ -454,7 +439,7 @@ class coauthors_plus {
 	/**
 	 * Filters post data before saving to db to set post_author
 	 */
-	function coauthors_set_post_author_field( $data ) {
+	function coauthors_set_post_author_field( $data, $postarr ) {
 		
 		// Bail on autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && !DOING_AUTOSAVE )
@@ -472,6 +457,15 @@ class coauthors_plus {
 				$author_data = get_user_by( 'login', $author );
 				$data['post_author'] = $author_data->ID;
 			}
+		}
+
+		// Restore the co-author when quick editing because we don't
+		// allow changing the co-author on quick edit. In wp_insert_post(),
+		// 'post_author' is set to current user if the $_REQUEST value doesn't exist
+		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
+			$coauthors = get_coauthors( $postarr['ID'] );
+			if ( is_array( $coauthors ) )
+				$data['post_author'] = $coauthors[0]->ID;
 		}
 
 		// If for some reason we don't have the coauthors fields set
@@ -587,7 +581,7 @@ class coauthors_plus {
 		$orderby = 'ORDER BY tr.term_order'; 
 		$order = 'ASC';
 		$object_ids = (int)$object_ids;
-		$query = $wpdb->prepare( "SELECT t.slug, t.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN ($taxonomies) AND tr.object_id IN ($object_ids) $orderby $order" );
+		$query = $wpdb->prepare( "SELECT t.slug, t.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $taxonomies, $object_ids );
 		$raw_coauthors = $wpdb->get_results( $query ); 
 		$terms = array();
 		foreach( $raw_coauthors as $author ) { 
@@ -666,58 +660,62 @@ class coauthors_plus {
 		
 		if( empty( $_REQUEST['q'] ) )
 			die();
-		
-		if( ! $this->current_user_can_set_authors() )
-			die();
-		
+
 		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
-		
-		$authors = $this->search_authors( $search );
+		$ignore = array_map( 'sanitize_user', explode( ',', $_REQUEST['existing_authors'] ) );
+
+		$authors = $this->search_authors( $search, $ignore );
 				
 		foreach( $authors as $author ) {
 			echo $author->ID ." | ". $author->user_login ." | ". $author->display_name ." | ". $author->user_email ."\n";		
 		}
-		
-		if( COAUTHORS_PLUS_DEBUG ) {		
-			echo 'queries:' . get_num_queries() ."\n";
-			echo 'timer: ' . timer_stop(1) . "sec\n";
-		}
-		
+
 		die();
-			
+
 	}
 
 	/**
 	 * Get matching authors based on a search value
 	 */	
-	function search_authors( $search = '' ) {
-		
+	function search_authors( $search = '', $ignored_authors = array() ) {
+
 		$args = array(
-			'search' => sprintf( '*%s*',  $search ), // Enable wildcard searching
-			'who' => 'authors',
-			'fields' => array(
-				'ID',
-				'display_name',
-				'user_login',
-				'user_email'
-			),
-		);
-		add_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
-		$authors = get_users( $args );
-		remove_filter( 'pre_user_query', array( &$this, 'filter_pre_user_query' ) );
-		
-		return (array) $authors;
+				'count_total' => false,
+				'search' => sprintf( '*%s*', $search ),
+				'search_fields' => array(
+					'ID',
+					'display_name',
+					'user_email',
+					'user_login',
+				),
+				'fields' => 'all_with_meta',
+			);
+		add_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
+		$found_users = get_users( $args );
+		remove_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
+
+		// Allow users to always filter out certain users if needed (e.g. administrators)
+		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
+		foreach( $found_users as $key => $found_user ) {
+			// Make sure the user is contributor and above (or a custom cap)
+			if ( in_array( $found_user->user_login, $ignored_authors ) )
+				unset( $found_users[$key] );
+			else if ( false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
+				unset( $found_users[$key] );
+		}
+		return (array) $found_users;
 	}
 
 	/**
 	 * Modify get_users() to search display_name instead of user_nicename
 	 */
 	function filter_pre_user_query( &$user_query ) {
+
 		if ( is_object( $user_query ) )
 			$user_query->query_where = str_replace( "user_nicename LIKE", "display_name LIKE", $user_query->query_where );
 		return $user_query;
 	}
-	
+
 	/**
 	 * Functions to add scripts and css
 	 */
@@ -726,25 +724,24 @@ class coauthors_plus {
 		
 		$post_type = $this->get_current_post_type();
 		
-		// TODO: Check if user can set authors? $this->current_user_can_set_authors()
-		if( $this->is_valid_page() && $this->authors_supported( $post_type ) ) {
+		if ( !$this->is_valid_page() || !$this->authors_supported( $post_type ) || !$this->current_user_can_set_authors() )
+			return;
 		
-			wp_enqueue_script( 'jquery' );
-			wp_enqueue_script( 'jquery-ui-sortable' );
-			wp_enqueue_style( 'co-authors-plus-css', COAUTHORS_PLUS_URL . 'css/co-authors-plus.css', false, COAUTHORS_PLUS_VERSION, 'all' );
-			wp_enqueue_script( 'co-authors-plus-js', COAUTHORS_PLUS_URL . 'js/co-authors-plus.js', array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
-			
-			$js_strings = array(
-				'edit_label' => __( 'Edit', 'co-authors-plus' ),
-				'delete_label' => __( 'Remove', 'co-authors-plus' ), 
-				'confirm_delete' => __( 'Are you sure you want to remove this author?', 'co-authors-plus' ),
-				'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
-				'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
-				'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
-			);
-			wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
-			
-		}
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-sortable' );
+		wp_enqueue_style( 'co-authors-plus-css', COAUTHORS_PLUS_URL . 'css/co-authors-plus.css', false, COAUTHORS_PLUS_VERSION, 'all' );
+		wp_enqueue_script( 'co-authors-plus-js', COAUTHORS_PLUS_URL . 'js/co-authors-plus.js', array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
+		
+		$js_strings = array(
+			'edit_label' => __( 'Edit', 'co-authors-plus' ),
+			'delete_label' => __( 'Remove', 'co-authors-plus' ), 
+			'confirm_delete' => __( 'Are you sure you want to remove this author?', 'co-authors-plus' ),
+			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
+			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
+			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
+		);
+		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
+
 	}	
 	
 	/**
@@ -820,7 +817,7 @@ class coauthors_plus {
 			return $allcaps;
 		
 		$post_type_object = get_post_type_object( $post->post_type );
-		
+
 		// Bail out if there's no post type object
 		if ( ! is_object( $post_type_object ) )
 			return $allcaps;
@@ -834,7 +831,7 @@ class coauthors_plus {
 			return $allcaps;
 		
 		// Bail out for users who can't publish posts if the post is already published
-		if ( 'publish' == $post->post_status && ( ! isset( $allcaps[$post_type_object->cap->publish_posts] ) || ! $allcaps[$post_type_object->cap->publish_posts] ) )
+		if ( 'publish' == $post->post_status && ( ! isset( $allcaps[$post_type_object->cap->edit_published_posts] ) || ! $allcaps[$post_type_object->cap->edit_published_posts] ) )
 			return $allcaps;
 		
 		// Finally, double check that the user is a coauthor of the post
@@ -846,40 +843,240 @@ class coauthors_plus {
 		
 		return $allcaps;
 	}
-	
+
 	/**
-	 * Emails all coauthors when comment added instead of the main author
-	 * 
+	 * Filter Edit Flow's 'ef_calendar_item_information_fields' to add co-authors
+	 *
+	 * @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/2
 	 */
-	function notify_coauthors( $message_headers, $comment_id ) {
-		// TODO: this is broken!
-		$comment = get_comment($comment_id);
-		$post = get_post($comment->comment_post_ID);
-		$coauthors = get_coauthors($comment->comment_post_ID);
-	
-		$message_headers .= 'cc: ';
-		$count = 0;
-		foreach($coauthors as $author) {
-			$count++;
-			if($author->ID != $post->post_author){
-				$message_headers .= $author->user_email;
-				if($count < count($coauthors)) $message_headers .= ',';
-			}
+	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
+
+		// Don't add the author row again if another plugin has removed
+		if ( !array_key_exists( 'author', $information_fields ) )
+			return $information_fields;
+
+		$co_authors = get_coauthors( $post_id );
+		if ( count( $co_authors ) > 1 )
+			$information_fields['author']['label'] = __( 'Authors', 'co-authors-plus' );
+		$co_authors_names = '';
+		foreach( $co_authors as $co_author ) {
+			$co_authors_names .= $co_author->display_name . ', ';
 		}
-		$message_headers .= "\n";
-		return $message_headers;
+		$information_fields['author']['value'] = rtrim( $co_authors_names, ', ' );
+		return $information_fields;
 	}
-	
-	function debug($msg, $object) {
-		if( COAUTHORS_PLUS_DEBUG ) {
-			echo '<hr />';
-			echo sprintf('<p>%s</p>', $msg);
-			echo '<pre>';
-			var_dump($object);
-			echo '</pre>';
+
+	/**
+	 * Filter Edit Flow's 'ef_story_budget_term_column_value' to add co-authors to the story budget
+	 *
+	 * @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/2
+	 */
+	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
+
+		// We only want to modify the 'author' column
+		if ( 'author' != $column_name )
+			return $column_name;
+
+		$co_authors = get_coauthors( $post->ID );
+		$co_authors_names = '';
+		foreach( $co_authors as $co_author ) {
+			$co_authors_names .= $co_author->display_name . ', ';
 		}
+		return rtrim( $co_authors_names, ', ' );
 	}
+
 }
 
 global $coauthors_plus;
 $coauthors_plus = new coauthors_plus();
+
+if ( ! function_exists('wp_notify_postauthor') ) :
+/**
+ * Notify a co-author of a comment/trackback/pingback to one of their posts.
+ * This is a modified version of the core function in wp-includes/pluggable.php that
+ * supports notifs to multiple co-authors. Unfortunately, this is the best way to do it :(
+ *
+ * @since 2.6.2
+ *
+ * @param int $comment_id Comment ID
+ * @param string $comment_type Optional. The comment type either 'comment' (default), 'trackback', or 'pingback'
+ * @return bool False if user email does not exist. True on completion.
+ */
+function wp_notify_postauthor( $comment_id, $comment_type = '' ) {
+	$comment = get_comment( $comment_id );
+	$post    = get_post( $comment->comment_post_ID );
+	$coauthors = get_coauthors( $post->ID );
+	foreach( $coauthors as $author ) {
+
+		// The comment was left by the co-author
+		if ( $comment->user_id == $author->ID )
+			return false;
+
+		// The co-author moderated a comment on his own post
+		if ( $author->ID == get_current_user_id() )
+			return false;
+
+		// If there's no email to send the comment to
+		if ( '' == $author->user_email )
+			return false;
+
+		$comment_author_domain = @gethostbyaddr($comment->comment_author_IP);
+
+		// The blogname option is escaped with esc_html on the way into the database in sanitize_option
+		// we want to reverse this for the plain text arena of emails.
+		$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+
+		if ( empty( $comment_type ) ) $comment_type = 'comment';
+
+		if ('comment' == $comment_type) {
+			$notify_message  = sprintf( __( 'New comment on your post "%s"' ), $post->post_title ) . "\r\n";
+			/* translators: 1: comment author, 2: author IP, 3: author domain */
+			$notify_message .= sprintf( __('Author : %1$s (IP: %2$s , %3$s)'), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+			$notify_message .= sprintf( __('E-mail : %s'), $comment->comment_author_email ) . "\r\n";
+			$notify_message .= sprintf( __('URL    : %s'), $comment->comment_author_url ) . "\r\n";
+			$notify_message .= sprintf( __('Whois  : http://whois.arin.net/rest/ip/%s'), $comment->comment_author_IP ) . "\r\n";
+			$notify_message .= __('Comment: ') . "\r\n" . $comment->comment_content . "\r\n\r\n";
+			$notify_message .= __('You can see all comments on this post here: ') . "\r\n";
+			/* translators: 1: blog name, 2: post title */
+			$subject = sprintf( __('[%1$s] Comment: "%2$s"'), $blogname, $post->post_title );
+		} elseif ('trackback' == $comment_type) {
+			$notify_message  = sprintf( __( 'New trackback on your post "%s"' ), $post->post_title ) . "\r\n";
+			/* translators: 1: website name, 2: author IP, 3: author domain */
+			$notify_message .= sprintf( __('Website: %1$s (IP: %2$s , %3$s)'), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+			$notify_message .= sprintf( __('URL    : %s'), $comment->comment_author_url ) . "\r\n";
+			$notify_message .= __('Excerpt: ') . "\r\n" . $comment->comment_content . "\r\n\r\n";
+			$notify_message .= __('You can see all trackbacks on this post here: ') . "\r\n";
+			/* translators: 1: blog name, 2: post title */
+			$subject = sprintf( __('[%1$s] Trackback: "%2$s"'), $blogname, $post->post_title );
+		} elseif ('pingback' == $comment_type) {
+			$notify_message  = sprintf( __( 'New pingback on your post "%s"' ), $post->post_title ) . "\r\n";
+			/* translators: 1: comment author, 2: author IP, 3: author domain */
+			$notify_message .= sprintf( __('Website: %1$s (IP: %2$s , %3$s)'), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+			$notify_message .= sprintf( __('URL    : %s'), $comment->comment_author_url ) . "\r\n";
+			$notify_message .= __('Excerpt: ') . "\r\n" . sprintf('[...] %s [...]', $comment->comment_content ) . "\r\n\r\n";
+			$notify_message .= __('You can see all pingbacks on this post here: ') . "\r\n";
+			/* translators: 1: blog name, 2: post title */
+			$subject = sprintf( __('[%1$s] Pingback: "%2$s"'), $blogname, $post->post_title );
+		}
+		$notify_message .= get_permalink($comment->comment_post_ID) . "#comments\r\n\r\n";
+		$notify_message .= sprintf( __('Permalink: %s'), get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment_id ) . "\r\n";
+		if ( EMPTY_TRASH_DAYS )
+			$notify_message .= sprintf( __('Trash it: %s'), admin_url("comment.php?action=trash&c=$comment_id") ) . "\r\n";
+		else
+			$notify_message .= sprintf( __('Delete it: %s'), admin_url("comment.php?action=delete&c=$comment_id") ) . "\r\n";
+		$notify_message .= sprintf( __('Spam it: %s'), admin_url("comment.php?action=spam&c=$comment_id") ) . "\r\n";
+
+		$wp_email = 'wordpress@' . preg_replace('#^www\.#', '', strtolower($_SERVER['SERVER_NAME']));
+
+		if ( '' == $comment->comment_author ) {
+			$from = "From: \"$blogname\" <$wp_email>";
+			if ( '' != $comment->comment_author_email )
+				$reply_to = "Reply-To: $comment->comment_author_email";
+		} else {
+			$from = "From: \"$comment->comment_author\" <$wp_email>";
+			if ( '' != $comment->comment_author_email )
+				$reply_to = "Reply-To: \"$comment->comment_author_email\" <$comment->comment_author_email>";
+		}
+
+		$message_headers = "$from\n"
+			. "Content-Type: text/plain; charset=\"" . get_option('blog_charset') . "\"\n";
+
+		if ( isset($reply_to) )
+			$message_headers .= $reply_to . "\n";
+
+		$notify_message = apply_filters('comment_notification_text', $notify_message, $comment_id);
+		$subject = apply_filters('comment_notification_subject', $subject, $comment_id);
+		$message_headers = apply_filters('comment_notification_headers', $message_headers, $comment_id);
+
+		@wp_mail( $author->user_email, $subject, $notify_message, $message_headers );
+	}
+
+	return true;
+}
+endif;
+
+if ( !function_exists('wp_notify_moderator') ) :
+/**
+ * Notifies the moderator of the blog about a new comment that is awaiting approval.
+ * This is a modified version of the core function in wp-includes/pluggable.php that
+ * supports notifs to multiple co-authors. Unfortunately, this is the best way to do it :(
+ *
+ * @since 2.6.2
+ *
+ * @param int $comment_id Comment ID
+ * @return bool Always returns true
+ */
+function wp_notify_moderator( $comment_id ) {
+	global $wpdb;
+
+	if ( 0 == get_option( 'moderation_notify' ) )
+		return true;
+
+	$comment = get_comment($comment_id);
+	$post = get_post($comment->comment_post_ID);
+	$coauthors = get_coauthors( $post->ID );
+	// Send to the administration and to the co-authors if the co-author can modify the comment.
+	$email_to = array( get_option('admin_email') );
+	foreach( $coauthors as $user ) {
+		if ( user_can($user->ID, 'edit_comment', $comment_id) && !empty($user->user_email) && ( get_option('admin_email') != $user->user_email) )
+			$email_to[] = $user->user_email;
+	}
+
+	$comment_author_domain = @gethostbyaddr($comment->comment_author_IP);
+	$comments_waiting = $wpdb->get_var("SELECT count(comment_ID) FROM $wpdb->comments WHERE comment_approved = '0'");
+
+	// The blogname option is escaped with esc_html on the way into the database in sanitize_option
+	// we want to reverse this for the plain text arena of emails.
+	$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+
+	switch ($comment->comment_type)
+	{
+		case 'trackback':
+			$notify_message  = sprintf( __('A new trackback on the post "%s" is waiting for your approval'), $post->post_title ) . "\r\n";
+			$notify_message .= get_permalink($comment->comment_post_ID) . "\r\n\r\n";
+			$notify_message .= sprintf( __('Website : %1$s (IP: %2$s , %3$s)'), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+			$notify_message .= sprintf( __('URL    : %s'), $comment->comment_author_url ) . "\r\n";
+			$notify_message .= __('Trackback excerpt: ') . "\r\n" . $comment->comment_content . "\r\n\r\n";
+			break;
+		case 'pingback':
+			$notify_message  = sprintf( __('A new pingback on the post "%s" is waiting for your approval'), $post->post_title ) . "\r\n";
+			$notify_message .= get_permalink($comment->comment_post_ID) . "\r\n\r\n";
+			$notify_message .= sprintf( __('Website : %1$s (IP: %2$s , %3$s)'), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+			$notify_message .= sprintf( __('URL    : %s'), $comment->comment_author_url ) . "\r\n";
+			$notify_message .= __('Pingback excerpt: ') . "\r\n" . $comment->comment_content . "\r\n\r\n";
+			break;
+		default: //Comments
+			$notify_message  = sprintf( __('A new comment on the post "%s" is waiting for your approval'), $post->post_title ) . "\r\n";
+			$notify_message .= get_permalink($comment->comment_post_ID) . "\r\n\r\n";
+			$notify_message .= sprintf( __('Author : %1$s (IP: %2$s , %3$s)'), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+			$notify_message .= sprintf( __('E-mail : %s'), $comment->comment_author_email ) . "\r\n";
+			$notify_message .= sprintf( __('URL    : %s'), $comment->comment_author_url ) . "\r\n";
+			$notify_message .= sprintf( __('Whois  : http://whois.arin.net/rest/ip/%s'), $comment->comment_author_IP ) . "\r\n";
+			$notify_message .= __('Comment: ') . "\r\n" . $comment->comment_content . "\r\n\r\n";
+			break;
+	}
+
+	$notify_message .= sprintf( __('Approve it: %s'),  admin_url("comment.php?action=approve&c=$comment_id") ) . "\r\n";
+	if ( EMPTY_TRASH_DAYS )
+		$notify_message .= sprintf( __('Trash it: %s'), admin_url("comment.php?action=trash&c=$comment_id") ) . "\r\n";
+	else
+		$notify_message .= sprintf( __('Delete it: %s'), admin_url("comment.php?action=delete&c=$comment_id") ) . "\r\n";
+	$notify_message .= sprintf( __('Spam it: %s'), admin_url("comment.php?action=spam&c=$comment_id") ) . "\r\n";
+
+	$notify_message .= sprintf( _n('Currently %s comment is waiting for approval. Please visit the moderation panel:',
+ 		'Currently %s comments are waiting for approval. Please visit the moderation panel:', $comments_waiting), number_format_i18n($comments_waiting) ) . "\r\n";
+	$notify_message .= admin_url("edit-comments.php?comment_status=moderated") . "\r\n";
+
+	$subject = sprintf( __('[%1$s] Please moderate: "%2$s"'), $blogname, $post->post_title );
+	$message_headers = '';
+
+	$notify_message = apply_filters('comment_moderation_text', $notify_message, $comment_id);
+	$subject = apply_filters('comment_moderation_subject', $subject, $comment_id);
+	$message_headers = apply_filters('comment_moderation_headers', $message_headers);
+
+	foreach ( $email_to as $email )
+		@wp_mail($email, $subject, $notify_message, $message_headers);
+
+	return true;
+}
+endif;

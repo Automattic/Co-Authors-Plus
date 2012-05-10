@@ -10,7 +10,7 @@ jQuery(document).ready(function () {
 		}
 		return false;
 	};
-	
+
 	function coauthors_delete( elem ) {
 		
 		var $coauthor_row = jQuery(elem).closest('.coauthor-row');
@@ -283,8 +283,15 @@ jQuery(document).ready(function () {
 	
 	// Adapted from http://www.deluxeblogtips.com/2010/04/get-gravatar-using-only-javascript.html
 	function get_gravatar_link(email, size) {
-		var size = size || 80;
-		return 'http://www.gravatar.com/avatar/' + MD5(email) + '.jpg?s=' + size;
+		var size = size || 80;	
+		
+		// need to check if page is secure or not 
+		var gravatar_url = 'http://www.gravatar.com/avatar/';
+		if ("https:" == document.location.protocol) {
+    			// secure
+			gravatar_url =  'https://secure.gravatar.com/avatar/';
+		}
+		return gravatar_url + MD5(email) + '.jpg?s=' + size;
 	}
 	
 	/*
@@ -432,6 +439,11 @@ jQuery(document).ready(function () {
 	// Show laoding cursor for autocomplete ajax requests
 	jQuery(document).ajaxSend(function(e, xhr, settings) {
 		if( settings.url.indexOf(coAuthorsPlus_ajax_suggest_link) != -1 ) {
+			// Including existing authors on the AJAX suggest link
+			// allows us to filter them out of the search request
+			var existing_authors = jQuery('input[name="coauthors[]"]').map(function(){return jQuery(this).val();}).get();
+			settings.url = settings.url.split('&existing_authors')[0];
+			settings.url += '&existing_authors=' + existing_authors.join(',');
 			show_loading();
 		}
 	});
