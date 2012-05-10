@@ -66,7 +66,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	
 	function filter_query_for_search( $where ) {
 		global $wpdb;
-		$var = '%' . sanitize_title( $_GET['s'] ) . '%';
+		$var = '%' . sanitize_text_field( $_GET['s'] ) . '%';
 		$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var);
 		return $where;
 	}
@@ -138,9 +138,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	function display() {
+		global $coauthors_plus;
 		echo '<form>';
 		echo '<input type="hidden" name="page" value="view-guest-authors" />';
-		$this->search_box('search', 'search_id');
+		$this->search_box( $coauthors_plus->guest_authors->labels['search_items'], 'guest-authors' );
 		echo '</form>';
 		parent::display();
 	}
