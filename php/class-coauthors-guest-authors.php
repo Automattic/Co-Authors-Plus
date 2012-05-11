@@ -435,43 +435,39 @@ class CoAuthors_Guest_Authors
 
 		switch( $key ) {
 			case 'id':
-				$post = get_post( $value );
+				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID=%d", $value );
+				$post_id = $wpdb->get_var( $query );
+				if ( empty( $post_id ) )
+					return false;
 				break;
 			case 'post_name':
 				// @todo look for a more performant way of gathering this data
 				$value = $this->get_post_meta_key( $value );
 				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
-				$result = $wpdb->get_results( $query );
-				if ( empty( $result ) )
+				$post_id = $wpdb->get_var( $query );
+				if ( empty( $post_id ) )
 					return false;
-				$post = get_post( $result[0]->ID );
 				break;
 			case 'login':
 			case 'user_login':
 			case 'linked_account':
 				if ( 'login' == $key )
 					$key = 'user_login';
-				$args = array(
-						'numberposts' => 1,
-						'post_type' => $this->post_type,
-						'meta_key' => $this->get_post_meta_key( $key ),
-						'meta_value' => $value,
-					);
-				$result = get_posts( $args );
-				if ( empty( $result ) )
+				$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
+				$post_id = $wpdb->get_var( $query );
+				if ( empty( $post_id ) )
 					return false;
-				$post = $result[0];
 				break;
 			default:
-				$post = false;
+				$post_id = false;
 				break;
 		}
 
-		if ( !$post )
+		if ( !$post_id )
 			return false;
 
 		$guest_author = array(
-			'ID' => $post->ID,
+			'ID' => $post_id,
 		);
 
 		// Load the guest author fields
@@ -479,7 +475,7 @@ class CoAuthors_Guest_Authors
 		foreach( $fields as $field ) {
 			$key = $field['key'];
 			$pm_key = $this->get_post_meta_key( $field['key'] );
-			$guest_author[$key] = get_post_meta( $post->ID, $pm_key, true );
+			$guest_author[$key] = get_post_meta( $post_id, $pm_key, true );
 		}
 		// Hack to model the WP_User object
 		$guest_author['user_nicename'] = $guest_author['user_login'];
@@ -683,7 +679,7 @@ class CoAuthors_Guest_Authors
 	 *
 	 * @todo support for multiple avatar sizes
 	 */
-	function filter_get_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
+	function filter_get_avatar( $avatar, $id_or_email, $size, $default ) {
 
 		if ( !is_email( $id_or_email ) )
 			return $avatar;
@@ -703,7 +699,6 @@ class CoAuthors_Guest_Authors
 
 		$args = array(
 				'class' => 'avatar avatar-32 photo',
-				'alt' => $alt,
 			);
 		$avatar = get_the_post_thumbnail( $post_id, 'guest-author-32', $args );
 

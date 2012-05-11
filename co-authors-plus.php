@@ -525,8 +525,8 @@ class coauthors_plus {
 
 		if( $query->is_author() ) {
 
-			if ( !empty( $query->query_vars['post_type'] ) && is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
-				return $where;
+			if ( !empty( $query->query_vars['post_type'] ) && !is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
+				return $join;
 
 			// Check to see that JOIN hasn't already been added. Props michaelingp and nbaxley
 			$term_relationship_join = " INNER JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
@@ -551,7 +551,7 @@ class coauthors_plus {
 
 		if ( $query->is_author() ) {
 
-			if ( !empty( $query->query_vars['post_type'] ) && is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
+			if ( !empty( $query->query_vars['post_type'] ) && !is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
 				return $where;
 			
 			if ( get_query_var( 'author_name' ) )
@@ -593,7 +593,7 @@ class coauthors_plus {
 		
 		if( $query->is_author() ) {
 
-			if ( !empty( $query->query_vars['post_type'] ) && is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
+			if ( !empty( $query->query_vars['post_type'] ) && !is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
 				return $groupby;
 
 			$groupby = $wpdb->posts .'.ID';
@@ -820,7 +820,7 @@ class coauthors_plus {
 		}
 		if ( is_object( $authordata ) ) {
 			$wp_query->queried_object = $authordata;
-			$wp_query->queried_object_id = $authordata;
+			$wp_query->queried_object_id = $authordata->ID;
 		}
 	}
 	
