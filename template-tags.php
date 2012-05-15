@@ -210,7 +210,7 @@ function coauthors_posts_links_single( $author ) {
 			esc_url( $args['href'] ),
 			esc_attr( $args['title'] ),
 			esc_attr( $args['rel'] ),
-			esc_html( $args['text'] ),
+			esc_html( $args['text'] )
 	);
 }
 
