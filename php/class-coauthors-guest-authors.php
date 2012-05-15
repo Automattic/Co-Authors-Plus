@@ -681,7 +681,7 @@ class CoAuthors_Guest_Authors
 	 */
 	function filter_get_avatar( $avatar, $id_or_email, $size, $default ) {
 
-		if ( !is_email( $id_or_email ) )
+		if ( is_object( $id_or_email ) || !is_email( $id_or_email ) )
 			return $avatar;
 
 		// @todo we need a better way of looking to see whether this email exists in our system to override
