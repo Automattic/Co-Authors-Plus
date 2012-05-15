@@ -198,11 +198,20 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 	), null, $echo );
 }
 function coauthors_posts_links_single( $author ) {
+	$args = array( 'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
+				   'rel' => 'author',
+				   'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), get_the_author() ),
+				   'text' => get_the_author(),
+	);
+
+	$args = apply_filters( 'coauthors_posts_link', $args );
+
 	return sprintf(
-		'<a href="%1$s" title="%2$s">%3$s</a>',
-		get_author_posts_url( $author->ID, $author->user_nicename ),
-		esc_attr( sprintf( __( 'Posts by %s', 'co-authors-plus' ), get_the_author() ) ),
-		get_the_author()
+			'<a href="%1$s" title="%2$s" rel="%3$s">%4$s</a>',
+			$args['href'],
+			esc_attr( $args['title'] ),
+			esc_attr( $args['rel'] ),
+			$args['text']
 	);
 }
 
