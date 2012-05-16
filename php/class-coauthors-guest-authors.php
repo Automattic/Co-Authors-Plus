@@ -10,7 +10,7 @@ class CoAuthors_Guest_Authors
 {
 
 	var $post_type = 'guest-author';
-
+	var $parent_page = 'users.php';
 	var $list_guest_authors_cap = 'list_users';
 
 	/**
@@ -48,6 +48,12 @@ class CoAuthors_Guest_Authors
 		// Add support for featured thumbnails that we can use for guest author avatars
 		add_action( 'after_setup_theme', array( $this, 'action_after_setup_theme' ) );
 		add_filter( 'get_avatar', array( $this, 'filter_get_avatar' ),10 ,5 );
+
+		// Allow users to change where this is placed in the WordPress admin
+		$this->parent_page = apply_filters( 'coauthors_guest_author_parent_page', $this->parent_page );
+
+		// Allow users to change the required cap for modifying guest authors
+		$this->list_guest_authors_cap = apply_filters( 'coauthors_guest_author_manage_cap', $this->list_guest_authors_cap );
 
 		// Set up default labels, but allow themes to modify
 		$this->labels = apply_filters( 'coauthors_guest_author_labels', array(
@@ -168,7 +174,7 @@ class CoAuthors_Guest_Authors
 	 */
 	function action_admin_menu() {
 
-		add_submenu_page( 'users.php', $this->labels['plural'], $this->labels['plural'], $this->list_guest_authors_cap, 'view-guest-authors', array( $this, 'view_guest_authors_list' ) );
+		add_submenu_page( $this->parent_page, $this->labels['plural'], $this->labels['plural'], $this->list_guest_authors_cap, 'view-guest-authors', array( $this, 'view_guest_authors_list' ) );
 
 	}
 
@@ -178,7 +184,7 @@ class CoAuthors_Guest_Authors
 	function action_admin_enqueue_scripts() {
 		global $pagenow;
 		// Enqueue our guest author CSS on the related pages
-		if ( 'users.php' == $pagenow && isset( $_GET['page'] ) && $_GET['page'] == 'view-guest-authors' ) {
+		if ( $this->parent_page == $pagenow && isset( $_GET['page'] ) && $_GET['page'] == 'view-guest-authors' ) {
 			wp_enqueue_style( 'guest-authors-css', COAUTHORS_PLUS_URL . 'css/guest-authors.css', false, COAUTHORS_PLUS_VERSION );
 		}
 	}
@@ -657,7 +663,7 @@ class CoAuthors_Guest_Authors
 					'user_id' => $user_object->ID,
 					'nonce' => wp_create_nonce( 'create-guest-author' ),
 				);
-			$create_guest_author_link = add_query_arg( $query_args, admin_url( 'users.php' ) );
+			$create_guest_author_link = add_query_arg( $query_args, admin_url( $this->parent_page ) );
 			$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create CA+ Profile', 'co-authors-plus' ) . '</a>';
 		}
 
