@@ -449,7 +449,7 @@ class CoAuthors_Guest_Authors
 			case 'post_name':
 				// @todo look for a more performant way of gathering this data
 				$value = $this->get_post_meta_key( $value );
-				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s", $value );
+				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s AND post_type = %s", $value, $this->post_type );
 				$post_id = $wpdb->get_var( $query );
 				if ( empty( $post_id ) )
 					return false;
