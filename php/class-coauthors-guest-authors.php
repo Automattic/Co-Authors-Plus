@@ -579,7 +579,7 @@ class CoAuthors_Guest_Authors
 	 */
 	function get_post_meta_key( $key ) {
 
-		if ( false === stripos( $key, 'cap-' ) )
+		if ( 0 !== stripos( $key, 'cap-' ) )
 			$key = 'cap-' . $key;
 
 		return $key;
