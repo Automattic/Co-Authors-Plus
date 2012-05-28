@@ -224,7 +224,10 @@ class CoAuthors_Guest_Authors
 		echo '</h2>';
 		$cap_list_table = new CoAuthors_WP_List_Table();
 		$cap_list_table->prepare_items();
+		echo '<form id="guest-authors-filter" action="" method="GET">';
+		echo '<input type="hidden" name="page" value="view-guest-authors" />';
 		$cap_list_table->display();
+		echo '</form>';
 		echo '</div>';
 
 	}
