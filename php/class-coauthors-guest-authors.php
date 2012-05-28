@@ -461,8 +461,11 @@ class CoAuthors_Guest_Authors
 					$key = 'user_login';
 				$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
 				$post_id = $wpdb->get_var( $query );
-				if ( empty( $post_id ) )
+				if ( empty( $post_id ) ) {
+					if ( 'user_login' == $key )
+						return $this->get_guest_author_by( 'post_name', $value ); // fallback to post_name in case the guest author isn't a linked account
 					return false;
+				}
 				break;
 			default:
 				$post_id = false;
