@@ -169,15 +169,13 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	 * Render linked account
 	 */
 	function column_linked_account( $item ) {
-		global $coauthors_plus;
-		$username = get_post_meta( $item->ID, $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' ), true );
-		if ( $username ) {
-			$account = get_user_by( 'login', $username );
+		if ( $item->linked_account ) {
+			$account = get_user_by( 'login', $item->linked_account );
 			if ( $account ) {
 				if ( current_user_can( 'edit_users' ) ) {
-					return '<a href="' . admin_url( 'user-edit.php?user_id=' . $account->ID ) . '">' . esc_html( $username ) . '</a>';
+					return '<a href="' . admin_url( 'user-edit.php?user_id=' . $account->ID ) . '">' . esc_html( $item->linked_account ) . '</a>';
 				}
-				return $username;
+				return $item->linked_account;
 			}
 		}
 		return '';
