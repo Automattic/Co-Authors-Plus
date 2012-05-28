@@ -197,7 +197,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				}
 				echo '</select>';
 			}
-			submit_button( __( 'Filter' ), 'secondary', false, false );
+			submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
 		}
 		?></div><?php
 	}
