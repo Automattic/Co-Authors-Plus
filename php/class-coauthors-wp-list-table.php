@@ -22,7 +22,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 *
+	 * Perform Co-Authors Query
 	 */
 	function prepare_items() {
 		global $coauthors_plus;
@@ -44,6 +44,15 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'order'          => 'ASC',
 			);
 
+		if ( $_GET['view'] == 'with-linked-account' ) {
+			$args['meta_key'] = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
+			$args['meta_compare'] = '!=';
+			$args['meta_value'] = '';
+		}
+		elseif ( $_GET['view'] == 'without-linked-account' ) {
+			add_filter( 'posts_where', array( $this, 'filter_query_without_linked_account' ) );
+		}
+
 		if( $this->is_search )
 			add_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
 
@@ -56,6 +65,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		if( $this->is_search )
 			remove_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
 
+		if ( $_GET['view'] == 'without-linked-acount' )
+			remove_filter( 'posts_where', array( $this, 'filter_query_without_linked_account' ) );
+
 		$this->items = $items;
 
 		$this->set_pagination_args( array(
@@ -63,11 +75,17 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			'per_page' => $per_page,
 			) );
 	}
-	
+
 	function filter_query_for_search( $where ) {
 		global $wpdb;
 		$var = '%' . sanitize_text_field( $_GET['s'] ) . '%';
 		$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var);
+		return $where;
+	}
+
+	function filter_query_without_linked_account( $where ) {
+		global $wpdb, $coauthors_plus;
+		$where .= $wpdb->prepare( " AND ID NOT IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s)", $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' ) );
 		return $where;
 	}
 
@@ -89,12 +107,13 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'first_name'     => __( 'First Name', 'co-authors-plus' ),
 				'last_name'      => __( 'Last Name', 'co-authors-plus' ),
 				'user_email'     => __( 'E-mail', 'co-authors-plus' ),
+				'linked_account' => __( 'Linked Account', 'co-authors-plus' ),
 			);
 		return $columns;
 	}
 
 	/**
-	 *
+	 * Render a single row
 	 */
 	function single_row( $item ) {
 		static $alternate_class = '';
@@ -107,7 +126,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 *
+	 * Render columns, some are overridden below
 	 */
 	function column_default( $item, $column_name ) {
 
@@ -120,6 +139,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		}
 	}
 
+	/**
+	 * Render display name, e.g. author name
+	 */
 	function column_display_name( $item ) {
 
 		$item_edit_link = get_edit_post_link( $item->ID );
@@ -137,9 +159,67 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		return $output;
 	}
 
+	/**
+	 * Render linked account
+	 */
+	function column_linked_account( $item ) {
+		global $coauthors_plus;
+		$username = get_post_meta( $item->ID, $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' ), true );
+		if ( $username ) {
+			$account = get_user_by( 'login', $username );
+			if ( $account ) {
+				if ( current_user_can( 'edit_users' ) ) {
+					return '<a href="' . admin_url( 'user-edit.php?user_id=' . $account->ID ) . '">' . esc_html( $username ) . '</a>';
+				}
+				return $username;
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * Show filters (views) on top
+	 */
+	function get_views() {
+		global $wpdb, $coauthors_plus;
+
+		$views = array();
+		$all = (int) $wpdb->get_var( $wpdb->prepare(
+			"SELECT count(ID) FROM $wpdb->posts WHERE post_type=%s", $coauthors_plus->guest_authors->post_type
+		) );
+
+		$query = $wpdb->prepare(
+			"SELECT count(ID) FROM $wpdb->posts p
+				INNER JOIN $wpdb->postmeta pm ON p.ID = pm.post_id AND pm.meta_key=%s
+			WHERE post_type=%s",
+			$coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' ),
+			$coauthors_plus->guest_authors->post_type
+		);
+		$with_linked_account = (int) $wpdb->get_var( $query );
+
+		$without_linked_account = $all - $with_linked_account;
+
+		$views = array(
+			'all' => array( 'count' => $all, 'view' => NULL, 'label' => __( 'All' ) ),
+			'with-linked-account' => array( 'count' => $with_linked_account, 'view' => 'with-linked-account', 'label' => __( 'With Linked Account' ) ),
+			'without-linked-account' => array( 'count' => $without_linked_account, 'view' => 'without-linked-account', 'label' => __( 'Without Linked Account' ) ),
+		);
+
+		foreach ( $views as $key => $view ) {
+			$url = admin_url( 'users.php?page=view-guest-authors' );
+			if ( !empty( $view['view'] ) ) $url .= '&view=' . $view['view'];
+			$class = '';
+			if ( $_GET['view'] == $view['view'] || ( empty( $_GET['view'] ) && empty( $view['view'] ) ) ) $class = ' class="current"';
+			$views[$key] = sprintf( '<a href="%s" %s >%s <span class="count">(%d)</span></a>', $url, $class, $view['label'], $view['count'] );
+		}
+
+		return $views;
+	}
+
 	function display() {
 		global $coauthors_plus;
 		echo '<form>';
+		$this->views();
 		echo '<input type="hidden" name="page" value="view-guest-authors" />';
 		$this->search_box( $coauthors_plus->guest_authors->labels['search_items'], 'guest-authors' );
 		echo '</form>';
