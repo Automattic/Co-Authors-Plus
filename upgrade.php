@@ -16,7 +16,7 @@ function coauthors_plus_upgrade_20 () {
 	global $coauthors_plus;
 	
 	// Get all posts with meta_key _coauthor
-	$all_posts = get_posts(array('numberposts' => '-1'));
+	$all_posts = get_posts(array('numberposts' => '-1', 'meta_key' => '_coauthor'));
 	
 	if(is_array($all_posts)) {
 		foreach($all_posts as $single_post) {
@@ -51,5 +51,6 @@ function coauthors_plus_upgrade_20 () {
 
 function coauthors_plus_update_version( $version ) {
 	global $coauthors_plus;
-	update_option($co_authors_plus->get_plugin_option_fullname('version'), $version);
+	// This method doesn't exist
+	update_option($coauthors_plus->get_plugin_option_fullname('version'), $version);
 }
