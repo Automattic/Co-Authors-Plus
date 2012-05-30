@@ -31,6 +31,9 @@ define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
 
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
 
+if ( defined('WP_CLI') && WP_CLI )
+	require_once( dirname( __FILE__ ) . '/php/class-wp-cli.php' );
+
 class coauthors_plus {
 	
 	// Name for the taxonomy we're using to store relationships
