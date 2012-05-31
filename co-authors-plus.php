@@ -558,7 +558,7 @@ class coauthors_plus {
 				return $where;
 			
 			if ( get_query_var( 'author_name' ) )
-				$author_name = sanitize_key( get_query_var( 'author_name' ) );
+				$author_name = sanitize_title( get_query_var( 'author_name' ) );
 			else
 				$author_name = get_userdata( $query->query_vars['author'] )->user_login;
 
@@ -623,7 +623,7 @@ class coauthors_plus {
 		// @todo this should check the nonce before changing the value
 		
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
-			$author = sanitize_user( $_POST['coauthors'][0] );
+			$author = sanitize_title( $_POST['coauthors'][0] );
 			if ( $author ) {
 				$author_data = $this->get_coauthor_by( 'login', $author );
 				if ( $author_data->type == 'wpuser' )
@@ -665,7 +665,7 @@ class coauthors_plus {
 			
 			if( $this->current_user_can_set_authors() ){
 				$coauthors = (array) $_POST['coauthors'];
-				$coauthors = array_map( 'sanitize_user', $coauthors );
+				$coauthors = array_map( 'sanitize_title', $coauthors );
 				return $this->add_coauthors( $post_id, $coauthors );
 			}
 		}
@@ -821,7 +821,7 @@ class coauthors_plus {
 		if ( $author_id && is_object( $authordata ) && $author_id != $authordata->ID ) {
 			// The IDs don't match, so we need to force the $authordata to the one we want		
 			$authordata = get_userdata( $author_id );
-		} else if ( $author_name = sanitize_key( get_query_var( 'author_name' ) ) ) {
+		} else if ( $author_name = sanitize_title( get_query_var( 'author_name' ) ) ) {
 			$authordata = $this->get_coauthor_by( 'login', $author_name );
 		}
 		if ( is_object( $authordata ) ) {
@@ -842,7 +842,7 @@ class coauthors_plus {
 			die();
 
 		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
-		$ignore = array_map( 'sanitize_user', explode( ',', $_REQUEST['existing_authors'] ) );
+		$ignore = array_map( 'sanitize_title', explode( ',', $_REQUEST['existing_authors'] ) );
 
 		$authors = $this->search_authors( $search, $ignore );
 				

@@ -150,7 +150,7 @@ class CoAuthors_Guest_Authors
 		if ( !isset( $query->query_vars['author_name'] ) )
 			return $query;
 
-		$coauthor = $this->get_guest_author_by( 'linked_account', sanitize_key( $query->query_vars['author_name'] ) );
+		$coauthor = $this->get_guest_author_by( 'linked_account', sanitize_title( $query->query_vars['author_name'] ) );
 		if ( is_object( $coauthor ) ) {
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
@@ -258,7 +258,7 @@ class CoAuthors_Guest_Authors
 		$pm_key = $this->get_post_meta_key( 'user_login' );
 		$existing_slug = get_post_meta( $post->ID, $pm_key, true );
 
-		echo '<input type="text" disabled="disabled" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $existing_slug ) . '" />';
+		echo '<input type="text" disabled="disabled" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( urldecode( $existing_slug ) ) . '" />';
 
 		// Taken from grist_authors.
 		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
@@ -489,6 +489,9 @@ class CoAuthors_Guest_Authors
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$guest_author[$key] = get_post_meta( $post_id, $pm_key, true );
 		}
+		// Support for non-Latin characters. They're stored as urlencoded slugs
+		$guest_author['user_login'] = urldecode( $guest_author['user_login'] );
+
 		// Hack to model the WP_User object
 		$guest_author['user_nicename'] = $guest_author['user_login'];
 		$guest_author['type'] = 'guest-author';
