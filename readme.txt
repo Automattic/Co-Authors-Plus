@@ -19,6 +19,7 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 == Changelog ==
 
 = ????-??-?? / 2.7 =
+* Support for non-Latin characters as guest author slugs
 * Apply query filters to only post_types registered with the taxonomy. Props [Tom Ransom](https://github.com/1bigidea)
 * Filter coauthors_posts_link_single() with 'coauthors_posts_link'. Also adds rel="author". Props [Amit Sannad](https://github.com/asannad) and [Gabriel Koen](https://github.com/mintindeed)
 
