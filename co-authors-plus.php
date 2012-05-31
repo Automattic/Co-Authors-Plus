@@ -571,9 +571,12 @@ class coauthors_plus {
 			}
 
 			// Whether or not to include the original 'post_author' value in the query
-			$maybe_both = '$1 OR';
 			if ( $this->force_guest_authors )
-				$maybe_both = '';
+				$maybe_both = false;
+			else
+				$maybe_both = apply_filters( 'coauthors_plus_should_query_post_author', true );
+
+			$maybe_both_query = $maybe_both ? '$1 OR' : '';
 
 			if ( !empty( $terms ) ) {
 				$terms_implode = '';
@@ -581,7 +584,7 @@ class coauthors_plus {
 					$terms_implode .= '(' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\') OR ';
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both . ' ' . $terms_implode . ')', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
+				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND 
 			}
 
 		}
