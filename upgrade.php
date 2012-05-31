@@ -3,9 +3,6 @@ function coauthors_plus_upgrade( $from ) {
 	// TODO: handle upgrade failures
 	
 	if( $from < 2.0 ) coauthors_plus_upgrade_20();
-	
-	// Update to the current global version
-	coauthors_plus_update_version(COAUTHORS_PLUS_VERSION);
 }
 
 /** 
@@ -46,11 +43,4 @@ function coauthors_plus_upgrade_20 () {
 			
 		}
 	}
-	coauthors_plus_update_version( '2.0' );
-}
-
-function coauthors_plus_update_version( $version ) {
-	global $coauthors_plus;
-	// This method doesn't exist
-	update_option($coauthors_plus->get_plugin_option_fullname('version'), $version);
 }
