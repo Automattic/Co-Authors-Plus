@@ -54,12 +54,11 @@ EOB
 		$append_coauthors = $this->args['append_coauthors'];
 		unset( $this->args['append_coauthors'] );
 
-		$posts_total = 1;
+		$posts_total = 0;
 		$posts_already_associated = 0;
 		$posts_missing_coauthor = 0;
 		$posts_associated = 0;
 		$missing_coauthors = array();
-		$key = 0;
 
 		$posts = new WP_Query( $this->args );
 		while( $posts->post_count ) {
@@ -95,9 +94,8 @@ EOB
 				$posts_associated++;
 				clean_post_cache( $single_post->ID );
 			}
-
-			$key++;
-			$this->args['paged'] += $key;
+			
+			$this->args['paged']++;
 			$posts = new WP_Query( $this->args );
 		}
 
