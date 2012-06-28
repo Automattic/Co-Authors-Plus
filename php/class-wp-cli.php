@@ -59,7 +59,7 @@ EOB
 		$posts_missing_coauthor = 0;
 		$posts_associated = 0;
 		$missing_coauthors = array();
-		$key = 1;
+		$key = 0;
 
 		$posts = new WP_Query( $this->args );
 		while( $posts->post_count ) {
@@ -97,7 +97,7 @@ EOB
 			}
 
 			$key++;
-			$this->args['paged'] = $key;
+			$this->args['paged'] += $key;
 			$posts = new WP_Query( $this->args );
 		}
 
