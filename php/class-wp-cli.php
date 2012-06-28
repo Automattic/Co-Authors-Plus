@@ -7,8 +7,8 @@
  * @see https://github.com/wp-cli/wp-cli
  */
 // WordPress.com is running v0.4 of WP-CLI and we need to maintain backwards compat for now
-if ( method_exists( 'WP_CLI', 'add_command' ) )
-	WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
+if ( method_exists( 'WP_CLI', 'addCommand' ) )
+	WP_CLI::addCommand( 'co-authors-plus', 'CoAuthorsPlus_Command' );
 else
 	WP_CLI::addCommand( 'co-authors-plus', 'CoAuthorsPlus_Command' );
 class CoAuthorsPlus_Command extends WP_CLI_Command
@@ -22,10 +22,95 @@ class CoAuthorsPlus_Command extends WP_CLI_Command
 		WP_CLI::line( <<<EOB
 usage: wp co-authors-plus <parameters>
 Possible subcommands:
-					  reassign_terms            Reassign posts with an old author to a new author
-					  --author_mapping=Where your author mapping file exists
+					assign_coauthors            Assign authors to a post based on a postmeta value
+					--meta_key=Post meta key to base the assignment on
+					--post_type=Which post type to modify assignments on
+					reassign_terms            Reassign posts with an old author to a new author
+					--author_mapping=Where your author mapping file exists
 EOB
 		);
+	}
+
+	/**
+	 * Subcommand to assign coauthors to a post based on a given meta key
+	 *
+	 * @todo support assigning multiple meta keys
+	 */
+	public function assign_coauthors( $args, $assoc_args ) {
+		global $coauthors_plus;
+
+		$defaults = array(
+				'meta_key'         => '_original_import_author',
+				'post_type'        => 'post',
+				'order'            => 'ASC',
+				'order_by'         => 'ID',
+				'posts_per_page'   => 100,
+				'paged'            => 1,
+				'append_coauthors' => false,
+			);
+		$this->args = wp_parse_args( $assoc_args, $defaults );
+
+		// For global use and not a part of WP_Query
+		$append_coauthors = $this->args['append_coauthors'];
+		unset( $this->args['append_coauthors'] );
+
+		$posts_total = 1;
+		$posts_already_associated = 0;
+		$posts_missing_coauthor = 0;
+		$posts_associated = 0;
+		$missing_coauthors = array();
+		$key = 1;
+
+		$posts = new WP_Query( $this->args );
+		while( $posts->post_count ) {
+
+			foreach( $posts->posts as $single_post ) {
+				$posts_total++;
+
+				// See if the value in the post meta field is the same as any of the existing coauthors
+				$original_author = get_post_meta( $single_post->ID, $this->args['meta_key'], true );
+				$existing_coauthors = get_coauthors( $single_post->ID );
+				$already_associated = false;
+				foreach( $existing_coauthors as $existing_coauthor ) {
+					if ( $original_author == $existing_coauthor->user_login )
+						$already_associated = true;
+				}
+				if ( $already_associated ) {
+					$posts_already_associated++;
+					WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' already has "' . $original_author . '" associated as a coauthor' );
+					continue;
+				}
+
+				// Make sure this original author exists as a co-author
+				if ( !$coauthors_plus->get_coauthor_by( 'user_login', $original_author ) ) {
+					$posts_missing_coauthor++;
+					$missing_coauthors[] = $original_author;
+					WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' does not have "' . $original_author . '" associated as a coauthor but there is not a coauthor profile' );
+					continue;
+				}
+
+				// Assign the coauthor to the post
+				$coauthors_plus->add_coauthors( $single_post->ID, array( $original_author ), $append_coauthors );
+				WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' has been assigned "' . $original_author . '" as the author' );
+				$posts_associated++;
+				clean_post_cache( $single_post->ID );
+			}
+
+			$key++;
+			$this->args['paged'] = $key;
+			$posts = new WP_Query( $this->args );
+		}
+
+		WP_CLI::line( "All done! Here are your results:" );
+		if ( $posts_already_associated )
+			WP_CLI::line( "- {$posts_already_associated} posts already had the coauthor assigned" );
+		if ( $posts_missing_coauthor ) {
+			WP_CLI::line( "- {$posts_missing_coauthor} posts reference coauthors that don't exist. These are:" );
+			WP_CLI::line( "  " . implode( ', ', array_unique( $missing_coauthors ) ) );
+		}
+		if ( $posts_associated )
+			WP_CLI::line( "- {$posts_associated} posts now have the proper coauthor" );
+
 	}
 
 	/**
