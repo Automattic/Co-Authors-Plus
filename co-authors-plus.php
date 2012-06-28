@@ -557,10 +557,10 @@ class coauthors_plus {
 			if ( !empty( $query->query_vars['post_type'] ) && !is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
 				return $where;
 			
-			if ( get_query_var( 'author_name' ) )
-				$author_name = sanitize_title( get_query_var( 'author_name' ) );
+			if ( $query->get( 'author_name' ) )
+				$author_name = sanitize_title( $query->get( 'author_name' ) );
 			else
-				$author_name = get_userdata( $query->query_vars['author'] )->user_login;
+				$author_name = get_userdata( $query->get( 'author' ) )->user_login;
 
 			$terms = array();
 			$terms[] = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy );
