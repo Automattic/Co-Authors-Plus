@@ -27,6 +27,7 @@ Possible subcommands:
 					--post_type=Which post type to modify assignments on
 					reassign_terms            Reassign posts with an old author to a new author
 					--author_mapping=Where your author mapping file exists
+					list_posts_without_terms    List all posts without Co-Authors Plus terms
 EOB
 		);
 	}
@@ -186,6 +187,69 @@ EOB
 		WP_CLI::line( "- $results->new_term_exists authors had their old term merged to their new term" );
 		WP_CLI::line( "- $results->old_term_missing authors were missing old terms" );
 
+	}
+
+	/**
+	 * List all of the posts without assigned co-authors terms
+	 */
+	public function list_posts_without_terms( $args, $assoc_args ) {
+		global $coauthors_plus;
+
+		$defaults = array(
+				'post_type'         => 'post',
+				'order'             => 'ASC',
+				'orderby'           => 'ID',
+				'year'              => '',
+				'posts_per_page'    => 300,
+				'paged'             => 1,
+				'no_found_rows'     => true,
+				'update_meta_cache' => false,
+			);
+		$this->args = wp_parse_args( $assoc_args, $defaults );
+
+		$posts = new WP_Query( $this->args );
+		while( $posts->post_count ) {
+
+			foreach( $posts->posts as $single_post ) {
+				
+				$terms = wp_get_post_terms( $single_post->ID, $coauthors_plus->coauthor_taxonomy );
+				if ( empty( $terms ) ) {
+					$saved = array(
+							$single_post->ID,
+							addslashes( $single_post->post_title ),
+							get_permalink( $single_post->ID ),
+							$single_post->post_date,
+						);
+					WP_CLI::line( '"' . implode( '","', $saved ) . '"' );
+				}
+			}
+
+			$this->stop_the_insanity();
+			
+			$this->args['paged']++;
+			$posts = new WP_Query( $this->args );
+		}
+
+	}
+
+	/**
+	 * Clear all of the caches for memory management
+	 */
+	private function stop_the_insanity() {
+		global $wpdb, $wp_object_cache;
+
+		$wpdb->queries = array(); // or define( 'WP_IMPORTING', true );
+
+		if ( !is_object( $wp_object_cache ) )
+			return;
+
+		$wp_object_cache->group_ops = array();
+		$wp_object_cache->stats = array();
+		$wp_object_cache->memcache_debug = array();
+		$wp_object_cache->cache = array();
+
+		if( is_callable( $wp_object_cache, '__remoteset' ) )
+			$wp_object_cache->__remoteset(); // important
 	}
 	
 }
