@@ -151,6 +151,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function column_display_name( $item ) {
 
 		$item_edit_link = get_edit_post_link( $item->ID );
+		$item_view_link = get_author_posts_url( $item->ID, $item->user_nicename );
 
 		$output = get_avatar( $item->user_email, 32 );
 		// @todo caps check to see whether the user can edit. Otherwise, just show the name
@@ -159,6 +160,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$actions = array();
 		$actions['edit'] = '<a href="' . esc_url( $item_edit_link ) . '">' . __( 'Edit', 'co-authors-plus' ) . '</a>';
 		$actions['delete'] = '<a href="#">' . __( 'Delete', 'co-authors-plus' ) . '</a>';
+		$actions['view'] = '<a href="' . esc_url( $item_view_link ) . '">' . __( 'View Posts', 'co-authors-plus' ) . '</a>';
 		$actions = apply_filters( 'coauthors_guest_author_row_actions', $actions, $item );
 		$output .= $this->row_actions( $actions, false );
 
