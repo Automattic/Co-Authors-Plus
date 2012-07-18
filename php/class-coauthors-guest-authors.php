@@ -42,6 +42,9 @@ class CoAuthors_Guest_Authors
 		add_action( 'wp_insert_post_data', array( $this, 'manage_guest_author_filter_post_data' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'manage_guest_author_save_meta_fields' ), 10, 2 );
 
+		// Modify the messages that appear when saving or creating
+		add_filter( 'post_updated_messages', array( $this, 'filter_post_updated_messages' ) );
+
 		// Allow admins to create or edit guest author profiles from the Manage Users listing
 		add_filter( 'user_row_actions', array( $this, 'filter_user_row_actions' ), 10, 2 );
 
@@ -106,6 +109,36 @@ class CoAuthors_Guest_Authors
 		remove_post_type_support( $this->post_type, 'title' );
 		remove_post_type_support( $this->post_type, 'editor' );
 
+	}
+
+	/**
+	 * Filter the messages that appear when saving or updating a guest author
+	 *
+	 * @since 0.7
+	 */
+	function filter_post_updated_messages( $messages ) {
+		global $post_ID;
+
+		$guest_author = $this->get_guest_author_by( 'id', $post_ID );
+		$guest_author_link = $this->filter_author_link( '', $guest_author->ID, $guest_author->user_nicename );
+
+		$messages[$this->post_type] = array(
+			0 => '', // Unused. Messages start at index 1.
+			1 => sprintf( __( 'Guest author updated. <a href="%s">View profile</a>', 'co-authors-plus' ), esc_url( $guest_author_link ) ),
+			2 => __( 'Custom field updated.', 'co-authors-plus' ),
+			3 => __( 'Custom field deleted.', 'co-authors-plus' ),
+			4 => __( 'Guest author updated.', 'co-authors-plus' ),
+			/* translators: %s: date and time of the revision */
+			5 => isset($_GET['revision']) ? sprintf( __( 'Guest author restored to revision from %s', 'co-authors-plus' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6 => sprintf( __( 'Guest author updated. <a href="%s">View profile</a>', 'co-authors-plus' ), esc_url( $guest_author_link ) ),
+			7 => __( 'Guest author saved.', 'co-authors-plus' ),
+			8 => sprintf( __( 'Guest author submitted. <a target="_blank" href="%s">Preview profile</a>', 'co-authors-plus' ), esc_url( add_query_arg( 'preview', 'true', $guest_author_link ) ) ),
+			9 => sprintf( __( 'Guest author scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview profile</a>', 'co-authors-plus' ),
+			// translators: Publish box date format, see http://php.net/date
+			date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( $guest_author_link ) ),
+			10 => sprintf( __('Guest author updated. <a target="_blank" href="%s">Preview profile</a>', 'co-authors-plus' ), esc_url( add_query_arg( 'preview', 'true', $guest_author_link ) ) ),
+		);
+		return $messages;
 	}
 
 	/**
