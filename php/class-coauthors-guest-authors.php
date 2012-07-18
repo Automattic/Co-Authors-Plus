@@ -238,7 +238,7 @@ class CoAuthors_Guest_Authors
 	function metabox_manage_guest_author_save() {
 		global $post, $coauthors_plus;
 
-		if ( $post->post_status == 'pending' )
+		if ( in_array( $post->post_status, array( 'pending', 'publish', 'draft' ) ) )
 			$button_text = $this->labels['update_item'];
 		else
 			$button_text = $this->labels['add_new_item'];
