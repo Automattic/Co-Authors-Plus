@@ -732,13 +732,11 @@ class CoAuthors_Guest_Authors
 		if ( !$author_nicename && is_author() && get_queried_object() )
 			$author_nicename = get_queried_object()->user_nicename;
 
-		global $wp_rewrite;
-		$link = $wp_rewrite->get_author_permastruct();
-
 		if ( empty($link) ) {
-			$file = home_url( '/' );
-			$link = $file . '?author_name=' . $author_nicename;
+			$link = add_query_arg( 'author_name', $author_nicename, home_url() );
 		} else {
+			global $wp_rewrite;
+			$link = $wp_rewrite->get_author_permastruct();
 			$link = str_replace('%author%', $author_nicename, $link);
 			$link = home_url( user_trailingslashit( $link ) );
 		}
