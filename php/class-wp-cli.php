@@ -26,7 +26,9 @@ Possible subcommands:
 					--meta_key=Post meta key to base the assignment on
 					--post_type=Which post type to modify assignments on
 					reassign_terms            Reassign posts with an old author to a new author
-					--author_mapping=Where your author mapping file exists
+					--author_mapping=           Where your author mapping file exists
+					--old_term=                 Term to be reassigned (instead of using author mapping file)
+					--new_term=                 Term to reassign to. Create a term if one doesn't exist
 					list_posts_without_terms    List all posts without Co-Authors Plus terms
 EOB
 		);
@@ -125,11 +127,15 @@ EOB
 		global $coauthors_plus;
 
 		$defaults = array(
-				'author_mapping' => null,
+				'author_mapping'    => null,
+				'old_term'          => null,
+				'new_term'          => null,
 			);
 		$this->args = wp_parse_args( $assoc_args, $defaults );
 
 		$author_mapping = $this->args['author_mapping'];
+		$old_term = $this->args['old_term'];
+		$new_term = $this->args['new_term'];
 
 		// Get the reassignment data
 		if ( $author_mapping && file_exists( $author_mapping ) ) {
@@ -137,6 +143,14 @@ EOB
 			$authors_to_migrate = $cli_user_map;
 		} else if ( $author_mapping ) {
 			WP_CLI::error( "author_mapping doesn't exist: " . $author_mapping );
+			exit;
+		}
+
+		// Alternate reassigment approach
+		if ( $old_term && $new_term ) {
+			$authors_to_migrate = array(
+					$old_term => $new_term,
+				);
 		}
 
 		// For each author to migrate, check whether the term exists,
@@ -180,6 +194,7 @@ EOB
 				WP_CLI::line( "Success: Converted '{$old_user}' term to '{$new_user}'" );
 				$results->success++;
 			}
+			clean_term_cache( $old_term->term_id, $coauthors_plus->coauthor_taxonomy );
 		}
 
 		WP_CLI::line( "Reassignment complete. Here are your results:" );
