@@ -727,9 +727,6 @@ class CoAuthors_Guest_Authors
 	 */
 	function filter_author_link( $link, $author_id, $author_nicename ) {
 
-		if ( $author_id ) {
-			return $link;
-		}
 		// If we're using this at the top of the loop on author.php,
 		// our queried object should be set correctly
 		if ( !$author_nicename && is_author() && get_queried_object() )
