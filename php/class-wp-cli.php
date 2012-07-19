@@ -22,6 +22,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command
 		WP_CLI::line( <<<EOB
 usage: wp co-authors-plus <parameters>
 Possible subcommands:
+					create_guest_authors        Create guest author profiles for each author
 					assign_coauthors            Assign authors to a post based on a postmeta value
 					--meta_key=Post meta key to base the assignment on
 					--post_type=Which post type to modify assignments on
@@ -32,6 +33,38 @@ Possible subcommands:
 					list_posts_without_terms    List all posts without Co-Authors Plus terms
 EOB
 		);
+	}
+
+	/**
+	 * Subcommand to create guest authors based on users
+	 *
+	 * @todo Don't create a guest author if the user is already mapped to a guest author
+	 */
+	public function create_guest_authors( $args, $assoc_args ) {
+		global $coauthors_plus;
+
+		$defaults = array(
+				// There are no arguments at this time
+			);
+		$this->args = wp_parse_args( $assoc_args, $defaults );
+
+		$users = get_users();
+		$created = 0;
+		$skipped = 0;
+		foreach( $users as $user ) {
+
+			$result = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $user->ID );
+			if ( is_wp_error( $result ) ) {
+				$skipped++;
+			} else {
+				$created++;
+			}
+		}
+
+		WP_CLI::line( "All done! Here are your results:" );
+		WP_CLI::line( "- {$created} guest author profiles were created" );
+		WP_CLI::line( "- {$skipped} users already had guest author profiles" );
+
 	}
 
 	/**
