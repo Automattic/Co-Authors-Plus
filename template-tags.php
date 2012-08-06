@@ -18,12 +18,12 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 		
 		if ( is_array( $coauthor_terms ) && !empty( $coauthor_terms ) ) {
 			foreach( $coauthor_terms as $coauthor ) {
-				$post_author =  get_user_by( 'login', $coauthor->name );
+				$post_author =  $coauthors_plus->get_coauthor_by( 'user_login', $coauthor->slug );
 				// In case the user has been deleted while plugin was deactivated
 				if ( !empty( $post_author ) )
 					$coauthors[] = $post_author;
 			}
-		} else {
+		} else if ( !$coauthors_plus->force_guest_authors ) {
 			if ( $post ) {
 				$post_author = get_userdata( $post->post_author );
 			} else {
@@ -31,7 +31,7 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 			}
 			if ( !empty( $post_author ) )
 				$coauthors[] = $post_author;
-		}
+		} // the empty else case is because if we force guest authors, we don't ever care what value wp_posts.post_author has.
 	}
 	return $coauthors;
 }
@@ -56,7 +56,7 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 	}
 	
 	foreach( $coauthors as $coauthor ) {
-		if ( $user == $coauthor->user_login )
+		if ( $user == $coauthor->user_login || $user == $coauthor->linked_account )
 			return true;
 	}
 	return false;
@@ -198,11 +198,19 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 	), null, $echo );
 }
 function coauthors_posts_links_single( $author ) {
+	$args = array(
+		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
+		'rel' => 'author',
+		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), get_the_author() ),
+		'text' => get_the_author(),
+	);
+	$args = apply_filters( 'coauthors_posts_link', $args, $author );
 	return sprintf(
-		'<a href="%1$s" title="%2$s">%3$s</a>',
-		get_author_posts_url( $author->ID, $author->user_nicename ),
-		esc_attr( sprintf( __( 'Posts by %s', 'co-authors-plus' ), get_the_author() ) ),
-		get_the_author()
+			'<a href="%1$s" title="%2$s" rel="%3$s">%4$s</a>',
+			esc_url( $args['href'] ),
+			esc_attr( $args['title'] ),
+			esc_attr( $args['rel'] ),
+			esc_html( $args['text'] )
 	);
 }
 
