@@ -424,8 +424,14 @@ class coauthors_plus {
 			
 			$count = 1;
 			foreach( $authors as $author ) :
+				$args = array(
+						'author_name' => $author->user_login,
+					);
+				if ( 'post' != $post->post_type )
+					$args['post_type'] = $post->post_type;
+				$author_filter_url = add_query_arg( $args, admin_url( 'edit.php' ) );
 				?>
-				<a href="<?php echo esc_url( get_admin_url( null, 'edit.php?author_name=' . $author->user_login ) ); ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
+				<a href="<?php echo esc_url( $author_filter_url ); ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
 			endforeach;
