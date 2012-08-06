@@ -563,11 +563,12 @@ class coauthors_plus {
 				$author_name = get_userdata( $query->get( 'author' ) )->user_login;
 
 			$terms = array();
-			$terms[] = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy );
+			if ( $author_term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy ) )
+				$terms[] = $author_term;
 			$coauthor = $this->get_coauthor_by( 'login', $author_name );
 			// If this coauthor has a linked account, we also need to get posts with those terms
-			if ( !empty( $coauthor->linked_account ) ) {
-				$terms[] = get_term_by( 'slug', $coauthor->linked_account, $this->coauthor_taxonomy );
+			if ( !empty( $coauthor->linked_account ) && $guest_author_term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy ) ) {
+				$terms[] = $guest_author_term;
 			}
 
 			// Whether or not to include the original 'post_author' value in the query
