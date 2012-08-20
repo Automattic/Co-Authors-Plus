@@ -117,9 +117,9 @@ class CoAuthors_Guest_Authors
 	 * @since 0.7
 	 */
 	function filter_post_updated_messages( $messages ) {
-		global $post_ID;
+		global $post;
 
-		$guest_author = $this->get_guest_author_by( 'id', $post_ID );
+		$guest_author = $this->get_guest_author_by( 'id', $post->ID );
 		$guest_author_link = $this->filter_author_link( '', $guest_author->ID, $guest_author->user_nicename );
 
 		$messages[$this->post_type] = array(
