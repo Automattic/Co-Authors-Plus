@@ -249,7 +249,7 @@ class coauthors_plus {
 				if ( 'user_email' == $key )
 					$key = 'email';
 				$user = get_user_by( $key, $value );
-				if ( !$user )
+				if ( !$user || !is_user_member_of_blog( $user->ID ) )
 					return false;
 				$user->type = 'wpuser';
 				// However, if guest authors are enabled and there's a guest author linked to this
