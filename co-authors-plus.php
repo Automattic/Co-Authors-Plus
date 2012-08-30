@@ -31,6 +31,8 @@ define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
 
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
 
+require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
+
 if ( defined('WP_CLI') && WP_CLI )
 	require_once( dirname( __FILE__ ) . '/php/class-wp-cli.php' );
 
@@ -49,7 +51,7 @@ class coauthors_plus {
 	var $_pages_whitelist = array( 'post.php', 'post-new.php' );
 
 	var $ajax_search_fields = array( 'display_name', 'first_name', 'last_name', 'user_login', 'ID', 'user_email' );
-		
+
 	/**
 	 * __construct()
 	 */
@@ -138,6 +140,11 @@ class coauthors_plus {
 			if ( apply_filters( 'coauthors_guest_authors_force', false ) ) {
 				$this->force_guest_authors = true;
 			}
+		}
+
+		// Maybe automatically apply our template tags
+		if ( apply_filters( 'coauthors_auto_apply_template_tags', false ) ) {
+			new CoAuthors_Template_Filters;
 		}
 
 	}
