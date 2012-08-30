@@ -55,10 +55,8 @@ class coauthors_plus {
 	 */
 	function __construct() {
 
-		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-
 		// Register our models
-		add_action( 'init', array( $this, 'register_models' ) );
+		add_action( 'init', array( $this, 'action_init' ) );
 
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
@@ -112,7 +110,10 @@ class coauthors_plus {
 	 * Register the taxonomy used to managing relationships,
 	 * and the custom post type to store our author data
 	 */
-	function register_models() {
+	function action_init() {
+
+		// Allow Co-Authors Plus to be easily translated
+		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 		// Register new taxonomy so that we can store all of the relationships
 		$args = array(
