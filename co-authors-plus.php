@@ -637,11 +637,16 @@ class coauthors_plus {
 
 		// @todo this should check the nonce before changing the value
 		
+		// This action happens when a post is saved while editing a post
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
 			$author = sanitize_title( $_POST['coauthors'][0] );
 			if ( $author ) {
 				$author_data = $this->get_coauthor_by( 'login', $author );
-				if ( $author_data->type == 'wpuser' )
+				// If it's a guest author and has a linked account, store that information in post_author
+				// because it'll be the valid user ID
+				if ( 'guest-author' == $author_data->type && ! empty( $author_data->linked_account ) ) {
+					$data['post_author'] = get_user_by( 'login', $author_data->linked_account )->ID;
+				} else if ( $author_data->type == 'wpuser' )
 					$data['post_author'] = $author_data->ID;
 			}
 		}
@@ -651,8 +656,13 @@ class coauthors_plus {
 		// 'post_author' is set to current user if the $_REQUEST value doesn't exist
 		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
 			$coauthors = get_coauthors( $postarr['ID'] );
-			if ( is_array( $coauthors ) )
-				$data['post_author'] = $coauthors[0]->ID;
+			if ( is_array( $coauthors ) ) {
+				$coauthor = $this->get_coauthor_by( 'user_login', $coauthors[0]->user_login );
+				if ( 'guest-author' == $coauthor->type && ! empty( $coauthor->linked_account ) ) {
+					$data['post_author'] = get_user_by( 'login', $coauthor->linked_account )->ID;
+				} else if ( $coauthor->type == 'wpuser' )
+					$data['post_author'] = $coauthor->ID;
+			}
 		}
 
 		// If for some reason we don't have the coauthors fields set
