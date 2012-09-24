@@ -321,7 +321,7 @@ class coauthors_plus {
 		$post_type = $this->get_current_post_type();
 		
 		if( $this->authors_supported( $post_type ) && $this->current_user_can_set_authors() )
-			add_meta_box($this->coauthors_meta_box_name, __('Post Authors', 'co-authors-plus'), array( &$this, 'coauthors_meta_box' ), $post_type, apply_filters( 'coauthors_meta_box_context', 'normal'), apply_filters( 'coauthors_meta_box_priority', 'high'));
+			add_meta_box($this->coauthors_meta_box_name, __('Post Authors', 'co-authors-plus'), array( $this, 'coauthors_meta_box' ), $post_type, apply_filters( 'coauthors_meta_box_context', 'normal'), apply_filters( 'coauthors_meta_box_priority', 'high'));
 	}
 	
 	/**
