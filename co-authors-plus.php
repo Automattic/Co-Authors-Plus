@@ -670,6 +670,9 @@ class coauthors_plus {
 			$user = wp_get_current_user();
 			$data['post_author'] = $user->ID;
 		}
+
+		// Allow the 'post_author' to be forced to generic user if it doesn't match any users on the post
+		$data['post_author'] = apply_filters( 'coauthors_post_author_value', $data['post_author'], $postarr['ID'] );
 		
 		return $data;
 	}
