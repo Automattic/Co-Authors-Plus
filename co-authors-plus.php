@@ -409,6 +409,9 @@ class coauthors_plus {
 	 */
 	function _filter_manage_posts_columns($posts_columns) {
 		$new_columns = array();
+
+		if ( ! $this->_edit_page_post_type_supported )
+			return $posts_columns;
 		
 		foreach ($posts_columns as $key => $value) {
 			$new_columns[$key] = $value;
