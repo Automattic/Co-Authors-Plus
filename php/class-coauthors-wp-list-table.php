@@ -151,6 +151,12 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function column_display_name( $item ) {
 
 		$item_edit_link = get_edit_post_link( $item->ID );
+		$args = array(
+				'action'       => 'delete',
+				'id'           => $item->ID,
+				'_wpnonce'     => wp_create_nonce( 'guest-author-delete' ),
+			);
+		$item_delete_link = add_query_arg( $args, menu_page_url( 'view-guest-authors', false ) );
 		$item_view_link = get_author_posts_url( $item->ID, $item->user_nicename );
 
 		$output = get_avatar( $item->user_email, 32 );
@@ -159,7 +165,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 		$actions = array();
 		$actions['edit'] = '<a href="' . esc_url( $item_edit_link ) . '">' . __( 'Edit', 'co-authors-plus' ) . '</a>';
-		$actions['delete'] = '<a href="#">' . __( 'Delete', 'co-authors-plus' ) . '</a>';
+		$actions['delete'] = '<a href="' . esc_url( $item_delete_link ) . '">' . __( 'Delete', 'co-authors-plus' ) . '</a>';
 		$actions['view'] = '<a href="' . esc_url( $item_view_link ) . '">' . __( 'View Posts', 'co-authors-plus' ) . '</a>';
 		$actions = apply_filters( 'coauthors_guest_author_row_actions', $actions, $item );
 		$output .= $this->row_actions( $actions, false );

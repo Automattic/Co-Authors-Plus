@@ -30,6 +30,7 @@ class CoAuthors_Guest_Authors
 
 		// Handle actions to create or delete guest author accounts
 		add_action( 'admin_init', array( $this, 'handle_create_guest_author_action' ) );
+		add_action( 'admin_init', array( $this, 'handle_delete_guest_author_action' ) );
 
 		// Redirect if the user is mapped to a guest author
 		add_action( 'parse_request', array( $this, 'action_parse_request' ) );
@@ -174,6 +175,64 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
+	 * Handle the admin action to delete a guest author and possibly reassign their posts
+	 *
+	 * @since 2.7
+	 */
+	function handle_delete_guest_author_action() {
+		global $coauthors_plus;
+
+		if ( !isset( $_POST['action'], $_POST['reassign'], $_POST['_wpnonce'], $_POST['id'] ) || 'delete-guest-author' != $_POST['action'] )
+			return;
+
+		// Verify the user is who they say they are
+		if ( !wp_verify_nonce( $_POST['_wpnonce'], 'delete-guest-author' ) )
+			wp_die( __( "Doin' something fishy, huh?", 'co-authors-plus' ) );
+
+		// Make sure they can perform the action
+		if ( ! current_user_can( $this->list_guest_authors_cap ) )
+			wp_die( __( "You don't have permission to perform this action.", 'co-authors-plus' ) );
+
+		// Make sure the guest author actually exists
+		$guest_author = $this->get_guest_author_by( 'id', (int)$_POST['id'] );
+		if ( ! $guest_author )
+			wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
+
+		// Perform the reassignment if needed
+		switch( $_POST['reassign'] ) {
+			// Leave assigned to the current linked account
+			case 'leave-assigned':
+				$guest_author_term = get_term_by( 'slug', $guest_author->user_login, $coauthors_plus->coauthor_taxonomy );
+				$linked_account_term = get_term_by( 'slug', $guest_author->linked_account, $coauthors_plus->coauthor_taxonomy );
+				// If they aren't the same, delete the guest author term and reassign those to the linked account term
+				if ( $guest_author_term->term_id != $linked_account_term->term_id )
+					wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $linked_account_term->term_id, 'force_default' => true ) );
+				break;
+			// Remove the byline, but don't delete the post
+			case 'remove-byline':
+				$guest_author_term = get_term_by( 'slug', $guest_author->user_login, $coauthors_plus->coauthor_taxonomy );
+				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy );
+				break;
+			default:
+				wp_die( __( "Please make sure to pick an option.", 'co-authors-plus' ) );
+				break;
+		}
+
+		// Delete the guest author
+		wp_delete_post( $guest_author->ID, true );
+
+		// Redirect to safety
+		$args = array(
+				'page'       => 'view-guest-authors',
+				'message'    => 'guest-author-deleted',
+			);
+		$redirect_to = add_query_arg( $args, admin_url( $this->parent_page ) );
+		wp_safe_redirect( $redirect_to );
+		exit;
+	}
+
+
+	/**
 	 * Some redirection we need to do for linked accounts
 	 *
 	 * @todo support author ID query vars
@@ -246,20 +305,64 @@ class CoAuthors_Guest_Authors
 	 */
 	function view_guest_authors_list() {
 
-		echo '<div class="wrap">';
-		echo '<div class="icon32" id="icon-users"><br/></div>';
-		echo '<h2>' . $this->labels['plural'];
-		// @todo caps check for creating a new user
-		$add_new_link = admin_url( "post-new.php?post_type=$this->post_type" );
-		echo '<a href="' . $add_new_link . '" class="add-new-h2">' . esc_html( __( 'Add New', 'co-authors-plus' ) ) . '</a>';
-		echo '</h2>';
-		$cap_list_table = new CoAuthors_WP_List_Table();
-		$cap_list_table->prepare_items();
-		echo '<form id="guest-authors-filter" action="" method="GET">';
-		echo '<input type="hidden" name="page" value="view-guest-authors" />';
-		$cap_list_table->display();
-		echo '</form>';
-		echo '</div>';
+		// Allow guest authors to be deleted
+		if ( isset( $_GET['action'], $_GET['id'], $_GET['_wpnonce'] ) && 'delete' == $_GET['action'] ) {
+			// Make sure the user is who they say they are
+			if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'guest-author-delete' ) )
+				wp_die( __( "Doin' something fishy, huh?", 'co-authors-plus' ) );
+
+			// Make sure the guest author actually exists
+			$guest_author = $this->get_guest_author_by( 'id', (int)$_GET['id'] );
+			if ( ! $guest_author )
+				wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
+
+			echo '<div class="wrap">';
+			echo '<div class="icon32" id="icon-users"><br/></div>';
+			echo '<h2>' . sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) . '</h2>';
+			echo '<p>' . __( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
+			echo '<p>#' . $guest_author->ID . ': ' . esc_html( $guest_author->display_name ) . '</p>';
+			echo '<p>' . __( 'What should be done with posts assigned to this guest author?', 'co-authors-plus' ) . '</p>';
+			echo '<form method="POST" action="' . esc_url( add_query_arg( 'page', 'view-guest-authors', admin_url( $this->parent_page ) ) ) . '">';
+			// Hidden stuffs
+			echo '<input type="hidden" name="action" value="delete-guest-author" />';
+			wp_nonce_field( 'delete-guest-author' );
+			echo '<input type="hidden" name="id" value="' . esc_attr( (int)$_GET['id'] ) . '" />';
+			echo '<fieldset><ul style="list-style-type:none;">';
+			// Leave mapped to a linked account
+			if ( get_user_by( 'login', $guest_author->linked_account ) ) {
+				echo '<li><label for="leave-assigned">';
+				echo '<input type="radio" id="leave-assigned" name="reassign" value="leave-assigned" /> ' . sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account );
+				echo '</label></li>';
+			}
+			// Remove bylines from the posts
+			echo '<li><label for="remove-byline">';
+			echo '<input type="radio" id="remove-byline" name="reassign" value="remove-byline" /> ' . __( 'Remove byline from posts (but leave the post in its current status).', 'co-authors-plus' );
+			echo '</label></li>';
+			// @todo Reassign to another user
+			// @todo Delete all posts
+			// echo '<li><label for="delete-posts">';
+			// echo '<input type="radio" id="delete-posts" name="reassign" value="delete" /> ' . __( 'Delete all posts, even when there is a second byline.', 'co-authors-plus' );
+			// echo '</label></li>';
+			echo '</ul></fieldset>';
+			submit_button( __( 'Confirm Deletion', 'co-authors-plus' ) );
+			echo '</form>';
+			echo '</div>';
+		} else {
+			echo '<div class="wrap">';
+			echo '<div class="icon32" id="icon-users"><br/></div>';
+			echo '<h2>' . $this->labels['plural'];
+			// @todo caps check for creating a new user
+			$add_new_link = admin_url( "post-new.php?post_type=$this->post_type" );
+			echo '<a href="' . $add_new_link . '" class="add-new-h2">' . esc_html( __( 'Add New', 'co-authors-plus' ) ) . '</a>';
+			echo '</h2>';
+			$cap_list_table = new CoAuthors_WP_List_Table();
+			$cap_list_table->prepare_items();
+			echo '<form id="guest-authors-filter" action="" method="GET">';
+			echo '<input type="hidden" name="page" value="view-guest-authors" />';
+			$cap_list_table->display();
+			echo '</form>';
+			echo '</div>';
+		}
 
 	}
 
