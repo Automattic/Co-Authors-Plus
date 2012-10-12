@@ -50,6 +50,8 @@ class coauthors_plus {
 	
 	var $_pages_whitelist = array( 'post.php', 'post-new.php' );
 
+	var $supported_post_types = array();
+
 	var $ajax_search_fields = array( 'display_name', 'first_name', 'last_name', 'user_login', 'ID', 'user_email' );
 
 	/**
@@ -59,6 +61,7 @@ class coauthors_plus {
 
 		// Register our models
 		add_action( 'init', array( $this, 'action_init' ) );
+		add_action( 'init', array( $this, 'action_init_late' ), 100 );
 
 		// Load admin_init function
 		add_action( 'admin_init', array( $this,'admin_init' ) );
@@ -89,7 +92,7 @@ class coauthors_plus {
 		add_action( 'add_meta_boxes', array( $this, 'remove_authors_box' ) );
 		
 		// Removes the author dropdown from the post quick edit 
-		add_action( 'load-edit.php', array( $this, 'remove_quick_edit_authors_box' ) );
+		add_action( 'admin_head', array( $this, 'remove_quick_edit_authors_box' ) );
 
 		// Restricts WordPress from blowing away term order on bulk edit
 		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
@@ -117,22 +120,6 @@ class coauthors_plus {
 		// Allow Co-Authors Plus to be easily translated
 		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		// Register new taxonomy so that we can store all of the relationships
-		$args = array(
-			'hierarchical' => false,
-			'update_count_callback' => array( $this, '_update_users_posts_count' ),
-			'label' => false,
-			'query_var' => false,
-			'rewrite' => false,
-			'sort' => true,
-			'show_ui' => false
-		);
-		$supported_post_types = array(
-				'post',
-				'page',
-			);
-		register_taxonomy( $this->coauthor_taxonomy, apply_filters( 'coauthors_supported_post_types', $supported_post_types ), $args );
-
 		// Load the Guest Authors functionality if needed
 		if ( $this->is_guest_authors_enabled() ) {
 			require_once( dirname( __FILE__ ) . '/php/class-coauthors-guest-authors.php' );
@@ -148,6 +135,30 @@ class coauthors_plus {
 		}
 
 	}
+
+	/**
+	 * Register the 'author' taxonomy and add post type support
+	 */
+	function action_init_late() {
+
+		// Register new taxonomy so that we can store all of the relationships
+		$args = array(
+			'hierarchical' => false,
+			'update_count_callback' => array( $this, '_update_users_posts_count' ),
+			'label' => false,
+			'query_var' => false,
+			'rewrite' => false,
+			'sort' => true,
+			'show_ui' => false
+		);
+		$post_types_with_authors = array_values( get_post_types() );
+		foreach( $post_types_with_authors as $key => $name ) {
+			if ( ! post_type_supports( $name, 'author' ) )
+				unset( $post_types_with_authors[$key] );
+		}
+		$this->supported_post_types = apply_filters( 'coauthors_supported_post_types', $post_types_with_authors );
+		register_taxonomy( $this->coauthor_taxonomy, $this->supported_post_types, $args );
+	}
 	
 	/**
 	 * Initialize the plugin for the admin 
@@ -158,7 +169,7 @@ class coauthors_plus {
 		// Add the main JS script and CSS file
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		// Add necessary JS variables
-		add_action( 'admin_print_scripts', array( $this, 'js_vars' ) );
+		add_action( 'admin_head', array( $this, 'js_vars' ) );
 
 		// Hooks to add additional coauthors to author column to Edit page
 		add_filter( 'manage_posts_columns', array( $this, '_filter_manage_posts_columns' ) );
@@ -170,24 +181,6 @@ class coauthors_plus {
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
 		add_filter( 'manage_users_custom_column', array( $this, '_filter_manage_users_custom_column' ), 10, 3 );
 		
-	}
-
-	/** 
-	 * Checks to see if the post_type supports authors
-	 */
-	function authors_supported( $post_type ) {
-		
-		if( ! function_exists( 'post_type_supports' ) && in_array( $post_type, array( 'post', 'page' ) ) )
-			return true;
-		
-		// Hacky way to prevent issues on the Edit page
-		if( isset( $this->_edit_page_post_type_supported ) && $this->_edit_page_post_type_supported )
-			return true;
-		
-		if( post_type_supports( $post_type, 'author' ) )
-			return true;
-		
-		return false;
 	}
 
 	/**
@@ -275,30 +268,20 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Gets the current global post type if one is set
+	 * Whether or not Co-Authors Plus is enabled for this post type
+	 * Must be called after init
+	 *
+	 * @since 0.7
+	 *
+	 * @param string $post_type The name of the post type we're considering
+	 * @return bool Whether or not it's enabled
 	 */
-	function get_current_post_type() {
-		global $post, $typenow, $current_screen;
-		
-		// "Cache" it!
-		if( isset( $this->_current_post_type ) )
-			return $this->_current_post_type;
-		
-		if( $post && $post->post_type )
-			$post_type = $post->post_type;
-		elseif( $typenow )
-			$post_type = $typenow;
-		elseif( $current_screen && isset( $current_screen->post_type ) )
-			$post_type = $current_screen->post_type;
-		elseif( isset( $_REQUEST['post_type'] ) )
-			$post_type = sanitize_key( $_REQUEST['post_type'] );
-		else
-			$post_type = '';
-		
-		if( $post_type )
-			$this->_current_post_type = $post_type;
-		
-		return $post_type;
+	function is_post_type_enabled( $post_type = null ) {
+
+		if ( ! $post_type )
+			$post_type = get_post_type();
+
+		return (bool) in_array( $post_type, $this->supported_post_types );
 	}
 
 	/**
@@ -306,22 +289,18 @@ class coauthors_plus {
 	 * We don't need it because the Co-Authors one is way cooler.
 	 */
 	function remove_authors_box() {
-		
-		$post_type = $this->get_current_post_type();
-		
-		if( $this->authors_supported( $post_type ) )
-			remove_meta_box( $this->coreauthors_meta_box_name, $post_type, 'normal' );
+
+		if ( $this->is_post_type_enabled() )
+			remove_meta_box( $this->coreauthors_meta_box_name, get_post_type(), 'normal' );
 	}
 	
 	/**
 	 * Adds a custom Authors box
 	 */
 	function add_coauthors_box() {
-		
-		$post_type = $this->get_current_post_type();
-		
-		if( $this->authors_supported( $post_type ) && $this->current_user_can_set_authors() )
-			add_meta_box($this->coauthors_meta_box_name, __('Post Authors', 'co-authors-plus'), array( $this, 'coauthors_meta_box' ), $post_type, apply_filters( 'coauthors_meta_box_context', 'normal'), apply_filters( 'coauthors_meta_box_priority', 'high'));
+
+		if( $this->is_post_type_enabled() && $this->current_user_can_set_authors() )
+			add_meta_box( $this->coauthors_meta_box_name, __('Post Authors', 'co-authors-plus'), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal'), apply_filters( 'coauthors_meta_box_priority', 'high'));
 	}
 	
 	/**
@@ -396,21 +375,20 @@ class coauthors_plus {
 	 * It's a bit hacky, but the only way I can figure out :( 
 	 */
 	function remove_quick_edit_authors_box() {
-		$post_type = $this->get_current_post_type();
-		if( post_type_supports( $post_type, 'author' )) {
-			$this->_edit_page_post_type_supported = true;
-			remove_post_type_support( $post_type, 'author' );
-		}
+		global $pagenow;
+
+		if ( 'edit.php' == $pagenow && $this->is_post_type_enabled() )
+			remove_post_type_support( get_post_type(), 'author' );
 	}
 	
 	/**
 	 * Add coauthors to author column on edit pages
 	 * @param array $post_columns
 	 */
-	function _filter_manage_posts_columns($posts_columns) {
-		$new_columns = array();
+	function _filter_manage_posts_columns( $posts_columns ) {
 
-		if ( ! $this->_edit_page_post_type_supported )
+		$new_columns = array();
+		if ( ! $this->is_post_type_enabled() )
 			return $posts_columns;
 		
 		foreach ($posts_columns as $key => $value) {
@@ -819,7 +797,7 @@ class coauthors_plus {
 		
 		// TODO: Enable Authors to set Co-Authors
 		
-		$post_type = $this->get_current_post_type();
+		$post_type = get_post_type();
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if( ! $post_type ) return false;
 		
@@ -986,10 +964,8 @@ class coauthors_plus {
 	 */
 	function enqueue_scripts($hook_suffix) {
 		global $pagenow, $post;
-
-		$post_type = $this->get_current_post_type();
 		
-		if ( !$this->is_valid_page() || !$this->authors_supported( $post_type ) || !$this->current_user_can_set_authors() )
+		if ( !$this->is_valid_page() || ! $this->is_post_type_enabled() || !$this->current_user_can_set_authors() )
 			return;
 		
 		wp_enqueue_script( 'jquery' );
@@ -1013,23 +989,21 @@ class coauthors_plus {
 	 * Adds necessary javascript variables to admin pages
 	 */
 	function js_vars() {
-		
-		$post_type = $this->get_current_post_type();
-		
-		if( $this->is_valid_page() && $this->authors_supported( $post_type ) && $this->current_user_can_set_authors() ) {
-			?>
+
+		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled() || ! $this-> current_user_can_set_authors() ) 
+			return;
+		?>
 			<script type="text/javascript">
 				// AJAX link used for the autosuggest
 				var coAuthorsPlus_ajax_suggest_link = '<?php echo add_query_arg(
 					array(
 						'action' => 'coauthors_ajax_suggest',
-						'post_type' => $post_type,
+						'post_type' => get_post_type(),
 					),
 					wp_nonce_url( 'admin-ajax.php', 'coauthors-search' )
 				); ?>';
 			</script>
-			<?php
-		}
+		<?php
 	} // END: js_vars()
 	
 	/**
@@ -1038,7 +1012,7 @@ class coauthors_plus {
 	function is_valid_page() {
 		global $pagenow;
 		
-		return in_array( $pagenow, $this->_pages_whitelist );
+		return (bool)in_array( $pagenow, $this->_pages_whitelist );
 	} 
 	
 	function get_post_id() {

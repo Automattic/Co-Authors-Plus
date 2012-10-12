@@ -228,9 +228,7 @@ class CoAuthors_Guest_Authors
 	function action_add_meta_boxes() {
 		global $coauthors_plus;
 
-		$post_type = $coauthors_plus->get_current_post_type();
-
-		if ( $post_type == $this->post_type ) {
+		if ( get_post_type() == $this->post_type ) {
 			// Remove the submitpost metabox because we have our own
 			remove_meta_box( 'submitdiv', $post_type, 'side' );
 			remove_meta_box( 'slugdiv', $post_type, 'normal' );
