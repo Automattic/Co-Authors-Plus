@@ -230,14 +230,14 @@ class CoAuthors_Guest_Authors
 
 		if ( get_post_type() == $this->post_type ) {
 			// Remove the submitpost metabox because we have our own
-			remove_meta_box( 'submitdiv', $post_type, 'side' );
-			remove_meta_box( 'slugdiv', $post_type, 'normal' );
-			add_meta_box( 'coauthors-manage-guest-author-save', __( 'Save', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_save' ), $post_type, 'side', 'default' );
-			add_meta_box( 'coauthors-manage-guest-author-slug', __( 'Unique Slug', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_slug' ), $post_type, 'side', 'default' );
+			remove_meta_box( 'submitdiv', $this->post_type, 'side' );
+			remove_meta_box( 'slugdiv', $this->post_type, 'normal' );
+			add_meta_box( 'coauthors-manage-guest-author-save', __( 'Save', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_save' ), $this->post_type, 'side', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-slug', __( 'Unique Slug', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_slug' ), $this->post_type, 'side', 'default' );
 			// Our metaboxes with co-author details
-			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_name' ), $post_type, 'normal', 'default' );
-			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_contact_info' ), $post_type, 'normal', 'default' );
-			add_meta_box( 'coauthors-manage-guest-author-bio', $this->labels['metabox_about'], array( $this, 'metabox_manage_guest_author_bio' ), $post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_name' ), $this->post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus'), array( $this, 'metabox_manage_guest_author_contact_info' ), $this->post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-bio', $this->labels['metabox_about'], array( $this, 'metabox_manage_guest_author_bio' ), $this->post_type, 'normal', 'default' );
 		}
 	}
 
