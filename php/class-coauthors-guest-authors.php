@@ -333,12 +333,12 @@ class CoAuthors_Guest_Authors
 			// Leave mapped to a linked account
 			if ( get_user_by( 'login', $guest_author->linked_account ) ) {
 				echo '<li><label for="leave-assigned">';
-				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" /> ' . sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account );
+				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account );
 				echo '</label></li>';
 			}
 			// Remove bylines from the posts
 			echo '<li><label for="remove-byline">';
-			echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" /> ' . __( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
+			echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" />&nbsp;&nbsp;' . __( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
 			echo '</label></li>';
 			// @todo Reassign to another user
 			echo '</ul></fieldset>';
