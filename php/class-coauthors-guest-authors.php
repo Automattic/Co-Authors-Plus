@@ -321,7 +321,8 @@ class CoAuthors_Guest_Authors
 			echo '<h2>' . sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) . '</h2>';
 			echo '<p>' . __( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
 			echo '<p>#' . $guest_author->ID . ': ' . esc_html( $guest_author->display_name ) . '</p>';
-			echo '<p>' . __( 'What should be done with posts assigned to this guest author?', 'co-authors-plus' ) . '</p>';
+			echo '<p>' . __( "What should be done with posts assigned to this guest author?", 'co-authors-plus' ) . '</p>';
+			echo '<p class="description">' . __( "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author.", 'co-authors-plus' ) . '</p>';
 			echo '<form method="POST" action="' . esc_url( add_query_arg( 'page', 'view-guest-authors', admin_url( $this->parent_page ) ) ) . '">';
 			// Hidden stuffs
 			echo '<input type="hidden" name="action" value="delete-guest-author" />';
@@ -336,13 +337,9 @@ class CoAuthors_Guest_Authors
 			}
 			// Remove bylines from the posts
 			echo '<li><label for="remove-byline">';
-			echo '<input type="radio" id="remove-byline" name="reassign" value="remove-byline" /> ' . __( 'Remove byline from posts (but leave the post in its current status).', 'co-authors-plus' );
+			echo '<input type="radio" id="remove-byline" name="reassign" value="remove-byline" /> ' . __( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
 			echo '</label></li>';
 			// @todo Reassign to another user
-			// @todo Delete all posts
-			// echo '<li><label for="delete-posts">';
-			// echo '<input type="radio" id="delete-posts" name="reassign" value="delete" /> ' . __( 'Delete all posts, even when there is a second byline.', 'co-authors-plus' );
-			// echo '</label></li>';
 			echo '</ul></fieldset>';
 			submit_button( __( 'Confirm Deletion', 'co-authors-plus' ) );
 			echo '</form>';
