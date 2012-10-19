@@ -278,6 +278,7 @@ class CoAuthors_Guest_Authors
 		// Enqueue our guest author CSS on the related pages
 		if ( $this->parent_page == $pagenow && isset( $_GET['page'] ) && $_GET['page'] == 'view-guest-authors' ) {
 			wp_enqueue_style( 'guest-authors-css', COAUTHORS_PLUS_URL . 'css/guest-authors.css', false, COAUTHORS_PLUS_VERSION );
+			wp_enqueue_script( 'guest-authors-js', COAUTHORS_PLUS_URL . 'js/guest-authors.js', false, COAUTHORS_PLUS_VERSION );
 		}
 	}
 
@@ -332,16 +333,16 @@ class CoAuthors_Guest_Authors
 			// Leave mapped to a linked account
 			if ( get_user_by( 'login', $guest_author->linked_account ) ) {
 				echo '<li><label for="leave-assigned">';
-				echo '<input type="radio" id="leave-assigned" name="reassign" value="leave-assigned" /> ' . sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account );
+				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" /> ' . sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account );
 				echo '</label></li>';
 			}
 			// Remove bylines from the posts
 			echo '<li><label for="remove-byline">';
-			echo '<input type="radio" id="remove-byline" name="reassign" value="remove-byline" /> ' . __( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
+			echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" /> ' . __( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
 			echo '</label></li>';
 			// @todo Reassign to another user
 			echo '</ul></fieldset>';
-			submit_button( __( 'Confirm Deletion', 'co-authors-plus' ) );
+			submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true, array( 'disabled' => 'disabled' ) );
 			echo '</form>';
 			echo '</div>';
 		} else {
