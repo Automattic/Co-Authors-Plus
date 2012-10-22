@@ -603,9 +603,10 @@ class coauthors_plus {
 			if ( !empty( $query->query_vars['post_type'] ) && !is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) )
 				return $groupby;
 
-			$having = 'MAX( IF( ' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\', IF( ' . $this->having_terms . ',2,1 ),0 ) ) <> 1 ';
-
-			$groupby = $wpdb->posts . '.ID HAVING ' . $having;
+			if ( $this->having_terms ) {
+				$having = 'MAX( IF( ' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\', IF( ' . $this->having_terms . ',2,1 ),0 ) ) <> 1 ';
+				$groupby = $wpdb->posts . '.ID HAVING ' . $having;
+			}
 		}
 		return $groupby;
 	}
