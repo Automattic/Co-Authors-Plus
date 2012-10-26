@@ -218,7 +218,7 @@ class coauthors_plus {
 
 		$coauthors = array();
 		foreach( $matching_terms as $matching_term ) {
-			$matching_user = $this->get_coauthor_by( 'user_login', $matching_term->slug );
+			$matching_user = $this->get_coauthor_by( 'user_login', $matching_term->name );
 			if ( $matching_user )
 				$coauthors[] = $matching_user;
 		}
@@ -294,7 +294,7 @@ class coauthors_plus {
 
 		// Update the taxonomy term to include details about the user for searching
 		$search_values = array();
-		$term = get_term_by( 'slug', $user_login, $this->coauthor_taxonomy );
+		$term = get_term_by( 'name', $user_login, $this->coauthor_taxonomy );
 		foreach( $this->ajax_search_fields as $search_field ) {
 			$search_values[] = $coauthor->$search_field;
 		}
@@ -527,9 +527,9 @@ class coauthors_plus {
 			$all_coauthor_posts = $wpdb->get_results( $query );
 
 			// Find the term_id from the term_taxonomy_id, and then get the user's user_login from that
-			$query = $wpdb->prepare( "SELECT $wpdb->terms.slug FROM $wpdb->term_taxonomy INNER JOIN $wpdb->terms ON $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id WHERE $wpdb->term_taxonomy.term_taxonomy_id = %d", $term_taxonomy_id );
-			$term_slug = $wpdb->get_var( $query );
-			$author = get_user_by( 'login', $term_slug );
+			$query = $wpdb->prepare( "SELECT $wpdb->terms.name FROM $wpdb->term_taxonomy INNER JOIN $wpdb->terms ON $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id WHERE $wpdb->term_taxonomy.term_taxonomy_id = %d", $term_taxonomy_id );
+			$term_name = $wpdb->get_var( $query );
+			$author = get_user_by( 'login', $term_name );
 
 			// If there's no author object, then we're probably editing a coauthor w/o a user
 			if ( empty( $author ) )
@@ -598,11 +598,11 @@ class coauthors_plus {
 				$author_name = get_userdata( $query->get( 'author' ) )->user_login;
 
 			$terms = array();
-			if ( $author_term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy ) )
+			if ( $author_term = get_term_by( 'name', $author_name, $this->coauthor_taxonomy ) )
 				$terms[] = $author_term;
 			$coauthor = $this->get_coauthor_by( 'login', $author_name );
 			// If this coauthor has a linked account, we also need to get posts with those terms
-			if ( !empty( $coauthor->linked_account ) && $guest_author_term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy ) ) {
+			if ( !empty( $coauthor->linked_account ) && $guest_author_term = get_term_by( 'name', $author_name, $this->coauthor_taxonomy ) ) {
 				$terms[] = $guest_author_term;
 			}
 
@@ -666,7 +666,7 @@ class coauthors_plus {
 
 		// This action happens when a post is saved while editing a post
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
-			$author = sanitize_title( $_POST['coauthors'][0] );
+			$author = sanitize_text_field( $_POST['coauthors'][0] );
 			if ( $author ) {
 				$author_data = $this->get_coauthor_by( 'login', $author );
 				// If it's a guest author and has a linked account, store that information in post_author
@@ -720,7 +720,7 @@ class coauthors_plus {
 
 			if( $this->current_user_can_set_authors() ){
 				$coauthors = (array) $_POST['coauthors'];
-				$coauthors = array_map( 'sanitize_title', $coauthors );
+				$coauthors = array_map( 'sanitize_text_field', $coauthors );
 				return $this->add_coauthors( $post_id, $coauthors );
 			}
 		}
@@ -733,7 +733,6 @@ class coauthors_plus {
 		global $current_user;
 
 		$post_id = (int) $post_id;
-		$insert = false;
 
 		// if an array isn't returned, create one and populate with default author
 		if ( !is_array( $coauthors ) || 0 == count( $coauthors ) || empty( $coauthors ) ) {
@@ -741,22 +740,18 @@ class coauthors_plus {
 		}
 
 		// Add each co-author to the post meta
-		foreach( array_unique( $coauthors ) as $author ){
+		foreach( array_unique( $coauthors ) as $key => $author ){
 
 			// Name and slug of term are the username;
 			$name = $author;
+			$coauthors[$key] = sanitize_title( $name );
 
 			// Add user as a term if they don't exist
-			if( !term_exists( $name, $this->coauthor_taxonomy ) ) {
-				$args = array( 'slug' => sanitize_title( $name ) );
-				$insert = wp_insert_term( $name, $this->coauthor_taxonomy, $args );
+			if( ! term_exists( $name, $this->coauthor_taxonomy ) ) {
+				$this->refresh_coauthor_term( $name );
 			}
 		}
-
-		// Add authors as post terms
-		if( !is_wp_error( $insert ) ) {
-			$set = wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, $append );
-		}
+		wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, $append );
 	}
 
 	/**
@@ -825,7 +820,7 @@ class coauthors_plus {
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
 
-		$term = get_term_by( 'slug', $user->user_login, $this->coauthor_taxonomy );
+		$term = get_term_by( 'name', $user->user_login, $this->coauthor_taxonomy );
 
 		// Only modify the count if the author already exists as a term
 		if( $term && !is_wp_error( $term ) ) {
@@ -934,7 +929,7 @@ class coauthors_plus {
 		remove_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
 
 		foreach( $found_users as $found_user ) {
-			$term = get_term_by( 'slug', $found_user->user_login, $this->coauthor_taxonomy );
+			$term = get_term_by( 'name', $found_user->user_login, $this->coauthor_taxonomy );
 			if ( empty( $term ) || empty( $term->description ) ) {
 				// Create the term and/or fill the details used for searching
 				$search_values = array();
@@ -967,7 +962,7 @@ class coauthors_plus {
 		// Get the co-author objects
 		$found_users = array();
 		foreach( $found_terms as $found_term ) {
-			$found_user = $this->get_coauthor_by( 'user_login', $found_term->slug );
+			$found_user = $this->get_coauthor_by( 'user_login', $found_term->name );
 			if ( !empty( $found_user ) )
 				$found_users[$found_user->user_login] = $found_user;
 		}
