@@ -246,11 +246,14 @@ class coauthors_plus {
 			case 'login':
 			case 'user_login':
 			case 'email':
+			case 'user_nicename':
 			case 'user_email':
 				if ( 'user_login' == $key )
 					$key = 'login';
 				if ( 'user_email' == $key )
 					$key = 'email';
+				if ( 'user_nicename' == $key )
+					$key = 'slug';
 				$user = get_user_by( $key, $value );
 				if ( !$user || !is_user_member_of_blog( $user->ID ) )
 					return false;
@@ -258,7 +261,7 @@ class coauthors_plus {
 				// However, if guest authors are enabled and there's a guest author linked to this
 				// user account, we want to use that instead
 				if ( $this->is_guest_authors_enabled() ) {
-					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
+					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $user->user_nicename );
 					if ( is_object( $guest_author ) )
 						$user = $guest_author;
 				}
@@ -934,7 +937,7 @@ class coauthors_plus {
 		remove_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
 
 		foreach( $found_users as $found_user ) {
-			$term = get_term_by( 'slug', $found_user->user_login, $this->coauthor_taxonomy );
+			$term = get_term_by( 'slug', $found_user->user_nicename, $this->coauthor_taxonomy );
 			if ( empty( $term ) || empty( $term->description ) ) {
 				// Create the term and/or fill the details used for searching
 				$search_values = array();
@@ -942,7 +945,7 @@ class coauthors_plus {
 					$search_values[] = $found_user->$search_field;
 				}
 				$args = array(
-					'name' => $found_user->user_login,
+					'name' => $found_user->user_nicename,
 					'description' => implode( ' ', $search_values ),
 				);
 				if ( empty( $term ) )
@@ -967,16 +970,17 @@ class coauthors_plus {
 		// Get the co-author objects
 		$found_users = array();
 		foreach( $found_terms as $found_term ) {
-			$found_user = $this->get_coauthor_by( 'user_login', $found_term->slug );
+			// Since term slugs cannot have spaces, we should map to user_nicename, which is essentially a slug itself.
+			$found_user = $this->get_coauthor_by( 'user_nicename', $found_term->slug );
 			if ( !empty( $found_user ) )
-				$found_users[$found_user->user_login] = $found_user;
+				$found_users[$found_user->user_nicename] = $found_user;
 		}
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
 		foreach( $found_users as $key => $found_user ) {
 			// Make sure the user is contributor and above (or a custom cap)
-			if ( in_array( $found_user->user_login, $ignored_authors ) )
+			if ( in_array( $found_user->user_nicename, $ignored_authors ) )
 				unset( $found_users[$key] );
 			else if ( $found_user->type == 'wpuser' && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
 				unset( $found_users[$key] );
