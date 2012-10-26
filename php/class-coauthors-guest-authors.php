@@ -592,7 +592,8 @@ class CoAuthors_Guest_Authors
 			case 'login':
 			case 'user_login':
 			case 'linked_account':
-				if ( 'login' == $key )
+			case 'user_nicename':
+				if ( 'login' == $key || 'user_nicename' == $key )
 					$key = 'user_login';
 				$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
 				$post_id = $wpdb->get_var( $query );
