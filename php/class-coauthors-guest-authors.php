@@ -647,21 +647,25 @@ class CoAuthors_Guest_Authors
 						'key'      => 'display_name',
 						'label'    => __( 'Display Name', 'co-authors-plus'),
 						'group'    => 'name',
+						'required' => true,
 					),
 				array(
 						'key'      => 'first_name',
 						'label'    => __( 'First Name', 'co-authors-plus'),
 						'group'    => 'name',
+						'required' => true,
 					),
 				array(
 						'key'      => 'last_name',
 						'label'    => __( 'Last Name', 'co-authors-plus'),
 						'group'    => 'name',
+						'required' => true,
 					),
 				array(
 						'key'      => 'user_login',
 						'label'    => __( 'Slug', 'co-authors-plus'),
 						'group'    => 'slug',
+						'required' => true,
 					),
 				// Contact info
 				array(
@@ -723,6 +727,56 @@ class CoAuthors_Guest_Authors
 			$key = 'cap-' . $key;
 
 		return $key;
+	}
+
+	/**
+	 * Create a guest author
+	 *
+	 * @since 0.7
+	 */
+	function create( $args ) {
+		global $coauthors_plus;
+
+		// Validate the arguments that have been passed
+		$fields = $this->get_guest_author_fields();
+		foreach( $fields as $field ) {
+
+			// Make sure required fields are there
+			if ( isset( $field['required'] ) && $field['required'] && empty( $args[$field['key']] ) ) {
+				return new WP_Error( 'field-required', sprintf( __( '%s is a required field', 'co-authors-plus' ), $field['key'] ) );
+			}
+
+			// The user login field shouldn't collide with any existing users
+			if ( 'user_login' == $field['key'] && $coauthors_plus->get_coauthor_by( 'user_login', $args['user_login'] ) ) {
+				return new WP_Error( 'duplicate-field', __( 'user_login field is already in use', 'co-authors-plus' ) );
+			}
+
+		}
+
+		// Create the primary post object
+		$new_post = array(
+				'post_title'      => $args['display_name'],
+				'post_name'       => $this->get_post_meta_key( $args['user_login'] ),
+				'post_type'       => $this->post_type,
+			);
+		$post_id = wp_insert_post( $new_post, true );
+		if ( is_wp_error( $post_id ) )
+			return $post_id;
+
+		// Add all of the fields for the new guest author
+		foreach( $fields as $field ) {
+			$key = $field['key'];
+			if ( empty( $args[$key] ) )
+				continue;
+			$pm_key = $this->get_post_meta_key( $key );
+			update_post_meta( $post_id, $pm_key, $args[$key] );
+		}
+
+		// Make sure the author term exists and that we're assigning it to this post type
+		$coauthors_plus->refresh_coauthor_term( $args['user_login'] );
+		wp_set_post_terms( $post_id, array( $args['user_login'] ), $coauthors_plus->coauthor_taxonomy, false );
+
+		return $post_id;
 	}
 
 	/**

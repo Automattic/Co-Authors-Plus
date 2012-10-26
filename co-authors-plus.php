@@ -270,6 +270,44 @@ class coauthors_plus {
 	}
 
 	/**
+	 * Update the corresponding 'author' term to include the most recent information
+	 * about the co-author object
+	 *
+	 * @since 0.7
+	 *
+	 * @param string $user_login Unique identifier for the co-author
+	 * @return bool True on success, false on failure
+	 */
+	function refresh_coauthor_term( $user_login ) {
+
+		$coauthor = $this->get_coauthor_by( 'user_login', $user_login );
+		if ( ! $coauthor )
+			return false;
+
+		// Make sure the term exists
+		if ( ! term_exists( $user_login, $this->coauthor_taxonomy ) ) {
+			$args = array(
+				'slug' => $user_login,
+			);
+			wp_insert_term( $user_login, $this->coauthor_taxonomy, $args );
+		}
+
+		// Update the taxonomy term to include details about the user for searching
+		$search_values = array();
+		$term = get_term_by( 'slug', $user_login, $this->coauthor_taxonomy );
+		foreach( $this->ajax_search_fields as $search_field ) {
+			$search_values[] = $coauthor->$search_field;
+		}
+		$args = array(
+				'description' => implode( ' ', $search_values ),
+			);
+		wp_update_term( $term->term_id, $this->coauthor_taxonomy, $args );
+		
+		return true;
+	}
+
+
+	/**
 	 * Whether or not Co-Authors Plus is enabled for this post type
 	 * Must be called after init
 	 *
