@@ -671,7 +671,7 @@ class coauthors_plus {
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
 			$author = sanitize_title( $_POST['coauthors'][0] );
 			if ( $author ) {
-				$author_data = $this->get_coauthor_by( 'login', $author );
+				$author_data = $this->get_coauthor_by( 'user_nicename', $author );
 				// If it's a guest author and has a linked account, store that information in post_author
 				// because it'll be the valid user ID
 				if ( 'guest-author' == $author_data->type && ! empty( $author_data->linked_account ) ) {
