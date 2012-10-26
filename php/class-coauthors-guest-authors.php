@@ -203,7 +203,7 @@ class CoAuthors_Guest_Authors
 			// Leave assigned to the current linked account
 			case 'leave-assigned':
 				$guest_author_term = get_term_by( 'slug', $guest_author->user_login, $coauthors_plus->coauthor_taxonomy );
-				$linked_account_term = get_term_by( 'name', $guest_author->linked_account, $coauthors_plus->coauthor_taxonomy );
+				$linked_account_term = get_term_by( 'slug', $guest_author->linked_account, $coauthors_plus->coauthor_taxonomy );
 				// If they aren't the same, delete the guest author term and reassign those to the linked account term
 				if ( $guest_author_term->term_id != $linked_account_term->term_id )
 					wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $linked_account_term->term_id, 'force_default' => true ) );
