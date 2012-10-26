@@ -29,7 +29,11 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 		$columns = $this->get_columns();
 		$hidden = array();
-		$sortable = array();
+		$sortable = array(
+				'display_name'       => array( 'display_name', 'ASC' ),
+				'first_name'         => array( 'first_name', 'ASC' ),
+				'last_name'          => array( 'last_name', 'ASC' ),
+			);
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		$paged = ( isset( $_REQUEST['paged'] ) ) ? intval( $_REQUEST['paged'] ) : 1;
@@ -43,6 +47,22 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'orderby'        => 'title',
 				'order'          => 'ASC',
 			);
+
+		if ( isset( $_REQUEST['orderby'] ) ) {
+			switch( $_REQUEST['orderby'] ) {
+				case 'display_name':
+					$args['orderby'] = 'title';
+					break;
+				case 'first_name':
+				case 'last_name':
+					$args['orderby'] = 'meta_value';
+					$args['meta_key'] = $coauthors_plus->guest_authors->get_post_meta_key( $_REQUEST['orderby'] );
+					break;
+			}
+		}
+		if ( isset( $_REQUEST['order'] ) && in_array( strtoupper( $_REQUEST['order'] ), array( 'ASC', 'DESC' ) ) ) {
+			$args['order'] = strtoupper( $_REQUEST['order'] );
+		}
 
 		$this->filters = array(
 				'show-all'                => __( 'Show all', 'co-authors-plus' ),
