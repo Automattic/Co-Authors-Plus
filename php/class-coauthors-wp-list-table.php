@@ -134,6 +134,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'last_name'      => __( 'Last Name', 'co-authors-plus' ),
 				'user_email'     => __( 'E-mail', 'co-authors-plus' ),
 				'linked_account' => __( 'Linked Account', 'co-authors-plus' ),
+				'posts'          => __( 'Posts', 'co-authors-plus' ),
 			);
 		return $columns;
 	}
@@ -207,6 +208,17 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			}
 		}
 		return '';
+	}
+
+	/**
+	 * Render the published post count column
+	 */
+	function column_posts( $item ) {
+		global $coauthors_plus;
+		$term = get_term_by( 'name', $item->user_login, $coauthors_plus->coauthor_taxonomy );
+		if ( ! $term )
+			return '';
+		return '<a href="' . esc_url( add_query_arg( 'author_name', $item->user_login, admin_url( 'edit.php' ) ) ) . '">' . $term->count . '</a>';
 	}
 
 	/**
