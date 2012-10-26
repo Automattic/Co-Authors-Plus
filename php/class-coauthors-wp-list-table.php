@@ -40,7 +40,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'posts_per_page' => $per_page,
 				'post_type'      => $coauthors_plus->guest_authors->post_type,
 				'post_status'    => 'any',
-				'orderby'        => 'post_title',
+				'orderby'        => 'title',
 				'order'          => 'ASC',
 			);
 
