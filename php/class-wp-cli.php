@@ -79,7 +79,7 @@ EOB
 				'meta_key'         => '_original_import_author',
 				'post_type'        => 'post',
 				'order'            => 'ASC',
-				'order_by'         => 'ID',
+				'orderby'          => 'ID',
 				'posts_per_page'   => 100,
 				'paged'            => 1,
 				'append_coauthors' => false,
@@ -132,6 +132,7 @@ EOB
 			}
 			
 			$this->args['paged']++;
+			$this->stop_the_insanity();
 			$posts = new WP_Query( $this->args );
 		}
 
