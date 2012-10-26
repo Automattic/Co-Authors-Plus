@@ -782,58 +782,34 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Create a guest author from an existing WordPress user
+	 *
+	 * @since 0.7
+	 *
+	 * @param int $user_id ID for a WordPress user
+	 * @return int|WP_Error $retval ID for the new guest author on success, WP_Error on failure
 	 */
 	function create_guest_author_from_user_id( $user_id ) {
-		global $coauthors_plus;
 
 		$user = get_user_by( 'id', $user_id );
-		if ( !$user )
+		if ( ! $user )
 			return new WP_Error( 'invalid-user', __( 'No user exists with that ID', 'co-authors-plus' ) );
 
-		$post_name = $this->get_post_meta_key( $user->user_login );
-		if ( $this->get_guest_author_by( 'post_name', $post_name ) )
-			return new WP_Error( 'profile-exists', __( "Profile already exists for {$user->user_login}", 'co-authors-plus' ) );
-
-		// Create the user as a new guest
-		$new_post = array(
-				'post_title' => $user->display_name,
-				'post_name' => $post_name,
-				'post_type' => $this->post_type,
-			);
-		$post_id = wp_insert_post( $new_post, true );
-		if ( is_wp_error( $post_id ) )
-			return $post_id;
-
-		$fields = $this->get_guest_author_fields();
-		foreach( $fields as $field ) {
+		$guest_author = array();
+		foreach( $this->get_guest_author_fields() as $field ) {
 			$key = $field['key'];
-			$pm_key = $this->get_post_meta_key( $field['key'] );
-			update_post_meta( $post_id, $pm_key, $user->$key );
+			if ( ! empty( $user->$key ) )
+				$guest_author[$key] = $user->$key;
 		}
-
-		// Ensure there's an 'author' term for this user/guest author
-		if( !term_exists( $user->user_login, $coauthors_plus->coauthor_taxonomy ) ) {
-			$args = array(
-				'slug' => $user->user_login
-			);
-			wp_insert_term( $user->user_login, $coauthors_plus->coauthor_taxonomy, $args );
-		}
-		// Add the author as a post term
-		wp_set_post_terms( $post_id, array( $user->user_login ), $coauthors_plus->coauthor_taxonomy, false );
-
-		// Update the taxonomy term to include details about the user for searching
-		$search_values = array();
-		$guest_author = $this->get_guest_author_by( 'id', $post_id );
-		$term = get_term_by( 'slug', $user->user_login, $coauthors_plus->coauthor_taxonomy );
-		foreach( $coauthors_plus->ajax_search_fields as $search_field ) {
-			$search_values[] = $guest_author->$search_field;
-		}
-		$args = array(
-				'description' => implode( ' ', $search_values ),
-			);
-		wp_update_term( $term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
-
-		return $post_id;
+		// Don't need the old user ID
+		unset( $guest_author['ID'] );
+		// Retain the user mapping and try to produce an unique user_login based on the name.
+		$guest_author['linked_account'] = $guest_author['user_login'];
+		if ( $guest_author['display_name'] != $guest_author['user_login'] )
+			$guest_author['user_login'] = sanitize_title( $guest_author['display_name'] );
+		else
+			$guest_author['user_login'] = sanitize_title( $guest_author['first_name'] . ' ' . $guest_author['last_name'] );
+		$retval = $this->create( $guest_author );
+		return $retval;
 	}
 
 	/**
