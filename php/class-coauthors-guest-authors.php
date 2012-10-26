@@ -827,7 +827,7 @@ class CoAuthors_Guest_Authors
 		$new_actions = array();
 		if ( $guest_author = $this->get_guest_author_by( 'linked_account', $user_object->user_login ) ) {
 			$edit_guest_author_link = get_edit_post_link( $guest_author->ID );
-			$new_actions['edit-guest-author'] = '<a href="' . esc_url( $edit_guest_author_link ) . '">' . __( 'Edit CA+ Profile', 'co-authors-plus' ) . '</a>';
+			$new_actions['edit-guest-author'] = '<a href="' . esc_url( $edit_guest_author_link ) . '">' . __( 'Edit Profile', 'co-authors-plus' ) . '</a>';
 		} else {
 			$query_args = array(
 					'action' => 'cap-create-guest-author',
@@ -835,7 +835,7 @@ class CoAuthors_Guest_Authors
 					'nonce' => wp_create_nonce( 'create-guest-author' ),
 				);
 			$create_guest_author_link = add_query_arg( $query_args, admin_url( $this->parent_page ) );
-			$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create CA+ Profile', 'co-authors-plus' ) . '</a>';
+			$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create Profile', 'co-authors-plus' ) . '</a>';
 		}
 
 		return $new_actions + $actions;
