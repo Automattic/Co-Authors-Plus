@@ -933,19 +933,7 @@ class coauthors_plus {
 		foreach( $found_users as $found_user ) {
 			$term = get_term_by( 'slug', $found_user->user_nicename, $this->coauthor_taxonomy );
 			if ( empty( $term ) || empty( $term->description ) ) {
-				// Create the term and/or fill the details used for searching
-				$search_values = array();
-				foreach( $this->ajax_search_fields as $search_field ) {
-					$search_values[] = $found_user->$search_field;
-				}
-				$args = array(
-					'slug' => $found_user->user_nicename,
-					'description' => implode( ' ', $search_values ),
-				);
-				if ( empty( $term ) )
-					wp_insert_term( $found_user->user_login, $this->coauthor_taxonomy, $args );
-				else
-					wp_update_term( $term->term_id, $this->coauthor_taxonomy, $args );
+				$this->refresh_coauthor_term( $found_user->user_login );
 			}
 		}
 
