@@ -568,8 +568,8 @@ class coauthors_plus {
 				$terms[] = $author_term;
 			// If this coauthor has a linked account, we also need to get posts with those terms
 			if ( ! empty( $coauthor->linked_account ) ) {
-				$linked_author = get_user_by( 'login', $coauthor->linked_author );
-				if ( $guest_author_term = $this->get_author_term( $linked_author ) )
+				$linked_account = get_user_by( 'login', $coauthor->linked_account );
+				if ( $guest_author_term = $this->get_author_term( $linked_account ) )
 					$terms[] = $guest_author_term;
 			}
 
