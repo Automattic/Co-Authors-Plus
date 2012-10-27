@@ -541,28 +541,10 @@ class CoAuthors_Guest_Authors
 			update_post_meta( $post_id, $key, $value );
 		}
 
-		// Ensure there's a proper 'author' term for this coauthor
-		$author_slug = get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true );
-		if ( empty( $author_slug ) && isset( $temp_slug ) )
-			$author_slug = $temp_slug;
-		if( !term_exists( $author_slug, $coauthors_plus->coauthor_taxonomy ) ) {
-			$args = array( 'slug' => $author_slug );
-			wp_insert_term( $author_slug, $coauthors_plus->coauthor_taxonomy, $args );
-		}
+		$author = $this->get_guest_author_by( 'ID', $post_id );
+		$author_term = $coauthors_plus->update_author_term( $author );
 		// Add the author as a post term
-		wp_set_post_terms( $post_id, array( $author_slug ), $coauthors_plus->coauthor_taxonomy, false );
-
-		// Update the taxonomy term to include details about the user for searching
-		$search_values = array();
-		$guest_author = $this->get_guest_author_by( 'id', $post_id );
-		$term = $coauthors_plus->get_author_term( $guest_author );
-		foreach( $coauthors_plus->ajax_search_fields as $search_field ) {
-			$search_values[] = $guest_author->$search_field;
-		}
-		$args = array(
-				'description' => implode( ' ', $search_values ),
-			);
-		wp_update_term( $term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
+		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy, false );
 	}
 
 	/**
@@ -574,6 +556,7 @@ class CoAuthors_Guest_Authors
 		global $wpdb;
 
 		switch( $key ) {
+			case 'ID':
 			case 'id':
 				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID=%d", $value );
 				$post_id = $wpdb->get_var( $query );
@@ -774,8 +757,8 @@ class CoAuthors_Guest_Authors
 		}
 
 		// Make sure the author term exists and that we're assigning it to this post type
-		$coauthors_plus->refresh_coauthor_term( $args['user_login'] );
-		wp_set_post_terms( $post_id, array( $args['user_login'] ), $coauthors_plus->coauthor_taxonomy, false );
+		$author_term = $coauthors_plus->update_author_term( $this->get_guest_author_by( 'ID', $post_id ) );
+		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy, false );
 
 		return $post_id;
 	}
