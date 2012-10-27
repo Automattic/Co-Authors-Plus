@@ -297,7 +297,7 @@ class coauthors_plus {
 
 		// Update the taxonomy term to include details about the user for searching
 		$search_values = array();
-		$term = get_term_by( 'slug', $user_login, $this->coauthor_taxonomy );
+		$term = $this->get_author_term( $coauthor );
 		foreach( $this->ajax_search_fields as $search_field ) {
 			$search_values[] = $coauthor->$search_field;
 		}
@@ -601,12 +601,14 @@ class coauthors_plus {
 				$author_name = get_userdata( $query->get( 'author' ) )->user_nicename;
 
 			$terms = array();
-			if ( $author_term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy ) )
-				$terms[] = $author_term;
 			$coauthor = $this->get_coauthor_by( 'user_nicename', $author_name );
+			if ( $author_term = $this->get_author_term( $coauthor ) )
+				$terms[] = $author_term;
 			// If this coauthor has a linked account, we also need to get posts with those terms
-			if ( !empty( $coauthor->linked_account ) && $guest_author_term = get_term_by( 'slug', $author_name, $this->coauthor_taxonomy ) ) {
-				$terms[] = $guest_author_term;
+			if ( ! empty( $coauthor->linked_account ) ) {
+				$linked_author = get_user_by( 'login', $coauthor->linked_author );
+				if ( $guest_author_term = $this->get_author_term( $linked_author ) )
+					$terms[] = $guest_author_term;
 			}
 
 			// Whether or not to include the original 'post_author' value in the query
@@ -822,8 +824,7 @@ class coauthors_plus {
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
 
-		$term = get_term_by( 'slug', $user->user_nicename, $this->coauthor_taxonomy );
-
+		$term = $this->get_author_term( $user );
 		// Only modify the count if the author already exists as a term
 		if( $term && !is_wp_error( $term ) ) {
 			$count = $term->count;
@@ -931,7 +932,7 @@ class coauthors_plus {
 		remove_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
 
 		foreach( $found_users as $found_user ) {
-			$term = get_term_by( 'slug', $found_user->user_nicename, $this->coauthor_taxonomy );
+			$term = $this->get_author_term( $found_user );
 			if ( empty( $term ) || empty( $term->description ) ) {
 				$this->refresh_coauthor_term( $found_user->user_login );
 			}
@@ -1113,6 +1114,32 @@ class coauthors_plus {
 		}
 
 		return $allcaps;
+	}
+
+	/**
+	 * Get the author term for a given co-author
+	 *
+	 * @since 0.7
+	 *
+	 * @param object $coauthor The co-author object
+	 * @return object|false $author_term The author term on success
+	 */
+	public function get_author_term( $coauthor ) {
+
+		if ( ! is_object( $coauthor ) )
+			return;
+
+		$cache_key = 'author-term-' . $coauthor->user_nicename;
+		if ( false !== ( $term = wp_cache_get( $cache_key, 'co-authors-plus' ) ) )
+			return $term;
+
+		// See if the prefixed term is available, otherwise default to just the nicename
+		$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
+		if ( ! $term ) {
+			$term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy );
+		}
+		wp_cache_set( $cache_key, $term, 'co-authors-plus' );
+		return $term;
 	}
 
 	/**

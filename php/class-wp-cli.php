@@ -200,7 +200,7 @@ EOB
 				$new_user = get_user_by( 'id', $new_user )->user_login;
 
 			// The old user should exist as a term
-			$old_term = get_term_by( 'slug', $old_user, $coauthors_plus->coauthor_taxonomy );
+			$old_term = $coauthors_plus->get_author_term( get_user_by( 'login', $old_user ) );
 			if ( !$old_term ) {
 				WP_CLI::line( "Error: Term '{$old_user}' doesn't exist, skipping" );
 				$results->old_term_missing++;
@@ -210,7 +210,7 @@ EOB
 			// If the new user exists as a term already, we want to reassign all posts to that
 			// new term and delete the original
 			// Otherwise, simply rename the old term
-			$new_term = get_term_by( 'slug', $new_user, $coauthors_plus->coauthor_taxonomy );
+			$new_term = $coauthors_plus->get_author_term( get_user_by( 'login', $new_user ) );
 			if ( is_object( $new_term ) ) {
 				$args = array(
 						'default' => $new_term->term_id,

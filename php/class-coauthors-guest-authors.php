@@ -199,18 +199,17 @@ class CoAuthors_Guest_Authors
 			wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 
 		// Perform the reassignment if needed
+		$guest_author_term = $coauthors_plus->get_author_term( $guest_author );
 		switch( $_POST['reassign'] ) {
 			// Leave assigned to the current linked account
 			case 'leave-assigned':
-				$guest_author_term = get_term_by( 'slug', $guest_author->user_login, $coauthors_plus->coauthor_taxonomy );
-				$linked_account_term = get_term_by( 'slug', $guest_author->linked_account, $coauthors_plus->coauthor_taxonomy );
+				$linked_account_term = $coauthors_plus->get_author_term( get_user_by( 'login', $guest_author->linked_account ) );
 				// If they aren't the same, delete the guest author term and reassign those to the linked account term
 				if ( $guest_author_term->term_id != $linked_account_term->term_id )
 					wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $linked_account_term->term_id, 'force_default' => true ) );
 				break;
 			// Remove the byline, but don't delete the post
 			case 'remove-byline':
-				$guest_author_term = get_term_by( 'slug', $guest_author->user_login, $coauthors_plus->coauthor_taxonomy );
 				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy );
 				break;
 			default:
@@ -556,7 +555,7 @@ class CoAuthors_Guest_Authors
 		// Update the taxonomy term to include details about the user for searching
 		$search_values = array();
 		$guest_author = $this->get_guest_author_by( 'id', $post_id );
-		$term = get_term_by( 'slug', $guest_author->user_login, $coauthors_plus->coauthor_taxonomy );
+		$term = $coauthors_plus->get_author_term( $guest_author );
 		foreach( $coauthors_plus->ajax_search_fields as $search_field ) {
 			$search_values[] = $guest_author->$search_field;
 		}
