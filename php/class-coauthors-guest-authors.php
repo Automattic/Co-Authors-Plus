@@ -608,7 +608,7 @@ class CoAuthors_Guest_Authors
 		$guest_author['user_login'] = urldecode( $guest_author['user_login'] );
 
 		// Hack to model the WP_User object
-		$guest_author['user_nicename'] = $guest_author['user_login'];
+		$guest_author['user_nicename'] = sanitize_title( $guest_author['user_login'] );
 		$guest_author['type'] = 'guest-author';
 		return (object)$guest_author;
 	}
