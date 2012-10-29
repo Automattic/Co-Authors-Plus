@@ -150,6 +150,7 @@ class coauthors_plus {
 			'label' => false,
 			'query_var' => false,
 			'rewrite' => false,
+			'public' => false,
 			'sort' => true,
 			'show_ui' => false
 		);
