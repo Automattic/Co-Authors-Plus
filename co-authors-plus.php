@@ -218,7 +218,7 @@ class coauthors_plus {
 
 		$coauthors = array();
 		foreach( $matching_terms as $matching_term ) {
-			$matching_user = $this->get_coauthor_by( 'user_nicename', $matching_term->slug );
+			$matching_user = $this->get_coauthor_by( 'user_login', $matching_term->name );
 			if ( $matching_user )
 				$coauthors[] = $matching_user;
 		}
@@ -633,7 +633,7 @@ class coauthors_plus {
 
 		// This action happens when a post is saved while editing a post
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
-			$author = sanitize_title( $_POST['coauthors'][0] );
+			$author = sanitize_text_field( $_POST['coauthors'][0] );
 			if ( $author ) {
 				$author_data = $this->get_coauthor_by( 'user_nicename', $author );
 				// If it's a guest author and has a linked account, store that information in post_author
@@ -653,7 +653,7 @@ class coauthors_plus {
 			if ( is_array( $coauthors ) ) {
 				$coauthor = $this->get_coauthor_by( 'user_nicename', $coauthors[0]->user_nicename );
 				if ( 'guest-author' == $coauthor->type && ! empty( $coauthor->linked_account ) ) {
-					$data['post_author'] = get_user_by( 'user_nicename', $coauthor->linked_account )->ID;
+					$data['post_author'] = get_user_by( 'user_login', $coauthor->linked_account )->ID;
 				} else if ( $coauthor->type == 'wpuser' )
 					$data['post_author'] = $coauthor->ID;
 			}
@@ -854,7 +854,7 @@ class coauthors_plus {
 			die();
 
 		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
-		$ignore = array_map( 'sanitize_title', explode( ',', $_REQUEST['existing_authors'] ) );
+		$ignore = array_map( 'sanitize_text_field', explode( ',', $_REQUEST['existing_authors'] ) );
 
 		$authors = $this->search_authors( $search, $ignore );
 
@@ -911,17 +911,16 @@ class coauthors_plus {
 		// Get the co-author objects
 		$found_users = array();
 		foreach( $found_terms as $found_term ) {
-			// Since term slugs cannot have spaces, we should map to user_nicename, which is essentially a slug itself.
-			$found_user = $this->get_coauthor_by( 'user_nicename', $found_term->slug );
+			$found_user = $this->get_coauthor_by( 'user_login', $found_term->name );
 			if ( !empty( $found_user ) )
-				$found_users[$found_user->user_nicename] = $found_user;
+				$found_users[$found_user->user_login] = $found_user;
 		}
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
 		foreach( $found_users as $key => $found_user ) {
 			// Make sure the user is contributor and above (or a custom cap)
-			if ( in_array( $found_user->user_nicename, $ignored_authors ) )
+			if ( in_array( $found_user->user_login, $ignored_authors ) )
 				unset( $found_users[$key] );
 			else if ( $found_user->type == 'wpuser' && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) )
 				unset( $found_users[$key] );
@@ -1138,6 +1137,7 @@ class coauthors_plus {
 				wp_delete_term( $old_term->term_id, $this->coauthor_taxonomy, $args );
 			}
 		}
+		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 		return get_term_by( 'slug', $coauthor_slug, $this->coauthor_taxonomy );
 	}
 
