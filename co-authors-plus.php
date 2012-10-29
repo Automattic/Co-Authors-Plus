@@ -912,7 +912,7 @@ class coauthors_plus {
 		// Get the co-author objects
 		$found_users = array();
 		foreach( $found_terms as $found_term ) {
-			$found_user = $this->get_coauthor_by( 'user_login', $found_term->name );
+			$found_user = $this->get_coauthor_by( 'user_nicename', $found_term->slug );
 			if ( !empty( $found_user ) )
 				$found_users[$found_user->user_login] = $found_user;
 		}
