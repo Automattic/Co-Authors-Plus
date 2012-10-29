@@ -219,7 +219,7 @@ class coauthors_plus {
 
 		$coauthors = array();
 		foreach( $matching_terms as $matching_term ) {
-			$matching_user = $this->get_coauthor_by( 'user_login', $matching_term->name );
+			$matching_user = $this->get_coauthor_by( 'user_nicename', $matching_term->slug );
 			if ( $matching_user )
 				$coauthors[] = $matching_user;
 		}
