@@ -261,7 +261,7 @@ class coauthors_plus {
 				// However, if guest authors are enabled and there's a guest author linked to this
 				// user account, we want to use that instead
 				if ( $this->is_guest_authors_enabled() ) {
-					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $user->user_nicename );
+					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
 					if ( is_object( $guest_author ) )
 						$user = $guest_author;
 				}
@@ -834,7 +834,7 @@ class coauthors_plus {
 			// The IDs don't match, so we need to force the $authordata to the one we want
 			$authordata = get_userdata( $author_id );
 		} else if ( $author_name = sanitize_title( get_query_var( 'author_name' ) ) ) {
-			$authordata = $this->get_coauthor_by( 'login', $author_name );
+			$authordata = $this->get_coauthor_by( 'user_nicename', $author_name );
 		}
 		if ( is_object( $authordata ) ) {
 			$wp_query->queried_object = $authordata;
