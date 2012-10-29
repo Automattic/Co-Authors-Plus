@@ -6,11 +6,8 @@
  * @since 2.7
  * @see https://github.com/wp-cli/wp-cli
  */
-// WordPress.com is running v0.4 of WP-CLI and we need to maintain backwards compat for now
-if ( method_exists( 'WP_CLI', 'addCommand' ) )
-	WP_CLI::addCommand( 'co-authors-plus', 'CoAuthorsPlus_Command' );
-else
-	WP_CLI::addCommand( 'co-authors-plus', 'CoAuthorsPlus_Command' );
+WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
+
 class CoAuthorsPlus_Command extends WP_CLI_Command
 {
 
