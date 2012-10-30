@@ -299,11 +299,10 @@ EOB
 			if ( $prefixed_term = get_term_by( 'slug', 'cap-' . $author_term->slug, $coauthors_plus->coauthor_taxonomy ) ) {
 				WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) has a new term too: $prefixed_term->slug ($prefixed_term->term_id). Merging" );
 				$args = array(
-					'default' => $prefixed_term->term_id,
+					'default' => $author_term->term_id,
 					'force_default' => true,
 				);
-				wp_delete_term( $author_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
-				continue;
+				wp_delete_term( $prefixed_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
 			}
 
 			// Term isn't prefixed, doesn't have a sibling, and should be updated
