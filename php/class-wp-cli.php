@@ -286,8 +286,8 @@ EOB
 	 */
 	public function migrate_author_terms( $args, $assoc_args ) {
 		global $coauthors_plus;
-		
-		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy );
+
+		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
 		WP_CLI::line( "Now migrating up to " . count( $author_terms ) . " terms" );
 		foreach( $author_terms as $author_term ) {
 			// Term is already prefixed. We're good.
