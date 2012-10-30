@@ -255,6 +255,9 @@ class coauthors_plus {
 					$key = 'email';
 				if ( 'user_nicename' == $key )
 					$key = 'slug';
+				// Ensure we aren't doing the lookup by the prefixed value
+				if ( 'login' == $key || 'slug' == $key )
+					$value = preg_replace( '#^cap\-#', '', $value );
 				$user = get_user_by( $key, $value );
 				if ( !$user || !is_user_member_of_blog( $user->ID ) )
 					return false;

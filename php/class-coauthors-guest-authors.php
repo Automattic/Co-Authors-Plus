@@ -577,6 +577,9 @@ class CoAuthors_Guest_Authors
 			case 'user_nicename':
 				if ( 'login' == $key || 'user_nicename' == $key )
 					$key = 'user_login';
+				// Ensure we aren't doing the lookup by the prefixed value
+				if ( 'user_login' == $key )
+					$value = preg_replace( '#^cap\-#', '', $value );
 				$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
 				$post_id = $wpdb->get_var( $query );
 				if ( empty( $post_id ) ) {
