@@ -1131,7 +1131,7 @@ class coauthors_plus {
 			$new_term = wp_insert_term( $coauthor->user_login, $this->coauthor_taxonomy, $args );
 		}
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
-		return get_term_by( 'slug', $coauthor_slug, $this->coauthor_taxonomy );
+		return $this->get_author_term( $coauthor );
 	}
 
 	/**
