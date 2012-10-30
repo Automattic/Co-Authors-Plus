@@ -28,6 +28,7 @@ Possible subcommands:
 					--old_term=                 Term to be reassigned (instead of using author mapping file)
 					--new_term=                 Term to reassign to. Create a term if one doesn't exist
 					list_posts_without_terms    List all posts without Co-Authors Plus terms
+					migrate_author_terms        Migrate author terms without prefixes to ones with prefixes
 EOB
 		);
 	}
@@ -276,6 +277,43 @@ EOB
 			$posts = new WP_Query( $this->args );
 		}
 
+	}
+
+	/**
+	 * Migrate author terms without prefixes to ones with prefixes
+	 * Pre-3.0, all author terms didn't have a 'cap-' prefix, which means
+	 * they can easily collide with terms in other taxonomies
+	 */
+	public function migrate_author_terms( $args, $assoc_args ) {
+		global $coauthors_plus;
+		
+		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy );
+		WP_CLI::line( "Now migrating up to " . count( $author_terms ) . " terms" );
+		foreach( $author_terms as $author_term ) {
+			// Term is already prefixed. We're good.
+			if ( preg_match( '#^cap\-#', $author_term->slug, $matches ) ) {
+				WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) is already prefixed, skipping" );
+				continue;
+			}
+			// A prefixed term was accidentally created, and the old term needs to be merged into the new (WordPress.com VIP)
+			if ( $prefixed_term = get_term_by( 'slug', 'cap-' . $author_term->slug, $coauthors_plus->coauthor_taxonomy ) ) {
+				WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) has a new term too: $prefixed_term->slug ($prefixed_term->term_id). Merging" );
+				$args = array(
+					'default' => $prefixed_term->term_id,
+					'force_default' => true,
+				);
+				wp_delete_term( $author_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
+				continue;
+			}
+
+			// Term isn't prefixed, doesn't have a sibling, and should be updated
+			WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) isn't prefixed, adding one" );
+			$args = array(
+					'slug' => 'cap-' . $author_term->slug,
+				);
+			wp_update_term( $author_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
+		}
+		WP_CLI::success( "All done! Grab a cold one (Affogatto)" );
 	}
 
 	/**
