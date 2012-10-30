@@ -1120,23 +1120,15 @@ class coauthors_plus {
 		}
 		$term_description = implode( ' ', $search_values );
 
-		$coauthor_slug = 'cap-' . $coauthor->user_nicename;
-		if ( $term = get_term_by( 'slug', $coauthor_slug, $this->coauthor_taxonomy ) ) {
+		if ( $term = $this->get_author_term( $coauthor ) ) {
 			wp_update_term( $term->term_id, $this->coauthor_taxonomy, array( 'description' => $term_description ) );
 		} else {
+			$coauthor_slug = 'cap-' . $coauthor->user_nicename;
 			$args = array(
 				'slug'          => $coauthor_slug,
 				'description'   => $term_description,
 			);
 			$new_term = wp_insert_term( $coauthor->user_login, $this->coauthor_taxonomy, $args );
-			// Migrate the old term if there was one
-			if ( $old_term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy ) ) {
-				$args = array(
-						'default' => $new_term['term_id'],
-						'force_default' => true,
-					);
-				wp_delete_term( $old_term->term_id, $this->coauthor_taxonomy, $args );
-			}
 		}
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 		return get_term_by( 'slug', $coauthor_slug, $this->coauthor_taxonomy );
