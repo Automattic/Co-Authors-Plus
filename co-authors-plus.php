@@ -473,55 +473,46 @@ class coauthors_plus {
 	/**
 	 * When we update the terms at all, we should update the published post count for each author
 	 */
-	function _update_users_posts_count( $terms, $taxonomy ) {
+	function _update_users_posts_count( $tt_ids, $taxonomy ) {
 		global $wpdb;
 
-		$object_types = (array) $taxonomy->object_type;
+		$tt_ids = implode( ', ', array_map( 'intval', $tt_ids ) );
+		$term_ids = $wpdb->get_results( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN ($tt_ids)" );
 
-		foreach ( $object_types as &$object_type ) {
-			list( $object_type ) = explode( ':', $object_type );
+		foreach( (array)$term_ids as $term_id_result ) {
+			$term = get_term_by( 'id', $term_id_result->term_id, $this->coauthor_taxonomy );
+			$this->update_author_term_post_count( $term );
 		}
+		$tt_ids = explode( ', ', $tt_ids );
+		clean_term_cache( $tt_ids, '', false );
 
-		if ( $object_types )
-			$object_types = esc_sql( array_filter( $object_types, 'post_type_exists' ) );
+	}
 
-		$object_types = array_unique( $object_types );
+	/**
+	 * Update the post count associated with an author term
+	 */
+	public function update_author_term_post_count( $term ) {
+		global $wpdb;
 
-		foreach( (array)$terms as $term_taxonomy_id ) {
-			$count = 0;
-			if ( 0 == $term_taxonomy_id )
-				continue;
-			// Get the post IDs for all published posts with this co-author
-			$query = $wpdb->prepare( "SELECT $wpdb->posts.ID FROM $wpdb->term_relationships, $wpdb->posts WHERE $wpdb->posts.ID = $wpdb->term_relationships.object_id AND post_status = 'publish' AND post_type IN ('" . implode("', '", $object_types ) . "') AND term_taxonomy_id = %d", $term_taxonomy_id );
-			$all_coauthor_posts = $wpdb->get_results( $query );
+		$coauthor = $this->get_coauthor_by( 'user_nicename', $term->slug );
+		if ( ! $coauthor )
+			return new WP_Error( 'missing-coauthor', __( 'No co-author exists for that term', 'co-authors-plus' ) );
 
-			// Find the term_id from the term_taxonomy_id, and then get the user's user_login from that
-			$query = $wpdb->prepare( "SELECT $wpdb->terms.slug FROM $wpdb->term_taxonomy INNER JOIN $wpdb->terms ON $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id WHERE $wpdb->term_taxonomy.term_taxonomy_id = %d", $term_taxonomy_id );
-			$term_slug = $wpdb->get_var( $query );
-			$author = get_user_by( 'slug', $term_slug );
+		$query = "SELECT COUNT({$wpdb->posts}.ID) FROM {$wpdb->posts}";
 
-			// If there's no author object, then we're probably editing a coauthor w/o a user
-			if ( empty( $author ) )
-				continue;
+		$query .= " LEFT JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
+		$query .= " LEFT JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
 
-			// Get all of the post IDs where the user is the primary author
-			$query = $wpdb->prepare( "SELECT $wpdb->posts.ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_type IN ('" . implode("', '", $object_types ) . "') AND post_author = %d;", $author->ID );
-			$all_author_posts = $wpdb->get_results( $query );
+		$having_terms_and_authors = $having_terms = $wpdb->prepare( "{$wpdb->term_taxonomy}.term_id = %d", $term->term_id );
+		if ( 'wpuser' == $coauthor->type )
+			$having_terms_and_authors .= $wpdb->prepare( " OR {$wpdb->posts}.post_author = %d", $coauthor->ID );
 
-			// Dedupe the post IDs and then provide a final count
-			$all_posts = array();
-			foreach( $all_coauthor_posts as $coauthor_post ) {
-				$all_posts[] = $coauthor_post->ID;
-			}
-			foreach( $all_author_posts as $author_post ) {
-				$all_posts[] = $author_post->ID;
-			}
-			$count = count( array_unique( $all_posts ) );
+		$query .= " WHERE ({$having_terms_and_authors}) AND {$wpdb->posts}.post_type = 'post' AND {$wpdb->posts}.post_status = 'publish'";
 
-			// Save the count to the term's count column
-			$wpdb->update( $wpdb->term_taxonomy, compact( 'count' ), array( 'term_taxonomy_id' => $term_taxonomy_id ) );
-		}
+		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF( {$wpdb->term_taxonomy}.taxonomy = '%s', IF( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy );
 
+		$count = $wpdb->query( $query );
+		$wpdb->update( $wpdb->term_taxonomy, array( 'count' => $count ), array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
 	}
 
 	/**
