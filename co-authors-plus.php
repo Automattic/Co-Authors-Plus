@@ -513,6 +513,8 @@ class coauthors_plus {
 
 		$count = $wpdb->query( $query );
 		$wpdb->update( $wpdb->term_taxonomy, array( 'count' => $count ), array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
+
+		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 	}
 
 	/**
