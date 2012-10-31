@@ -18,10 +18,11 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 == Changelog ==
 
-= ????-??-?? / 2.7 =
+= ????-??-?? / 3.0 =
 * Support for non-Latin characters as guest author slugs
 * WP CLI subcommands for creating, assigning, and reassigning co-authors
 * For themes using core template tags like the_author() or the_author_posts_link(), enable Co-Authors Plus support with a simple filter
+* New author terms are now prefixed with 'cap-' to avoid collisions with global scope
 * Apply query filters to only post_types registered with the taxonomy. Props [Tom Ransom](https://github.com/1bigidea)
 * Filter coauthors_posts_link_single() with 'coauthors_posts_link'. Also adds rel="author". Props [Amit Sannad](https://github.com/asannad) and [Gabriel Koen](https://github.com/mintindeed)
 * Filter for the context and priorities of the Co-Authors meta boxes. Props [Tomáš Kapler](https://github.com/tkapler)
