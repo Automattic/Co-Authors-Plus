@@ -576,6 +576,7 @@ class CoAuthors_Guest_Authors
 				if ( empty( $post_id ) )
 					return false;
 				break;
+			case 'user_nicename':
 			case 'post_name':
 				// @todo look for a more performant way of gathering this data
 				$value = $this->get_post_meta_key( $value );
@@ -587,8 +588,7 @@ class CoAuthors_Guest_Authors
 			case 'login':
 			case 'user_login':
 			case 'linked_account':
-			case 'user_nicename':
-				if ( 'login' == $key || 'user_nicename' == $key )
+				if ( 'login' == $key )
 					$key = 'user_login';
 				// Ensure we aren't doing the lookup by the prefixed value
 				if ( 'user_login' == $key )
@@ -755,7 +755,7 @@ class CoAuthors_Guest_Authors
 		// Create the primary post object
 		$new_post = array(
 				'post_title'      => $args['display_name'],
-				'post_name'       => $this->get_post_meta_key( $args['user_login'] ),
+				'post_name'       => sanitize_title( $this->get_post_meta_key( $args['user_login'] ) ),
 				'post_type'       => $this->post_type,
 			);
 		$post_id = wp_insert_post( $new_post, true );
