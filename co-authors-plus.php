@@ -533,10 +533,10 @@ class coauthors_plus {
 			$term_taxonomy_join = " INNER JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
 
 			if( strpos( $join, trim( $term_relationship_join ) ) === false ) {
-				$join .= $term_relationship_join;
+				$join .= str_replace( "INNER JOIN", "LEFT JOIN", $term_relationship_join );
 			}
 			if( strpos( $join, trim( $term_taxonomy_join ) ) === false ) {
-				$join .= $term_taxonomy_join;
+				$join .= str_replace( "INNER JOIN", "LEFT JOIN", $term_taxonomy_join );
 			}
 		}
 
