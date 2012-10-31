@@ -502,8 +502,8 @@ class CoAuthors_Guest_Authors
 		global $post;
 
 		$post_data['post_title'] = sanitize_text_field( $_POST['cap-display_name'] );
-		$slug = get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true );
-		if ( !$slug )
+		$slug = sanitize_title( get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true ) );
+		if ( ! $slug )
 			$slug = sanitize_title( $_POST['cap-display_name'] );
 		$post_data['post_name'] = $this->get_post_meta_key( $slug );
 		return $post_data;
