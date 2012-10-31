@@ -29,7 +29,7 @@ Possible subcommands:
 					--new_term=                 Term to reassign to. Create a term if one doesn't exist
 					list_posts_without_terms    List all posts without Co-Authors Plus terms
 					migrate_author_terms        Migrate author terms without prefixes to ones with prefixes
-					update_author_post_counts   Update the published post count for all coauthors
+					update_author_terms         Update the published post count for all coauthors and refresh the description field
 EOB
 		);
 	}
@@ -317,18 +317,20 @@ EOB
 	}
 
 	/**
-	 * Update the term's count field for all author terms
+	 * Update the post count and description for each author
 	 */
-	public function update_author_post_counts() {
+	public function update_author_terms() {
 		global $coauthors_plus;
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
 		WP_CLI::line( "Now updating " . count( $author_terms ) . " terms" );
 		foreach( $author_terms as $author_term ) {
 			$old_count = $author_term->count;
+			$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $author_term->slug );
+			$coauthors_plus->update_author_term( $coauthor );
 			$coauthors_plus->update_author_term_post_count( $author_term );
 			wp_cache_delete( $author_term->term_id, $coauthors_plus->coauthor_taxonomy );
 			$new_count = get_term_by( 'id', $author_term->term_id, $coauthors_plus->coauthor_taxonomy )->count;
-			WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) changed from {$old_count} to {$new_count}" );
+			WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) changed from {$old_count} to {$new_count} and the description was refreshed" );
 		}
 		WP_CLI::success( "All done" );
 	}
