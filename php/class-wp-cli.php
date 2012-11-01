@@ -148,6 +148,47 @@ EOB
 	}
 
 	/**
+	 * Assign posts associated with a WordPress user to a co-author
+	 * Only apply the changes if there aren't yet co-authors associated with the post
+	 */
+	public function assign_user_to_coauthor( $args, $assoc_args ) {
+		global $coauthors_plus, $wpdb;
+
+		$defaults = array(
+				'user_login'        => '',
+				'coauthor'          => '',
+			);
+		$assoc_args = wp_parse_args( $assoc_args, $defaults );
+
+		$user = get_user_by( 'login', $assoc_args['user_login'] );
+		$coauthor = $coauthors_plus->get_coauthor_by( 'login', $assoc_args['coauthor'] );
+
+		if ( ! $user )
+			WP_CLI::error( __( 'Please specify a valid user_login', 'co-authors-plus' ) );
+
+		if ( ! $coauthor )
+			WP_CLI::error( __( 'Please specify a valid co-author login', 'co-authors-plus' ) );
+
+		$post_types = implode( "','", $coauthors_plus->supported_post_types );
+		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
+		$affected = 0;
+		foreach( $posts as $post_id ) {
+			if ( $coauthors = wp_get_post_terms( $post_id, $coauthors_plus->coauthor_taxonomy ) ) {
+				WP_CLI::line( sprintf( __( "Skipping - Post #%d already has co-authors assigned: %s", 'co-authors-plus' ), $post_id, implode( ', ', wp_list_pluck( $coauthors, 'slug' ) ) ) );
+				continue;
+			}
+
+			$coauthors_plus->add_coauthors( $post_id, array( $coauthor->user_login ) );
+			WP_CLI::line( sprintf( __( "Updating - Adding %s's byline to post #%d", 'co-authors-plus' ), $coauthor->user_login, $post_id ) );
+			$affected++;
+			if ( $affected && $affected % 20 == 0 )
+				sleep( 5 );
+		}
+		WP_CLI::success( sprintf( __( "All done! %d posts were affected.", 'co-authors-plus' ), $affected ) );
+
+	}
+
+	/**
 	 * Subcommand to reassign co-authors based on some given format
 	 * This will look for terms with slug 'x' and rename to term with slug and name 'y'
 	 * This subcommand can be helpful for cleaning up after an import if the usernames
@@ -199,7 +240,7 @@ EOB
 				$new_user = get_user_by( 'id', $new_user )->user_login;
 
 			// The old user should exist as a term
-			$old_term = $coauthors_plus->get_author_term( get_user_by( 'login', $old_user ) );
+			$old_term = $coauthors_plus->get_author_term( $coauthors_plus->get_coauthor_by( 'login', $old_user ) );
 			if ( !$old_term ) {
 				WP_CLI::line( "Error: Term '{$old_user}' doesn't exist, skipping" );
 				$results->old_term_missing++;
@@ -209,7 +250,7 @@ EOB
 			// If the new user exists as a term already, we want to reassign all posts to that
 			// new term and delete the original
 			// Otherwise, simply rename the old term
-			$new_term = $coauthors_plus->get_author_term( get_user_by( 'login', $new_user ) );
+			$new_term = $coauthors_plus->get_author_term( $coauthors_plus->get_coauthor_by( 'login', $new_user ) );
 			if ( is_object( $new_term ) ) {
 				$args = array(
 						'default' => $new_term->term_id,
