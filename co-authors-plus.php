@@ -823,19 +823,12 @@ class coauthors_plus {
 
 		global $wp_query, $authordata;
 
-		// Get the id of the author whose page we're on
-		$author_id = (int)get_query_var( 'author' );
-
-		// If the author ID is set, then we've got a WP user
-		if ( $author_id && is_object( $authordata ) && $author_id != $authordata->ID ) {
-			// The IDs don't match, so we need to force the $authordata to the one we want
-			$authordata = get_userdata( $author_id );
-		} else if ( $author_name = sanitize_title( get_query_var( 'author_name' ) ) ) {
+		if ( $author_name = sanitize_title( get_query_var( 'author_name' ) ) ) {
 			$authordata = $this->get_coauthor_by( 'user_nicename', $author_name );
-		}
-		if ( is_object( $authordata ) ) {
-			$wp_query->queried_object = $authordata;
-			$wp_query->queried_object_id = $authordata->ID;
+			if ( is_object( $authordata ) ) {
+				$wp_query->queried_object = $authordata;
+				$wp_query->queried_object_id = $authordata->ID;
+			}
 		}
 	}
 
