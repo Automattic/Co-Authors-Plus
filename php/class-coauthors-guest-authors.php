@@ -13,6 +13,8 @@ class CoAuthors_Guest_Authors
 	var $parent_page = 'users.php';
 	var $list_guest_authors_cap = 'list_users';
 
+	public static $cache_group = 'coauthors-plus-guest-authors';
+
 	/**
 	 * Initialize our Guest Authors class and establish common hooks
 	 */
@@ -123,7 +125,7 @@ class CoAuthors_Guest_Authors
 	function filter_post_updated_messages( $messages ) {
 		global $post;
 
-		$guest_author = $this->get_guest_author_by( 'id', $post->ID );
+		$guest_author = $this->get_guest_author_by( 'ID', $post->ID );
 		$guest_author_link = $this->filter_author_link( '', $guest_author->ID, $guest_author->user_nicename );
 
 		$messages[$this->post_type] = array(
@@ -197,7 +199,7 @@ class CoAuthors_Guest_Authors
 			wp_die( __( "You don't have permission to perform this action.", 'co-authors-plus' ) );
 
 		// Make sure the guest author actually exists
-		$guest_author = $this->get_guest_author_by( 'id', (int)$_POST['id'] );
+		$guest_author = $this->get_guest_author_by( 'ID', (int)$_POST['id'] );
 		if ( ! $guest_author )
 			wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 
@@ -315,7 +317,7 @@ class CoAuthors_Guest_Authors
 				wp_die( __( "Doin' something fishy, huh?", 'co-authors-plus' ) );
 
 			// Make sure the guest author actually exists
-			$guest_author = $this->get_guest_author_by( 'id', (int)$_GET['id'] );
+			$guest_author = $this->get_guest_author_by( 'ID', (int)$_GET['id'] );
 			if ( ! $guest_author )
 				wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 
@@ -577,6 +579,10 @@ class CoAuthors_Guest_Authors
 	function get_guest_author_by( $key, $value ) {
 		global $wpdb;
 
+		$cache_key = md5( 'guest-author-' . $key . '-' . $value );
+		if ( false !== ( $retval = wp_cache_get( $cache_key, self::$cache_group ) ) )
+			return $retval;
+
 		switch( $key ) {
 			case 'ID':
 			case 'id':
@@ -587,7 +593,6 @@ class CoAuthors_Guest_Authors
 				break;
 			case 'user_nicename':
 			case 'post_name':
-				// @todo look for a more performant way of gathering this data
 				$value = $this->get_post_meta_key( $value );
 				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s AND post_type = %s", $value, $this->post_type );
 				$post_id = $wpdb->get_var( $query );
@@ -635,6 +640,9 @@ class CoAuthors_Guest_Authors
 		// Hack to model the WP_User object
 		$guest_author['user_nicename'] = sanitize_title( $guest_author['user_login'] );
 		$guest_author['type'] = 'guest-author';
+
+		wp_cache_set( $cache_key, (object)$guest_author, self::$cache_group );
+
 		return (object)$guest_author;
 	}
 
@@ -745,7 +753,7 @@ class CoAuthors_Guest_Authors
 		global $wpdb;
 
 		$cache_key = 'all-linked-accounts';
-		$retval = wp_cache_get( $cache_key, 'coauthors-plus' );
+		$retval = wp_cache_get( $cache_key, self::$cache_group );
 
 		if ( true === $force || false === $retval ) {
 			$user_logins = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value !=''", $this->get_post_meta_key( 'linked_account' ) ) );
@@ -760,7 +768,7 @@ class CoAuthors_Guest_Authors
 					);
 			}
 			$retval = $users;
-			wp_cache_set( $cache_key, $retval, 'coauthors-plus' );
+			wp_cache_set( $cache_key, $retval, self::$cache_group );
 		}
 		return ( $retval ) ? $retval : array();
 	}
@@ -779,7 +787,23 @@ class CoAuthors_Guest_Authors
 		// Don't regenerate though, as we haven't saved the new value
 		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
 		if ( $linked_account_key == $meta_key && $meta_value != get_post_meta( $object_id, $linked_account_key, true ) ) {
-			wp_cache_delete( 'all-linked-accounts', 'coauthors-plus' );
+			wp_cache_delete( 'all-linked-accounts', self::$cache_group );
+		}
+
+		// If one of the guest author meta values has changed, we'll need to invalidate all keys
+		if ( false !== strpos( $meta_key, 'cap-' ) && $meta_value != get_post_meta( $object_id, $meta_key, true ) ) {
+			$keys = wp_list_pluck( $this->get_guest_author_fields(), 'key' );
+			$keys = array_merge( $keys, array( 'login', 'post_name', 'user_nicename', 'ID' ) );
+			// Get the old cached values
+			$guest_author = $this->get_guest_author_by( 'ID', $object_id );
+			foreach( $keys as $key ) {
+				if ( 'post_name' == $key )
+					$key = 'user_nicename';
+				else if ( 'login' == $key )
+					$key = 'user_login';
+				$cache_key = md5( 'guest-author-' . $key . '-' . $guest_author->$key );
+				wp_cache_delete( $cache_key, self::$cache_group );
+			}
 		}
 
 		return null;
