@@ -931,37 +931,46 @@ class CoAuthors_Guest_Authors
 	function action_after_setup_theme() {
 		add_theme_support( 'post-thumbnails', array( $this->post_type ) );
 
-		// @todo identify a few of the common image sizes used by get_avatar()
-		add_image_size( 'guest-author-32', 32, 32, true );
+		// Some of the common sizes used by get_avatar
+		$this->avatar_sizes = array(
+				32,
+				64,
+				96,
+				128
+			);
+		$this->avatar_sizes = apply_filters( 'coauthors_guest_author_avatar_sizes', $this->avatar_sizes );
+		foreach( $this->avatar_sizes as $size ) {
+			add_image_size( 'guest-author-' . $size, $size, $size, true );
+		}
 	}
 
 	/**
 	 * Filter 'get_avatar' to replace with our own avatar if one exists
 	 *
-	 * @todo support for multiple avatar sizes
+	 * @since 2.7
 	 */
 	function filter_get_avatar( $avatar, $id_or_email, $size, $default ) {
 
 		if ( is_object( $id_or_email ) || !is_email( $id_or_email ) )
 			return $avatar;
 
-		// @todo we need a better way of looking to see whether this email exists in our system to override
-		// it probably should be cached too. maybe produce a URL that's a HTTP request against the site, and then serve
-		// the image from that?
-		global $wpdb;
-		$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key='cap-user_email' AND meta_value=%s", $id_or_email );
-		$results = $wpdb->get_results( $query );
-		if ( empty( $results ) )
+		// See if this matches a guest author
+		$guest_author = $this->get_guest_author_by( 'user_email', $id_or_email );
+		if ( ! $guest_author )
 			return $avatar;
 
-		$post_id = $results[0]->post_id;
-		if ( !has_post_thumbnail( $post_id ) )
+		// See if the guest author as an avatar
+		if ( ! has_post_thumbnail( $guest_author->ID ) )
 			return $avatar;
 
 		$args = array(
-				'class' => 'avatar avatar-32 photo',
+				'class' => "avatar avatar-{$size} photo",
 			);
-		$avatar = get_the_post_thumbnail( $post_id, 'guest-author-32', $args );
+		if ( in_array( $size, $this->avatar_sizes ) )
+			$size = 'guest-author-' . $size;
+		else
+			$size = array( $size, $size );
+		$avatar = get_the_post_thumbnail( $guest_author->ID, $size, $args );
 
 		return $avatar;
 	}
