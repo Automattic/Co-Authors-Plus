@@ -43,6 +43,9 @@ class CoAuthors_Guest_Authors
 		add_action( 'wp_insert_post_data', array( $this, 'manage_guest_author_filter_post_data' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'manage_guest_author_save_meta_fields' ), 10, 2 );
 
+		// Empty associated caches when the guest author profile is updated
+		add_filter( 'update_post_metadata', array( $this, 'filter_update_post_metadata' ), 10, 5 );
+
 		// Modify the messages that appear when saving or creating
 		add_filter( 'post_updated_messages', array( $this, 'filter_post_updated_messages' ) );
 
@@ -403,6 +406,10 @@ class CoAuthors_Guest_Authors
 		if ( $linked_account == $existing_slug )
 			add_filter( 'wp_dropdown_users', array( $this, 'filter_wp_dropdown_users_to_disable' ) );
 
+		$linked_account_user_ids = wp_list_pluck( $this->get_all_linked_accounts(), 'ID' );
+		if ( $key = array_search( $linked_account_id, $linked_account_user_ids ) )
+			unset( $linked_account_user_ids[$key] );
+
 		echo '<p><label>' . __( 'WordPress User Mapping', 'co-authors-plus' ) . '</label> ';
 		wp_dropdown_users( array(
 			'show_option_none' => __( '-- Not mapped --', 'co-authors-plus' ),
@@ -410,6 +417,8 @@ class CoAuthors_Guest_Authors
 			// If we're adding an author or if there is no post author (0), then use -1 (which is show_option_none).
 			// We then take -1 on save and convert it back to 0. (#blamenacin)
 			'selected' => $linked_account_id,
+			// Don't let user accounts to be linked to more than one guest author
+			'exclude'  => $linked_account_user_ids,
 		) );
 		echo '</p>';
 
@@ -726,6 +735,56 @@ class CoAuthors_Guest_Authors
 
 		return $key;
 	}
+
+	/**
+	 * Get all of the user accounts that have been linked
+	 *
+	 * @since 0.7
+	 */
+	function get_all_linked_accounts( $force = false ) {
+		global $wpdb;
+
+		$cache_key = 'all-linked-accounts';
+		$retval = wp_cache_get( $cache_key, 'coauthors-plus' );
+
+		if ( true === $force || false === $retval ) {
+			$user_logins = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value !=''", $this->get_post_meta_key( 'linked_account' ) ) );
+			$users = array();
+			foreach( $user_logins as $user_login ) {
+				$user = get_user_by( 'login', $user_login );
+				if ( ! $user )
+					continue;
+				$users[] = array(
+						'ID'              => $user->ID,
+						'user_login'      => $user->user_login,
+					);
+			}
+			$retval = $users;
+			wp_cache_set( $cache_key, $retval, 'coauthors-plus' );
+		}
+		return ( $retval ) ? $retval : array();
+	}
+
+	/**
+	 * Filter update post metadata
+	 *
+	 * @since 0.7
+	 */
+	function filter_update_post_metadata( $retnull, $object_id, $meta_key, $meta_value, $prev_value ) {
+
+		if ( $this->post_type != get_post_type( $object_id ) )
+			return null;
+
+		// If the linked_account is changing, invalidate the cache of all linked accounts
+		// Don't regenerate though, as we haven't saved the new value
+		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
+		if ( $linked_account_key == $meta_key && $meta_value != get_post_meta( $object_id, $linked_account_key, true ) ) {
+			wp_cache_delete( 'all-linked-accounts', 'coauthors-plus' );
+		}
+
+		return null;
+	}
+
 
 	/**
 	 * Create a guest author
