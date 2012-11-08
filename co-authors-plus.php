@@ -656,6 +656,13 @@ class coauthors_plus {
 					$data['post_author'] = get_user_by( 'user_login', $coauthor->linked_account )->ID;
 				} else if ( $coauthor->type == 'wpuser' )
 					$data['post_author'] = $coauthor->ID;
+				// Refresh their post publish count too
+				if ( 'publish' == $postarr['post_status'] || 'publish' == get_post_status( $postarr['ID'] ) ) {
+					foreach( $coauthors as $coauthor ) {
+						if ( $author_term = $this->get_author_term( $coauthor ) )
+							$this->update_author_term_post_count( $author_term );
+					}
+				}
 			}
 		}
 
