@@ -27,6 +27,9 @@ class CoAuthors_Guest_Authors
 		// WP List Table for breaking out our Guest Authors
 		require_once( dirname( __FILE__ ) . '/class-coauthors-wp-list-table.php' );
 
+		// Get a co-author based on a query
+		add_action( 'wp_ajax_search_coauthors_to_assign', array( $this, 'handle_ajax_search_coauthors_to_assign' ) );
+
 		// Any CSS or JS
 		add_action( 'admin_enqueue_scripts', array( $this, 'action_admin_enqueue_scripts' ) );
 
@@ -219,6 +222,17 @@ class CoAuthors_Guest_Authors
 				if ( $guest_author_term->term_id != $linked_account_term->term_id )
 					wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $linked_account_term->term_id, 'force_default' => true ) );
 				break;
+			// Reassign to a different user
+			case 'reassign-another':
+				$user_nicename = sanitize_title( $_POST['leave-assigned-to'] );
+				$reassign_to = $coauthors_plus->get_coauthor_by( 'user_nicename', $user_nicename );
+				if ( ! $reassign_to )
+					wp_die( __( 'Co-author does not exists. Try again?', 'co-authors-plus' ) );
+				if ( $reassign_to->user_login == $guest_author->user_login )
+					wp_die( __( '', 'co-authors-plus' ) );
+				$reassign_to_term = $coauthors_plus->get_author_term( $reassign_to );
+				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $reassign_to_term->term_id, 'force_default' => true ) );
+				break;
 			// Remove the byline, but don't delete the post
 			case 'remove-byline':
 				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy );
@@ -239,6 +253,33 @@ class CoAuthors_Guest_Authors
 		$redirect_to = add_query_arg( $args, admin_url( $this->parent_page ) );
 		wp_safe_redirect( $redirect_to );
 		exit;
+	}
+
+	/**
+	 * Given a search query, suggest some co-authors that might match it
+	 *
+	 * @since 2.7
+	 */
+	function handle_ajax_search_coauthors_to_assign() {
+		global $coauthors_plus;
+
+		if ( ! current_user_can( $this->list_guest_authors_cap ) )
+			die();
+
+		$search = sanitize_text_field( $_GET['q'] );
+
+		$results = wp_list_pluck( $coauthors_plus->search_authors( $search ), 'user_login' );
+		$retval = array();
+		foreach( $results as $user_login ) {
+			$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $user_login );
+			$retval[] = (object)array(
+					'display_name'       => $coauthor->display_name,
+					'user_login'         => $coauthor->user_login,
+					'id'                 => $coauthor->user_nicename,
+				);
+		}
+		echo json_encode( $retval );
+		die();
 	}
 
 
@@ -287,6 +328,9 @@ class CoAuthors_Guest_Authors
 		global $pagenow;
 		// Enqueue our guest author CSS on the related pages
 		if ( $this->parent_page == $pagenow && isset( $_GET['page'] ) && $_GET['page'] == 'view-guest-authors' ) {
+			wp_enqueue_script( 'jquery-select2', COAUTHORS_PLUS_URL . 'lib/select2/select2.min.js', array( 'jquery' ), COAUTHORS_PLUS_VERSION );
+			wp_enqueue_style( 'cap-jquery-select2-css', COAUTHORS_PLUS_URL . 'lib/select2/select2.css', false, COAUTHORS_PLUS_VERSION );
+
 			wp_enqueue_style( 'guest-authors-css', COAUTHORS_PLUS_URL . 'css/guest-authors.css', false, COAUTHORS_PLUS_VERSION );
 			wp_enqueue_script( 'guest-authors-js', COAUTHORS_PLUS_URL . 'js/guest-authors.js', false, COAUTHORS_PLUS_VERSION );
 		}
@@ -363,6 +407,11 @@ class CoAuthors_Guest_Authors
 			wp_nonce_field( 'delete-guest-author' );
 			echo '<input type="hidden" name="id" value="' . esc_attr( (int)$_GET['id'] ) . '" />';
 			echo '<fieldset><ul style="list-style-type:none;">';
+			// Reassign to another user
+			echo '<li class="hide-if-no-js"><label for="reassign-another">';
+			echo '<input type="radio" id="reassign-another" name="reassign" class="reassign-option" value="reassign-another" />&nbsp;&nbsp;' . __( 'Reassign to another co-author:', 'co-authors-plus' ) . '&nbsp;&nbsp;</label>';
+			echo '<input type="hidden" id="leave-assigned-to" name="leave-assigned-to" style="width:200px;" />';
+			echo '</li>';
 			// Leave mapped to a linked account
 			if ( get_user_by( 'login', $guest_author->linked_account ) ) {
 				echo '<li><label for="leave-assigned">';
@@ -373,7 +422,6 @@ class CoAuthors_Guest_Authors
 			echo '<li><label for="remove-byline">';
 			echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" />&nbsp;&nbsp;' . __( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
 			echo '</label></li>';
-			// @todo Reassign to another user
 			echo '</ul></fieldset>';
 			submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true, array( 'disabled' => 'disabled' ) );
 			echo '</form>';
