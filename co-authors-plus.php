@@ -460,8 +460,9 @@ class coauthors_plus {
 			return $value;
 		// We filter count_user_posts() so it provides an accurate number
 		$numposts = count_user_posts( $user_id );
+		$user = get_user_by( 'id', $user_id );
 		if ( $numposts > 0 ) {
-			$value .= "<a href='edit.php?author=$user_id' title='" . esc_attr__( 'View posts by this author' ) . "' class='edit'>";
+			$value .= "<a href='edit.php?author_name=$user->user_nicename' title='" . esc_attr__( 'View posts by this author', 'co-authors-plus' ) . "' class='edit'>";
 			$value .= $numposts;
 			$value .= '</a>';
 		} else {
