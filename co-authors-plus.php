@@ -184,6 +184,8 @@ class coauthors_plus {
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
 		add_filter( 'manage_users_custom_column', array( $this, '_filter_manage_users_custom_column' ), 10, 3 );
 
+		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
+
 	}
 
 	/**
@@ -964,6 +966,43 @@ class coauthors_plus {
 		);
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
 
+	}
+
+	/**
+	 * load-edit.php is when the screen has been set up
+	 */
+	function load_edit() {
+
+		$screen = get_current_screen();
+		if ( in_array( $screen->post_type, $this->supported_post_types ) )
+			add_filter( 'views_' . $screen->id, array( $this, 'filter_views' ) );
+	}
+
+	/**
+	 * Filter the view links that appear at the top of the Manage Posts view
+	 */
+	function filter_views( $views ) {
+
+		if ( array_key_exists( 'mine', $views ) )
+			return $views;
+
+		$views = array_reverse( $views );
+		$all_view = array_pop( $views );
+		$mine_args = array(
+				'author_name'           => wp_get_current_user()->user_nicename,
+			);
+		if ( 'post' != get_post_type() )
+			$mine_args['post_type'] = get_post_type();
+		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] )
+			$class = ' class="current"';
+		else
+			$class = '';
+		$views['mine'] = $view_mine = '<a' . $class . ' href="' . add_query_arg( $mine_args, admin_url( 'edit.php' ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
+
+		$views['all'] = str_replace( $class, '', $all_view );
+		$views = array_reverse( $views );
+
+		return $views;
 	}
 
 	/**
