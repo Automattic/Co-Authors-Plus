@@ -30,6 +30,9 @@ class CoAuthors_Guest_Authors
 		// Any CSS or JS
 		add_action( 'admin_enqueue_scripts', array( $this, 'action_admin_enqueue_scripts' ) );
 
+		// Extra notices
+		add_action( 'admin_notices', array( $this, 'action_admin_notices' ) );
+
 		// Handle actions to create or delete guest author accounts
 		add_action( 'admin_init', array( $this, 'handle_create_guest_author_action' ) );
 		add_action( 'admin_init', array( $this, 'handle_delete_guest_author_action' ) );
@@ -287,6 +290,29 @@ class CoAuthors_Guest_Authors
 			wp_enqueue_style( 'guest-authors-css', COAUTHORS_PLUS_URL . 'css/guest-authors.css', false, COAUTHORS_PLUS_VERSION );
 			wp_enqueue_script( 'guest-authors-js', COAUTHORS_PLUS_URL . 'js/guest-authors.js', false, COAUTHORS_PLUS_VERSION );
 		}
+	}
+
+	/**
+	 * Show some extra notices to the user
+	 */
+	function action_admin_notices() {
+		global $pagenow;
+
+		if ( $this->parent_page != $pagenow || ! isset( $_REQUEST['message'] ) )
+			return;
+
+		switch( $_REQUEST['message'] ) {
+			case 'guest-author-deleted':
+				$message = __( 'Guest author deleted.', 'co-authors-plus' );
+				break;
+			default:
+				$message = false;
+				break;
+		}
+
+		if ( $message )
+			echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
+
 	}
 
 	/**
