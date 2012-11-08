@@ -235,10 +235,10 @@ class coauthors_plus {
 	 * @param string $key Key to search by (slug,email)
 	 */
 	function get_coauthor_by( $key, $value ) {
-		global $coauthors_plus;
+
 		// If Guest Authors are enabled, prioritize those profiles
 		if ( $this->is_guest_authors_enabled() ) {
-			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( $key, $value );
+			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value );
 			if ( is_object( $guest_author ) ) {
 				return $guest_author;
 			}
@@ -267,7 +267,7 @@ class coauthors_plus {
 				// However, if guest authors are enabled and there's a guest author linked to this
 				// user account, we want to use that instead
 				if ( $this->is_guest_authors_enabled() ) {
-					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
+					$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
 					if ( is_object( $guest_author ) )
 						$user = $guest_author;
 				}
