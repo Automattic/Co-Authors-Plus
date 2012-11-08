@@ -40,6 +40,9 @@ class CoAuthors_Guest_Authors
 		// Filter author links and such
 		add_filter( 'author_link', array( $this, 'filter_author_link' ), 10, 3 );
 
+		// Validate new guest authors
+		add_filter( 'wp_insert_post_empty_content', array( $this, 'filter_wp_insert_post_empty_content' ), 10, 2 );
+
 		// Add metaboxes for our guest author management interface
 		add_action( 'add_meta_boxes', array( $this, 'action_add_meta_boxes' ), 10, 2 );
 		add_action( 'wp_insert_post_data', array( $this, 'manage_guest_author_filter_post_data' ), 10, 2 );
@@ -510,13 +513,26 @@ class CoAuthors_Guest_Authors
 		if ( !isset( $_POST['guest-author-nonce'] ) || !wp_verify_nonce( $_POST['guest-author-nonce'], 'guest-author-nonce' ) )
 			return $post_data;
 
-		global $post;
-
 		$post_data['post_title'] = sanitize_text_field( $_POST['cap-display_name'] );
-		$slug = sanitize_title( get_post_meta( $post->ID, $this->get_post_meta_key( 'user_login' ), true ) );
+		$slug = sanitize_title( get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'user_login' ), true ) );
 		if ( ! $slug )
 			$slug = sanitize_title( $_POST['cap-display_name'] );
+		// Uh oh, no guest authors without slugs
+		if ( ! $slug )
+			wp_die( __( 'Guest authors cannot be created without display names.', 'co-authors-plus' ) );
 		$post_data['post_name'] = $this->get_post_meta_key( $slug );
+
+		// Guest authors can't be created with the same user_login as a user
+		$user_nicename = str_replace( 'cap-', '', $slug );
+		$user = get_user_by( 'slug', $user_nicename );
+		if ( $user && $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) )
+			wp_die( __( 'Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user instead', 'co-authors-plus' ) );
+
+		// Guest authors can't have the same post_name value
+		$guest_author = $this->get_guest_author_by( 'post_name', $post_data['post_name'] );
+		if ( $guest_author && $guest_author->ID != $original_args['ID'] )
+			wp_die( __( 'Display name conflicts with another guest author display name.', 'co-authors-plus' ) );
+
 		return $post_data;
 	}
 
@@ -547,7 +563,7 @@ class CoAuthors_Guest_Authors
 			}
 			if ( 'linked_account' == $author_field['key'] ) {
 				$linked_account_key = $this->get_post_meta_key( 'linked_account' );
-				$user_id = intval( $_POST[$linked_account_key] );
+				$user_id = ( isset( $_POST[$linked_account_key] ) ) ? intval( $_POST[$linked_account_key] ) : 0;
 				$user = get_user_by( 'id', $user_id );
 				if ( $user_id > 0 && is_object( $user ) )
 					$user_login = $user->user_login;
@@ -894,6 +910,20 @@ class CoAuthors_Guest_Authors
 
 		$retval = $this->create( $guest_author );
 		return $retval;
+	}
+
+	/**
+	 * Guest authors must have Display Names
+	 */
+	function filter_wp_insert_post_empty_content( $maybe_empty, $postarr ) {
+
+		if ( $this->post_type != $postarr['post_type'] )
+			return $maybe_empty;
+
+		if ( empty( $postarr['post_title'] ) )
+			return true;
+
+		return $maybe_empty;
 	}
 
 	/**
