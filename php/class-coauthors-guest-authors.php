@@ -1068,7 +1068,7 @@ class CoAuthors_Guest_Authors
 	 * On the User Management view, add action links to create or edit
 	 * guest author profiles
 	 *
-	 * @todo The text of these links is definitely up in the air
+	 * @since 2.7
 	 *
 	 * @param array $actions The existing actions to perform on a user
 	 * @param object $user_object A WP_User object
