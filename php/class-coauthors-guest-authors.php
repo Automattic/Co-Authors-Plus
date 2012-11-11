@@ -1076,6 +1076,9 @@ class CoAuthors_Guest_Authors
 	 */
 	function filter_user_row_actions( $actions, $user_object ) {
 
+		if ( ! current_user_can( $this->list_guest_authors_cap ) )
+			return $actions;
+
 		$new_actions = array();
 		if ( $guest_author = $this->get_guest_author_by( 'linked_account', $user_object->user_login ) ) {
 			$edit_guest_author_link = get_edit_post_link( $guest_author->ID );
