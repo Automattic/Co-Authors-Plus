@@ -217,10 +217,7 @@ class CoAuthors_Guest_Authors
 		switch( $_POST['reassign'] ) {
 			// Leave assigned to the current linked account
 			case 'leave-assigned':
-				$linked_account_term = $coauthors_plus->get_author_term( get_user_by( 'login', $guest_author->linked_account ) );
-				// If they aren't the same, delete the guest author term and reassign those to the linked account term
-				if ( $guest_author_term->term_id != $linked_account_term->term_id )
-					wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $linked_account_term->term_id, 'force_default' => true ) );
+				$reassign_to = $guest_author->linked_account;
 				break;
 			// Reassign to a different user
 			case 'reassign-another':
@@ -228,28 +225,28 @@ class CoAuthors_Guest_Authors
 				$reassign_to = $coauthors_plus->get_coauthor_by( 'user_nicename', $user_nicename );
 				if ( ! $reassign_to )
 					wp_die( __( 'Co-author does not exists. Try again?', 'co-authors-plus' ) );
-				if ( $reassign_to->user_login == $guest_author->user_login )
-					wp_die( __( '', 'co-authors-plus' ) );
-				$reassign_to_term = $coauthors_plus->get_author_term( $reassign_to );
-				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $reassign_to_term->term_id, 'force_default' => true ) );
+				$reassign_to = $reassign_to->user_login;
 				break;
 			// Remove the byline, but don't delete the post
 			case 'remove-byline':
-				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy );
+				$reassign_to = false;
 				break;
 			default:
 				wp_die( __( "Please make sure to pick an option.", 'co-authors-plus' ) );
 				break;
 		}
 
-		// Delete the guest author
-		wp_delete_post( $guest_author->ID, true );
+		$retval = $this->delete( $guest_author->ID, $reassign_to );
+
+		$args = array(
+				'page'        => 'view-guest-authors',
+			);
+		if ( is_wp_error( $retval ) )
+			$args['message'] = 'delete-error';
+		else
+			$args['message'] = 'guest-author-deleted';
 
 		// Redirect to safety
-		$args = array(
-				'page'       => 'view-guest-authors',
-				'message'    => 'guest-author-deleted',
-			);
 		$redirect_to = add_query_arg( $args, admin_url( $this->parent_page ) );
 		wp_safe_redirect( $redirect_to );
 		exit;
@@ -877,27 +874,47 @@ class CoAuthors_Guest_Authors
 		// Don't regenerate though, as we haven't saved the new value
 		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
 		if ( $linked_account_key == $meta_key && $meta_value != get_post_meta( $object_id, $linked_account_key, true ) ) {
-			wp_cache_delete( 'all-linked-accounts', self::$cache_group );
+			$this->delete_guest_author_cache( $object_id );
 		}
 
 		// If one of the guest author meta values has changed, we'll need to invalidate all keys
 		if ( false !== strpos( $meta_key, 'cap-' ) && $meta_value != get_post_meta( $object_id, $meta_key, true ) ) {
-			$keys = wp_list_pluck( $this->get_guest_author_fields(), 'key' );
-			$keys = array_merge( $keys, array( 'login', 'post_name', 'user_nicename', 'ID' ) );
-			// Get the old cached values
-			$guest_author = $this->get_guest_author_by( 'ID', $object_id );
-			foreach( $keys as $key ) {
-				if ( 'post_name' == $key )
-					$key = 'user_nicename';
-				else if ( 'login' == $key )
-					$key = 'user_login';
-				$cache_key = md5( 'guest-author-' . $key . '-' . $guest_author->$key );
-				wp_cache_delete( $cache_key, self::$cache_group );
-			}
+			$this->delete_guest_author_cache( $object_id );
 		}
 
 		return null;
 	}
+
+	/**
+	 * Delete all of the cache values associated with a guest author
+	 *
+	 * @since 2.7
+	 *
+	 * @param int|object $guest_author The guest author ID or object
+	 */
+	public function delete_guest_author_cache( $id_or_object ) {
+
+		if ( is_object( $id_or_object ) )
+			$guest_author = $id_or_object;
+		else
+			$guest_author = $this->get_guest_author_by( 'ID', $id_or_object );
+
+		// Delete the lookup cache associated with each old co-author value
+		$keys = wp_list_pluck( $this->get_guest_author_fields(), 'key' );
+		$keys = array_merge( $keys, array( 'login', 'post_name', 'user_nicename', 'ID' ) );
+		foreach( $keys as $key ) {
+			if ( 'post_name' == $key )
+				$key = 'user_nicename';
+			else if ( 'login' == $key )
+				$key = 'user_login';
+			$cache_key = md5( 'guest-author-' . $key . '-' . $guest_author->$key );
+			wp_cache_delete( $cache_key, self::$cache_group );
+		}
+
+		// Delete the 'all-linked-accounts' cache
+		wp_cache_delete( 'all-linked-accounts', self::$cache_group );
+
+	} 
 
 
 	/**
@@ -950,6 +967,52 @@ class CoAuthors_Guest_Authors
 
 		return $post_id;
 	}
+
+	/**
+	 * Delete a guest author
+	 *
+	 * @since 0.7
+	 *
+	 * @param int $post_id The ID for the guest author profile
+	 * @param string $reassign_to User login value for the co-author to reassign posts to
+	 * @return bool|WP_Error $success True on success, WP_Error on a failure
+	 */
+	public function delete( $id, $reassign_to = false ) {
+		global $coauthors_plus;
+
+		$guest_author = $this->get_guest_author_by( 'ID', $id );
+		if ( ! $guest_author )
+			return new WP_Error( 'guest-author-missing', __( 'Guest author does not exist', 'co-authors-plus' ) );
+
+		$guest_author_term = $coauthors_plus->get_author_term( $guest_author );
+
+		if ( $reassign_to ) {
+
+			// We're reassigning the guest author's posts user to its linked account
+			if ( $guest_author->linked_account == $reassign_to )
+				$reassign_to_author = get_user_by( 'login', $reassign_to );
+			else 
+				$reassign_to_author = $coauthors_plus->get_coauthor_by( 'user_login', $reassign_to );
+			if ( ! $reassign_to_author )
+				return new WP_Error( 'reassign-to-missing', __( 'Reassignment co-author does not exist', 'co-authors-plus' ) );
+
+			$reassign_to_term = $coauthors_plus->get_author_term( $reassign_to_author );
+			// In the case where the guest author and its linked account shared the same term, we don't want to reassign
+			if ( $guest_author_term->term_id != $reassign_to_term->term_id )
+				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $reassign_to_term->term_id, 'force_default' => true ) );
+
+		} else {
+			wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy );
+		}
+
+		// Delete the guest author profile
+		wp_delete_post( $guest_author->ID, true );
+
+		// Make sure all of the caches are reset
+		$this->delete_guest_author_cache( $guest_author );
+		return true;
+	}
+
 
 	/**
 	 * Create a guest author from an existing WordPress user
