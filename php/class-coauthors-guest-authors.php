@@ -635,7 +635,10 @@ class CoAuthors_Guest_Authors
 			}
 			if ( 'linked_account' == $author_field['key'] ) {
 				$linked_account_key = $this->get_post_meta_key( 'linked_account' );
-				$user_id = ( isset( $_POST[$linked_account_key] ) ) ? intval( $_POST[$linked_account_key] ) : 0;
+				if ( ! empty( $_POST[$linked_account_key] ) )
+					$user_id = intval( $_POST[$linked_account_key] );
+				else
+					continue;
 				$user = get_user_by( 'id', $user_id );
 				if ( $user_id > 0 && is_object( $user ) )
 					$user_login = $user->user_login;
