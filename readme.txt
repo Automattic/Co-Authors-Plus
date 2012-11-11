@@ -26,6 +26,7 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 * Apply query filters to only post_types registered with the taxonomy. Props [Tom Ransom](https://github.com/1bigidea)
 * Filter coauthors_posts_link_single() with 'coauthors_posts_link'. Also adds rel="author". Props [Amit Sannad](https://github.com/asannad) and [Gabriel Koen](https://github.com/mintindeed)
 * Filter for the context and priorities of the Co-Authors meta boxes. Props [Tomáš Kapler](https://github.com/tkapler)
+* Renamed the post meta box for selecting authors so it applies to many post types. Props [John Blackbourn](https://github.com/johnbillion)
 
 = 2012-05-07 / 2.6.4 =
 * Bug fix: Properly filter the user query so users can AJAX search against the display name field again
