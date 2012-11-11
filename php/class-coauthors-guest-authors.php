@@ -170,7 +170,8 @@ class CoAuthors_Guest_Authors
 		if ( !wp_verify_nonce( $_GET['nonce'], 'create-guest-author' ) )
 			wp_die( __( "Doin' something fishy, huh?", 'co-authors-plus' ) );
 
-		// @todo permissions check
+		if ( ! current_user_can( $this->list_guest_authors_cap ) )
+			wp_die( __( "You don't have permission to perform this action.", 'co-authors-plus' ) );
 
 		// @todo Check to see if the user already has a guest profile
 		$user_id = intval( $_GET['user_id'] );
