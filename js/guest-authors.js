@@ -20,13 +20,12 @@ jQuery(document).ready(function($){
 			}
 		},
 		formatResult: function( object, container, query ) {
-			if ( object.display_name )
-				return object.display_name;
-			else
-				return object.user_login;
+			return object.display_name;
 		},
 		formatSelection: function( object, container ) {
-			return object.user_login;
-		},
+			return object.display_name;
+		}
+	}).on('change', function() {
+		$('#reassign-another').trigger('click');
 	});
 });
