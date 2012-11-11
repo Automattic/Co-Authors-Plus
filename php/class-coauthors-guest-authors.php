@@ -483,7 +483,7 @@ class CoAuthors_Guest_Authors
 			add_filter( 'wp_dropdown_users', array( $this, 'filter_wp_dropdown_users_to_disable' ) );
 
 		$linked_account_user_ids = wp_list_pluck( $this->get_all_linked_accounts(), 'ID' );
-		if ( $key = array_search( $linked_account_id, $linked_account_user_ids ) )
+		if ( false !== ( $key = array_search( $linked_account_id, $linked_account_user_ids ) ) )
 			unset( $linked_account_user_ids[$key] );
 
 		echo '<p><label>' . __( 'WordPress User Mapping', 'co-authors-plus' ) . '</label> ';
