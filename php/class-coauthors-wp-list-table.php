@@ -124,8 +124,6 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 	/**
 	 * Generate the columns of information to be displayed on our list table
-	 *
-	 * @todo display the post count
 	 */
 	function get_columns() {
 		$columns = array(

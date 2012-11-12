@@ -129,7 +129,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Filter the messages that appear when saving or updating a guest author
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 */
 	function filter_post_updated_messages( $messages ) {
 		global $post;
@@ -160,7 +160,7 @@ class CoAuthors_Guest_Authors
 	 * Handle the admin action to create a guest author based
 	 * on an existing WordPress user
 	 *
-	 * @since 2.7
+	 * @since 3.0
 	 */
 	function handle_create_guest_author_action() {
 
@@ -173,7 +173,6 @@ class CoAuthors_Guest_Authors
 		if ( ! current_user_can( $this->list_guest_authors_cap ) )
 			wp_die( __( "You don't have permission to perform this action.", 'co-authors-plus' ) );
 
-		// @todo Check to see if the user already has a guest profile
 		$user_id = intval( $_GET['user_id'] );
 
 		// Create the guest author
@@ -192,7 +191,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Handle the admin action to delete a guest author and possibly reassign their posts
 	 *
-	 * @since 2.7
+	 * @since 3.0
 	 */
 	function handle_delete_guest_author_action() {
 		global $coauthors_plus;
@@ -256,7 +255,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Given a search query, suggest some co-authors that might match it
 	 *
-	 * @since 2.7
+	 * @since 3.0
 	 */
 	function handle_ajax_search_coauthors_to_assign() {
 		global $coauthors_plus;
@@ -312,6 +311,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Add the admin menus for seeing all co-authors
+	 *
+	 * @since 3.0
 	 */
 	function action_admin_menu() {
 
@@ -321,6 +322,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Enqueue any scripts or styles used for Guest Authors
+	 *
+	 * @since 3.0
 	 */
 	function action_admin_enqueue_scripts() {
 		global $pagenow;
@@ -336,6 +339,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Show some extra notices to the user
+	 *
+	 * @since 3.0
 	 */
 	function action_admin_notices() {
 		global $pagenow;
@@ -359,6 +364,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Register the metaboxes used for Guest Authors
+	 *
+	 * @since 3.0
 	 */
 	function action_add_meta_boxes() {
 		global $coauthors_plus;
@@ -377,7 +384,9 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
+	 * View a list table of all guest authors
 	 *
+	 * @since 3.0
 	 */
 	function view_guest_authors_list() {
 
@@ -445,6 +454,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Metabox for saving or updating a Guest Author
+	 *
+	 * @since 3.0
 	 */
 	function metabox_manage_guest_author_save() {
 		global $post, $coauthors_plus;
@@ -461,7 +472,9 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
-	 * Metabox for editing this guest author's slug
+	 * Metabox for editing this guest author's slug or changing the linked account
+	 *
+	 * @since 3.0
 	 */
 	function metabox_manage_guest_author_slug() {
 		global $post;
@@ -504,6 +517,9 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Make a wp_dropdown_users disabled
+	 * Only applied if the user_login value for the guest author matches its linked account
+	 *
+	 * @since 3.0
 	 */
 	public function filter_wp_dropdown_users_to_disable( $output ) {
 		return str_replace( '<select ', '<select disabled="disabled" ', $output );
@@ -511,6 +527,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Metabox to display all of the pertient names for a Guest Author without a user account
+	 *
+	 * @since 3.0
 	 */
 	function metabox_manage_guest_author_name() {
 		global $post;
@@ -532,6 +550,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Metabox to display all of the pertient contact details for a Guest Author without a user account
+	 *
+	 * @since 3.0
 	 */
 	function metabox_manage_guest_author_contact_info() {
 		global $post;
@@ -553,6 +573,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Metabox to edit the bio and other biographical details of the Guest Author
+	 *
+	 * @since 3.0
 	 */
 	function metabox_manage_guest_author_bio() {
 		global $post;
@@ -575,6 +597,8 @@ class CoAuthors_Guest_Authors
 	/**
 	 * When a guest author is created or updated, we need to properly create
 	 * the post_name based on some data provided by the user
+	 *
+	 * @since 3.0
 	 */
 	function manage_guest_author_filter_post_data( $post_data, $original_args ) {
 
@@ -610,6 +634,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Save the various meta fields associated with our guest author model
+	 *
+	 * @since 3.0
 	 */
 	function manage_guest_author_save_meta_fields( $post_id, $post ) {
 		global $coauthors_plus;
@@ -666,6 +692,11 @@ class CoAuthors_Guest_Authors
 	 * Return a simulated WP_User object based on the post ID
 	 * of a guest author
 	 *
+	 * @since 3.0
+	 *
+	 * @param string $key Key to search by (login,email)
+	 * @param string $value Value to search for
+	 * @param object|false $coauthor The guest author on success, false on failure
 	 */
 	function get_guest_author_by( $key, $value ) {
 		global $wpdb;
@@ -739,6 +770,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Get all of the meta fields that can be associated with a guest author
+	 *
+	 * @since 3.0
 	 */
 	function get_guest_author_fields( $groups = 'all' ) {
 
@@ -825,7 +858,7 @@ class CoAuthors_Guest_Authors
 	 * Gets a postmeta key by prefixing it with 'cap-'
 	 * if not yet prefixed
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 */
 	function get_post_meta_key( $key ) {
 
@@ -838,7 +871,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Get all of the user accounts that have been linked
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 */
 	function get_all_linked_accounts( $force = false ) {
 		global $wpdb;
@@ -866,8 +899,9 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Filter update post metadata
+	 * Clean caches when any of the values have been changed
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 */
 	function filter_update_post_metadata( $retnull, $object_id, $meta_key, $meta_value, $prev_value ) {
 
@@ -892,7 +926,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Delete all of the cache values associated with a guest author
 	 *
-	 * @since 2.7
+	 * @since 3.0
 	 *
 	 * @param int|object $guest_author The guest author ID or object
 	 */
@@ -924,7 +958,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Create a guest author
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 */
 	function create( $args ) {
 		global $coauthors_plus;
@@ -975,7 +1009,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Delete a guest author
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 *
 	 * @param int $post_id The ID for the guest author profile
 	 * @param string $reassign_to User login value for the co-author to reassign posts to
@@ -1021,7 +1055,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Create a guest author from an existing WordPress user
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 *
 	 * @param int $user_id ID for a WordPress user
 	 * @return int|WP_Error $retval ID for the new guest author on success, WP_Error on failure
@@ -1055,6 +1089,8 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Guest authors must have Display Names
+	 *
+	 * @since 3.0
 	 */
 	function filter_wp_insert_post_empty_content( $maybe_empty, $postarr ) {
 
@@ -1071,7 +1107,7 @@ class CoAuthors_Guest_Authors
 	 * On the User Management view, add action links to create or edit
 	 * guest author profiles
 	 *
-	 * @since 2.7
+	 * @since 3.0
 	 *
 	 * @param array $actions The existing actions to perform on a user
 	 * @param object $user_object A WP_User object
@@ -1099,8 +1135,10 @@ class CoAuthors_Guest_Authors
 		return $new_actions + $actions;
 	}
 
-		/**
+	/**
 	 * Anything to do after the theme has been set up
+	 *
+	 * @since 3.0
 	 */
 	function action_after_setup_theme() {
 		add_theme_support( 'post-thumbnails', array( $this->post_type ) );
@@ -1121,7 +1159,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Filter 'get_avatar' to replace with our own avatar if one exists
 	 *
-	 * @since 2.7
+	 * @since 3.0
 	 */
 	function filter_get_avatar( $avatar, $id_or_email, $size, $default ) {
 
@@ -1152,7 +1190,7 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Filter the URL used in functions like the_author_posts_link()
 	 *
-	 * @since 2.7
+	 * @since 3.0
 	 */
 	function filter_author_link( $link, $author_id, $author_nicename ) {
 

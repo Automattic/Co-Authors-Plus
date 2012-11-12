@@ -184,6 +184,7 @@ class coauthors_plus {
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
 		add_filter( 'manage_users_custom_column', array( $this, '_filter_manage_users_custom_column' ), 10, 3 );
 
+		// Apply some targeted filters
 		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
 
 	}
@@ -193,7 +194,7 @@ class coauthors_plus {
 	 * Guest authors can be disabled entirely with:
 	 *     add_filter( 'coauthors_guest_authors_enabled', '__return_false' )
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 */
 	function is_guest_authors_enabled() {
 		return apply_filters( 'coauthors_guest_authors_enabled', true );
@@ -203,6 +204,8 @@ class coauthors_plus {
 	 * Get a co-author object by a specific type of key
 	 *
 	 * @param string $key Key to search by (slug,email)
+	 * @param string $value Value to search for
+	 * @param object|false $coauthor The co-author on success, false on failure
 	 */
 	function get_coauthor_by( $key, $value ) {
 
@@ -252,7 +255,7 @@ class coauthors_plus {
 	 * Whether or not Co-Authors Plus is enabled for this post type
 	 * Must be called after init
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 *
 	 * @param string $post_type The name of the post type we're considering
 	 * @return bool Whether or not it's enabled
@@ -364,6 +367,7 @@ class coauthors_plus {
 
 	/**
 	 * Add coauthors to author column on edit pages
+	 *
 	 * @param array $post_columns
 	 */
 	function _filter_manage_posts_columns( $posts_columns ) {
@@ -381,13 +385,14 @@ class coauthors_plus {
 				unset($new_columns[$key]);
 		}
 		return $new_columns;
-	} // END: _filter_manage_posts_columns
+	}
 
 	/**
 	 * Insert coauthors into post rows on Edit Page
+	 *
 	 * @param string $column_name
-	 **/
-	function _filter_manage_posts_custom_column($column_name) {
+	 */
+	function _filter_manage_posts_custom_column( $column_name ) {
 		if ($column_name == 'coauthors') {
 			global $post;
 			$authors = get_coauthors( $post->ID );
@@ -463,6 +468,10 @@ class coauthors_plus {
 
 	/**
 	 * Update the post count associated with an author term
+	 *
+	 * @since 3.0
+	 *
+	 * @param object $term The co-author term
 	 */
 	public function update_author_term_post_count( $term ) {
 		global $wpdb;
@@ -517,7 +526,7 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Modify
+	 * Modify the author query posts SQL to include posts co-authored
 	 */
 	function posts_where_filter( $where, $query ){
 		global $wpdb;
@@ -568,7 +577,7 @@ class coauthors_plus {
 	}
 
 	/**
-	 *
+	 * Modify the author query posts SQL to include posts co-authored
 	 */
 	function posts_groupby_filter( $groupby, $query ) {
 		global $wpdb;
@@ -596,10 +605,8 @@ class coauthors_plus {
 			return $data;
 
 		// Bail on revisions
-		if( $data['post_type'] == 'revision' )
+		if ( $data['post_type'] == 'revision' )
 			return $data;
-
-		// @todo this should check the nonce before changing the value
 
 		// This action happens when a post is saved while editing a post
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
@@ -649,9 +656,9 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Update a post's co-authors
+	 * Update a post's co-authors on the 'save_post' hook
+	 *
 	 * @param $post_ID
-	 * @return
 	 */
 	function coauthors_update_post( $post_id, $post ) {
 		$post_type = $post->post_type;
@@ -671,7 +678,7 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Add a user as coauthor for a post
+	 * Add one or more co-authors as bylines for a post
 	 */
 	function add_coauthors( $post_id, $coauthors, $append = false ) {
 		global $current_user;
@@ -755,7 +762,7 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Filter the count_users_posts() core function
+	 * Filter the count_users_posts() core function to include our correct count
 	 */
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
@@ -912,7 +919,7 @@ class coauthors_plus {
 	/**
 	 * Modify get_terms() to LIKE against the term description instead of the term name
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 */
 	function filter_terms_clauses( $pieces ) {
 
@@ -958,6 +965,8 @@ class coauthors_plus {
 
 	/**
 	 * Filter the view links that appear at the top of the Manage Posts view
+	 *
+	 * @since 3.0
 	 */
 	function filter_views( $views ) {
 
@@ -1002,7 +1011,7 @@ class coauthors_plus {
 				); ?>';
 			</script>
 		<?php
-	} // END: js_vars()
+	}
 
 	/**
 	 * Helper to only add javascript to necessary pages. Avoids bloat in admin.
@@ -1070,7 +1079,7 @@ class coauthors_plus {
 	/**
 	 * Get the author term for a given co-author
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 *
 	 * @param object $coauthor The co-author object
 	 * @return object|false $author_term The author term on success
@@ -1096,7 +1105,7 @@ class coauthors_plus {
 	/**
 	 * Update the author term for a given co-author
 	 *
-	 * @since 0.7
+	 * @since 3.0
 	 *
 	 * @param object $coauthor The co-author object (user or guest author)
 	 * @return object|false $success Term object if successful, false if not
@@ -1130,7 +1139,7 @@ class coauthors_plus {
 	/**
 	 * Filter Edit Flow's 'ef_calendar_item_information_fields' to add co-authors
 	 *
-	 * @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/2
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
 	 */
 	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
 
@@ -1152,7 +1161,7 @@ class coauthors_plus {
 	/**
 	 * Filter Edit Flow's 'ef_story_budget_term_column_value' to add co-authors to the story budget
 	 *
-	 * @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/2
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
 	 */
 	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
 
