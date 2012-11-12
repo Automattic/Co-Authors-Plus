@@ -200,36 +200,6 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Get one or more co-authors based on arguments
-	 *
-	 * @todo full argument support
-	 * @todo cache based on query args
-	 */
-	function get_coauthors( $args = array() ) {
-
-		$term_args = array(
-				'get' => 'all',
-			);
-		if ( isset( $args['per_page'] ) )
-			$term_args['number'] = (int)$args['per_page'];
-		if ( isset( $args['paged'] ) )
-			$term_args['offset'] = absint( $args['paged'] - 1 );
-
-		$matching_terms = get_terms( $this->coauthor_taxonomy, $term_args );
-		if ( empty( $matching_terms ) )
-			return array();
-
-		$coauthors = array();
-		foreach( $matching_terms as $matching_term ) {
-			$matching_user = $this->get_coauthor_by( 'user_nicename', $matching_term->slug );
-			if ( $matching_user )
-				$coauthors[] = $matching_user;
-		}
-		return $coauthors;
-
-	}
-
-	/**
 	 * Get a co-author object by a specific type of key
 	 *
 	 * @param string $key Key to search by (slug,email)
