@@ -3,41 +3,19 @@
  * Co-Authors Plus commands for the WP-CLI framework
  *
  * @package wp-cli
- * @since 2.7
+ * @since 3.0
  * @see https://github.com/wp-cli/wp-cli
  */
 WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
 
-class CoAuthorsPlus_Command extends WP_CLI_Command
-{
-
-	/**
-	 * Help function for this command
-	 */
-	public static function help() {
-
-		WP_CLI::line( <<<EOB
-usage: wp co-authors-plus <parameters>
-Possible subcommands:
-					create_guest_authors        Create guest author profiles for each author
-					assign_coauthors            Assign authors to a post based on a postmeta value
-					--meta_key=Post meta key to base the assignment on
-					--post_type=Which post type to modify assignments on
-					reassign_terms            Reassign posts with an old author to a new author
-					--author_mapping=           Where your author mapping file exists
-					--old_term=                 Term to be reassigned (instead of using author mapping file)
-					--new_term=                 Term to reassign to. Create a term if one doesn't exist
-					list_posts_without_terms    List all posts without Co-Authors Plus terms
-					migrate_author_terms        Migrate author terms without prefixes to ones with prefixes
-					update_author_terms         Update the published post count for all coauthors and refresh the description field
-EOB
-		);
-	}
+class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 	/**
 	 * Subcommand to create guest authors based on users
 	 *
-	 * @todo Don't create a guest author if the user is already mapped to a guest author
+	 * @since 3.0
+	 *
+	 * @subcommand create-guest-authors
 	 */
 	public function create_guest_authors( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -69,7 +47,10 @@ EOB
 	/**
 	 * Subcommand to assign coauthors to a post based on a given meta key
 	 *
-	 * @todo support assigning multiple meta keys
+	 * @since 3.0
+	 *
+	 * @subcommand assign-coauthors
+	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>]
 	 */
 	public function assign_coauthors( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -150,6 +131,11 @@ EOB
 	/**
 	 * Assign posts associated with a WordPress user to a co-author
 	 * Only apply the changes if there aren't yet co-authors associated with the post
+	 *
+	 * @since 3.0
+	 *
+	 * @subcommand assign-user-to-coauthor
+	 * @synopsis --user_login=<user-login> --coauthor=<coauthor>
 	 */
 	public function assign_user_to_coauthor( $args, $assoc_args ) {
 		global $coauthors_plus, $wpdb;
@@ -196,6 +182,11 @@ EOB
 	 * created with the old user_login value. We can use this to migrate to the new user_login
 	 *
 	 * @todo support reassigning by CSV
+	 *
+	 * @since 3.0
+	 *
+	 * @subcommand reassign-terms
+	 * @synopsis [--author-mapping=<file>] [--old_term=<slug>] [--new_term=<slug>]
 	 */
 	public function reassign_terms( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -280,6 +271,11 @@ EOB
 
 	/**
 	 * List all of the posts without assigned co-authors terms
+	 *
+	 * @since 3.0
+	 *
+	 * @subcommand list-posts-without-terms
+	 * @synopsis [--post_type=<ptype>]
 	 */
 	public function list_posts_without_terms( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -325,6 +321,10 @@ EOB
 	 * Migrate author terms without prefixes to ones with prefixes
 	 * Pre-3.0, all author terms didn't have a 'cap-' prefix, which means
 	 * they can easily collide with terms in other taxonomies
+	 *
+	 * @since 3.0
+	 * 
+	 * @subcommand migrate-author-terms
 	 */
 	public function migrate_author_terms( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -359,6 +359,10 @@ EOB
 
 	/**
 	 * Update the post count and description for each author
+	 *
+	 * @since 3.0
+	 *
+	 * @subcommand update-author-terms
 	 */
 	public function update_author_terms() {
 		global $coauthors_plus;
