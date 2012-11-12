@@ -166,5 +166,5 @@ When a user is deleted from WordPress, they will be removed from all posts for w
 1. Add co-authors to your posts and pages.
 
 == Screenshots ==
-1.  "Post Author(s)" box with multiple authors added
-2.  Search-as-you-type input box that looks up authors as you type in their name. Fields displayed are: ID, Display Name, and Email.
+1.  "Authors" box with multiple authors added
+2.  Guest authors allow you to assign bylines without creating WordPress user accounts
