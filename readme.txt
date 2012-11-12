@@ -11,13 +11,21 @@ Assign multiple bylines to posts, pages, and custom post types via a search-as-y
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box. Co-authored posts appear on a co-author's archive page and in their feed. Co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
 
-Add writers as bylines without creating WordPress user accounts. Simply create a guest author profile for the writer and assign the byline as you normally would.
+Add writers as bylines without creating WordPress user accounts. Simply [create a guest author profile](http://vip.wordpress.com/documentation/add-guest-bylines-to-your-content-with-co-authors-plus/) for the writer and assign the byline as you normally would.
 
-On the frontend, use the Co-Authors Plus template tags to list co-authors anywhere you'd normally list the author.
+On the frontend, use the [Co-Authors Plus template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) to list co-authors anywhere you'd normally list the author.
 
 This plugin is an almost complete rewrite of the Co-Authors plugin originally developed at [Shepherd Interactive](http://www.shepherd-interactive.com/) (2007). The original plugin was inspired by the 'Multiple Authors' plugin by Mark Jaquith (2005).
 
-> *See "Other Notes" section for Template Tags and usage information*
+== Frequently Asked Questions ==
+
+= How do I add Co-Authors Plus support to my theme? =
+
+If you've just installed Co-Authors Plus, you might notice that the bylines are being added in the backend but aren't appearing on the frontend. You'll need to [add the template tags to your theme](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) before the bylines will appear.
+
+= What happens to posts and pages when I delete a user assigned to a post or page as a coauthor? =
+
+When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
 == Changelog ==
 
@@ -149,108 +157,13 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 * Initial beta release.
 
-
 == Installation ==
 
 1. IMPORTANT: Please disable the original Co-Authors plugin (if you are using it) before installing Co-Authors Plus
 1. Extract the coauthors-plus.zip file and upload its contents to the `/wp-content/plugins/` directory. Alternately, you can install directly from the Plugin directory within your WordPress Install.
 1. Activate the plugin through the "Plugins" menu in WordPress.
-1. Place the appropriate coauthors template tags in your template.
+1. Place the appropriate [co-authors template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) in your template.
 1. Add co-authors to your posts and pages.
-
-
-== Basic Usage and Other Notes ==
-
-* Contributor-level and above can be added as co-authors.
-* As per WordPress design, when an editor creates a new Post or Page, they are by default added as an author. However, they can be replaced by clicking on their name and typing in the name of the new author.
-* The search-as-you-type box starts searching once two letters have been added, and executes a new search with every subsequent letter.
-* The search-as-you-type box searches through the following user fields: a) user login; b) user nicename; c) display name; d) user email; e) first name; f) last name; and g) nickname. 
-
-
-== Template Tags ==
-
-New template tags enable listing of co-authors:
-
-*   <code>coauthors()</code>
-*   <code>coauthors_posts_links()</code>
-*   <code>coauthors_firstnames()</code>
-*   <code>coauthors_lastnames()</code>
-*   <code>coauthors_nicknames()</code>
-*   <code>coauthors_links()</code>
-*   <code>coauthors_IDs()</code>
-
-These template tags correspond to their "<code>the_author*</code>" equivalents; take special note of the pluralization.
-Each of these template tags accept four optional arguments:
-
-1.   <code>between</code>: default ", "
-1.   <code>betweenLast</code>: default " and "
-1.   <code>before</code>: default ""
-1.   <code>after</code>: default ""
-
-To use them, simply modify the code surrounding all instances of <code>the_author*()</code> to something like the following example:
-
-    if(function_exists('coauthors_posts_links'))
-        coauthors_posts_links();
-    else
-        the_author_posts_link();
-
-The result of this would be formatted like "John Smith, Jane Doe and Joe Public".
-
-Note that as of this writing, WordPress does provide a means of extending <code>wp_list_authors()</code>, so
-included in this plugin is the function <code>coauthors_wp_list_authors()</code> modified
-to take into account co-authored posts; the same arguments are accepted.
-
-Sometimes you may need fine-grained control over the display of a posts's authors, and in this case you may use
-the <code>CoAuthorsIterator</code> class. This class may be instantiated anywhere you may place <code>the_author()</code>
-or everywhere if the post ID is provided to the constructor. The instantiated class has the following methods:
-
-1.   <code>iterate()</code>: advances <code>$authordata</code> to the next co-author; returns <code>false</code> and restores the original <code>$authordata</code> if there are no more authors to iterate. 
-1.   <code>get_position()</code>: returns the zero-based index of the current author; returns -1 if the iterator is invalid.
-1.   <code>is_last()</code>: returns <code>true</code> if the current author is the last.
-1.   <code>is_first()</code>: returns <code>true</code> if the current author is the first.
-1.   <code>count()</code>: returns the total number of authors.
-1.   <code>get_all()</code>: returns an array of all of the authors' user data.
-
-For example:
-
-    $i = new CoAuthorsIterator();
-    print $i->count() == 1 ? 'Author: ' : 'Authors: ';
-    $i->iterate();
-    the_author();
-    while($i->iterate()){
-    	print $i->is_last() ? ' and ' : ', ';
-    	the_author();
-    }
-
-= the coauthor meta =
-
-*   <code>get_the_coauthor_meta( $field )</code> (2.8 only)
-*   <code>the_coauthor_meta( $field )</code> (2.8 only)
-
-Note: The $field variable corresponds with the same values accepted by the [the author meta](http://codex.wordpress.org/Template_Tags/the_author_meta) function.
-
-= get coauthors =
-
-*	<code>get_coauthors( [$post_id], [$args] )</code>
-
-This function returns an array of coauthors for the specified post, or if used inside the Loop, the current post active in the Loop. the $args parameter is an array that allows you to specify the order in which the authors should be returned.
-
-= is coauthor for post =
-
-*	<code>is_coauthor_for_post( $user, $post_id )</code>
-
-This function allows you to check whether the specified user is coauthor for a post. The $user attribute can be the user ID or username. 
-
-
-== Frequently Asked Questions ==
-
-= What is the main difference between Co-Authors and Co-Authors Plus? =
-
-The most notable difference is the replacement of the standard WordPress authors drop-downs with search-as-you-type/auto-suggest/whatever-you-call-them input boxes. As a result, major bits of the JavaScript code was changed to be more jQuery-friendly. Eventually, I hope to include the ability to add new Users from within the Edit Post/Page screen and possibly Gravatar support.
-
-= What happens to posts and pages when I delete a user assigned to a post or page as a coauthor? =
-
-When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
 == Screenshots ==
 1.  "Post Author(s)" box with multiple authors added
