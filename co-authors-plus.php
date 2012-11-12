@@ -87,7 +87,7 @@ class coauthors_plus {
 		add_action( 'wp_ajax_coauthors_ajax_suggest', array( $this, 'ajax_suggest' ) );
 
 		// Filter to allow coauthors to edit posts
-		add_filter( 'user_has_cap', array( $this, 'add_coauthor_cap' ), 10, 3 );
+		add_filter( 'user_has_cap', array( $this, 'filter_user_has_cap' ), 10, 3 );
 
 		// Handle the custom author meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_coauthors_box' ) );
@@ -805,14 +805,15 @@ class coauthors_plus {
 	function current_user_can_set_authors( ) {
 		global $post, $typenow;
 
-		// TODO: Enable Authors to set Co-Authors
-
 		$post_type = get_post_type();
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if( ! $post_type ) return false;
 
 		$post_type_object = get_post_type_object( $post_type );
-		$can_set_authors = current_user_can( $post_type_object->cap->edit_others_posts );
+		$current_user = wp_get_current_user();
+		if ( ! $current_user )
+			return false;
+		$can_set_authors = isset( $current_user->allcaps['edit_others_posts'] ) ? $current_user->allcaps['edit_others_posts'] : false;
 
 		return apply_filters( 'coauthors_plus_edit_authors', $can_set_authors );
 	}
@@ -1062,50 +1063,37 @@ class coauthors_plus {
 
 	/**
 	 * Allows coauthors to edit the post they're coauthors of
-	 * Pieces of code borrowed from http://pastebin.ca/1909968
-	 *
 	 */
-	function add_coauthor_cap( $allcaps, $caps, $args ) {
+	function filter_user_has_cap( $allcaps, $caps, $args ) {
 
-		// Load the post data:
+		$cap = $args[0];
 		$user_id = isset( $args[1] ) ? $args[1] : 0;
 		$post_id = isset( $args[2] ) ? $args[2] : 0;
 
-		if( ! $post_id )
-			$post_id = $this->get_post_id();
-
-		if( ! $post_id )
+		$obj = get_post_type_object( get_post_type( $post_id ) );
+		if ( ! $obj )
 			return $allcaps;
 
-		$post = get_post( $post_id );
-
-		if( ! $post )
+		$caps_to_modify = array(
+				$obj->cap->edit_post,
+				'edit_post', // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
+				$obj->cap->edit_others_posts, // This as well: http://core.trac.wordpress.org/ticket/22417
+			);
+		if ( ! in_array( $cap, $caps_to_modify ) )
 			return $allcaps;
 
-		$post_type_object = get_post_type_object( $post->post_type );
-
-		// Bail out if there's no post type object
-		if ( ! is_object( $post_type_object ) )
+		// We won't be doing any modification if they aren't already a co-author on the post
+		if( ! is_coauthor_for_post( $user_id, $post_id ) )
 			return $allcaps;
 
-		// Bail out if we're not asking about a post
-		if ( ! in_array( $args[0], array( $post_type_object->cap->edit_post, $post_type_object->cap->edit_others_posts ) ) )
-			return $allcaps;
+		$current_user = wp_get_current_user();
+		error_log( var_export( $current_user, true ) );
+		if ( 'publish' == get_post_status( $post_id ) && ! empty( $current_user->allcaps[$obj->cap->edit_published_posts] ) )
+			$allcaps[$obj->cap->edit_published_posts] = true;
+		elseif ( 'private' == get_post_status( $post_id ) && ! empty( $current_user->allcaps[$obj->cap->edit_private_posts] ) )
+			$allcaps[$obj->cap->edit_private_posts] = true;
 
-		// Bail out for users who can already edit others posts
-		if ( isset( $allcaps[$post_type_object->cap->edit_others_posts] ) && $allcaps[$post_type_object->cap->edit_others_posts] )
-			return $allcaps;
-
-		// Bail out for users who can't publish posts if the post is already published
-		if ( 'publish' == $post->post_status && ( ! isset( $allcaps[$post_type_object->cap->edit_published_posts] ) || ! $allcaps[$post_type_object->cap->edit_published_posts] ) )
-			return $allcaps;
-
-		// Finally, double check that the user is a coauthor of the post
-		if( is_coauthor_for_post( $user_id, $post_id ) ) {
-			foreach($caps as $cap) {
-				$allcaps[$cap] = true;
-			}
-		}
+		$allcaps[$obj->cap->edit_others_posts] = true;
 
 		return $allcaps;
 	}
