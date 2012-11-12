@@ -23,7 +23,7 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 = 3.0 (Nov. 12, 2012) =
 * Create guest author profiles for bylines you'd like to assign without creating WordPress user accounts. Guest authors can have all of the same fields as normal users including display name, biography, and avatars.
-* Support for non-Latin characters used in usernames and guest author names
+* Support for non-Latin characters in usernames and guest author names
 * wp-cli subcommands for creating, assigning, and reassigning co-authors
 * For themes using core template tags like the_author() or the_author_posts_link(), you enable Co-Authors Plus support with a simple filter
 * New author terms are now prefixed with 'cap-' to avoid collisions with global scope
