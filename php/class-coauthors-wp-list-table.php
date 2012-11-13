@@ -34,6 +34,19 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'first_name'         => array( 'first_name', 'ASC' ),
 				'last_name'          => array( 'last_name', 'ASC' ),
 			);
+		$_sortable = apply_filters( "manage_coauthors_guest_author_sortable_columns", $this->get_sortable_columns() );
+
+		foreach( (array)$_sortable as $id => $data ) {
+			if ( empty( $data ) )
+				continue;
+
+			$data = (array) $data;
+			if ( !isset( $data[1] ) )
+				$data[1] = false;
+
+			$sortable[$id] = $data;
+		}
+
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		$paged = ( isset( $_REQUEST['paged'] ) ) ? intval( $_REQUEST['paged'] ) : 1;
@@ -134,6 +147,8 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'linked_account' => __( 'Linked Account', 'co-authors-plus' ),
 				'posts'          => __( 'Posts', 'co-authors-plus' ),
 			);
+
+		$columns = apply_filters( "manage_coauthors_guest_author_columns", $columns );
 		return $columns;
 	}
 
@@ -161,6 +176,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				return $item->$column_name;
 			case 'user_email':
 				return '<a href="' . esc_attr( 'mailto:' . $item->user_email ) . '">' . esc_html( $item->user_email ) . '</a>';
+
+			default:
+				do_action( "manage_coauthors_guest_author_custom_column", $column_name, $item->ID );
+			break;
 		}
 	}
 
