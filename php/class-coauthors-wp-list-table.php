@@ -34,7 +34,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'first_name'         => array( 'first_name', 'ASC' ),
 				'last_name'          => array( 'last_name', 'ASC' ),
 			);
-		$_sortable = apply_filters( "manage_coauthors_guest_author_sortable_columns", $this->get_sortable_columns() );
+		$_sortable = apply_filters( "coauthors_guest_author_sortable_columns", $this->get_sortable_columns() );
 
 		foreach( (array)$_sortable as $id => $data ) {
 			if ( empty( $data ) )
@@ -148,7 +148,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'posts'          => __( 'Posts', 'co-authors-plus' ),
 			);
 
-		$columns = apply_filters( "manage_coauthors_guest_author_columns", $columns );
+		$columns = apply_filters( "coauthors_guest_author_manage_columns", $columns );
 		return $columns;
 	}
 
@@ -178,7 +178,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				return '<a href="' . esc_attr( 'mailto:' . $item->user_email ) . '">' . esc_html( $item->user_email ) . '</a>';
 
 			default:
-				do_action( "manage_coauthors_guest_author_custom_column", $column_name, $item->ID );
+				do_action( "coauthors_guest_author_custom_columns", $column_name, $item->ID );
 			break;
 		}
 	}
