@@ -1062,7 +1062,7 @@ class coauthors_plus {
 			return $allcaps;
 
 		// We won't be doing any modification if they aren't already a co-author on the post
-		if( ! is_coauthor_for_post( $user_id, $post_id ) )
+		if( ! is_user_logged_in() || ! is_coauthor_for_post( $user_id, $post_id ) )
 			return $allcaps;
 
 		$current_user = wp_get_current_user();

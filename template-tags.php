@@ -49,6 +49,9 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 		$post_id = $post->ID;
 	if( ! $post_id )
 		return false;
+
+	if ( ! $user )
+		return false;
 	
 	$coauthors = get_coauthors( $post_id );
 	if ( is_numeric( $user ) ) {
