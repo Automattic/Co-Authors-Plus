@@ -790,6 +790,10 @@ class coauthors_plus {
 		$current_user = wp_get_current_user();
 		if ( ! $current_user )
 			return false;
+		// Super admins can do anything
+		if ( function_exists( 'is_super_admin' ) && is_super_admin() )
+			return true;
+
 		$can_set_authors = isset( $current_user->allcaps['edit_others_posts'] ) ? $current_user->allcaps['edit_others_posts'] : false;
 
 		return apply_filters( 'coauthors_plus_edit_authors', $can_set_authors );
