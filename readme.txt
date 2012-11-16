@@ -32,6 +32,7 @@ When a user is deleted from WordPress, they will be removed from all posts for w
 = 3.0.1 (???? ??, 2012) =
 * Add your own custom columns to the guest authors table using filters. Props [cfg](https://github.com/cfg)
 * Bug fix: Make the coauthors_wp_list_authors() template tag work again
+* Bug fix: Improve capability filtering by properly handling super admin access and situations where user_id = 0
 
 = 3.0 (Nov. 12, 2012) =
 * Create guest author profiles for bylines you'd like to assign without creating WordPress user accounts. Guest authors can have all of the same fields as normal users including display name, biography, and avatars.
