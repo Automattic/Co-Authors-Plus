@@ -156,7 +156,7 @@ class coauthors_plus {
 		);
 		$post_types_with_authors = array_values( get_post_types() );
 		foreach( $post_types_with_authors as $key => $name ) {
-			if ( ! post_type_supports( $name, 'author' ) )
+			if ( ! post_type_supports( $name, 'author' ) || 'revision' == $name )
 				unset( $post_types_with_authors[$key] );
 		}
 		$this->supported_post_types = apply_filters( 'coauthors_supported_post_types', $post_types_with_authors );
@@ -605,7 +605,7 @@ class coauthors_plus {
 			return $data;
 
 		// Bail on revisions
-		if ( $data['post_type'] == 'revision' )
+		if ( ! $this->is_post_type_enabled( $data['post_type'] ) )
 			return $data;
 
 		// This action happens when a post is saved while editing a post
@@ -665,7 +665,7 @@ class coauthors_plus {
 		if ( defined( 'DOING_AUTOSAVE' ) && !DOING_AUTOSAVE )
 			return;
 
-		if ( 'revision' == $post->post_type )
+		if ( ! $this->is_post_type_enabled( $post->post_type ) )
 			return;
 
 		if( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
