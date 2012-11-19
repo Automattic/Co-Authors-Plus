@@ -243,12 +243,12 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			// Otherwise, simply rename the old term
 			$new_term = $coauthors_plus->get_author_term( $coauthors_plus->get_coauthor_by( 'login', $new_user ) );
 			if ( is_object( $new_term ) ) {
+				WP_CLI::line( "Success: There's already a '{$new_user}' term for '{$old_user}'. Reassigning {$old_term->count} posts and then deleting the term" );
 				$args = array(
 						'default' => $new_term->term_id,
 						'force_default' => true,
 					);
 				wp_delete_term( $old_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
-				WP_CLI::line( "Success: There's already a '{$new_user}' term for '{$old_user}'. Reassigning posts and then deleting the term" );
 				$results->new_term_exists++;
 			} else {
 				$args = array(
