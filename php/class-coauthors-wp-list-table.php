@@ -233,9 +233,11 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function column_posts( $item ) {
 		global $coauthors_plus;
 		$term = $coauthors_plus->get_author_term( $item );
-		if ( ! $term )
-			return '';
-		return '<a href="' . esc_url( add_query_arg( 'author_name', $item->user_login, admin_url( 'edit.php' ) ) ) . '">' . $term->count . '</a>';
+		if ( $term )
+			$count = $term->count;
+		else
+			$count = 0;
+		return '<a href="' . esc_url( add_query_arg( 'author_name', $item->user_login, admin_url( 'edit.php' ) ) ) . '">' . $count . '</a>';
 	}
 
 	/**
