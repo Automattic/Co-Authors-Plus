@@ -661,9 +661,11 @@ class coauthors_plus {
 	 * @param $post_ID
 	 */
 	function coauthors_update_post( $post_id, $post ) {
-		$post_type = $post->post_type;
 
 		if ( defined( 'DOING_AUTOSAVE' ) && !DOING_AUTOSAVE )
+			return;
+
+		if ( 'revision' == $post->post_type )
 			return;
 
 		if( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
