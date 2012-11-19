@@ -107,7 +107,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$author_posts = new WP_Query( $args );
 		$items = array();
 		foreach( $author_posts->get_posts() as $author_post ) {
-			$items[] = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $author_post->ID );
+			$items[] = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $author_post->ID );
 		}
 
 		if( $this->is_search )
