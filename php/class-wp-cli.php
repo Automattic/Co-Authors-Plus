@@ -381,6 +381,33 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Remove author terms from revisions, which we've been adding since the dawn of time
+	 *
+	 * @since 3.0.1
+	 *
+	 * @subcommand remove-terms-from-revisions
+	 */
+	public function remove_terms_from_revisions() {
+		global $wpdb;
+
+		$ids = $wpdb->get_col( "SELECT ID FROM $wpdb->posts WHERE post_type='revision' AND post_status='inherit'" );
+
+		WP_CLI::line( "Found " . count( $ids ) . " revisions to look through" );
+		$affected = 0;
+		foreach( $ids as $post_id ) {
+
+			$terms = wp_get_post_terms( $post_id, 'author' );
+			if ( ! $terms )
+				continue;
+
+			WP_CLI::line( "#{$post_id}: Removing " . implode( ',', wp_list_pluck( $terms, 'slug' ) ) );
+			wp_set_post_terms( $post_id, array(), 'author' );
+			$affected++;
+		}
+		WP_CLI::line( "All done! {$affected} revisions had author terms removed" );
+	}
+
+	/**
 	 * Clear all of the caches for memory management
 	 */
 	private function stop_the_insanity() {
