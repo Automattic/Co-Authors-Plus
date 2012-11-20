@@ -270,6 +270,58 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Change a term from representing one user_login value to another
+	 * If the term represents a guest author, the post_name will be changed
+	 * in addition to the term slug/name
+	 *
+	 * @since 3.0.1
+	 *
+	 * @subcommand rename-coauthor
+	 * @synopsis --from=<user-login> --to=<user-login>
+	 */
+	public function rename_coauthor( $args, $assoc_args ) {
+		global $coauthors_plus, $wpdb;
+
+		$defaults = array(
+				'from'      => null,
+				'to'        => null,
+			);
+		$assoc_args = array_merge( $defaults, $assoc_args );
+
+		$to_userlogin = $assoc_args['to'];
+		$to_userlogin_prefixed = 'cap-' . $to_userlogin;
+
+		$orig_coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $assoc_args['from'] );
+		if ( ! $orig_coauthor )
+			WP_CLI::error( "No co-author found for {$assoc_args['from']}" );
+
+		if ( ! $to_userlogin )
+			WP_CLI::error( '--to param must not be empty' );
+
+		if ( $coauthors_plus->get_coauthor_by( 'user_login', $to_userlogin ) )
+			WP_CLI::error( "New user_login value conflicts with existing co-author" );
+
+		$orig_term = $coauthors_plus->get_author_term( $orig_coauthor );
+
+		WP_CLI::line( "Renaming {$orig_term->name} to {$to_userlogin}" );
+		$rename_args = array(
+				'name'         => $to_userlogin,
+				'slug'         => $to_userlogin_prefixed,
+			);
+		wp_update_term( $orig_term->term_id, $coauthors_plus->coauthor_taxonomy, $rename_args );
+
+		if ( 'guest-author' == $orig_coauthor->type ) {
+			$wpdb->update( $wpdb->posts, array( 'post_name' => $to_userlogin_prefixed ), array( 'ID' => $orig_coauthor->ID ) );
+			clean_post_cache( $orig_coauthor->ID );
+			update_post_meta( $orig_coauthor->ID, 'cap-user_login', $to_userlogin );
+			$coauthors_plus->guest_authors->delete_guest_author_cache( $orig_coauthor->ID );
+			WP_CLI::line( "Updated guest author profile value too" );
+		}
+
+		WP_CLI::success( "All done!" );
+	}
+
+	/**
 	 * List all of the posts without assigned co-authors terms
 	 *
 	 * @since 3.0
