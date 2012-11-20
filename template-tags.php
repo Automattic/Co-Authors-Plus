@@ -14,7 +14,7 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 	
 	if ( $post_id ) {
-		$coauthor_terms = wp_get_post_terms( $post_id, $coauthors_plus->coauthor_taxonomy, $args );
+		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy, $args );
 		
 		if ( is_array( $coauthor_terms ) && !empty( $coauthor_terms ) ) {
 			foreach( $coauthor_terms as $coauthor ) {
