@@ -349,7 +349,25 @@ class CoAuthors_Guest_Authors
 
 			wp_enqueue_style( 'guest-authors-css', COAUTHORS_PLUS_URL . 'css/guest-authors.css', false, COAUTHORS_PLUS_VERSION );
 			wp_enqueue_script( 'guest-authors-js', COAUTHORS_PLUS_URL . 'js/guest-authors.js', false, COAUTHORS_PLUS_VERSION );
+		} else if ( in_array( $pagenow, array( 'post.php', 'post-new.php' ) ) && $this->post_type == get_post_type() ) {
+			add_action( 'admin_head', array( $this, 'change_title_icon' ) );
 		}
+	}
+
+	/**
+	 * Change the icon appearing next to the title
+	 * Core doesn't allow us to filter screen_icon(), so changing the ID is the next best thing
+	 *
+	 * @since 3.0.1
+	 */
+	function change_title_icon() {
+		?>
+		<script type="text/javascript">
+			jQuery(document).ready(function($){
+				$('#icon-edit').attr('id', 'icon-users');
+			});
+		</script>
+		<?php
 	}
 
 	/**
