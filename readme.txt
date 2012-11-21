@@ -27,6 +27,11 @@ If you've just installed Co-Authors Plus, you might notice that the bylines are 
 
 When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
+== Upgrade Notice ==
+
+= 3.0.1 =
+Bug fixes and minor enhancements
+
 == Changelog ==
 
 = 3.0.1 (???? ??, 2012) =
