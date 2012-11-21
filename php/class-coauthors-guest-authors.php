@@ -724,6 +724,7 @@ class CoAuthors_Guest_Authors
 			case 'login':
 			case 'user_login':
 			case 'linked_account':
+			case 'user_email':
 				if ( 'login' == $key )
 					$key = 'user_login';
 				// Ensure we aren't doing the lookup by the prefixed value
