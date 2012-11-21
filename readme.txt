@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.4.2
 Requires at least: 3.3
-Stable tag: 3.0
+Stable tag: 3.0.1
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -34,7 +34,7 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.0.1 (???? ??, 2012) =
+= 3.0.1 (Nov. 21, 2012) =
 * Add your own custom columns to the guest authors table using filters. Props [cfg](https://github.com/cfg)
 * A new wp-cli subcommand for renaming co-authors and another for removing author terms mistakenly assigned to revisions
 * Bug fix: Using a featured image for a guest author avatar didn't work. Now it does.
