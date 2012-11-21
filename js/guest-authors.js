@@ -12,7 +12,8 @@ jQuery(document).ready(function($){
 			data: function( term, page ) {
 				return {
 					q: term,
-					action: 'search_coauthors_to_assign'
+					action: 'search_coauthors_to_assign',
+					guest_author: $('#id').val()
 				};
 			},
 			results: function( data, page ) {
