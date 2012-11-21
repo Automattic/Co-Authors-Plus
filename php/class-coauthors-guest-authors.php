@@ -64,7 +64,6 @@ class CoAuthors_Guest_Authors
 		add_filter( 'user_row_actions', array( $this, 'filter_user_row_actions' ), 10, 2 );
 
 		// Add support for featured thumbnails that we can use for guest author avatars
-		add_action( 'after_setup_theme', array( $this, 'action_after_setup_theme' ) );
 		add_filter( 'get_avatar', array( $this, 'filter_get_avatar' ),10 ,5 );
 
 		// Allow users to change where this is placed in the WordPress admin
@@ -119,6 +118,18 @@ class CoAuthors_Guest_Authors
 				'query_var' => false,
 			);
 		register_post_type( $this->post_type, $args );
+
+		// Some of the common sizes used by get_avatar
+		$this->avatar_sizes = array(
+				32,
+				64,
+				96,
+				128
+			);
+		$this->avatar_sizes = apply_filters( 'coauthors_guest_author_avatar_sizes', $this->avatar_sizes );
+		foreach( $this->avatar_sizes as $size ) {
+			add_image_size( 'guest-author-' . $size, $size, $size, true );
+		}
 
 		// Hacky way to remove the title and the editor
 		remove_post_type_support( $this->post_type, 'title' );
@@ -1134,27 +1145,6 @@ class CoAuthors_Guest_Authors
 		}
 
 		return $new_actions + $actions;
-	}
-
-	/**
-	 * Anything to do after the theme has been set up
-	 *
-	 * @since 3.0
-	 */
-	function action_after_setup_theme() {
-		add_theme_support( 'post-thumbnails', array( $this->post_type ) );
-
-		// Some of the common sizes used by get_avatar
-		$this->avatar_sizes = array(
-				32,
-				64,
-				96,
-				128
-			);
-		$this->avatar_sizes = apply_filters( 'coauthors_guest_author_avatar_sizes', $this->avatar_sizes );
-		foreach( $this->avatar_sizes as $size ) {
-			add_image_size( 'guest-author-' . $size, $size, $size, true );
-		}
 	}
 
 	/**
