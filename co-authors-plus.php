@@ -207,11 +207,11 @@ class coauthors_plus {
 	 * @param string $value Value to search for
 	 * @param object|false $coauthor The co-author on success, false on failure
 	 */
-	function get_coauthor_by( $key, $value ) {
+	function get_coauthor_by( $key, $value, $force = false ) {
 
 		// If Guest Authors are enabled, prioritize those profiles
 		if ( $this->is_guest_authors_enabled() ) {
-			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value );
+			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value, $force );
 			if ( is_object( $guest_author ) ) {
 				return $guest_author;
 			}

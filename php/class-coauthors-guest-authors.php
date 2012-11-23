@@ -731,11 +731,11 @@ class CoAuthors_Guest_Authors
 	 * @param string $value Value to search for
 	 * @param object|false $coauthor The guest author on success, false on failure
 	 */
-	function get_guest_author_by( $key, $value ) {
+	function get_guest_author_by( $key, $value, $force = false ) {
 		global $wpdb;
 
 		$cache_key = md5( 'guest-author-' . $key . '-' . $value );
-		if ( false !== ( $retval = wp_cache_get( $cache_key, self::$cache_group ) ) )
+		if ( false == $force && false !== ( $retval = wp_cache_get( $cache_key, self::$cache_group ) ) )
 			return $retval;
 
 		switch( $key ) {
@@ -1007,7 +1007,7 @@ class CoAuthors_Guest_Authors
 			}
 
 			// The user login field shouldn't collide with any existing users
-			if ( 'user_login' == $field['key'] && $existing_coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $args['user_login'] ) ) {
+			if ( 'user_login' == $field['key'] && $existing_coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $args['user_login'], true ) ) {
 				if ( 'guest-author' == $existing_coauthor->type )
 					return new WP_Error( 'duplicate-field', __( 'user_login cannot duplicate existing guest author or mapped user', 'co-authors-plus' ) );
 			}
