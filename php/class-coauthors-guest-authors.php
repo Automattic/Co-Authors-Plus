@@ -1217,8 +1217,12 @@ class CoAuthors_Guest_Authors
 		} else {
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
-			$link = str_replace('%author%', $author_nicename, $link);
-			$link = home_url( user_trailingslashit( $link ) );
+			if ( $link ) {
+				$link = str_replace('%author%', $author_nicename, $link);
+				$link = home_url( user_trailingslashit( $link ) );
+			} else {
+				$link = add_query_arg( 'author_name', $author_nicename, home_url() );
+			}
 		}
 		return $link;
 
