@@ -34,6 +34,9 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= 3.0.2 (Nov. 23, 2012) =
+* Bug fix: Fall back to non-pretty permalinks when the author permastruct is empty, so that coauthors_posts_links() doesn't link to the homepage
+
 = 3.0.1 (Nov. 21, 2012) =
 * Add your own custom columns to the guest authors table using filters. Props [cfg](https://github.com/cfg)
 * A new wp-cli subcommand for renaming co-authors and another for removing author terms mistakenly assigned to revisions
