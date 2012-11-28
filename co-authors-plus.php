@@ -152,6 +152,7 @@ class coauthors_plus {
 			'rewrite' => false,
 			'public' => false,
 			'sort' => true,
+			'args' => array( 'orderby' => 'term_order' ),
 			'show_ui' => false
 		);
 		$post_types_with_authors = array_values( get_post_types() );
