@@ -34,6 +34,9 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= 3.0.3 (??? ??, 2012) =
+* Bug fix: The default order for the 'author' taxonomy should be 'term_order', in order for the author positions to stick. Props [lgedeon](https://github.com/lgedeon)
+
 = 3.0.2 (Nov. 23, 2012) =
 * Bug fix: Fall back to non-pretty permalinks when the author permastruct is empty, so that coauthors_posts_links() doesn't link to the homepage
 
