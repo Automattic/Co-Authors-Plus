@@ -1056,7 +1056,11 @@ class coauthors_plus {
 		$user_id = isset( $args[1] ) ? $args[1] : 0;
 		$post_id = isset( $args[2] ) ? $args[2] : 0;
 
-		$obj = get_post_type_object( get_post_type( $post_id ) );
+		$post = get_post( $post_id );
+		if ( ! $post )
+			return $allcaps;
+
+		$obj = get_post_type_object( $post->post_type );
 		if ( ! $obj )
 			return $allcaps;
 
@@ -1069,13 +1073,13 @@ class coauthors_plus {
 			return $allcaps;
 
 		// We won't be doing any modification if they aren't already a co-author on the post
-		if( ! is_user_logged_in() || ! is_coauthor_for_post( $user_id, $post_id ) )
+		if( ! is_user_logged_in() || ! is_coauthor_for_post( $user_id, $post->ID ) )
 			return $allcaps;
 
 		$current_user = wp_get_current_user();
-		if ( 'publish' == get_post_status( $post_id ) && ! empty( $current_user->allcaps[$obj->cap->edit_published_posts] ) )
+		if ( 'publish' == $post->post_status && ! empty( $current_user->allcaps[$obj->cap->edit_published_posts] ) )
 			$allcaps[$obj->cap->edit_published_posts] = true;
-		elseif ( 'private' == get_post_status( $post_id ) && ! empty( $current_user->allcaps[$obj->cap->edit_private_posts] ) )
+		elseif ( 'private' == $post->post_status && ! empty( $current_user->allcaps[$obj->cap->edit_private_posts] ) )
 			$allcaps[$obj->cap->edit_private_posts] = true;
 
 		$allcaps[$obj->cap->edit_others_posts] = true;
