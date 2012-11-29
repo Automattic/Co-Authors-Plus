@@ -333,6 +333,7 @@ class coauthors_plus {
 							<input type="text" name="coauthorsinput[]" readonly="readonly" value="<?php echo esc_attr( $coauthor->display_name ); ?>" />
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
 							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
+							<input type="text" name="coauthorsnicenames[]" value="<?php echo esc_attr( $coauthor->user_nicename ); ?>" />
 						</span>
 					</li>
 					<?php
@@ -844,7 +845,7 @@ class coauthors_plus {
 		$authors = $this->search_authors( $search, $ignore );
 
 		foreach( $authors as $author ) {
-			echo $author->ID ." | ". $author->user_login ." | ". $author->display_name ." | ". $author->user_email ."\n";
+			echo $author->ID ." | ". $author->user_login ." | ". $author->display_name ." | ". $author->user_email ." | ". $author->user_nicename . "\n";
 		}
 
 		die();
