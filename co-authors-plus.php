@@ -698,7 +698,7 @@ class coauthors_plus {
 		// Add each co-author to the post meta
 		foreach( array_unique( $coauthors ) as $key => $author_name ){
 
-			$author = $this->get_coauthor_by( 'user_login', $author_name );
+			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
 			$term = $this->update_author_term( $author );
 			$coauthors[$key] = $term->slug;
 		}
