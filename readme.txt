@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.4.2
 Requires at least: 3.3
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -34,7 +34,7 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.0.3 (??? ??, 2012) =
+= 3.0.3 (Dec. 3, 2012) =
 * Bug fix: The default order for the 'author' taxonomy should be 'term_order', in order for the author positions to stick. Props [lgedeon](https://github.com/lgedeon)
 
 = 3.0.2 (Nov. 23, 2012) =
