@@ -35,7 +35,8 @@ Bug fixes and minor enhancements
 == Changelog ==
 
 = 3.0.4 (??? ?? ????) =
-* Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg)
+* Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
+* Bug fix: Better support for co-authors with non-standard user_nicenames. Props [STRML](https://github.com/STRML).
 
 = 3.0.3 (Dec. 3, 2012) =
 * Bug fix: The default order for the 'author' taxonomy should be 'term_order', in order for the author positions to stick. Props [lgedeon](https://github.com/lgedeon)
