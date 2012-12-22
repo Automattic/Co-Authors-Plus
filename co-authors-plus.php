@@ -555,7 +555,8 @@ class coauthors_plus {
 			}
 
 			// Whether or not to include the original 'post_author' value in the query
-			if ( $this->force_guest_authors )
+			// Don't include it if we're forcing guest authors, or it's obvious our query is for a guest author's posts
+			if ( $this->force_guest_authors || stripos( $where, '.post_author = 0)' ) )
 				$maybe_both = false;
 			else
 				$maybe_both = apply_filters( 'coauthors_plus_should_query_post_author', true );
