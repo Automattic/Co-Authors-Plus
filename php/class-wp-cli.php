@@ -429,6 +429,15 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$new_count = get_term_by( 'id', $author_term->term_id, $coauthors_plus->coauthor_taxonomy )->count;
 			WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) changed from {$old_count} to {$new_count} and the description was refreshed" );
 		}
+		// Create author terms for any users that don't have them
+		$users = get_users();
+		foreach( $users as $user ) {
+			$term = $coauthors_plus->get_author_term( $user );
+			if ( empty( $term ) || empty( $term->description ) ) {
+				$coauthors_plus->update_author_term( $user );
+				WP_CLI::line( "Created author term for {$user->user_login}" );
+			}
+		}
 		WP_CLI::success( "All done" );
 	}
 
