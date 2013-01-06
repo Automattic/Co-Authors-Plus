@@ -157,7 +157,7 @@ class coauthors_plus {
 		);
 		$post_types_with_authors = array_values( get_post_types() );
 		foreach( $post_types_with_authors as $key => $name ) {
-			if ( ! post_type_supports( $name, 'author' ) || 'revision' == $name )
+			if ( ! post_type_supports( $name, 'author' ) || in_array( $name, array( 'revision', 'attachment' ) ) )
 				unset( $post_types_with_authors[$key] );
 		}
 		$this->supported_post_types = apply_filters( 'coauthors_supported_post_types', $post_types_with_authors );

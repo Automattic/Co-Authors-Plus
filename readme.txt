@@ -36,6 +36,7 @@ Bug fixes and minor enhancements
 
 = 3.0.4 (??? ?? ????) =
 * Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
+* Bug fix: No Co-Authors Plus on attachments. For now.
 * Bug fix: Better support for co-authors with non-standard user_nicenames. Props [STRML](https://github.com/STRML).
 
 = 3.0.3 (Dec. 3, 2012) =
