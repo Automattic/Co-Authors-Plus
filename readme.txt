@@ -91,11 +91,9 @@ Bug fixes and minor enhancements
 * Bug fix: Allow output constants to be defined in a theme's functions.php file and include filters you can use instead
 
 = 2.6.1 (Dec. 30, 2011) =
-
 * Fix mangled usernames because of sanitize_key http://wordpress.org/support/topic/plugin-co-authors-plus-26-not-working-with-wp-33
 
 = 2.6 (Dec. 22, 2011) =
-
 * Sortable authors: Drag and drop the order of the authors as you'd like them to appear ([props kingkool68](http://profiles.wordpress.org/users/kingkool68/))
 * Search for authors by display name (instead of nicename which was essentially the same as user_login)
 * Option to remove the first author when there are two or more so it's less confusing
@@ -103,22 +101,18 @@ Bug fixes and minor enhancements
 * Bug fix: Update the published post count for each user more reliably
 
 = 2.5.3 (Aug. 14, 2011) =
-
 * Bug fix: Removed extra comma when only two authors were listed. If you used the COAUTHORS_DEFAULT_BETWEEN_LAST constant, double-check what you have
 
 = 2.5.2 (Apr. 23, 2011) =
-
 * Bug: Couldn't query terms and authors at the same time (props nbaxley)
 * Bug: Authors with empty fields (e.g. first name) were displaying blank in some cases
 * Bug: authors with spaces in usernames not getting saved (props MLmsw, Ruben S. and others!)
 * Bug: revisions getting wrong user attached (props cliquenoir!)
 
 = 2.5.1 (Mar. 26, 2011) =
-
 * Fix with author post count (throwing errors)
 
 = 2.5 (Mar. 26, 2011) =
-
 * Custom Post Type Support
 * Compatibility with WP 3.0 and 3.1
 * Gravatars
@@ -126,17 +120,14 @@ Bug fixes and minor enhancements
 * Thanks to everyone who submitted bugs, fixes, and suggestions! And for your patience!
 
 = 2.1.1 (Oct. 16, 2009) =
-
 * Fix for coauthors not being added if their username is different from display name
 * Fixes to readme.txt (fixes for textual and punctuation errors, language clarification, minor formatting changes) courtesy of [Waldo Jaquith](http://www.vqronline.org)
 
 = 2.1 (Oct. 11, 2009) =
-
 * Fixed issues related to localization. Thanks to Jan Zombik <zombik@students.uni-mainz.de> for the fixes.
 * Added set_time_limit to update function to get around timeout issues when upgrading plugin
 
 = 2.0 (Oct. 11, 2009) =
-
 * Plugin mostly rewritten to make use of taxonomy instead of post_meta
 * Can now see all authors of a post under the author column from Edit Posts page
 * All authors of a post are now notified on a new comment
@@ -147,7 +138,6 @@ Bug fixes and minor enhancements
 * FIX: Issues with coauthored posts not showing up on author archives
 
 = 1.2.0 (Jun. 16, 2012) =
-
 * FIX: Added compatibility for WordPress 2.8
 * FIX: Added new template tags (get_the_coauthor_meta & the_coauthor_meta) to fix issues related to displaying author info on author archive pages. See [Other Notes](http://wordpress.org/extend/plugins/co-authors-plus/other_notes/) for details.
 * FIX: Plugin should now work for plugins not using the 'wp_' DB prefix 
@@ -156,34 +146,28 @@ Bug fixes and minor enhancements
 * DOCS: Added details about the new template tags
 
 = 1.1.5 (Apr. 26, 2009) =
-
 * FIX: Not searching Updated SQL query for autosuggest to search through first name, last name, and nickname
 * FIX: When editing an author, and clicking on a suggested author, the original author was not be removed
 * DOCS: Added code comments to javascript; more still to be added
 * DOCS: Updated readme information
 
 = 1.1.4 (Apr. 25, 2009) =
-
 * Disabled "New Author" output in suggest box, for now
 * Hopefully fixed SVN issue (if you're having trouble with the plugin, please delete the plugin and reinstall)
 
 = 1.1.3 (Apr. 23, 2009) =
-
 * Add blur event to disable input box
 * Limit only one edit at a time.
 * Checked basic cross-browser compatibility (Firefox 3 OS X, Safari 3 OS X, IE7 Vista).
 * Add suggest javascript plugin to Edit Page.
 
 = 1.1.2 (Apr. 19, 2009) =
-
 * Disabled form submit when enter pressed.
 
 = 1.1.1 (Apr. 15, 2009) =
-
 * Changed SQL query to return only contributor-level and above users.
 
 = 1.1.0 (Apr. 14, 2009) =
-
 * Initial beta release.
 
 == Installation ==
