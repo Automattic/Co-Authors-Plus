@@ -27,6 +27,10 @@ If you've just installed Co-Authors Plus, you might notice that the bylines are 
 
 When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
+= Can I use Co-Authors Plus with WordPress multisite? =
+
+Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
+
 == Upgrade Notice ==
 
 = 3.0.1 =
