@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.5.1
 Requires at least: 3.3
-Stable tag: 3.0.3
+Stable tag: 3.0.4
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -33,12 +33,15 @@ Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activa
 
 == Upgrade Notice ==
 
+= 3.0.4 =
+Bug fixes and the ability to automatically add co-authors to your feeds.
+
 = 3.0.1 =
 Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.0.4 (??? ?? ????) =
+= 3.0.4 (Jan. 6, 2013) =
 * Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
 * Bug fix: No Co-Authors Plus on attachments. For now.
 * Bug fix: Better support for co-authors with non-standard user_nicenames. Props [STRML](https://github.com/STRML).
