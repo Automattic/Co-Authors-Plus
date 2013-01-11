@@ -31,6 +31,12 @@ When a user is deleted from WordPress, they will be removed from all posts for w
 
 Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
 
+= Who needs permission to do what? =
+
+To assign co-authors to posts, a WordPress user will need the 'edit_others_posts' capability. This is typically granted to the Editor role, but can be altered with the 'coauthors_plus_edit_authors' filter.
+
+To create new guest author profiles, a WordPress will need the 'list_users' capability. This is typically granted to the Administrator role, but can be altered with the 'coauthors_guest_author_manage_cap' filter.
+
 == Upgrade Notice ==
 
 = 3.0.4 =
