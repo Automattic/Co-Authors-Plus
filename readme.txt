@@ -41,6 +41,8 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= 3.1 (??? ?? ????) =
+
 = 3.0.4 (Jan. 6, 2013) =
 * Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
 * Bug fix: No Co-Authors Plus on attachments. For now.
