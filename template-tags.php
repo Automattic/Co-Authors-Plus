@@ -184,7 +184,16 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	return $output;
 }
 
-//Provide co-author equivalents to the existing author template tags
+/**
+ * Outputs the co-authors display names, without links to their posts.
+ * Co-Authors Plus equivalent of the_author() template tag.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
 	return coauthors__echo('display_name', 'field', array(
 		'between' => $between,
@@ -193,6 +202,17 @@ function coauthors( $between = null, $betweenLast = null, $before = null, $after
 		'after' => $after
 	), null, $echo );
 }
+
+/**
+ * Outputs the co-authors display names, with links to their posts.
+ * Co-Authors Plus equivalent of the_author_posts_link() template tag.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_posts_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
 	return coauthors__echo('coauthors_posts_links_single', 'callback', array(
 		'between' => $between,
@@ -201,6 +221,13 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 		'after' => $after
 	), null, $echo );
 }
+
+/**
+ * Outputs a single co-author linked to their post archive.
+ *
+ * @param object $author
+ * @return string 
+ */
 function coauthors_posts_links_single( $author ) {
 	$args = array(
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
@@ -218,6 +245,15 @@ function coauthors_posts_links_single( $author ) {
 	);
 }
 
+/**
+ * Outputs the co-authors first names, without links to their posts.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_firstnames($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
 	return coauthors__echo('get_the_author_meta', 'tag', array(
 		'between' => $between,
@@ -226,6 +262,16 @@ function coauthors_firstnames($between = null, $betweenLast = null, $before = nu
 		'after' => $after
 	), 'first_name', $echo );
 }
+
+/**
+ * Outputs the co-authors last names, without links to their posts.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_lastnames($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('get_the_author_meta', 'tag', array(
 		'between' => $between,
@@ -234,6 +280,16 @@ function coauthors_lastnames($between = null, $betweenLast = null, $before = nul
 		'after' => $after
 	), 'last_name', $echo );
 }
+
+/**
+ * Outputs the co-authors nicknames, without links to their posts.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_nicknames($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('get_the_author_meta', 'tag', array(
 		'between' => $between,
@@ -242,6 +298,16 @@ function coauthors_nicknames($between = null, $betweenLast = null, $before = nul
 		'after' => $after
 	), 'nickname', $echo );
 }
+
+/**
+ * Outputs the co-authors display names, with links to their websites if they've provided them.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_links($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('coauthors_links_single', 'callback', array(
 		'between' => $between,
@@ -250,6 +316,13 @@ function coauthors_links($between = null, $betweenLast = null, $before = null, $
 		'after' => $after
 	), null, $echo );
 }
+
+/**
+ * Outputs a single co-author, linked to their website if they've provided one.
+ *
+ * @param object $author
+ * @return string 
+ */
 function coauthors_links_single( $author ) {
 	if ( get_the_author_meta('url') ) {
 		return sprintf( '<a href="%s" title="%s" rel="external">%s</a>',
@@ -261,6 +334,16 @@ function coauthors_links_single( $author ) {
 		return get_the_author();
 	}
 }
+
+/**
+ * Outputs the co-authors IDs
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_IDs($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('ID', 'field', array(
 		'between' => $between,
