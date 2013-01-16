@@ -37,6 +37,10 @@ To assign co-authors to posts, a WordPress user will need the 'edit_others_posts
 
 To create new guest author profiles, a WordPress will need the 'list_users' capability. This is typically granted to the Administrator role, but can be altered with the 'coauthors_guest_author_manage_cap' filter.
 
+= Can I easily create a list of all co-authors? =
+
+Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
+
 == Upgrade Notice ==
 
 = 3.0.4 =
