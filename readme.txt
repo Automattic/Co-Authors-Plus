@@ -52,6 +52,7 @@ Bug fixes and minor enhancements
 == Changelog ==
 
 = 3.1 (??? ?? ????) =
+* New filter 'coauthors_search_authors_get_terms_args' allows you to increase the number of matches returned with AJAX co-author selection
 
 = 3.0.4 (Jan. 6, 2013) =
 * Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
