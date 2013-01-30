@@ -45,6 +45,73 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Create author terms for all posts that don't have them
+	 *
+	 * @subcommand create-terms-for-posts
+	 */
+	public function create_terms_for_posts() {
+		global $coauthors_plus, $wp_post_types;
+
+		// Cache these to prevent repeated lookups
+		$authors = array();
+		$author_terms = array();
+
+		$args = array(
+				'order'            => 'ASC',
+				'orderby'          => 'ID',
+				'post_type'         => $coauthors_plus->supported_post_types,
+				'posts_per_page'    => 100,
+				'paged'             => 1,
+				'update_meta_cache' => false,
+			);
+
+		$posts = new WP_Query( $args );
+		$affected = 0;
+		$count = 0;
+		WP_CLI::line( "Now inspecting or updating {$posts->found_posts} total posts." );
+		while( $posts->post_count ) {
+
+			foreach( $posts->posts as $single_post ) {
+
+				$count++;
+				
+				$terms = wp_get_post_terms( $single_post->ID, $coauthors_plus->coauthor_taxonomy );
+				if ( is_wp_error( $terms ) )
+					WP_CLI::error( $terms->get_error_message() );
+
+				if ( ! empty( $terms ) ) {
+					WP_CLI::line( "{$count}/{$posts->found_posts}) Skipping - Post #{$single_post->ID} '{$single_post->post_title}' already has these terms: " . implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
+					continue;
+				}
+
+				$author = ( ! empty( $authors[$single_post->post_author] ) ) ? $authors[$single_post->post_author] : get_user_by( 'id', $single_post->post_author );
+				$authors[$single_post->post_author] = $author;
+
+				$author_term = ( ! empty( $author_terms[$single_post->post_author] ) ) ? $author_terms[$single_post->post_author] : $coauthors_plus->update_author_term( $author );
+				$author_terms[$single_post->post_author] = $author_term;
+
+				wp_set_post_terms( $single_post->ID, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy );
+				WP_CLI::line( "{$count}/{$posts->found_posts}) Added - Post #{$single_post->ID} '{$single_post->post_title}' now has an author term for: " . $author->user_nicename );
+				$affected++;
+				if ( $affected && $affected % 10 == 0 )
+					sleep( 3 );
+			}
+
+			$this->stop_the_insanity();
+			
+			$this->args['paged']++;
+			$posts = new WP_Query( $this->args );
+		}
+		WP_CLI::line( "Updating author terms with new counts" );
+		foreach( $authors as $author ) {
+			$this->update_author_term( $author );
+		}
+
+		WP_CLI::success( "Done! Of {$posts->found_posts} posts, {$affected} now have author terms." );
+
+	}
+
+	/**
 	 * Subcommand to assign coauthors to a post based on a given meta key
 	 *
 	 * @since 3.0
