@@ -53,6 +53,7 @@ Bug fixes and minor enhancements
 
 = 3.1 (??? ?? ????) =
 * New filter 'coauthors_search_authors_get_terms_args' allows you to increase the number of matches returned with AJAX co-author selection
+* Bug fix: If there isn't an author term yet for a co-author, avoid an erronous join that caused duplicate posts to appear.
 
 = 3.0.4 (Jan. 6, 2013) =
 * Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
