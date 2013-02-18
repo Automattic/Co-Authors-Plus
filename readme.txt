@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.5.1
 Requires at least: 3.3
-Stable tag: 3.0.4
+Stable tag: 3.0.5
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -51,7 +51,7 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.1 (??? ?? ????) =
+= 3.0.5 (Feb. 18, 2013) =
 * New filter 'coauthors_search_authors_get_terms_args' allows you to increase the number of matches returned with AJAX co-author selection
 * Bug fix: If there isn't an author term yet for a co-author, avoid an erronous join that caused duplicate posts to appear.
 
