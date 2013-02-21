@@ -543,8 +543,13 @@ class coauthors_plus {
 
 			if ( $query->get( 'author_name' ) )
 				$author_name = sanitize_title( $query->get( 'author_name' ) );
-			else
-				$author_name = get_userdata( $query->get( 'author' ) )->user_nicename;
+			else {
+				$author_data = get_userdata( $query->get( 'author' ) );
+				if ( is_object( $author_data ) )
+					$author_name = $author_data->user_nicename;
+				else
+					return $where;
+			}
 
 			$terms = array();
 			$coauthor = $this->get_coauthor_by( 'user_nicename', $author_name );
