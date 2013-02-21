@@ -245,7 +245,7 @@ class coauthors_plus {
 					if ( is_object( $guest_author ) )
 						$user = $guest_author;
 				}
-				return $user;
+				return apply_filters( 'co-authors_co-author', $user );
 				break;
 		}
 		return false;
@@ -543,8 +543,13 @@ class coauthors_plus {
 
 			if ( $query->get( 'author_name' ) )
 				$author_name = sanitize_title( $query->get( 'author_name' ) );
-			else
-				$author_name = get_userdata( $query->get( 'author' ) )->user_nicename;
+			else {
+				$author = get_userdata( $query->get( 'author' ) );
+				if ( is_object( $author ) )
+					$author_name = $author->user_nicename;
+				else
+					$author_name = '';
+			}
 
 			$terms = array();
 			$coauthor = $this->get_coauthor_by( 'user_nicename', $author_name );
