@@ -14,11 +14,12 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 	
 	if ( $post_id ) {
-		$coauthor_terms = wp_get_post_terms( $post_id, $coauthors_plus->coauthor_taxonomy, $args );
+		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy, $args );
 		
 		if ( is_array( $coauthor_terms ) && !empty( $coauthor_terms ) ) {
 			foreach( $coauthor_terms as $coauthor ) {
-				$post_author =  $coauthors_plus->get_coauthor_by( 'user_login', $coauthor->slug );
+				$coauthor_slug = preg_replace( '#^cap\-#', '', $coauthor->slug );
+				$post_author =  $coauthors_plus->get_coauthor_by( 'user_nicename', $coauthor_slug );
 				// In case the user has been deleted while plugin was deactivated
 				if ( !empty( $post_author ) )
 					$coauthors[] = $post_author;
@@ -47,6 +48,9 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 	if( ! $post_id && $post )
 		$post_id = $post->ID;
 	if( ! $post_id )
+		return false;
+
+	if ( ! $user )
 		return false;
 	
 	$coauthors = get_coauthors( $post_id );
@@ -180,7 +184,16 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	return $output;
 }
 
-//Provide co-author equivalents to the existing author template tags
+/**
+ * Outputs the co-authors display names, without links to their posts.
+ * Co-Authors Plus equivalent of the_author() template tag.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
 	return coauthors__echo('display_name', 'field', array(
 		'between' => $between,
@@ -189,6 +202,17 @@ function coauthors( $between = null, $betweenLast = null, $before = null, $after
 		'after' => $after
 	), null, $echo );
 }
+
+/**
+ * Outputs the co-authors display names, with links to their posts.
+ * Co-Authors Plus equivalent of the_author_posts_link() template tag.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_posts_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
 	return coauthors__echo('coauthors_posts_links_single', 'callback', array(
 		'between' => $between,
@@ -197,6 +221,13 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 		'after' => $after
 	), null, $echo );
 }
+
+/**
+ * Outputs a single co-author linked to their post archive.
+ *
+ * @param object $author
+ * @return string 
+ */
 function coauthors_posts_links_single( $author ) {
 	$args = array(
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
@@ -214,6 +245,15 @@ function coauthors_posts_links_single( $author ) {
 	);
 }
 
+/**
+ * Outputs the co-authors first names, without links to their posts.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_firstnames($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
 	return coauthors__echo('get_the_author_meta', 'tag', array(
 		'between' => $between,
@@ -222,6 +262,16 @@ function coauthors_firstnames($between = null, $betweenLast = null, $before = nu
 		'after' => $after
 	), 'first_name', $echo );
 }
+
+/**
+ * Outputs the co-authors last names, without links to their posts.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_lastnames($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('get_the_author_meta', 'tag', array(
 		'between' => $between,
@@ -230,6 +280,16 @@ function coauthors_lastnames($between = null, $betweenLast = null, $before = nul
 		'after' => $after
 	), 'last_name', $echo );
 }
+
+/**
+ * Outputs the co-authors nicknames, without links to their posts.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_nicknames($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('get_the_author_meta', 'tag', array(
 		'between' => $between,
@@ -238,6 +298,16 @@ function coauthors_nicknames($between = null, $betweenLast = null, $before = nul
 		'after' => $after
 	), 'nickname', $echo );
 }
+
+/**
+ * Outputs the co-authors display names, with links to their websites if they've provided them.
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_links($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('coauthors_links_single', 'callback', array(
 		'between' => $between,
@@ -246,6 +316,13 @@ function coauthors_links($between = null, $betweenLast = null, $before = null, $
 		'after' => $after
 	), null, $echo );
 }
+
+/**
+ * Outputs a single co-author, linked to their website if they've provided one.
+ *
+ * @param object $author
+ * @return string 
+ */
 function coauthors_links_single( $author ) {
 	if ( get_the_author_meta('url') ) {
 		return sprintf( '<a href="%s" title="%s" rel="external">%s</a>',
@@ -257,6 +334,16 @@ function coauthors_links_single( $author ) {
 		return get_the_author();
 	}
 }
+
+/**
+ * Outputs the co-authors IDs
+ *
+ * @param string $between Delimiter that should appear between the co-authors
+ * @param string $betweenLast Delimiter that should appear between the last two co-authors
+ * @param string $before What should appear before the presentation of co-authors
+ * @param string $after What should appear after the presentation of co-authors
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
 function coauthors_IDs($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('ID', 'field', array(
 		'between' => $between,
@@ -287,7 +374,6 @@ function the_coauthor_meta( $field, $user_id = 0 ) {
 /**
  * List all the *co-authors* of the blog, with several options available.
  * optioncount (boolean) (false): Show the count in parenthesis next to the author's name.
- * exclude_admin (boolean) (true): Exclude the 'admin' user that is installed by default.
  * show_fullname (boolean) (false): Show their full names.
  * hide_empty (boolean) (true): Don't show authors without any posts.
  * feed (string) (''): If isn't empty, show links to author's feeds.
@@ -295,46 +381,56 @@ function the_coauthor_meta( $field, $user_id = 0 ) {
  * echo (boolean) (true): Set to false to return the output, instead of echoing.
  * @param array $args The argument array.
  * @return null|string The output, if echo is set to false.
- * 
- * NOTE: This is not perfect and probably won't work that well. 
- *
  */
-
-function coauthors_wp_list_authors($args = '') {
-	global $wpdb, $coauthors_plus;
+function coauthors_wp_list_authors( $args = array() ) {
+	global $coauthors_plus;
 
 	$defaults = array(
-		'optioncount' => false, 'exclude_admin' => true,
-		'show_fullname' => false, 'hide_empty' => true,
-		'feed' => '', 'feed_image' => '', 'feed_type' => '', 'echo' => true,
-		'style' => 'list', 'html' => true
+		'optioncount'      => false,
+		'show_fullname'    => false,
+		'hide_empty'       => true,
+		'feed'             => '',
+		'feed_image'       => '',
+		'feed_type'        => '',
+		'echo'             => true,
+		'style'            => 'list',
+		'html'             => true,
+		'number'           => 20, // A sane limit to start to avoid breaking all the things
 	);
 
-	$r = wp_parse_args( $args, $defaults );
-	extract($r, EXTR_SKIP);
+	$args = wp_parse_args( $args, $defaults );
 	$return = '';
 
-	$authors = $coauthors_plus->search_authors();
-	$author_terms = get_terms( 'author' );
+	$term_args = array(
+			'orderby'      => 'name',
+			'hide_empty'   => 0,
+			'number'       => (int)$args['number'],
+		);
+	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
+	$authors = array();
+	foreach( $author_terms as $author_term ) {
+		// Something's wrong in the state of Denmark
+		if ( false === ( $coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $author_term->name ) ) )
+			continue;
+
+		$authors[$author_term->name] = $coauthor;
 	
-	foreach ( (array) $author_terms as $author_term ) {
-		$author_count[$author_term->slug] = $author_term->count;
+		$authors[$author_term->name]->post_count = $author_term->count;
 	}
 
 	foreach ( (array) $authors as $author ) {
 
 		$link = '';
 
-		$author = get_userdata( $author->ID );
-		$posts = (isset($author_count[$author->user_login])) ? $author_count[$author->user_login] : 0;
-		$name = $author->display_name;
-
-		if ( $show_fullname && ($author->first_name != '' && $author->last_name != '') )
+		if ( $args['show_fullname'] && ( $author->first_name && $author->last_name ) )
 			$name = "$author->first_name $author->last_name";
+		else
+			$name = $author->display_name;
 
-		if( !$html ) {
-			if ( $posts == 0 ) {
-				if ( ! $hide_empty )
+
+		if ( ! $args['html'] ) {
+			if ( $author->post_count == 0 ) {
+				if ( ! $args['hide_empty'] )
 					$return .= $name . ', ';
 			} else
 				$return .= $name . ', ';
@@ -343,54 +439,54 @@ function coauthors_wp_list_authors($args = '') {
 			continue;
 		}
 
-		if ( !($posts == 0 && $hide_empty) && 'list' == $style )
+		if ( ! ( $author->post_count == 0 && $args['hide_empty'] ) && 'list' == $args['style'] )
 			$return .= '<li>';
-		if ( $posts == 0 ) {
-			if ( ! $hide_empty )
+		if ( $author->post_count == 0 ) {
+			if ( ! $args['hide_empty'] )
 				$link = $name;
 		} else {
-			$link = '<a href="' . get_author_posts_url($author->ID, $author->user_nicename) . '" title="' . esc_attr( sprintf(__("Posts by %s", 'co-authors-plus'), $author->display_name) ) . '">' . $name . '</a>';
+			$link = '<a href="' . get_author_posts_url( $author->ID, $author->user_nicename ) . '" title="' . esc_attr( sprintf( __("Posts by %s", 'co-authors-plus' ), $name ) ) . '">' . esc_html( $name ) . '</a>';
 
-			if ( (! empty($feed_image)) || (! empty($feed)) ) {
+			if ( (! empty( $args['feed_image'] ) ) || ( ! empty( $args['feed'] ) ) ) {
 				$link .= ' ';
-				if (empty($feed_image))
+				if ( empty( $args['feed_image'] ) )
 					$link .= '(';
-				$link .= '<a href="' . get_author_feed_link($author->ID) . '"';
+				$link .= '<a href="' . get_author_feed_link( $author->ID ) . '"';
 
-				if ( !empty($feed) ) {
-					$title = ' title="' . esc_attr($feed) . '"';
-					$alt = ' alt="' . esc_attr($feed) . '"';
+				if ( !empty( $args['feed'] ) ) {
+					$title = ' title="' . esc_attr( $args['feed'] ) . '"';
+					$alt = ' alt="' . esc_attr( $args['feed'] ) . '"';
 					$name = $feed;
 					$link .= $title;
 				}
 
 				$link .= '>';
 
-				if ( !empty($feed_image) )
-					$link .= "<img src=\"" . esc_url($feed_image) . "\" style=\"border: none;\"$alt$title" . ' />';
+				if ( ! empty( $args['feed_image'] ) )
+					$link .= "<img src=\"" . esc_url( $args['feed_image'] ) . "\" style=\"border: none;\"$alt$title" . ' />';
 				else
 					$link .= $name;
 
 				$link .= '</a>';
 
-				if ( empty($feed_image) )
+				if ( empty( $args['feed_image'] ) )
 					$link .= ')';
 			}
 
-			if ( $optioncount )
-				$link .= ' ('. $posts . ')';
+			if ( $args['optioncount'] )
+				$link .= ' ('. $author->post_count . ')';
 
 		}
 
-		if ( !($posts == 0 && $hide_empty) && 'list' == $style )
+		if ( ! ( $author->post_count == 0 && $args['hide_empty'] ) && 'list' == $args['style'] )
 			$return .= $link . '</li>';
-		else if ( ! $hide_empty )
+		else if ( ! $args['hide_empty'] )
 			$return .= $link . ', ';
 	}
 
-	$return = trim($return, ', ');
+	$return = trim( $return, ', ' );
 
-	if ( ! $echo )
+	if ( ! $args['echo'] )
 		return $return;
 	echo $return;
 }
