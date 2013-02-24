@@ -146,7 +146,6 @@ class coauthors_plus {
 		// Register new taxonomy so that we can store all of the relationships
 		$args = array(
 			'hierarchical' => false,
-			'update_count_callback' => array( $this, '_update_users_posts_count' ),
 			'label' => false,
 			'query_var' => false,
 			'rewrite' => false,
@@ -155,6 +154,13 @@ class coauthors_plus {
 			'args' => array( 'orderby' => 'term_order' ),
 			'show_ui' => false
 		);
+
+		// If we use the nasty SQL query, we need our custom callback. Otherwise, we still need to flush cache.
+		if ( apply_filters( 'coauthors_plus_should_query_post_author', true ) )
+			$args['update_count_callback'] = array( $this, '_update_users_posts_count' );
+		else
+			add_action( 'edited_term_taxonomy', array( $this, 'action_edited_term_taxonomy_flush_cache' ), 10, 2 );
+
 		$post_types_with_authors = array_values( get_post_types() );
 		foreach( $post_types_with_authors as $key => $name ) {
 			if ( ! post_type_supports( $name, 'author' ) || in_array( $name, array( 'revision', 'attachment' ) ) )
@@ -466,6 +472,28 @@ class coauthors_plus {
 		$tt_ids = explode( ', ', $tt_ids );
 		clean_term_cache( $tt_ids, '', false );
 
+	}
+
+	/**
+	 * If we're forcing Co-Authors Plus to just do taxonomy queries, we still
+	 * need to flush our special cache after a taxonomy term has been updated
+	 *
+	 * @since 3.1
+	 */
+	public function action_edited_term_taxonomy_flush_cache( $tt_id, $taxonomy ) {
+		global $wpdb;
+
+		if ( $this->coauthor_taxonomy != $taxonomy )
+			return;
+
+		$term_id = $wpdb->get_results( $wpdb->prepare( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id = %d ", $tt_id ) );
+
+		$term = get_term_by( 'id', $term_id[0]->term_id, $taxonomy );
+		$coauthor = $this->get_coauthor_by( 'user_nicename', $term->slug );
+		if ( ! $coauthor )
+			return new WP_Error( 'missing-coauthor', __( 'No co-author exists for that term', 'co-authors-plus' ) );
+
+		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 	}
 
 	/**
