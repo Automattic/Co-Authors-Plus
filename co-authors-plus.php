@@ -808,6 +808,8 @@ class coauthors_plus {
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
 
+		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+
 		$term = $this->get_author_term( $user );
 		// Only modify the count if the author already exists as a term
 		if( $term && !is_wp_error( $term ) ) {
