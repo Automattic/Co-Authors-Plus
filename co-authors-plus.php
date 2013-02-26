@@ -669,7 +669,7 @@ class coauthors_plus {
 			if ( is_array( $coauthors ) ) {
 				$coauthor = $this->get_coauthor_by( 'user_nicename', $coauthors[0]->user_nicename );
 				if ( 'guest-author' == $coauthor->type && ! empty( $coauthor->linked_account ) ) {
-					$data['post_author'] = get_user_by( 'user_login', $coauthor->linked_account )->ID;
+					$data['post_author'] = get_user_by( 'login', $coauthor->linked_account )->ID;
 				} else if ( $coauthor->type == 'wpuser' )
 					$data['post_author'] = $coauthor->ID;
 				// Refresh their post publish count too
