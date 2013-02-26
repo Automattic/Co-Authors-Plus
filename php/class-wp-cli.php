@@ -104,7 +104,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 		WP_CLI::line( "Updating author terms with new counts" );
 		foreach( $authors as $author ) {
-			$this->update_author_term( $author );
+			$coauthors_plus->update_author_term( $author );
 		}
 
 		WP_CLI::success( "Done! Of {$posts->found_posts} posts, {$affected} now have author terms." );
