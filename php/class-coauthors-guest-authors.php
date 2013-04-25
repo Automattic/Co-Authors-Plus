@@ -859,6 +859,12 @@ class CoAuthors_Guest_Authors
 						'group'    => 'contact-info',
 					),
 				array(
+						'key'      => 'twitter',
+						'label'    => __( 'Twitter', 'co-authors-plus' ),
+						'group'    => 'contact-info',
+						'sanitize_function'	=> array( $this, 'sanitize_twitter' )
+					),
+				array(
 						'key'      => 'aim',
 						'label'    => __( 'AIM', 'co-authors-plus' ),
 						'group'    => 'contact-info',
@@ -1228,6 +1234,10 @@ class CoAuthors_Guest_Authors
 		}
 		return $link;
 
+	}
+
+	function sanitize_twitter( $twitter_username ) {
+		return ltrim( $twitter_username, '@' );
 	}
 
 }
