@@ -710,8 +710,8 @@ class CoAuthors_Guest_Authors
 			}
 			if ( !isset( $_POST[$key] ) )
 				continue;
-			if ( isset( $author_field['sanitize_function'] ) && function_exists( $author_field['sanitize_function'] ) )
-				$value = $author_field['sanitize_function']( $_POST[$key] );
+			if ( isset( $author_field['sanitize_function'] ) && is_callable( $author_field['sanitize_function'] ) )
+				$value = call_user_func( $author_field['sanitize_function'], $_POST[$key] );
 			else
 				$value = sanitize_text_field( $_POST[$key] );
 			update_post_meta( $post_id, $key, $value );
