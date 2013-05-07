@@ -1,5 +1,5 @@
 === Co-Authors Plus ===
-Contributors: batmoo, danielbachhuber, nickdaugherty, automattic
+Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.5.1
 Requires at least: 3.3
@@ -54,7 +54,6 @@ Bug fixes and minor enhancements
 = 3.1 (??? ?? ????) =
 * Updated German translation, courtesy of [krafit](https://github.com/krafit).
 * Bug fix: When filtering a user's published post count, use the value of their guest author profile if one is mapped.
-* Added Twitter username to profiles
 
 = 3.0.5 (Feb. 18, 2013) =
 * New filter 'coauthors_search_authors_get_terms_args' allows you to increase the number of matches returned with AJAX co-author selection
