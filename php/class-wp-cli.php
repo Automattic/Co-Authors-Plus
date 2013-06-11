@@ -536,6 +536,161 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Subcommand to create guest authors from an author list in a WXR file
+	 *
+	 * @subcommand create-guest-authors-from-wxr
+	 * @synopsis --file=</path/to/file.wxr>
+	 */
+	public function create_guest_authors_from_wxr( $args, $assoc_args ) {
+		global $coauthors_plus;
+
+		$defaults = array(
+			'file' => '',
+		);
+		$this->args = wp_parse_args( $assoc_args, $defaults );
+
+		if ( empty( $this->args['file'] ) || ! is_readable( $this->args['file'] ) )
+			WP_CLI::error( 'Please specify a valid WXR file with the --file arg.' );
+
+		if ( ! class_exists( 'WXR_Parser' ) )
+			require_once( WP_CONTENT_DIR . '/admin-plugins/wordpress-importer/parsers.php' );
+
+		$parser = new WXR_Parser();
+		$import_data = $parser->parse( $this->args['file'] );
+
+		if ( is_wp_error( $import_data ) )
+			WP_CLI::error( 'Failed to read WXR file.' );
+
+		// Get author nodes
+		$authors = $import_data['authors'];
+
+		foreach ( $authors as $author ) {
+			WP_CLI::line( sprintf( 'Processing author %s (%s)', $author['author_login'], $author['author_email'] ) );
+
+			$guest_author_data = array(
+				'display_name' => $author['author_display_name'],
+				'user_login' => $author['author_login'],
+				'user_email' => $author['author_email'],
+				'first_name' => $author['author_first_name'],
+				'last_name' => $author['author_last_name'],
+				'ID' => $author['author_id'],
+			);
+
+			$guest_author_id = $this->create_guest_author( $guest_author_data );
+		}
+
+		WP_CLI::line( 'All done!' );
+	}
+
+	/**
+	 * Subcommand to create guest authors from an author list in a CSV file
+	 *
+	 * @subcommand create-guest-authors-from-csv
+	 * @synopsis --file=</path/to/file.csv>
+	 */
+	public function create_guest_authors_from_csv( $args, $assoc_args ) {
+		global $coauthors_plus;
+
+		$defaults = array(
+			'file' => '',
+		);
+		$this->args = wp_parse_args( $assoc_args, $defaults );
+
+		if ( empty( $this->args['file'] ) || ! is_readable( $this->args['file'] ) )
+			WP_CLI::error( 'Please specify a valid CSV file with the --file arg.' );
+
+		$file = fopen( $this->args['file'], 'r' );
+
+		if ( ! $file )
+			WP_CLI::error( 'Failed to read file.' );
+
+		$authors = array();
+
+		$row = 0;
+		while ( false !== ( $data = fgetcsv( $file ) ) ) {
+			if ( $row == 0 ) {
+				$field_keys = array_map( 'trim', $data );
+				// TODO: bail if required fields not found
+			} else {
+				$row_data = array_map( 'trim', $data );
+				$author_data = array();
+				foreach( (array) $row_data as $col_num => $val ) {
+						// Don't use the value of the field key isn't set
+						if ( empty( $field_keys[$col_num] ) )
+							continue;
+					$author_data[$field_keys[$col_num]] = $val;
+				}
+				
+				$authors[] = $author_data;
+			}
+			$row++;
+		}
+		fclose( $file );
+
+		WP_CLI::line( "Found " . count( $authors ) . " authors in CSV" );
+
+		foreach ( $authors as $author ) {
+			WP_CLI::line( sprintf( 'Processing author %s (%s)', $author['user_login'], $author['user_email'] ) );
+
+			$guest_author_data = array(
+				'display_name' => sanitize_text_field( $author['display_name'] ),
+				'user_login' => sanitize_user( $author['user_login'] ),
+				'user_email' => sanitize_email( $author['user_email'] ),
+			);
+
+			$display_name_space_pos = strpos( $author['display_name'], ' ' );
+
+			if ( false !== $display_name_space_pos && empty( $author['first_name'] ) && empty( $author['last_name'] ) ) {
+				$first_name = substr( $author['display_name'], 0, $display_name_space_pos );
+				$last_name = substr( $author['display_name'], ( $display_name_space_pos + 1 ) );
+
+				$guest_author_data['first_name'] = sanitize_text_field( $first_name );
+				$guest_author_data['last_name'] = sanitize_text_field( $last_name );
+			} elseif ( ! empty( $author['first_name'] ) && ! empty( $author['last_name'] ) ) {
+				$guest_author_data['first_name'] = sanitize_text_field( $author['first_name'] );
+				$guest_author_data['last_name'] = sanitize_text_field( $author['last_name'] );
+			}
+
+			$guest_author_id = $this->create_guest_author( $guest_author_data );
+		}
+
+		WP_CLI::line( 'All done!' );
+	}
+
+	private function create_guest_author( $author ) {
+		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email', $author['user_email'], true );
+
+		if ( ! $guest_author ) {
+			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $author['user_login'], true );
+		}
+
+		if ( ! $guest_author ) {
+			WP_CLI::line( '-- Not found; creating profile.' );
+
+			$guest_author_id = $coauthors_plus->guest_authors->create( array(
+				'display_name' => $author['display_name'],
+				'user_login' => $author['user_login'],
+				'user_email' => $author['user_email'],
+				'first_name' => $author['first_name'],
+				'last_name' => $author['last_name'],
+			) );
+
+			if ( $guest_author_id ) {
+				WP_CLI::line( sprintf( '-- Created as guest author #%s', $guest_author_id ) );
+
+				if ( isset( $author['author_id'] ) )
+					update_post_meta( $guest_author_id, '_original_author_id', $author['ID'] );
+
+				update_post_meta( $guest_author_id, '_original_author_login', $author['user_login'] );
+			} else {
+				WP_CLI::warning( "-- Failed to create guest author." );
+			}
+		} else {
+			WP_CLI::line( sprintf( '-- Author already exists (ID #%s); skipping.', $guest_author->ID ) );
+		}
+	}
+
+	/**
 	 * Clear all of the caches for memory management
 	 */
 	private function stop_the_insanity() {
