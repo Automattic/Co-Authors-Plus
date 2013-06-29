@@ -1233,18 +1233,16 @@ class coauthors_plus {
 	}
 
 	/**
-	 * This function makes it possible for a theme to request user_meta or user_attributes
-	 * using a guest author id and get a post_meta value of the same name from the guest author profile.
+	 * This function makes it possible for a theme to request user_meta or user_attributes using a
+	 * guest author id and get a post_meta value of the same name from the guest author profile, if
+	 * that value exists. Otherwise it falls back to the user_attribute of the linked_account.
 	 * 
-	 * If no valget the meta for the corresponding user, if there is one, and if that user has a
-	 * matching meta key.
-	 * 
-	 * @global type $coauthors_plus_is_guest
-	 * @param type $value
-	 * @param type $object_id
-	 * @param type $meta_key
-	 * @param type $single
-	 * @return type
+	 * @global bool  $coauthors_plus_is_guest Whether we are looking for a meta for a guest_author
+	 * @param mixed  $value     Passed forward from any other filters.
+	 * @param int    $object_id 
+	 * @param string $meta_key  The meta key to retrieve.
+	 * @param bool   $single    Whether to return a single value.
+	 * @return mixed Will be an array if $single is false. Will be value of meta data field if $single
 	 */
 	function _filter_get_user_metadata ( $value, $object_id, $meta_key, $single ) {
 		global $coauthors_plus_is_guest;
