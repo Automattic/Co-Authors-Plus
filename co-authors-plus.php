@@ -107,6 +107,8 @@ class coauthors_plus {
 		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
 		add_filter( 'ef_story_budget_term_column_value', array( $this, 'filter_ef_story_budget_term_column_value' ), 10, 3 );
 
+		// Intercept user meta for guest authors
+		add_filter( 'get_user_metadata', array( $this, '_filter_get_user_metadata' ), 10, 4 );
 	}
 
 	function coauthors_plus() {
@@ -215,11 +217,14 @@ class coauthors_plus {
 	 * @param object|false $coauthor The co-author on success, false on failure
 	 */
 	function get_coauthor_by( $key, $value, $force = false ) {
+		global $coauthors_plus_is_guest;
+		$coauthors_plus_is_guest = false;
 
 		// If Guest Authors are enabled, prioritize those profiles
 		if ( $this->is_guest_authors_enabled() ) {
 			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value, $force );
 			if ( is_object( $guest_author ) ) {
+				$coauthors_plus_is_guest = true;
 				return $guest_author;
 			}
 		}
@@ -248,8 +253,10 @@ class coauthors_plus {
 				// user account, we want to use that instead
 				if ( $this->is_guest_authors_enabled() ) {
 					$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
-					if ( is_object( $guest_author ) )
+					if ( is_object( $guest_author ) ) {
+						$coauthors_plus_is_guest = true;
 						$user = $guest_author;
+					}
 				}
 				return $user;
 				break;
@@ -1225,6 +1232,55 @@ class coauthors_plus {
 		return rtrim( $co_authors_names, ', ' );
 	}
 
+	/**
+	 * This function makes it possible for a theme to request user_meta or user_attributes
+	 * using a guest author id and get a post_meta value of the same name from the guest author profile.
+	 * 
+	 * If no valget the meta for the corresponding user, if there is one, and if that user has a
+	 * matching meta key.
+	 * 
+	 * @global type $coauthors_plus_is_guest
+	 * @param type $value
+	 * @param type $object_id
+	 * @param type $meta_key
+	 * @param type $single
+	 * @return type
+	 */
+	function _filter_get_user_metadata ( $value, $object_id, $meta_key, $single ) {
+		global $coauthors_plus_is_guest;
+
+		if ( $coauthors_plus_is_guest ) {
+			$guest_author = $this->guest_authors->get_guest_author_by( 'id', $object_id );
+
+			if ( is_object( $guest_author ) && 'guest-author' == $guest_author->type ) {
+				// First see if we can get the data we are looking for in the guest author's post meta
+				$new_value = get_post_meta( $guest_author->ID, $meta_key, $single );
+
+				// Then if we have a linked account for the author and nothing in value...
+				if ( ! empty( $guest_author->linked_account ) && empty( $new_value ) ) {
+					$author = get_user_by( 'login',  $guest_author->linked_account );
+					// and the author exists
+					if ( is_object( $author ) ) {
+						// remove this filter so we don't get stuck on Apple's campus
+						remove_filter( 'get_user_metadata', array( $this, '_filter_get_user_metadata' ) );
+						// get the user_meta or user attribute
+						if ( function_exists( 'wpcom_is_vip' ) ) {
+							$new_value = get_user_attribute( $author->ID, $meta_key );
+						} else {
+							$new_value = get_user_meta( $author->ID, $meta_key );
+						}
+						// now we can safely add it back for next time
+						add_filter( 'get_user_metadata', array( $this, '_filter_get_user_metadata' ), 10, 4 );
+					}
+				}
+
+				if ( ! empty( $new_value ) ) {
+					return $new_value;
+				}
+			}
+		}
+		return $value;
+	}
 }
 
 global $coauthors_plus;
