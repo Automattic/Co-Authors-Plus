@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.4.2
+Tested up to: 3.5.1
 Requires at least: 3.3
-Stable tag: 3.0.2
+Stable tag: 3.0.5
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -27,12 +27,46 @@ If you've just installed Co-Authors Plus, you might notice that the bylines are 
 
 When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
+= Can I use Co-Authors Plus with WordPress multisite? =
+
+Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
+
+= Who needs permission to do what? =
+
+To assign co-authors to posts, a WordPress user will need the 'edit_others_posts' capability. This is typically granted to the Editor role, but can be altered with the 'coauthors_plus_edit_authors' filter.
+
+To create new guest author profiles, a WordPress will need the 'list_users' capability. This is typically granted to the Administrator role, but can be altered with the 'coauthors_guest_author_manage_cap' filter.
+
+= Can I easily create a list of all co-authors? =
+
+Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
+
 == Upgrade Notice ==
+
+= 3.0.4 =
+Bug fixes and the ability to automatically add co-authors to your feeds.
 
 = 3.0.1 =
 Bug fixes and minor enhancements
 
 == Changelog ==
+
+= 3.1 (??? ?? ????) =
+* Updated German translation, courtesy of [krafit](https://github.com/krafit).
+* Bug fix: When filtering a user's published post count, use the value of their guest author profile if one is mapped.
+* Added support for checkboxes in Guest Author profiles
+
+= 3.0.5 (Feb. 18, 2013) =
+* New filter 'coauthors_search_authors_get_terms_args' allows you to increase the number of matches returned with AJAX co-author selection
+* Bug fix: If there isn't an author term yet for a co-author, avoid an erronous join that caused duplicate posts to appear.
+
+= 3.0.4 (Jan. 6, 2013) =
+* Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
+* Bug fix: No Co-Authors Plus on attachments. For now.
+* Bug fix: Better support for co-authors with non-standard user_nicenames. Props [STRML](https://github.com/STRML).
+
+= 3.0.3 (Dec. 3, 2012) =
+* Bug fix: The default order for the 'author' taxonomy should be 'term_order', in order for the author positions to stick. Props [lgedeon](https://github.com/lgedeon)
 
 = 3.0.2 (Nov. 23, 2012) =
 * Bug fix: Fall back to non-pretty permalinks when the author permastruct is empty, so that coauthors_posts_links() doesn't link to the homepage
@@ -79,11 +113,9 @@ Bug fixes and minor enhancements
 * Bug fix: Allow output constants to be defined in a theme's functions.php file and include filters you can use instead
 
 = 2.6.1 (Dec. 30, 2011) =
-
 * Fix mangled usernames because of sanitize_key http://wordpress.org/support/topic/plugin-co-authors-plus-26-not-working-with-wp-33
 
 = 2.6 (Dec. 22, 2011) =
-
 * Sortable authors: Drag and drop the order of the authors as you'd like them to appear ([props kingkool68](http://profiles.wordpress.org/users/kingkool68/))
 * Search for authors by display name (instead of nicename which was essentially the same as user_login)
 * Option to remove the first author when there are two or more so it's less confusing
@@ -91,22 +123,18 @@ Bug fixes and minor enhancements
 * Bug fix: Update the published post count for each user more reliably
 
 = 2.5.3 (Aug. 14, 2011) =
-
 * Bug fix: Removed extra comma when only two authors were listed. If you used the COAUTHORS_DEFAULT_BETWEEN_LAST constant, double-check what you have
 
 = 2.5.2 (Apr. 23, 2011) =
-
 * Bug: Couldn't query terms and authors at the same time (props nbaxley)
 * Bug: Authors with empty fields (e.g. first name) were displaying blank in some cases
 * Bug: authors with spaces in usernames not getting saved (props MLmsw, Ruben S. and others!)
 * Bug: revisions getting wrong user attached (props cliquenoir!)
 
 = 2.5.1 (Mar. 26, 2011) =
-
 * Fix with author post count (throwing errors)
 
 = 2.5 (Mar. 26, 2011) =
-
 * Custom Post Type Support
 * Compatibility with WP 3.0 and 3.1
 * Gravatars
@@ -114,17 +142,14 @@ Bug fixes and minor enhancements
 * Thanks to everyone who submitted bugs, fixes, and suggestions! And for your patience!
 
 = 2.1.1 (Oct. 16, 2009) =
-
 * Fix for coauthors not being added if their username is different from display name
 * Fixes to readme.txt (fixes for textual and punctuation errors, language clarification, minor formatting changes) courtesy of [Waldo Jaquith](http://www.vqronline.org)
 
 = 2.1 (Oct. 11, 2009) =
-
 * Fixed issues related to localization. Thanks to Jan Zombik <zombik@students.uni-mainz.de> for the fixes.
 * Added set_time_limit to update function to get around timeout issues when upgrading plugin
 
 = 2.0 (Oct. 11, 2009) =
-
 * Plugin mostly rewritten to make use of taxonomy instead of post_meta
 * Can now see all authors of a post under the author column from Edit Posts page
 * All authors of a post are now notified on a new comment
@@ -135,7 +160,6 @@ Bug fixes and minor enhancements
 * FIX: Issues with coauthored posts not showing up on author archives
 
 = 1.2.0 (Jun. 16, 2012) =
-
 * FIX: Added compatibility for WordPress 2.8
 * FIX: Added new template tags (get_the_coauthor_meta & the_coauthor_meta) to fix issues related to displaying author info on author archive pages. See [Other Notes](http://wordpress.org/extend/plugins/co-authors-plus/other_notes/) for details.
 * FIX: Plugin should now work for plugins not using the 'wp_' DB prefix 
@@ -144,34 +168,28 @@ Bug fixes and minor enhancements
 * DOCS: Added details about the new template tags
 
 = 1.1.5 (Apr. 26, 2009) =
-
 * FIX: Not searching Updated SQL query for autosuggest to search through first name, last name, and nickname
 * FIX: When editing an author, and clicking on a suggested author, the original author was not be removed
 * DOCS: Added code comments to javascript; more still to be added
 * DOCS: Updated readme information
 
 = 1.1.4 (Apr. 25, 2009) =
-
 * Disabled "New Author" output in suggest box, for now
 * Hopefully fixed SVN issue (if you're having trouble with the plugin, please delete the plugin and reinstall)
 
 = 1.1.3 (Apr. 23, 2009) =
-
 * Add blur event to disable input box
 * Limit only one edit at a time.
 * Checked basic cross-browser compatibility (Firefox 3 OS X, Safari 3 OS X, IE7 Vista).
 * Add suggest javascript plugin to Edit Page.
 
 = 1.1.2 (Apr. 19, 2009) =
-
 * Disabled form submit when enter pressed.
 
 = 1.1.1 (Apr. 15, 2009) =
-
 * Changed SQL query to return only contributor-level and above users.
 
 = 1.1.0 (Apr. 14, 2009) =
-
 * Initial beta release.
 
 == Installation ==
@@ -183,5 +201,7 @@ Bug fixes and minor enhancements
 1. Add co-authors to your posts and pages.
 
 == Screenshots ==
-1.  "Authors" box with multiple authors added
-2.  Guest authors allow you to assign bylines without creating WordPress user accounts
+
+1. Multiple authors can be added to a Post, Page, or Custom Post Type using an auto-complete interface.
+2. The order of your co-authors can be changed by drag and drop.
+3. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.

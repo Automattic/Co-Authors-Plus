@@ -52,7 +52,7 @@ jQuery(document).ready(function () {
 			;
 		
 		// Update the value of the hidden input
-		co.siblings('input[name="coauthors[]"]').val(author.login);
+		co.siblings('input[name="coauthors[]"]').val(author.nicename);
 	}
 	
 	
@@ -215,6 +215,7 @@ jQuery(document).ready(function () {
 		author.login = jQuery.trim(vals[1]);
 		author.name = jQuery.trim(vals[2]);
 		author.email = jQuery.trim(vals[3]);
+		author.nicename = jQuery.trim(vals[4]);
 		
 		if(author.id=="New") {
 			//alert('Eventually, this will allow you to add a new author right from here. But it\'s not ready yet. *sigh*');
@@ -304,7 +305,7 @@ jQuery(document).ready(function () {
 							'type': 'hidden',
 							'id': 'coauthors_hidden_input',
 							'name': 'coauthors[]',
-							'value': unescape(author.login)
+							'value': unescape(author.nicename)
 							})
 						;
 		
@@ -392,6 +393,7 @@ jQuery(document).ready(function () {
 	var $post_coauthor_logins = jQuery('input[name="coauthors[]"]');
 	var $post_coauthor_names = jQuery('input[name="coauthorsinput[]"]');
 	var $post_coauthor_emails = jQuery('input[name="coauthorsemails[]"]');
+	var $post_coauthor_nicenames = jQuery('input[name="coauthorsnicenames[]"]');
 	
 	post_coauthors = [];
 	
@@ -400,6 +402,7 @@ jQuery(document).ready(function () {
 			login: $post_coauthor_logins[i].value,
 			name: $post_coauthor_names[i].value,
 			email: $post_coauthor_emails[i].value,
+			nicename: $post_coauthor_nicenames[i].value
 		});
 	}
 	

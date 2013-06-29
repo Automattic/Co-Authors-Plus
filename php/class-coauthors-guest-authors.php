@@ -654,8 +654,10 @@ class CoAuthors_Guest_Authors
 		// Guest authors can't be created with the same user_login as a user
 		$user_nicename = str_replace( 'cap-', '', $slug );
 		$user = get_user_by( 'slug', $user_nicename );
-		if ( $user && $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) )
-			wp_die( __( 'Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user instead', 'co-authors-plus' ) );
+		if ( $user 
+			&& is_user_member_of_blog( $user->ID, get_current_blog_id() )
+			&& $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) )
+			wp_die( __( 'Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user on the Manage Users listing instead.', 'co-authors-plus' ) );
 
 		// Guest authors can't have the same post_name value
 		$guest_author = $this->get_guest_author_by( 'post_name', $post_data['post_name'] );
@@ -706,10 +708,14 @@ class CoAuthors_Guest_Authors
 				update_post_meta( $post_id, $key, $user_login );
 				continue;
 			}
+
+			if ( isset( $author_field['type'] ) && 'checkbox' === $author_field['type'] && ! isset( $_POST[ $key ] ) )
+				delete_post_meta( $post_id, $key );
+
 			if ( !isset( $_POST[$key] ) )
 				continue;
-			if ( isset( $author_field['sanitize_function'] ) && function_exists( $author_field['sanitize_function'] ) )
-				$value = $author_field['sanitize_function']( $_POST[$key] );
+			if ( isset( $author_field['sanitize_function'] ) && is_callable( $author_field['sanitize_function'] ) )
+				$value = call_user_func( $author_field['sanitize_function'], $_POST[$key] );
 			else
 				$value = sanitize_text_field( $_POST[$key] );
 			update_post_meta( $post_id, $key, $value );
