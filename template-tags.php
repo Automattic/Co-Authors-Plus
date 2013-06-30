@@ -507,7 +507,7 @@ function coauthors_wp_list_authors( $args = array() ) {
  * @param string     $meta_key Optional. Metadata key.
  * @return mixed
  */
-function get_coauthor_user_meta( $user, $meta_key ) {
+function get_coauthor_user_meta( $user, $meta_key, $single ) {
 	global $coauthors_plus_is_guest;
 
 	$guest_author_id = null;
@@ -538,7 +538,7 @@ function get_coauthor_user_meta( $user, $meta_key ) {
 	}
 
 	// Get a User object either from the user object that was passed in, or the guest author linked_account, or int passed into $user
-	if ( is_object( $user ) && is_object( $user->data ) ) {
+	if ( is_object( $user ) && ! empty( $user->data ) ) {
 		$author = $user;
 	} elseif ( ! empty( $guest_author->linked_account ) ) {
 		$author = get_user_by( 'login',  $guest_author->linked_account );
@@ -549,9 +549,9 @@ function get_coauthor_user_meta( $user, $meta_key ) {
 	// If the author exists, return the user_attribute or user_meta depending on whether we are on VIP or not.
 	if ( is_object( $author ) ) {
 		if ( function_exists( 'wpcom_is_vip' ) ) {
-			return get_user_attribute( $author->ID, $meta_key );
+			return get_user_attribute( $author->ID, $meta_key, $single );
 		} else {
-			return get_user_meta( $author->ID, $meta_key );
+			return get_user_meta( $author->ID, $meta_key, $single );
 		}
 	}
 
