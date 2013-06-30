@@ -490,3 +490,85 @@ function coauthors_wp_list_authors( $args = array() ) {
 		return $return;
 	echo $return;
 }
+
+/**
+ * Retrieve user meta data (attributes on VIP) from guest author profile if available.
+ *
+ * Pass a user or guest author object into this function, if available, for best results. The
+ * function accepts a user id and trys to make a good match, but relies on a global that is set when 
+ * get_coauthor_by() is run. It is possible to call this function before get_coauthor_by() runs and
+ * in that case it is possible to grab a guest profile based on an user id that just matches by
+ * coincidence.
+ * 
+ * Will return the requested value from a guest author profile's post_meta or fall back to the
+ * user_attribute of the linked_account. Returns false if nothing found.
+ * 
+ * @param int|object $user User ID or User object
+ * @param string     $meta_key Optional. Metadata key.
+ * @return mixed
+ */
+function get_coauthor_user_meta( $user, $meta_key, $single ) {
+	global $coauthors_plus_is_guest;
+
+	$guest_author_id = null;
+	$author_id = null;
+
+	// Get guest author if we can.
+	if ( is_object( $user ) ) {
+		if ( 'guest-author' == $user->type ) {
+			$guest_author = $user;
+			$guest_author_id = $user->ID;
+		}
+	} elseif ( is_int( $user ) ) {
+		if ( $coauthors_plus_is_guest ) {
+			$guest_author = $this->guest_authors->get_guest_author_by( 'id', $user );
+			$guest_author_id = ( is_object( $guest_author ) && 'guest-author' == $guest_author->type ) ? $guest_author->ID : false;
+		} else {
+			$author_id = $user;
+		}
+	} else {
+		return false;
+	}
+
+	// Now see if we can find what we need based on guest_author and return it
+	$value = $guest_author_id ? get_post_meta( $guest_author_id, $meta_key, $single ) : null;
+
+	if ( ! empty( $value ) ) {
+		return $value;
+	}
+
+	// Get a User object either from the user object that was passed in, or the guest author linked_account, or int passed into $user
+	if ( is_object( $user ) && ! empty( $user->data ) ) {
+		$author = $user;
+	} elseif ( ! empty( $guest_author->linked_account ) ) {
+		$author = get_user_by( 'login',  $guest_author->linked_account );
+	} elseif ( $author_id ) {
+		$author = get_user_by( 'id', $author_id );
+	}
+
+	// If the author exists, return the user_attribute or user_meta depending on whether we are on VIP or not.
+	if ( is_object( $author ) ) {
+		if ( function_exists( 'wpcom_is_vip' ) ) {
+			return get_user_attribute( $author->ID, $meta_key, $single );
+		} else {
+			return get_user_meta( $author->ID, $meta_key, $single );
+		}
+	}
+
+	// If we haven't found anything yet, perhaps it is time to admit defeat?
+	return false;
+}
+
+/**
+ * Retrieve user attribute data from guest author profile if available.
+ * 
+ * Alias for get_coauthor_user_meta() to use on VIP.
+ * 
+ * @param int|object $user User ID or User object
+ * @param string     $meta_key Optional. Metadata key.
+ * @return mixed
+ */
+function get_coauthor_user_attribute( $user, $meta_key ) {
+	get_coauthor_user_meta( $user, $meta_key );
+}
+
