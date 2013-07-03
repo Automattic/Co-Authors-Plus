@@ -707,15 +707,28 @@ class coauthors_plus {
 		if ( ! $this->is_post_type_enabled( $post->post_type ) )
 			return;
 
-		if( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
-			check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
+		if ( $this->current_user_can_set_authors() ) {
+			// if current_user_can_set_authors and nonce valid
+			if( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
+				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
 
-			if( $this->current_user_can_set_authors() ){
 				$coauthors = (array) $_POST['coauthors'];
 				$coauthors = array_map( 'sanitize_text_field', $coauthors );
-				return $this->add_coauthors( $post_id, $coauthors );
+				$this->add_coauthors( $post_id, $coauthors );
+			}
+		} else {
+			// If the user can't set authors and a co-author isn't currently set, we need to explicity set one
+			if ( ! $this->has_author_terms( $post_id ) ) {
+				$user = get_userdata( $post->post_author );
+				if ( $user )
+					$this->add_coauthors( $post_id, array( $user->user_login ) );
 			}
 		}
+	}
+
+	function has_author_terms( $post_id ) {
+		$terms = wp_get_object_terms( $post_id, $this->coauthor_taxonomy, array( 'fields' => 'ids' ) );
+		return ! empty( $terms ) && ! is_wp_error( $terms );
 	}
 
 	/**
