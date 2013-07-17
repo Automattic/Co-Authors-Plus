@@ -658,6 +658,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	private function create_guest_author( $author ) {
+		global $coauthors_plus;
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email', $author['user_email'], true );
 
 		if ( ! $guest_author ) {
