@@ -752,7 +752,7 @@ class coauthors_plus {
 			$term = $this->update_author_term( $author );
 			$coauthors[$key] = $term->slug;
 		}
-		wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, $append );
+		return wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, $append );
 	}
 
 	/**
