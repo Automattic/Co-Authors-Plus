@@ -55,6 +55,7 @@ Bug fixes and minor enhancements
 * Updated German translation, courtesy of [krafit](https://github.com/krafit).
 * Bug fix: When filtering a user's published post count, use the value of their guest author profile if one is mapped.
 * Added support for checkboxes in Guest Author profiles
+* Fix Strict warnings from CPT's that don't define all capabilities
 
 = 3.0.5 (Feb. 18, 2013) =
 * New filter 'coauthors_search_authors_get_terms_args' allows you to increase the number of matches returned with AJAX co-author selection
