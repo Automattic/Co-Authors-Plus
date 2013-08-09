@@ -1186,7 +1186,9 @@ class coauthors_plus {
 		$term_description = implode( ' ', $search_values );
 
 		if ( $term = $this->get_author_term( $coauthor ) ) {
-			wp_update_term( $term->term_id, $this->coauthor_taxonomy, array( 'description' => $term_description ) );
+			if ( $term->description != $term_description ) {
+				wp_update_term( $term->term_id, $this->coauthor_taxonomy, array( 'description' => $term_description ) );
+			}
 		} else {
 			$coauthor_slug = 'cap-' . $coauthor->user_nicename;
 			$args = array(
