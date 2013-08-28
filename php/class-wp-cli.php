@@ -389,6 +389,111 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Swap one Co Author with another on all posts for which they are an author. Unlike rename-coauthor,
+	 * this leaves the original Co Author term intact and works when the 'to' user already has a co-author term.
+	 *
+	 * @subcommand swap-coauthors
+	 * @synopsis --from=<user-login> --to=<user-login> [--post_type=<ptype>] [--dry=<dry>]
+	 */
+	public function swap_coauthors( $args, $assoc_args ) {
+		global $coauthors_plus, $wpdb;
+
+		$defaults = array(
+			'from'      => null,
+			'to'        => null,
+			'post_type'	=> 'post',
+			'dry'		=> false
+		);
+
+		$assoc_args = array_merge( $defaults, $assoc_args );
+
+		$dry 						= $assoc_args['dry'];
+
+		$from_userlogin 			= $assoc_args['from'];
+		$to_userlogin 				= $assoc_args['to'];
+
+		$from_userlogin_prefixed	= 'cap-' . $from_userlogin;
+		$to_userlogin_prefixed 		= 'cap-' . $to_userlogin;
+
+		$orig_coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $from_userlogin );
+
+		if ( ! $orig_coauthor )
+			WP_CLI::error( "No co-author found for $from_userlogin" );
+
+		if ( ! $to_userlogin )
+			WP_CLI::error( '--to param must not be empty' );
+
+		$to_coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $to_userlogin );
+
+		if ( ! $to_coauthor )
+			WP_CLI::error( "No co-author found for $to_userlogin" );
+
+		WP_CLI::line( "Swapping authorship from {$from_userlogin} to {$to_userlogin}" );
+
+		$query_args = array( 
+			'post_type'        	=> $assoc_args['post_type'],
+			'order'            	=> 'ASC',
+			'orderby'          	=> 'ID',
+			'posts_per_page'   	=> 100,
+			'paged'            	=> 1,
+			'tax_query'			=> array(
+				array(
+					'taxonomy' 	=> $coauthors_plus->coauthor_taxonomy,
+					'field'		=> 'slug',
+					'terms'		=> array( $from_userlogin_prefixed )
+				)
+			)
+		);
+
+		$posts = new WP_Query( $query_args );
+
+		$posts_total = 0;
+
+		WP_CLI::line( "Found $posts->found_posts posts to update." );
+
+		while( $posts->post_count ) {
+			foreach( $posts->posts as $post ) {
+				$coauthors = get_coauthors( $post->ID );
+
+				if ( ! is_array( $coauthors ) || ! count( $coauthors ) )
+					continue;
+
+				$coauthors = wp_list_pluck( $coauthors, 'user_login' );
+
+				$posts_total++;
+				
+				if ( ! $dry ) {
+					// Remove the $from_userlogin from $coauthors
+					foreach( $coauthors as $index => $user_login ) {
+						if ( $from_userlogin === $user_login ) {
+							unset( $coauthors[ $index ] );
+
+							break;
+						}
+					}
+
+					// By not passing $append = false as the 3rd param, we replace all existing coauthors
+					$coauthors_plus->add_coauthors( $post->ID, $coauthors, false );
+				
+					WP_CLI::line( $posts_total . ': Post #' . $post->ID . ' has been assigned "' . $to_userlogin . '" as a co-author' );
+					
+					clean_post_cache( $post->ID );
+				} else {
+					WP_CLI::line( $posts_total . ': Post #' . $post->ID . ' will be assigned "' . $to_userlogin . '" as a co-author' );
+				}
+			}
+			
+			$query_args['paged']++;
+
+			$this->stop_the_insanity();
+
+			$posts = new WP_Query( $query_args );
+		}
+
+		WP_CLI::success( "All done!" );
+	}
+
+	/**
 	 * List all of the posts without assigned co-authors terms
 	 *
 	 * @since 3.0
