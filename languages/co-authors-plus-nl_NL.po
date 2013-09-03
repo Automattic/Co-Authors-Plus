@@ -9,9 +9,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Poedit 1.5.7\n"
 "Project-Id-Version: co-authors-plus\n"
-"POT-Creation-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
 
 #: php/class-coauthors-wp-list-table.php:207
 msgid "View Posts"
@@ -22,9 +19,7 @@ msgid "Mine"
 msgstr "Mijn"
 
 msgid "Mohammad Jangda, Daniel Bachhuber, Automattic"
-msgstr ""
-"Mohammad Jangda, Daniel Bachhuber, Automattic</a>, Translation by <a href="
-"\"http://kar.im\">Karim"
+msgstr "Mohammad Jangda, Daniel Bachhuber, Automattic</a>, Translation by <a href=\"http://kar.im\">Karim"
 
 #: co-authors-plus.php:481
 msgid "No co-author exists for that term"
@@ -140,16 +135,10 @@ msgid "Approve it: %s"
 msgstr "Goedkeuren: %s"
 
 #: co-authors-plus.php:1364
-msgid ""
-"Currently %s comment is waiting for approval. Please visit the moderation "
-"panel:"
-msgid_plural ""
-"Currently %s comments are waiting for approval. Please visit the moderation "
-"panel:"
-msgstr[0] ""
-"Er wacht momenteel %s reactie op goedkeuring. Bezoek het moderatiepaneel:"
-msgstr[1] ""
-"Er wachten momenteel %s reacties op goedkeuring. Bezoek het moderatiepaneel:"
+msgid "Currently %s comment is waiting for approval. Please visit the moderation panel:"
+msgid_plural "Currently %s comments are waiting for approval. Please visit the moderation panel:"
+msgstr[0] "Er wacht momenteel %s reactie op goedkeuring. Bezoek het moderatiepaneel:"
+msgstr[1] "Er wachten momenteel %s reacties op goedkeuring. Bezoek het moderatiepaneel:"
 
 #: co-authors-plus.php:1368
 msgid "[%1$s] Please moderate: \"%2$s\""
@@ -231,28 +220,20 @@ msgid "Guest author saved."
 msgstr "Gastauteur bewaard"
 
 #: php/class-coauthors-guest-authors.php:161
-msgid ""
-"Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
-msgstr ""
-"Gastauteur toegevoegd. <a target=\"_blank\" href=\"%s\">Bekijk profiel</a> "
+msgid "Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+msgstr "Gastauteur toegevoegd. <a target=\"_blank\" href=\"%s\">Bekijk profiel</a> "
 
 #: php/class-coauthors-guest-authors.php:162
-msgid ""
-"Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href="
-"\"%2$s\">Preview profile</a>"
-msgstr ""
-"Gastauteur gepland &uuml; <strong>%1$s</strong>. <a target=\"_blank\" href="
-"\"%2$s\">Bekijk profiel</a>"
+msgid "Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview profile</a>"
+msgstr "Gastauteur gepland &uuml; <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Bekijk profiel</a>"
 
 #: php/class-coauthors-guest-authors.php:164
 msgid "M j, Y @ G:i"
 msgstr "M j, Y @ G:i"
 
 #: php/class-coauthors-guest-authors.php:165
-msgid ""
-"Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
-msgstr ""
-"Gastauteur bewerkt. <a target=\"_blank\" href=\"%s\">Bekijk profiel</a>"
+msgid "Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+msgstr "Gastauteur bewerkt. <a target=\"_blank\" href=\"%s\">Bekijk profiel</a>"
 
 #: php/class-coauthors-guest-authors.php:182
 #: php/class-coauthors-guest-authors.php:215
@@ -308,17 +289,11 @@ msgstr "Je heb deze gastauteur geselecteerd om te verwijderen"
 
 #: php/class-coauthors-guest-authors.php:442
 msgid "What should be done with posts assigned to this guest author?"
-msgstr ""
-"Wat moet er met de berichten gebeuren die aan deze gastauteur zijn gekoppeld"
+msgstr "Wat moet er met de berichten gebeuren die aan deze gastauteur zijn gekoppeld"
 
 #: php/class-coauthors-guest-authors.php:443
-msgid ""
-"Note: If you'd like to delete the guest author and all of their posts, you "
-"should delete their posts first and then come back to delete the guest "
-"author."
-msgstr ""
-"Als je gastauteur en al zijn berichten wilt verwijderen dan moet je eerst de "
-"berichten verwijderen en dan de gastauteur."
+msgid "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author."
+msgstr "Als je gastauteur en al zijn berichten wilt verwijderen dan moet je eerst de berichten verwijderen en dan de gastauteur."
 
 #: php/class-coauthors-guest-authors.php:452
 msgid "Reassign to another co-author:"
@@ -330,8 +305,7 @@ msgstr "Laat berichten toegewezen aan de verbonden gebruiker "
 
 #: php/class-coauthors-guest-authors.php:463
 msgid "Remove byline from posts (but leave each post in its current status)."
-msgstr ""
-"Verwijder de bijzin van berichten (maar behoud de status van elk bericht)"
+msgstr "Verwijder de bijzin van berichten (maar behoud de status van elk bericht)"
 
 #: php/class-coauthors-guest-authors.php:466
 msgid "Confirm Deletion"
@@ -350,12 +324,8 @@ msgid "Guest authors cannot be created without display names."
 msgstr "Gastauteur kan niet worden aangemaakt zonder de beeldschermnaam."
 
 #: php/class-coauthors-guest-authors.php:658
-msgid ""
-"Guest authors cannot be created with the same user_login value as a user. "
-"Try creating a profile from the user instead"
-msgstr ""
-"Gastauteur kan niet worden aangemaakt met dezelfde login naam als de "
-"gebruiker. Maak inplaats daarvan een profiel aan voor de gebruiker"
+msgid "Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user instead.
+msgstr "Gastauteur kan niet worden aangemaakt met dezelfde login naam als de gebruiker. Maak inplaats daarvan een profiel aan voor de gebruiker"
 
 #: php/class-coauthors-guest-authors.php:663
 msgid "Display name conflicts with another guest author display name."
@@ -411,9 +381,7 @@ msgstr "%s is een verplicht veld"
 
 #: php/class-coauthors-guest-authors.php:1012
 msgid "user_login cannot duplicate existing guest author or mapped user"
-msgstr ""
-"user_login kan niet worden gedupliceert met de bestaande gastauteur of "
-"verbonden gebruiker"
+msgstr "user_login kan niet worden gedupliceert met de bestaande gastauteur of verbonden gebruiker"
 
 #: php/class-coauthors-guest-authors.php:1057
 msgid "Guest author does not exist"
@@ -505,20 +473,12 @@ msgid " and "
 msgstr "en"
 
 #: co-authors-plus.php:342
-msgid ""
-"<strong>Note:</strong> To edit post authors, please enable javascript or use "
-"a javascript-capable browser"
-msgstr ""
-"<strong>Notitie:</strong> activeer javascript of gebruikt een browser die "
-"javascript ondersrteund om bericht auteurs te bewerken"
+msgid "<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser"
+msgstr "<strong>Notitie:</strong> activeer javascript of gebruikt een browser die javascript ondersrteund om bericht auteurs te bewerken"
 
 #: co-authors-plus.php:349 co-authors-plus.php:956
-msgid ""
-"Click on an author to change them. Drag to change their order. Click on "
-"<strong>Remove</strong> to remove them."
-msgstr ""
-"Klik op een auteur om deze te bewerken. Sleep om de volgorde aan te passen. "
-"Klik op <strong>Verwijderen</strong> om ze te verwijderen."
+msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
+msgstr "Klik op een auteur om deze te bewerken. Sleep om de volgorde aan te passen. Klik op <strong>Verwijderen</strong> om ze te verwijderen."
 
 #: co-authors-plus.php:287 co-authors-plus.php:382 co-authors-plus.php:1158
 msgid "Authors"
@@ -553,12 +513,8 @@ msgid "Search for an author"
 msgstr "Zoek voor een auteur"
 
 #: template-tags.php:82
-msgid ""
-"No post ID provided for CoAuthorsIterator constructor. Are you not in a loop "
-"or is $post not set?"
-msgstr ""
-"Geen bericht ID gevonden voor CoAuthorsIterator constructor. Ben je niet in "
-"de loop? of is er geen $post ingesteld?"
+msgid "No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?
+msgstr "Geen bericht ID gevonden voor CoAuthorsIterator constructor. Is er geen $post ingesteld?"
 
 #: template-tags.php:208 template-tags.php:365
 msgid "Posts by %s"
@@ -574,9 +530,5 @@ msgstr "Co-Authors Plus"
 msgid "http://wordpress.org/extend/plugins/co-authors-plus/"
 msgstr "http://wordpress.org/extend/plugins/co-authors-plus/"
 
-msgid ""
-"Allows multiple authors to be assigned to a post. This plugin is an extended "
-"version of the Co-Authors plugin developed by Weston Ruter."
-msgstr ""
-"Sta toe om meerdere auteurs toe te wijzen aan een bericht. Deze plugin is "
-"een uitgebreide versie van de Co-Authors plugin ontwikkeld door Weston Ruter"
+msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
+msgstr "Sta toe om meerdere auteurs toe te wijzen aan een bericht. Deze plugin is een uitgebreide versie van de Co-Authors plugin ontwikkeld door Weston Ruter"
