@@ -472,6 +472,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 						}
 					}
 
+					// Add the 'to' author on
+					$coauthors[] = $to_userlogin;
+
 					// By not passing $append = false as the 3rd param, we replace all existing coauthors
 					$coauthors_plus->add_coauthors( $post->ID, $coauthors, false );
 				
