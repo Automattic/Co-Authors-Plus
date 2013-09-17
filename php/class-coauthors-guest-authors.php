@@ -306,7 +306,7 @@ class CoAuthors_Guest_Authors
 			return $query;
 
 		$coauthor = $this->get_guest_author_by( 'linked_account', sanitize_title( $query->query_vars['author_name'] ) );
-		if ( is_object( $coauthor ) && $query->query_vars['author_name'] != $coauthor->linked_account ) {
+		if ( is_object( $coauthor ) && $query->query_vars['author_name'] != $coauthor->user_login ) {
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
 
