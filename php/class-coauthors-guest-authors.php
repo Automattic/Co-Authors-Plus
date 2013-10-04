@@ -305,6 +305,10 @@ class CoAuthors_Guest_Authors
 		if ( !isset( $query->query_vars['author_name'] ) )
 			return $query;
 
+		// No redirection needed on admin requests
+		if ( is_admin() )
+			return $query;
+
 		$coauthor = $this->get_guest_author_by( 'linked_account', sanitize_title( $query->query_vars['author_name'] ) );
 		if ( is_object( $coauthor ) && $query->query_vars['author_name'] != $coauthor->user_login ) {
 			global $wp_rewrite;
