@@ -485,8 +485,6 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					WP_CLI::line( $posts_total . ': Post #' . $post->ID . ' will be assigned "' . $to_userlogin . '" as a co-author' );
 				}
 			}
-			
-			$query_args['paged']++;
 
 			$this->stop_the_insanity();
 
