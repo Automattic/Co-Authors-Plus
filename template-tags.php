@@ -490,3 +490,37 @@ function coauthors_wp_list_authors( $args = array() ) {
 		return $return;
 	echo $return;
 }
+
+/**
+ * Retrieve a Co-Author's Avatar.
+ *
+ * Since Guest Authors doesn't enforce unique email addresses, simply loading the avatar by email won't work when
+ * multiple Guest Authors share the same address.
+ *
+ * This is a replacement for using get_avatar(), which only operates on email addresses and cannot differentiate 
+ * between Guest Authors (who may share an email) and regular user accounts
+ * 
+ * @param  object   $coauthor The Co Author or Guest Author object
+ * @param  int      $size     The desired size
+ * @return string             The image tag for the avatar, or an empty string if none could be determined
+ */
+function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = false ) {
+	global $coauthors_plus;
+
+	if ( ! is_object( $coauthor ) )
+		return '';
+
+	if ( isset( $coauthor->type ) && 'guest-author' == $coauthor->type ) {
+		$guest_author_thumbnail = $coauthors_plus->guest_authors->get_guest_author_thumbnail( $coauthor, $size );
+
+		if ( $guest_author_thumbnail )
+			return $guest_author_thumbnail;
+	}
+
+	// Make sure we're dealing with an object for which we can retrieve an email
+	if ( isset( $coauthor->user_email ) )
+		return get_avatar( $coauthor->user_email, $size, $default, $alt );
+
+	// Nothing matched, an invalid object was passed.
+	return '';
+}
