@@ -611,6 +611,51 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				WP_CLI::line( "Created author term for {$user->user_login}" );
 			}
 		}
+
+		// And create author terms for any Guest Authors that don't have them
+		if ( $coauthors_plus->is_guest_authors_enabled() && $coauthors_plus->guest_authors instanceof CoAuthors_Guest_Authors ) {
+			$args = array(
+				'order'             => 'ASC',
+				'orderby'           => 'ID',
+				'post_type'         => $coauthors_plus->guest_authors->post_type,
+				'posts_per_page'    => 100,
+				'paged'             => 1,
+				'update_meta_cache' => false,
+				'fields'            => 'ids'
+			);
+
+			$posts = new WP_Query( $args );
+			$count = 0;
+			WP_CLI::line( "Now inspecting or updating {$posts->found_posts} Guest Authors." );
+
+			while( $posts->post_count ) {
+				foreach( $posts->posts as $guest_author_id ) {
+					$count++;
+
+					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $guest_author_id );
+
+					if ( ! $guest_author ) {
+						WP_CLI::line( 'Failed to load guest author ' . $guest_author_id );
+
+						continue;
+					}
+
+					$term = $coauthors_plus->get_author_term( $guest_author );
+
+					if ( empty( $term ) || empty( $term->description ) ) {
+						$coauthors_plus->update_author_term( $guest_author );
+
+						WP_CLI::line( "Created author term for Guest Author {$guest_author->user_nicename}" );
+					}
+				}
+
+				$this->stop_the_insanity();
+				
+				$args['paged']++;
+				$posts = new WP_Query( $args );
+			}
+		}
+		 
 		WP_CLI::success( "All done" );
 	}
 
