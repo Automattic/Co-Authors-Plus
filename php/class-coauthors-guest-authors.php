@@ -744,7 +744,8 @@ class CoAuthors_Guest_Authors
 	function get_guest_author_by( $key, $value, $force = false ) {
 		global $wpdb;
 
-		$cache_key = md5( 'guest-author-' . $key . '-' . $value );
+		$cache_key = $this->get_cache_key( $key, $value );
+		
 		if ( false == $force && false !== ( $retval = wp_cache_get( $cache_key, self::$cache_group ) ) )
 			return $retval;
 
@@ -913,6 +914,36 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
+	 * Build a cache key for a given key/value
+	 *
+	 * @param string $key A guest author field
+	 * @param string $value The guest author field value
+	 * 
+	 * @return string The generated cache key
+	 */
+	function get_cache_key( $key, $value ) {
+		// Normalize $key and $value
+		switch( $key ) {
+			case 'post_name':
+				$key = 'user_nicename';
+
+				if ( 0 === strpos( $value, 'cap-' ) )
+					$value = substr( $value, 4 );
+
+				break;
+
+			case 'login':
+				$key = 'user_login';
+
+				break;
+		}
+
+		$cache_key = md5( 'guest-author-' . $key . '-' . $value );
+
+		return $cache_key;
+	}
+
+	/**
 	 * Get all of the user accounts that have been linked
 	 *
 	 * @since 3.0
@@ -985,11 +1016,15 @@ class CoAuthors_Guest_Authors
 		$keys = wp_list_pluck( $this->get_guest_author_fields(), 'key' );
 		$keys = array_merge( $keys, array( 'login', 'post_name', 'user_nicename', 'ID' ) );
 		foreach( $keys as $key ) {
+			$value_key = $key;
+
 			if ( 'post_name' == $key )
-				$key = 'user_nicename';
+    			$value_key = 'user_nicename';
 			else if ( 'login' == $key )
-				$key = 'user_login';
-			$cache_key = md5( 'guest-author-' . $key . '-' . $guest_author->$key );
+    			$value_key = 'user_login';
+
+			$cache_key = $this->get_cache_key( $key, $guest_author->$value_key );
+
 			wp_cache_delete( $cache_key, self::$cache_group );
 		}
 
