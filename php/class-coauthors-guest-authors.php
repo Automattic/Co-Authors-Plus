@@ -745,7 +745,7 @@ class CoAuthors_Guest_Authors
 		global $wpdb;
 
 		$cache_key = $this->get_cache_key( $key, $value );
-		
+
 		if ( false == $force && false !== ( $retval = wp_cache_get( $cache_key, self::$cache_group ) ) )
 			return $retval;
 
@@ -1245,7 +1245,6 @@ class CoAuthors_Guest_Authors
 	 * @since 3.0
 	 */
 	function filter_get_avatar( $avatar, $id_or_email, $size, $default ) {
-
 		if ( is_object( $id_or_email ) || !is_email( $id_or_email ) )
 			return $avatar;
 
