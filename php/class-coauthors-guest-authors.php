@@ -814,6 +814,31 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
+	 * Get an thumbnail for a Guest Author object
+	 *
+	 * @param 	object 	The Guest Author object for which to retrieve the thumbnail
+	 * @param 	int 	The desired image size
+	 * @return 	string 	The thumbnail image tag, or null if one doesn't exist
+	 */
+	function get_guest_author_thumbnail( $guest_author, $size ) {
+		// See if the guest author has an avatar
+		if ( ! has_post_thumbnail( $guest_author->ID ) )
+			return null;
+
+		$args = array(
+				'class' => "avatar avatar-{$size} photo",
+			);
+		if ( in_array( $size, $this->avatar_sizes ) )
+			$size = 'guest-author-' . $size;
+		else
+			$size = array( $size, $size );
+
+		$thumbnail = get_the_post_thumbnail( $guest_author->ID, $size, $args );
+
+		return $thumbnail;
+	}
+
+	/**
 	 * Get all of the meta fields that can be associated with a guest author
 	 *
 	 * @since 3.0
@@ -1229,18 +1254,10 @@ class CoAuthors_Guest_Authors
 		if ( ! $guest_author )
 			return $avatar;
 
-		// See if the guest author as an avatar
-		if ( ! has_post_thumbnail( $guest_author->ID ) )
-			return $avatar;
+		$thumbnail = $this->get_guest_author_thumbnail( $guest_author, $size );
 
-		$args = array(
-				'class' => "avatar avatar-{$size} photo",
-			);
-		if ( in_array( $size, $this->avatar_sizes ) )
-			$size = 'guest-author-' . $size;
-		else
-			$size = array( $size, $size );
-		$avatar = get_the_post_thumbnail( $guest_author->ID, $size, $args );
+		if ( $thumbnail )
+			return $thumbnail;
 
 		return $avatar;
 	}
