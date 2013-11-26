@@ -217,7 +217,7 @@ class coauthors_plus {
 	function get_coauthor_by( $key, $value, $force = false ) {
 
 		// If Guest Authors are enabled, prioritize those profiles
-		if ( $this->is_guest_authors_enabled() ) {
+		if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
 			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value, $force );
 			if ( is_object( $guest_author ) ) {
 				return $guest_author;
@@ -246,7 +246,7 @@ class coauthors_plus {
 				$user->type = 'wpuser';
 				// However, if guest authors are enabled and there's a guest author linked to this
 				// user account, we want to use that instead
-				if ( $this->is_guest_authors_enabled() ) {
+				if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
 					$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
 					if ( is_object( $guest_author ) )
 						$user = $guest_author;
@@ -944,6 +944,7 @@ class coauthors_plus {
 		add_filter( 'terms_clauses', array( $this, 'filter_terms_clauses' ) );
 		$found_terms = get_terms( $this->coauthor_taxonomy, $args );
 		remove_filter( 'terms_clauses', array( $this, 'filter_terms_clauses' ) );
+
 		if ( empty( $found_terms ) )
 			return array();
 
@@ -1195,6 +1196,7 @@ class coauthors_plus {
 				'slug'          => $coauthor_slug,
 				'description'   => $term_description,
 			);
+
 			$new_term = wp_insert_term( $coauthor->user_login, $this->coauthor_taxonomy, $args );
 		}
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
