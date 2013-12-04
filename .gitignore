@@ -1,3 +1,5 @@
 .DS_Store
 .svn
 wpcom-helper.php
+.idea/
+.gitignore
