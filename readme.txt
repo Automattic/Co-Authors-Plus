@@ -52,6 +52,7 @@ Bug fixes and minor enhancements
 == Changelog ==
 
 = 3.1 (??? ?? ????) =
+* New Swedish translation, courtesy of [alundstroem](https://github.com/alundstroem)
 * Updated German translation, courtesy of [krafit](https://github.com/krafit).
 * Bug fix: When filtering a user's published post count, use the value of their guest author profile if one is mapped.
 * Added support for checkboxes in Guest Author profiles
