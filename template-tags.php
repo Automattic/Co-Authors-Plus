@@ -1,6 +1,6 @@
 <?php
 
-function get_coauthors( $post_id = 0, $args = array() ) {
+function get_coauthors( $post_id = 0 ) {
 	global $post, $post_ID, $coauthors_plus, $wpdb;
 	
 	$coauthors = array();
@@ -9,12 +9,9 @@ function get_coauthors( $post_id = 0, $args = array() ) {
 		$post_id = $post_ID;
 	if ( !$post_id && $post )
 		$post_id = $post->ID;
-
-	$defaults = array('orderby'=>'term_order', 'order'=>'ASC');
-	$args = wp_parse_args( $args, $defaults );
 	
 	if ( $post_id ) {
-		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy, $args );
+		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy );
 		
 		if ( is_array( $coauthor_terms ) && !empty( $coauthor_terms ) ) {
 			foreach( $coauthor_terms as $coauthor ) {
