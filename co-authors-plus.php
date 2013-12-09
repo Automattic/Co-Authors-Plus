@@ -302,6 +302,8 @@ class coauthors_plus {
 
 		$post_id = $post->ID;
 
+		$default_user = apply_filters( 'coauthors_default_author', wp_get_current_user() );
+
 		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
 		// and the else case below was always able to properly assign users based on wp_posts.post_author,
 		// but that's not possible with force_guest_authors = true.
@@ -309,7 +311,7 @@ class coauthors_plus {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
 			if ( $this->is_guest_authors_enabled() ) {
-				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', wp_get_current_user()->user_login );
+				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $default_user->user_login );
 				if ( $coauthor ) {
 					$coauthors[] = $coauthor;
 				}
@@ -318,7 +320,7 @@ class coauthors_plus {
 			// logged in user, so long as force_guest_authors is false. If force_guest_authors = true, we are
 			// OK with having an empty authoring box.
 			if ( !$coauthors_plus->force_guest_authors && empty( $coauthors ) ) {
-				$coauthors[] = wp_get_current_user();
+				$coauthors[] = $default_user;
 			}
 		} else {
 			$coauthors = get_coauthors();
