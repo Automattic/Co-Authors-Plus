@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.5.1
+Tested up to: 3.7.1
 Requires at least: 3.3
-Stable tag: 3.0.5
+Stable tag: 3.0.6
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -51,7 +51,7 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.1 (??? ?? ????) =
+= 3.0.6 (Dec. 9, 2013) =
 * New Swedish translation, courtesy of [alundstroem](https://github.com/alundstroem)
 * Updated German translation, courtesy of [krafit](https://github.com/krafit).
 * New filter for specifying the default author assigned to a post. Props [tannerm](https://github.com/tannerm)
