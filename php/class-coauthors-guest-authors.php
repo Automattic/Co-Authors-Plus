@@ -583,7 +583,7 @@ class CoAuthors_Guest_Authors
 			$field['input'] = apply_filters("$pm_key_input", $field['input']);
 			switch($field['input']){
 				case "checkbox":
-					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('',$value,false) .' value="' . esc_attr( $value ) . '"/>';
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('1',$value,false) .' value="1"/>';
 				break;
 				default:
 					echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
@@ -616,7 +616,7 @@ class CoAuthors_Guest_Authors
 			$field['input'] = apply_filters("$pm_key_input", $field['input']);
 			switch($field['input']){
 				case "checkbox":
-					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('',$value,false) .' value="' . esc_attr( $value ) . '"/>';
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('1',$value,false) .' value="1"/>';
 				break;
 				default:
 					echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
