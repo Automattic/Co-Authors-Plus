@@ -573,15 +573,22 @@ class CoAuthors_Guest_Authors
 		$fields = $this->get_guest_author_fields( 'name' );
 		echo '<table class="form-table"><tbody>';
 		foreach( $fields as $field ) {
-			if(!isset($field['input'])){ $field['input'] = "text"; }
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$value = get_post_meta( $post->ID, $pm_key, true );
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
 			
+			if(!isset($field['input'])){ $field['input'] = "text"; }
 			$field['input'] = apply_filters("$pm_key_input", $field['input']);
-			echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			switch($field['input']){
+				case "checkbox":
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('',$value,false) .' value="' . esc_attr( $value ) . '"/>';
+				break;
+				default:
+					echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			break;
+			} 
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
@@ -599,15 +606,23 @@ class CoAuthors_Guest_Authors
 		$fields = $this->get_guest_author_fields( 'contact-info' );
 		echo '<table class="form-table"><tbody>';
 		foreach( $fields as $field ) {
-			if(!isset($field['input'])){ $field['input'] = "text"; }
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$value = get_post_meta( $post->ID, $pm_key, true );
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
 			
+			if(!isset($field['input'])){ $field['input'] = "text"; }
 			$field['input'] = apply_filters("$pm_key_input", $field['input']);
-			echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			switch($field['input']){
+				case "checkbox":
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('',$value,false) .' value="' . esc_attr( $value ) . '"/>';
+				break;
+				default:
+					echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			break;
+			} 
+
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
