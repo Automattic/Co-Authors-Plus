@@ -573,12 +573,15 @@ class CoAuthors_Guest_Authors
 		$fields = $this->get_guest_author_fields( 'name' );
 		echo '<table class="form-table"><tbody>';
 		foreach( $fields as $field ) {
+			if(!isset($field['input'])){ $field['input'] = "text"; }
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$value = get_post_meta( $post->ID, $pm_key, true );
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
-			echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			
+			$field['input'] = apply_filters("$pm_key_input", $field['input']);
+			echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
@@ -596,12 +599,15 @@ class CoAuthors_Guest_Authors
 		$fields = $this->get_guest_author_fields( 'contact-info' );
 		echo '<table class="form-table"><tbody>';
 		foreach( $fields as $field ) {
+			if(!isset($field['input'])){ $field['input'] = "text"; }
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$value = get_post_meta( $post->ID, $pm_key, true );
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
-			echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			
+			$field['input'] = apply_filters("$pm_key_input", $field['input']);
+			echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
@@ -852,6 +858,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'ID',
 						'label'    => __( 'ID', 'co-authors-plus' ),
 						'group'    => 'hidden',
+						'input'	=> 'hidden',
 					),
 				// Name
 				array(
@@ -881,6 +888,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'user_email',
 						'label'    => __( 'E-mail', 'co-authors-plus' ),
 						'group'    => 'contact-info',
+						'input'	=> 'email',
 					),
 				array(
 						'key'      => 'linked_account',
@@ -891,6 +899,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'website',
 						'label'    => __( 'Website', 'co-authors-plus' ),
 						'group'    => 'contact-info',
+						'input'	=> 'url',
 					),
 				array(
 						'key'      => 'aim',
