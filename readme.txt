@@ -54,6 +54,7 @@ Bug fixes and minor enhancements
 = 3.0.6 (Dec. 9, 2013) =
 * New Swedish translation, courtesy of [alundstroem](https://github.com/alundstroem)
 * Updated German translation, courtesy of [krafit](https://github.com/krafit).
+* New Dutch translation, courtesy of [kardotim](https://github.com/kardotim)
 * New filter for specifying the default author assigned to a post. Props [tannerm](https://github.com/tannerm)
 * Bug fix: When filtering a user's published post count, use the value of their guest author profile if one is mapped.
 * Added support for checkboxes in Guest Author profiles
