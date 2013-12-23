@@ -26,10 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 define( 'COAUTHORS_PLUS_VERSION', '3.0.6' );
 
-define( 'COAUTHORS_PLUS_PATH', dirname( __FILE__ ) );
-define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
-
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
+require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 
