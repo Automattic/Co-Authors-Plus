@@ -3,7 +3,7 @@
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 3.0.6
+Version: 3.0.7-alpha
 Author: Mohammad Jangda, Daniel Bachhuber, Automattic
 Copyright: 2008-2013 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
 
@@ -24,12 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '3.0.6' );
-
-define( 'COAUTHORS_PLUS_PATH', dirname( __FILE__ ) );
-define( 'COAUTHORS_PLUS_URL', plugin_dir_url( __FILE__ ) );
+define( 'COAUTHORS_PLUS_VERSION', '3.0.7-alpha' );
 
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
+require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 
@@ -1002,8 +1000,8 @@ class coauthors_plus {
 
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
-		wp_enqueue_style( 'co-authors-plus-css', COAUTHORS_PLUS_URL . 'css/co-authors-plus.css', false, COAUTHORS_PLUS_VERSION, 'all' );
-		wp_enqueue_script( 'co-authors-plus-js', COAUTHORS_PLUS_URL . 'js/co-authors-plus.js', array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
+		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
+		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
 
 		$js_strings = array(
 			'edit_label' => __( 'Edit', 'co-authors-plus' ),
