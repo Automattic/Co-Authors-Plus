@@ -348,11 +348,11 @@ class CoAuthors_Guest_Authors
 		global $pagenow;
 		// Enqueue our guest author CSS on the related pages
 		if ( $this->parent_page == $pagenow && isset( $_GET['page'] ) && $_GET['page'] == 'view-guest-authors' ) {
-			wp_enqueue_script( 'jquery-select2', COAUTHORS_PLUS_URL . 'lib/select2/select2.min.js', array( 'jquery' ), COAUTHORS_PLUS_VERSION );
-			wp_enqueue_style( 'cap-jquery-select2-css', COAUTHORS_PLUS_URL . 'lib/select2/select2.css', false, COAUTHORS_PLUS_VERSION );
+			wp_enqueue_script( 'jquery-select2', plugins_url( 'lib/select2/select2.min.js', dirname( __FILE__ ) ), array( 'jquery' ), COAUTHORS_PLUS_VERSION );
+			wp_enqueue_style( 'cap-jquery-select2-css', plugins_url( 'lib/select2/select2.css', dirname( __FILE__ ) ), false, COAUTHORS_PLUS_VERSION );
 
-			wp_enqueue_style( 'guest-authors-css', COAUTHORS_PLUS_URL . 'css/guest-authors.css', false, COAUTHORS_PLUS_VERSION );
-			wp_enqueue_script( 'guest-authors-js', COAUTHORS_PLUS_URL . 'js/guest-authors.js', false, COAUTHORS_PLUS_VERSION );
+			wp_enqueue_style( 'guest-authors-css', plugins_url( 'css/guest-authors.css', dirname( __FILE__ ) ), false, COAUTHORS_PLUS_VERSION );
+			wp_enqueue_script( 'guest-authors-js', plugins_url( 'js/guest-authors.js', dirname( __FILE__ ) ), false, COAUTHORS_PLUS_VERSION );
 		} else if ( in_array( $pagenow, array( 'post.php', 'post-new.php' ) ) && $this->post_type == get_post_type() ) {
 			add_action( 'admin_head', array( $this, 'change_title_icon' ) );
 		}

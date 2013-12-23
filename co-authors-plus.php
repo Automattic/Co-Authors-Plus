@@ -1002,8 +1002,8 @@ class coauthors_plus {
 
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
-		wp_enqueue_style( 'co-authors-plus-css', COAUTHORS_PLUS_URL . 'css/co-authors-plus.css', false, COAUTHORS_PLUS_VERSION, 'all' );
-		wp_enqueue_script( 'co-authors-plus-js', COAUTHORS_PLUS_URL . 'js/co-authors-plus.js', array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
+		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
+		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
 
 		$js_strings = array(
 			'edit_label' => __( 'Edit', 'co-authors-plus' ),
