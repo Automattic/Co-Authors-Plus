@@ -53,6 +53,7 @@ Bug fixes and minor enhancements
 
 = 3.0.7 (??? ?? ????) =
 * Better support for installing Co-Authors Plus as a symlinked directory. [Follow these instructions](http://kaspars.net/blog/wordpress/plugins-via-symlinks) to filter `plugins_url`.
+* Updated French translation, courtesy of Jojaba (via email).
 
 = 3.0.6 (Dec. 9, 2013) =
 * New Swedish translation, courtesy of [alundstroem](https://github.com/alundstroem)
