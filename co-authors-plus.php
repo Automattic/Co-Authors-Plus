@@ -97,8 +97,8 @@ class coauthors_plus {
 		// Restricts WordPress from blowing away term order on bulk edit
 		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
 
-		// Fix for author info not properly displaying on author pages
-		add_action( 'template_redirect', array( $this, 'fix_author_page' ) );
+		// Make sure we've correctly set author data on author pages
+		add_filter( 'posts_selection', array( $this, 'fix_author_page' ) ); // use posts_selection since it's after WP_Query has built the request and before it's queried any posts
 		add_action( 'the_post', array( $this, 'fix_author_page' ) );
 
 		// Support for Edit Flow's calendar and story budget
@@ -856,9 +856,12 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Fix for author info not properly displaying on author pages
+	 * Fix for author pages 404ing or not properly displaying on author pages
 	 *
-	 * On an author archive, if the first story has coauthors and
+	 * If an author has no posts, we need to still force the queried object to be
+	 * set in case a site wants to still display the author's profile.
+	 *
+	 * Alternatively, on an author archive, if the first story has coauthors and
 	 * the first author is NOT the same as the author for the archive,
 	 * the query_var is changed.
 	 *
