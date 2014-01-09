@@ -227,16 +227,20 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
  */
 function coauthors_posts_links_single( $author ) {
 	$args = array(
+		'span_class' => 'author vcard',
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
 		'rel' => 'author',
 		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), get_the_author() ),
+		'link_class' => 'url fn',
 		'text' => get_the_author(),
 	);
 	$args = apply_filters( 'coauthors_posts_link', $args, $author );
 	return sprintf(
-			'<a href="%1$s" title="%2$s" rel="%3$s">%4$s</a>',
+			'<span class="%1$s"><a href="%2$s" title="%3$s" class="%4$s" rel="%5$s">%6$s</a></span>',
+			esc_attr( $args['span_class'] ),
 			esc_url( $args['href'] ),
 			esc_attr( $args['title'] ),
+			esc_attr( $args['link_class'] ),
 			esc_attr( $args['rel'] ),
 			esc_html( $args['text'] )
 	);
