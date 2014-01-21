@@ -185,6 +185,9 @@ class coauthors_plus {
 		add_action( 'manage_posts_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
 		add_action( 'manage_pages_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
 
+		// Hooks to add coauthors quick edit fields
+		add_action( 'quick_edit_custom_box', array( $this, '_action_quick_edit_custom_box' ), 10, 2 );
+
 		// Hooks to modify the published post number count on the Users WP List Table
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
 		add_filter( 'manage_users_custom_column', array( $this, '_filter_manage_users_custom_column' ), 10, 3 );
@@ -414,7 +417,7 @@ class coauthors_plus {
 					$args['post_type'] = $post->post_type;
 				$author_filter_url = add_query_arg( $args, admin_url( 'edit.php' ) );
 				?>
-				<a href="<?php echo esc_url( $author_filter_url ); ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
+				<a href="<?php echo esc_url( $author_filter_url ); ?>" data-author-id="<?php echo $author->ID ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
 			endforeach;
@@ -454,6 +457,30 @@ class coauthors_plus {
 			$value .= 0;
 		}
 		return $value;
+	}
+
+	/**
+	 * Quick Edit co-authors box.
+	 */
+	function _action_quick_edit_custom_box( $column_name, $post_type ) {
+		if (
+			'coauthors' != $column_name ||
+			! $this->is_post_type_enabled( $post_type ) ||
+			! $this->current_user_can_set_authors()
+			)
+			return;
+		?>
+		<fieldset class="inline-edit-col-right inline-edit-coauthors">
+			<div class="inline-edit-col column-coauthors">
+				<label class="inline-edit-group">
+					<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
+					<select multiple="multiple" name="coauthors">
+						<option></option>
+					</select>
+				</label>
+			</div>
+		</fieldset>
+		<?php
 	}
 
 	/**
@@ -1442,3 +1469,5 @@ function wp_notify_moderator( $comment_id ) {
 	return true;
 }
 endif;
+
+
