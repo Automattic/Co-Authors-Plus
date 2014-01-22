@@ -46,7 +46,7 @@ class coauthors_plus {
 
 	var $gravatar_size = 25;
 
-	var $_pages_whitelist = array( 'post.php', 'post-new.php' );
+	var $_pages_whitelist = array( 'post.php', 'post-new.php', 'edit.php' );
 
 	var $supported_post_types = array();
 
@@ -470,13 +470,11 @@ class coauthors_plus {
 			)
 			return;
 		?>
-		<fieldset class="inline-edit-col-right inline-edit-coauthors">
+		<fieldset class="inline-edit-col-left inline-edit-coauthors">
 			<div class="inline-edit-col column-coauthors">
 				<label class="inline-edit-group">
 					<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
-					<select multiple="multiple" name="coauthors">
-						<option></option>
-					</select>
+					<select multiple="multiple" name="coauthors[]"></select>
 				</label>
 			</div>
 		</fieldset>
@@ -1028,20 +1026,30 @@ class coauthors_plus {
 		if ( !$this->is_valid_page() || ! $this->is_post_type_enabled() || !$this->current_user_can_set_authors() )
 			return;
 
-		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'jquery-ui-sortable' );
-		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
-		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
+		if ( 'edit.php' == $pagenow ) {
 
-		$js_strings = array(
-			'edit_label' => __( 'Edit', 'co-authors-plus' ),
-			'delete_label' => __( 'Remove', 'co-authors-plus' ),
-			'confirm_delete' => __( 'Are you sure you want to remove this author?', 'co-authors-plus' ),
-			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
-			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
-			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
-		);
-		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
+			// Quick Edit scripts
+			$select2_url = plugins_url( 'js/select2/', dirname( __FILE__ ) );
+			wp_enqueue_script( 'jquery-select2', $select2_url . 'select2.min.js', array( 'jquery' ) );
+			wp_enqueue_style( 'jquery-select2', $select2_url . 'select2.css' );
+			wp_enqueue_script( 'co-authors-plus-quick-edit', plugins_url( 'js/co-authors-plus-quick-edit.js', __FILE__ ), array('jquery', 'jquery-select2'), COAUTHORS_PLUS_VERSION, true);
+
+		} else {
+			wp_enqueue_script( 'jquery' );
+			wp_enqueue_script( 'jquery-ui-sortable' );
+			wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
+			wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
+
+			$js_strings = array(
+				'edit_label' => __( 'Edit', 'co-authors-plus' ),
+				'delete_label' => __( 'Remove', 'co-authors-plus' ),
+				'confirm_delete' => __( 'Are you sure you want to remove this author?', 'co-authors-plus' ),
+				'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
+				'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
+				'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
+				);
+			wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
+		}
 
 	}
 
