@@ -474,7 +474,7 @@ class coauthors_plus {
 			<div class="inline-edit-col column-coauthors">
 				<label class="inline-edit-group">
 					<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
-					<select multiple="multiple" name="coauthors[]"></select>
+					<input value="0000" type="hidden" name="coauthors[]"></select>
 				</label>
 			</div>
 		</fieldset>
@@ -1032,7 +1032,7 @@ class coauthors_plus {
 			$select2_url = plugins_url( 'js/select2/', dirname( __FILE__ ) );
 			wp_enqueue_script( 'jquery-select2', $select2_url . 'select2.min.js', array( 'jquery' ) );
 			wp_enqueue_style( 'jquery-select2', $select2_url . 'select2.css' );
-			wp_enqueue_script( 'co-authors-plus-quick-edit', plugins_url( 'js/co-authors-plus-quick-edit.js', __FILE__ ), array('jquery', 'jquery-select2'), COAUTHORS_PLUS_VERSION, true);
+			wp_enqueue_script( 'co-authors-plus-quick-edit', plugins_url( 'js/co-authors-plus-quick-edit.js', __FILE__ ), array('jquery', 'jquery-select2', 'jquery-ui-sortable'), COAUTHORS_PLUS_VERSION, true);
 
 		} else {
 			wp_enqueue_script( 'jquery' );
