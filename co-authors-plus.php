@@ -924,6 +924,20 @@ class coauthors_plus {
 
 		$authors = $this->search_authors( $search, $ignore );
 
+		if ( ! empty( $_REQUEST['json'] ) ) {
+			$author_data = array();
+			foreach ( $authors as $author ) {
+				$author_data[] = array(
+					'id' => $author->ID,
+					'user_login' => $author->user_login,
+					'display_name' => $author->display_name,
+					'user_email' => $author->user_email,
+					'user_nicename' => $author->user_nicename,
+					);
+			}
+			wp_send_json_success( $author_data );
+		}
+
 		foreach( $authors as $author ) {
 			echo $author->ID ." | ". $author->user_login ." | ". $author->display_name ." | ". $author->user_email ." | ". $author->user_nicename . "\n";
 		}

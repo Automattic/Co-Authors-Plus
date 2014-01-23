@@ -24,16 +24,40 @@
 
 			// initialize coauthors
 			var coauthors = $.map($('.column-coauthors a', $postRow), function(el) {
-				return {id: $(el).data('author-id'), text: $(el).text() }
+				return {id: $(el).data('author-id'), display_name: $(el).text() }
 			})
 
 			$coauthorsSelect.select2({
 				multiple: true,
+				minimumInputLength: 2,
 				initSelection: function(element, callback) {
 					return callback(coauthors)
 				},
-				query: function() {
-					
+				ajax: {
+					url: coAuthorsPlus_ajax_suggest_link,
+					data: function(term, page) {
+						return {
+							q: term,
+							json: true
+						}
+					},
+					results: function(data, page) {
+						return { results: data.data };
+					}
+				},
+				formatResult: function(result) {
+					return jQuery('<div></div>').text(
+						[
+						result.id,
+						result.user_login,
+						result.display_name,
+						result.user_email,
+						result.user_nicename
+						].join(' | ')
+						)
+				},
+				formatSelection: function(selection) {
+					return selection.display_name
 				}
 			})
 			$coauthorsSelect.select2("container").find("ul.select2-choices").sortable({
