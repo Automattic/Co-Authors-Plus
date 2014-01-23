@@ -474,7 +474,7 @@ class coauthors_plus {
 			<div class="inline-edit-col column-coauthors">
 				<label class="inline-edit-group">
 					<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
-					<input value="0000" type="hidden" name="coauthors[]"></select>
+					<input style="width: 100%;" value="0000" type="hidden" name="coauthors[]"></select>
 				</label>
 			</div>
 		</fieldset>
