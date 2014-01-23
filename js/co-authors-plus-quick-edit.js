@@ -19,7 +19,7 @@
 		if ( postId > 0 ) {
 
 			var $editRow = $( '#edit-' + postId )
-			var $coauthorsSelect = $('[name="coauthors[]"]', $editRow)
+			var $coauthorsSelect = $('[name="inline-coauthors"]', $editRow)
 			var $postRow = $( '#post-' + postId )
 
 			// initialize coauthors
@@ -48,11 +48,11 @@
 				formatResult: function(result) {
 					return jQuery('<div></div>').text(
 						[
-						result.id,
+						result.numerical_id,
 						result.user_login,
 						result.display_name,
 						result.user_email,
-						result.user_nicename
+						result.id
 						].join(' | ')
 						)
 				},

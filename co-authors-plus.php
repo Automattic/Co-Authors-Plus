@@ -367,7 +367,6 @@ class coauthors_plus {
 
 	/**
 	 * Removes the author dropdown from the post quick edit
-	 * It's a bit hacky, but the only way I can figure out :(
 	 */
 	function remove_quick_edit_authors_box() {
 		global $pagenow;
@@ -417,7 +416,7 @@ class coauthors_plus {
 					$args['post_type'] = $post->post_type;
 				$author_filter_url = add_query_arg( $args, admin_url( 'edit.php' ) );
 				?>
-				<a href="<?php echo esc_url( $author_filter_url ); ?>" data-author-id="<?php echo $author->ID ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
+				<a href="<?php echo esc_url( $author_filter_url ); ?>" data-author-id="<?php echo esc_attr( $author->user_nicename ) ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
 			endforeach;
@@ -474,7 +473,8 @@ class coauthors_plus {
 			<div class="inline-edit-col column-coauthors">
 				<label class="inline-edit-group">
 					<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
-					<input style="width: 100%;" value="0000" type="hidden" name="coauthors[]"></select>
+					<input style="width: 100%;" value="0" type="hidden" name="inline-coauthors"></select>
+					<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 				</label>
 			</div>
 		</fieldset>
@@ -672,6 +672,11 @@ class coauthors_plus {
 		if ( ! $this->is_post_type_enabled( $data['post_type'] ) )
 			return $data;
 
+		// Set up co-authors array on quick-edit
+		if ( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
+			$_POST['coauthors'] = array_values( array_filter( explode( ',', $_REQUEST['inline-coauthors'] ) ) );
+		}
+
 		// This action happens when a post is saved while editing a post
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
 			$author = sanitize_text_field( $_POST['coauthors'][0] );
@@ -683,27 +688,6 @@ class coauthors_plus {
 					$data['post_author'] = get_user_by( 'login', $author_data->linked_account )->ID;
 				} else if ( $author_data->type == 'wpuser' )
 					$data['post_author'] = $author_data->ID;
-			}
-		}
-
-		// Restore the co-author when quick editing because we don't
-		// allow changing the co-author on quick edit. In wp_insert_post(),
-		// 'post_author' is set to current user if the $_REQUEST value doesn't exist
-		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
-			$coauthors = get_coauthors( $postarr['ID'] );
-			if ( is_array( $coauthors ) ) {
-				$coauthor = $this->get_coauthor_by( 'user_nicename', $coauthors[0]->user_nicename );
-				if ( 'guest-author' == $coauthor->type && ! empty( $coauthor->linked_account ) ) {
-					$data['post_author'] = get_user_by( 'login', $coauthor->linked_account )->ID;
-				} else if ( $coauthor->type == 'wpuser' )
-					$data['post_author'] = $coauthor->ID;
-				// Refresh their post publish count too
-				if ( 'publish' == $postarr['post_status'] || 'publish' == get_post_status( $postarr['ID'] ) ) {
-					foreach( $coauthors as $coauthor ) {
-						if ( $author_term = $this->get_author_term( $coauthor ) )
-							$this->update_author_term_post_count( $author_term );
-					}
-				}
 			}
 		}
 
@@ -732,7 +716,7 @@ class coauthors_plus {
 		if ( ! $this->is_post_type_enabled( $post->post_type ) )
 			return;
 
-		if ( $this->current_user_can_set_authors() ) {
+		if ( $this->current_user_can_set_authors( $post ) ) {
 			// if current_user_can_set_authors and nonce valid
 			if( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
@@ -860,10 +844,17 @@ class coauthors_plus {
 	/**
 	 * Checks to see if the current user can set authors or not
 	 */
-	function current_user_can_set_authors( ) {
+	function current_user_can_set_authors( $my_post = null ) {
 		global $post, $typenow;
 
-		$post_type = get_post_type();
+		if ( ! $my_post )
+			$my_post = $post;
+
+		if ( $my_post )
+			$post_type = $my_post->post_type;
+		else
+			$post_type = get_post_type();
+
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if( ! $post_type ) return false;
 
@@ -928,11 +919,11 @@ class coauthors_plus {
 			$author_data = array();
 			foreach ( $authors as $author ) {
 				$author_data[] = array(
-					'id' => $author->ID,
+					'numerical_id' => $author->ID,
 					'user_login' => $author->user_login,
 					'display_name' => $author->display_name,
 					'user_email' => $author->user_email,
-					'user_nicename' => $author->user_nicename,
+					'id' => $author->user_nicename,  // using slugs as ids
 					);
 			}
 			wp_send_json_success( $author_data );
