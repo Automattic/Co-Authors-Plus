@@ -36,9 +36,15 @@
 				ajax: {
 					url: coAuthorsPlus_ajax_suggest_link,
 					data: function(term, page) {
+						var existingAuthors = jQuery.map(
+							$coauthorsSelect.select2('data'),
+							function( item ) {
+								return item.id
+							}).join(',');
 						return {
 							q: term,
-							json: true
+							json: true,
+							existing_authors: existingAuthors
 						}
 					},
 					results: function(data, page) {

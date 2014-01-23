@@ -185,7 +185,7 @@ class coauthors_plus {
 		add_action( 'manage_posts_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
 		add_action( 'manage_pages_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
 
-		// Hooks to add coauthors quick edit fields
+		// Add quick-edit author select field
 		add_action( 'quick_edit_custom_box', array( $this, '_action_quick_edit_custom_box' ), 10, 2 );
 
 		// Hooks to modify the published post number count on the Users WP List Table
