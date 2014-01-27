@@ -55,6 +55,7 @@ Bug fixes and minor enhancements
 * Better support for installing Co-Authors Plus as a symlinked directory. [Follow these instructions](http://kaspars.net/blog/wordpress/plugins-via-symlinks) to filter `plugins_url`.
 * Links to authors' posts pages to comply to hCard microformat, which Google depends on.
 * New `coauthors_emails()` template tag to list email addresses of the co-authors. Props [benlk](https://github.com/benlk).
+* Bug fix: Remove extraneous space between last two co-authors output. Props [johnciacia](https://github.com/johnciacia). 
 * Updated French translation, courtesy of Jojaba (via email).
 
 = 3.0.6 (Dec. 9, 2013) =
