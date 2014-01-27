@@ -328,7 +328,7 @@ function coauthors_links($between = null, $betweenLast = null, $before = null, $
  * @param string $after What should appear after the presentation of email addresses
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
-function coauthors_email($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
+function coauthors_emails($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('get_the_author_meta', 'tag', array(
 		'between' => $between,
 		'betweenLast' => $betweenLast,
