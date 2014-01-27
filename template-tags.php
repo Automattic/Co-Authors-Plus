@@ -166,8 +166,8 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 			$output .= $separators['between'];
 		
 		if ( $i->is_last() && $i->count() > 1 ) {
-			$output = rtrim( $output, " {$separators['between']}" );
-			$output .= ' ' . $separators['betweenLast'];
+			$output = rtrim( $output, $separators['between'] );
+			$output .= $separators['betweenLast'];
 		}
 		
 		$output .= $author_text;
