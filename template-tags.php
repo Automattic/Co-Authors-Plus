@@ -320,6 +320,24 @@ function coauthors_links($between = null, $betweenLast = null, $before = null, $
 }
 
 /**
+ * Outputs the co-authors email addresses
+ *
+ * @param string $between Delimiter that should appear between the email addresses
+ * @param string $betweenLast Delimiter that should appear between the last two email addresses
+ * @param string $before What should appear before the presentation of email addresses
+ * @param string $after What should appear after the presentation of email addresses
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
+function coauthors_emails($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
+	return coauthors__echo('get_the_author_meta', 'tag', array(
+		'between' => $between,
+		'betweenLast' => $betweenLast,
+		'before' => $before,
+		'after' => $after
+	), 'user_email', $echo );
+}
+
+/**
  * Outputs a single co-author, linked to their website if they've provided one.
  *
  * @param object $author
