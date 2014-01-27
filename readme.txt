@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.7.1
+Tested up to: 3.8.1
 Requires at least: 3.3
-Stable tag: 3.0.6
+Stable tag: 3.0.7
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -43,6 +43,9 @@ Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts ma
 
 == Upgrade Notice ==
 
+= 3.0.7 =
+Support for symlink installations, updated French translation, bug fixes.
+
 = 3.0.4 =
 Bug fixes and the ability to automatically add co-authors to your feeds.
 
@@ -51,9 +54,11 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.0.7 (??? ?? ????) =
+= 3.0.7 (Jan. 27, 2014) =
 * Better support for installing Co-Authors Plus as a symlinked directory. [Follow these instructions](http://kaspars.net/blog/wordpress/plugins-via-symlinks) to filter `plugins_url`.
 * Links to authors' posts pages to comply to hCard microformat, which Google depends on.
+* New `coauthors_emails()` template tag to list email addresses of the co-authors. Props [benlk](https://github.com/benlk).
+* Bug fix: Remove extraneous space between last two co-authors output. Props [johnciacia](https://github.com/johnciacia). 
 * Updated French translation, courtesy of Jojaba (via email).
 
 = 3.0.6 (Dec. 9, 2013) =

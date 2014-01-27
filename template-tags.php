@@ -166,8 +166,8 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 			$output .= $separators['between'];
 		
 		if ( $i->is_last() && $i->count() > 1 ) {
-			$output = rtrim( $output, " {$separators['between']}" );
-			$output .= ' ' . $separators['betweenLast'];
+			$output = rtrim( $output, $separators['between'] );
+			$output .= $separators['betweenLast'];
 		}
 		
 		$output .= $author_text;
@@ -317,6 +317,24 @@ function coauthors_links($between = null, $betweenLast = null, $before = null, $
 		'before' => $before,
 		'after' => $after
 	), null, $echo );
+}
+
+/**
+ * Outputs the co-authors email addresses
+ *
+ * @param string $between Delimiter that should appear between the email addresses
+ * @param string $betweenLast Delimiter that should appear between the last two email addresses
+ * @param string $before What should appear before the presentation of email addresses
+ * @param string $after What should appear after the presentation of email addresses
+ * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ */
+function coauthors_emails($between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
+	return coauthors__echo('get_the_author_meta', 'tag', array(
+		'between' => $between,
+		'betweenLast' => $betweenLast,
+		'before' => $before,
+		'after' => $after
+	), 'user_email', $echo );
 }
 
 /**
