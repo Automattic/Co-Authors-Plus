@@ -381,6 +381,16 @@ jQuery(document).ready(function () {
 
 	var $coauthors_div = null;
 		
+	/**
+	 * Initialize the Coauthors UI.
+	 *
+	 * @param array List of coauthors objects.
+	 *  Each coauthor object should have the (string) properties:
+	 *    login
+	 *    email
+	 *    name
+	 *    nicename
+	 */
 	function coauthors_initialize(post_coauthors) {
 
 		// Add the controls to add co-authors
@@ -457,7 +467,6 @@ jQuery(document).ready(function () {
 			hide_loading();
 	});
 
-	// fire it up!
 	if ( 'post' == pagenow ) {
 		var $post_coauthor_logins = jQuery('input[name="coauthors[]"]');
 		var $post_coauthor_names = jQuery('input[name="coauthorsinput[]"]');
@@ -506,7 +515,7 @@ jQuery(document).ready(function () {
 					}
 				})
 				coauthors_initialize(post_coauthors);
-				
+
 			}
 		}
 	}
