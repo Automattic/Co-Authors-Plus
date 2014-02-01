@@ -679,11 +679,6 @@ class coauthors_plus {
 		if ( ! $this->is_post_type_enabled( $data['post_type'] ) )
 			return $data;
 
-		// Set up co-authors array on quick-edit
-		if ( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
-			$_POST['coauthors'] = array_values( array_filter( explode( ',', $_REQUEST['inline-coauthors'] ) ) );
-		}
-
 		// This action happens when a post is saved while editing a post
 		if( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
 			$author = sanitize_text_field( $_POST['coauthors'][0] );
@@ -851,16 +846,16 @@ class coauthors_plus {
 	/**
 	 * Checks to see if the current user can set authors or not
 	 */
-	function current_user_can_set_authors( $my_post = null ) {
-		global $post, $typenow;
+	function current_user_can_set_authors( $post = null ) {
+		global $typenow;
 
-		if ( ! $my_post )
-			$my_post = $post;
+		if ( ! $post ) {
+			$post = get_post();
+			if ( ! $post )
+				return false;
+		}
 
-		if ( $my_post )
-			$post_type = $my_post->post_type;
-		else
-			$post_type = get_post_type();
+		$post_type = $post->post_type;
 
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if( ! $post_type ) return false;
