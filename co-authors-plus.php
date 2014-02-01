@@ -1038,30 +1038,20 @@ class coauthors_plus {
 		if ( !$this->is_valid_page() || ! $this->is_post_type_enabled() || !$this->current_user_can_set_authors() )
 			return;
 
-		if ( 'edit.php' == $pagenow ) {
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-sortable' );
+		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
+		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
 
-			// Quick Edit scripts
-			$select2_url = plugins_url( 'js/select2/', dirname( __FILE__ ) );
-			wp_enqueue_script( 'jquery-select2', $select2_url . 'select2.min.js', array( 'jquery' ) );
-			wp_enqueue_style( 'jquery-select2', $select2_url . 'select2.css' );
-			wp_enqueue_script( 'co-authors-plus-quick-edit', plugins_url( 'js/co-authors-plus-quick-edit.js', __FILE__ ), array('jquery', 'jquery-select2', 'jquery-ui-sortable'), COAUTHORS_PLUS_VERSION, true);
-
-		} else {
-			wp_enqueue_script( 'jquery' );
-			wp_enqueue_script( 'jquery-ui-sortable' );
-			wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
-			wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array('jquery', 'suggest'), COAUTHORS_PLUS_VERSION, true);
-
-			$js_strings = array(
-				'edit_label' => __( 'Edit', 'co-authors-plus' ),
-				'delete_label' => __( 'Remove', 'co-authors-plus' ),
-				'confirm_delete' => __( 'Are you sure you want to remove this author?', 'co-authors-plus' ),
-				'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
-				'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
-				'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
-				);
-			wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
-		}
+		$js_strings = array(
+			'edit_label' => __( 'Edit', 'co-authors-plus' ),
+			'delete_label' => __( 'Remove', 'co-authors-plus' ),
+			'confirm_delete' => __( 'Are you sure you want to remove this author?', 'co-authors-plus' ),
+			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
+			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
+			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
+			);
+		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
 
 	}
 
