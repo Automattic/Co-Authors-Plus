@@ -474,17 +474,13 @@ class coauthors_plus {
 			)
 			return;
 		?>
-		<fieldset class="inline-edit-col-left inline-edit-coauthors">
-			<div class="inline-edit-col column-coauthors">
-				<label class="inline-edit-group">
-					<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
-					<div id="coauthors-edit" class="hide-if-no-js">
-						<p><?php _e( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ); ?></p>
-					</div>
-					<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
-				</label>
+		<label class="inline-edit-group inline-edit-coauthors">
+			<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
+			<div id="coauthors-edit" class="hide-if-no-js">
+				<p><?php _e( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ); ?></p>
 			</div>
-		</fieldset>
+			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
+		</label>
 		<?php
 	}
 

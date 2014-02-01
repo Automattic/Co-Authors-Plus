@@ -490,7 +490,7 @@ jQuery(document).ready(function () {
 	}
 	else if ( 'edit-post' == pagenow ) {
 
-		var wpInlineEdit = inlineEditPost.edit
+		var wpInlineEdit = inlineEditPost.edit;
 
 		inlineEditPost.edit = function( id ) {
 
@@ -504,6 +504,11 @@ jQuery(document).ready(function () {
 			if ( postId > 0 ) {
 
 				var $postRow = jQuery( '#post-' + postId )
+
+				// Move the element to the appropriate position in the view
+				// JS hack for core bug: https://core.trac.wordpress.org/ticket/26982
+				var el = jQuery('.inline-edit-group.inline-edit-coauthors', '#edit-' + postId );
+				el.detach().appendTo('.quick-edit-row .inline-edit-col-left .inline-edit-col').show();
 
 				// initialize coauthors
 				var post_coauthors = jQuery.map(jQuery('.column-coauthors a', $postRow), function(el) {
