@@ -54,6 +54,8 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= 3.1 (??? ?? ????) =
+
 = 3.0.7 (Jan. 27, 2014) =
 * Better support for installing Co-Authors Plus as a symlinked directory. [Follow these instructions](http://kaspars.net/blog/wordpress/plugins-via-symlinks) to filter `plugins_url`.
 * Links to authors' posts pages to comply to hCard microformat, which Google depends on.
