@@ -478,7 +478,9 @@ class coauthors_plus {
 			<div class="inline-edit-col column-coauthors">
 				<label class="inline-edit-group">
 					<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
-					<input style="width: 100%;" value="0" type="hidden" name="inline-coauthors"></select>
+					<div id="coauthors-edit" class="hide-if-no-js">
+						<p><?php _e( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ); ?></p>
+					</div>
 					<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 				</label>
 			</div>
