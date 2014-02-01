@@ -1,3 +1,11 @@
+.inline-edit-group.inline-edit-coauthors {
+	display: none;
+}
+
+.inline-edit-group.inline-edit-coauthors #coauthors-edit {
+	margin-left: 5em;
+}
+
 #coauthors-list {
 	width: 100%;
 	padding: 0 5px;

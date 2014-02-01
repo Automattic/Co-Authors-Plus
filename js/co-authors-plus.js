@@ -378,57 +378,68 @@ jQuery(document).ready(function () {
 		//role
 	}
 	*/
+
+	var $coauthors_div = null;
 		
-	// Add the controls to add co-authors
-	var $coauthors_div = jQuery('#coauthors-edit');
+	/**
+	 * Initialize the Coauthors UI.
+	 *
+	 * @param array List of coauthors objects.
+	 *  Each coauthor object should have the (string) properties:
+	 *    login
+	 *    email
+	 *    name
+	 *    nicename
+	 */
+	function coauthors_initialize(post_coauthors) {
+
+		// Add the controls to add co-authors
+
+		$coauthors_div = jQuery('#coauthors-edit');
 	
-	if( $coauthors_div.length ) {
-		// Create the co-authors table
-		var table = jQuery('<div/>')
-			.attr('id', 'coauthors-list')
-			;
-		$coauthors_div.append(table);
-	}
-	
-	var $post_coauthor_logins = jQuery('input[name="coauthors[]"]');
-	var $post_coauthor_names = jQuery('input[name="coauthorsinput[]"]');
-	var $post_coauthor_emails = jQuery('input[name="coauthorsemails[]"]');
-	var $post_coauthor_nicenames = jQuery('input[name="coauthorsnicenames[]"]');
-	
-	post_coauthors = [];
-	
-	for(var i = 0; i < $post_coauthor_logins.length; i++) {
-		post_coauthors.push({
-			login: $post_coauthor_logins[i].value,
-			name: $post_coauthor_names[i].value,
-			email: $post_coauthor_emails[i].value,
-			nicename: $post_coauthor_nicenames[i].value
+		if( $coauthors_div.length ) {
+			// Create the co-authors table
+			var table = jQuery('<div/>')
+				.attr('id', 'coauthors-list')
+				;
+			$coauthors_div.append(table);
+		}
+
+		// Select authors already added to the post
+		var addedAlready = [];
+		//jQuery('#the-list tr').each(function(){
+		var count = 0;
+		jQuery.each(post_coauthors, function() {
+			coauthors_add_coauthor(this, undefined, true, count );
+			count++;
 		});
+
+		// Hide the delete button if there's only one co-author
+		if ( jQuery( '#coauthors-list .coauthor-row .coauthor-tag' ).length < 2 )
+			jQuery( '#coauthors-list .coauthor-row .coauthors-author-options' ).addClass('hidden');
+
+	
+		// Create new author-suggest and append it to a new row
+		var newCO = coauthors_create_autosuggest('', false);
+		coauthors_add_to_table(newCO);
+	
+		$coauthors_loading = jQuery('#ajax-loading').clone().attr('id', 'coauthors-loading');
+		move_loading(newCO);
+	
+
+		// Make co-authors sortable so an editor can control the order of the authors  
+		jQuery('#coauthors-edit').ready(function($) {
+			$( "#coauthors-list" ).sortable({
+				axis: 'y',
+				handle: '.coauthor-tag',
+				placeholder: 'ui-state-highlight',
+				items: 'div.coauthor-row:not(div.coauthor-row:last)',
+				containment: 'parent',
+			});
+		});
+
 	}
 	
-	// Select authors already added to the post
-	var addedAlready = [];
-	//jQuery('#the-list tr').each(function(){
-	var count = 0;
-	jQuery.each(post_coauthors, function() {
-		coauthors_add_coauthor(this, undefined, true, count );
-		count++;
-	});
-
-	// Hide the delete button if there's only one co-author
-	if ( jQuery( '#coauthors-list .coauthor-row .coauthor-tag' ).length < 2 )
-		jQuery( '#coauthors-list .coauthor-row .coauthors-author-options' ).addClass('hidden');
-
-	
-	// Create new author-suggest and append it to a new row
-	var newCO = coauthors_create_autosuggest('', false);
-	coauthors_add_to_table(newCO);
-	
-	$coauthors_loading = jQuery('#ajax-loading').clone().attr('id', 'coauthors-loading');
-	move_loading(newCO);
-	
-	// Remove the read-only coauthors so we don't get craziness
-	jQuery('#coauthors-readonly').remove();
 
 	function show_loading() {
 		$coauthors_loading.css('visibility', 'visible');
@@ -456,16 +467,63 @@ jQuery(document).ready(function () {
 			hide_loading();
 	});
 
-	// Make co-authors sortable so an editor can control the order of the authors  
-	jQuery('#coauthors-edit').ready(function($) {
-		$( "#coauthors-list" ).sortable({
-			axis: 'y',
-			handle: '.coauthor-tag',
-			placeholder: 'ui-state-highlight',
-			items: 'div.coauthor-row:not(div.coauthor-row:last)',
-			containment: 'parent',
-		});
-	});
+	if ( 'post' == pagenow ) {
+		var $post_coauthor_logins = jQuery('input[name="coauthors[]"]');
+		var $post_coauthor_names = jQuery('input[name="coauthorsinput[]"]');
+		var $post_coauthor_emails = jQuery('input[name="coauthorsemails[]"]');
+		var $post_coauthor_nicenames = jQuery('input[name="coauthorsnicenames[]"]');
+	
+		var post_coauthors = [];
+	
+		for(var i = 0; i < $post_coauthor_logins.length; i++) {
+			post_coauthors.push({
+				login: $post_coauthor_logins[i].value,
+				name: $post_coauthor_names[i].value,
+				email: $post_coauthor_emails[i].value,
+				nicename: $post_coauthor_nicenames[i].value
+			});
+		}
+
+		// Remove the read-only coauthors so we don't get craziness
+		jQuery('#coauthors-readonly').remove();
+		coauthors_initialize(post_coauthors);
+	}
+	else if ( 'edit-post' == pagenow ) {
+
+		var wpInlineEdit = inlineEditPost.edit;
+
+		inlineEditPost.edit = function( id ) {
+
+			wpInlineEdit.apply( this, arguments )
+
+			// get the post ID
+			var postId = 0
+			if ( typeof( id ) == 'object' )
+				postId = parseInt( this.getId( id ) )
+
+			if ( postId > 0 ) {
+
+				var $postRow = jQuery( '#post-' + postId )
+
+				// Move the element to the appropriate position in the view
+				// JS hack for core bug: https://core.trac.wordpress.org/ticket/26982
+				var el = jQuery('.inline-edit-group.inline-edit-coauthors', '#edit-' + postId );
+				el.detach().appendTo('.quick-edit-row .inline-edit-col-left .inline-edit-col').show();
+
+				// initialize coauthors
+				var post_coauthors = jQuery.map(jQuery('.column-coauthors a', $postRow), function(el) {
+					return {
+						login: jQuery(el).data('user_login'),
+						name: jQuery(el).data('display_name'),
+						email: jQuery(el).data('user_email'),
+						nicename: jQuery(el).data('user_nicename')
+					}
+				})
+				coauthors_initialize(post_coauthors);
+
+			}
+		}
+	}
 
 });
 

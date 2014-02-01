@@ -3,7 +3,7 @@
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 3.0.7
+Version: 3.1-alpha
 Author: Mohammad Jangda, Daniel Bachhuber, Automattic
 Copyright: 2008-2014 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
 
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '3.0.7' );
+define( 'COAUTHORS_PLUS_VERSION', '3.1-alpha' );
 
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
 require_once( dirname( __FILE__ ) . '/deprecated.php' );
@@ -46,7 +46,7 @@ class coauthors_plus {
 
 	var $gravatar_size = 25;
 
-	var $_pages_whitelist = array( 'post.php', 'post-new.php' );
+	var $_pages_whitelist = array( 'post.php', 'post-new.php', 'edit.php' );
 
 	var $supported_post_types = array();
 
@@ -184,6 +184,9 @@ class coauthors_plus {
 		add_filter( 'manage_pages_columns', array( $this, '_filter_manage_posts_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
 		add_action( 'manage_pages_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
+
+		// Add quick-edit author select field
+		add_action( 'quick_edit_custom_box', array( $this, '_action_quick_edit_custom_box' ), 10, 2 );
 
 		// Hooks to modify the published post number count on the Users WP List Table
 		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
@@ -364,7 +367,6 @@ class coauthors_plus {
 
 	/**
 	 * Removes the author dropdown from the post quick edit
-	 * It's a bit hacky, but the only way I can figure out :(
 	 */
 	function remove_quick_edit_authors_box() {
 		global $pagenow;
@@ -414,7 +416,12 @@ class coauthors_plus {
 					$args['post_type'] = $post->post_type;
 				$author_filter_url = add_query_arg( $args, admin_url( 'edit.php' ) );
 				?>
-				<a href="<?php echo esc_url( $author_filter_url ); ?>"><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
+				<a href="<?php echo esc_url( $author_filter_url ); ?>"
+				data-user_nicename="<?php echo esc_attr( $author->user_nicename ) ?>"
+				data-user_email="<?php echo esc_attr( $author->user_email) ?>"
+				data-display_name="<?php echo esc_attr( $author->display_name) ?>"
+				data-user_login="<?php echo esc_attr( $author->user_login) ?>"
+				><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
 			endforeach;
@@ -454,6 +461,27 @@ class coauthors_plus {
 			$value .= 0;
 		}
 		return $value;
+	}
+
+	/**
+	 * Quick Edit co-authors box.
+	 */
+	function _action_quick_edit_custom_box( $column_name, $post_type ) {
+		if (
+			'coauthors' != $column_name ||
+			! $this->is_post_type_enabled( $post_type ) ||
+			! $this->current_user_can_set_authors()
+			)
+			return;
+		?>
+		<label class="inline-edit-group inline-edit-coauthors">
+			<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
+			<div id="coauthors-edit" class="hide-if-no-js">
+				<p><?php _e( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ); ?></p>
+			</div>
+			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
+		</label>
+		<?php
 	}
 
 	/**
@@ -661,27 +689,6 @@ class coauthors_plus {
 			}
 		}
 
-		// Restore the co-author when quick editing because we don't
-		// allow changing the co-author on quick edit. In wp_insert_post(),
-		// 'post_author' is set to current user if the $_REQUEST value doesn't exist
-		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
-			$coauthors = get_coauthors( $postarr['ID'] );
-			if ( is_array( $coauthors ) ) {
-				$coauthor = $this->get_coauthor_by( 'user_nicename', $coauthors[0]->user_nicename );
-				if ( 'guest-author' == $coauthor->type && ! empty( $coauthor->linked_account ) ) {
-					$data['post_author'] = get_user_by( 'login', $coauthor->linked_account )->ID;
-				} else if ( $coauthor->type == 'wpuser' )
-					$data['post_author'] = $coauthor->ID;
-				// Refresh their post publish count too
-				if ( 'publish' == $postarr['post_status'] || 'publish' == get_post_status( $postarr['ID'] ) ) {
-					foreach( $coauthors as $coauthor ) {
-						if ( $author_term = $this->get_author_term( $coauthor ) )
-							$this->update_author_term_post_count( $author_term );
-					}
-				}
-			}
-		}
-
 		// If for some reason we don't have the coauthors fields set
 		if( ! isset( $data['post_author'] ) ) {
 			$user = wp_get_current_user();
@@ -707,7 +714,7 @@ class coauthors_plus {
 		if ( ! $this->is_post_type_enabled( $post->post_type ) )
 			return;
 
-		if ( $this->current_user_can_set_authors() ) {
+		if ( $this->current_user_can_set_authors( $post ) ) {
 			// if current_user_can_set_authors and nonce valid
 			if( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
@@ -835,10 +842,17 @@ class coauthors_plus {
 	/**
 	 * Checks to see if the current user can set authors or not
 	 */
-	function current_user_can_set_authors( ) {
-		global $post, $typenow;
+	function current_user_can_set_authors( $post = null ) {
+		global $typenow;
 
-		$post_type = get_post_type();
+		if ( ! $post ) {
+			$post = get_post();
+			if ( ! $post )
+				return false;
+		}
+
+		$post_type = $post->post_type;
+
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if( ! $post_type ) return false;
 
@@ -1013,7 +1027,7 @@ class coauthors_plus {
 			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
 			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
 			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
-		);
+			);
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
 
 	}
@@ -1442,3 +1456,5 @@ function wp_notify_moderator( $comment_id ) {
 	return true;
 }
 endif;
+
+
