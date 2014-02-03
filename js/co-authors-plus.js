@@ -392,7 +392,6 @@ jQuery(document).ready(function () {
 	 *    nicename
 	 */
 	function coauthors_initialize(post_coauthors) {
-
 		// Add the controls to add co-authors
 
 		$coauthors_div = jQuery('#coauthors-edit');
@@ -507,6 +506,7 @@ jQuery(document).ready(function () {
 
 				// Move the element to the appropriate position in the view
 				// JS hack for core bug: https://core.trac.wordpress.org/ticket/26982
+				jQuery('.quick-edit-row .inline-edit-col-left .inline-edit-col').find('.inline-edit-coauthors').remove() // remove any previously added elements
 				var el = jQuery('.inline-edit-group.inline-edit-coauthors', '#edit-' + postId );
 				el.detach().appendTo('.quick-edit-row .inline-edit-col-left .inline-edit-col').show();
 
