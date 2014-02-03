@@ -321,7 +321,11 @@ class coauthors_plus {
 			// logged in user, so long as force_guest_authors is false. If force_guest_authors = true, we are
 			// OK with having an empty authoring box.
 			if ( !$coauthors_plus->force_guest_authors && empty( $coauthors ) ) {
-				$coauthors[] = $default_user;
+				if( is_array( $default_user ) ) {
+					$coauthors = $default_user;
+				} else {
+					$coauthors[] = $default_user;
+				}
 			}
 		} else {
 			$coauthors = get_coauthors();
