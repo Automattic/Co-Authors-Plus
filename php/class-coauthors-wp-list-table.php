@@ -201,16 +201,19 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 		$output .= coauthors_get_avatar( $item, 32 );
 		
-		if ( current_user_can( 'edit_post', $item->ID ) )
+		if ( current_user_can( 'edit_post', $item->ID ) ) {
 			$output .= '<a href="' . esc_url( $item_edit_link ) . '">' . esc_html( $item->display_name ) . '</a>';
-		else
+		} else {
 			$output .= esc_html( $item->display_name );
+		}
 
 		$actions = array();
-		if ( current_user_can( 'edit_post', $item->ID ) )
+		if ( current_user_can( 'edit_post', $item->ID ) ) {
 			$actions['edit'] = '<a href="' . esc_url( $item_edit_link ) . '">' . __( 'Edit', 'co-authors-plus' ) . '</a>';
-		if ( current_user_can( 'delete_post', $item->ID ) )
+		}
+		if ( current_user_can( 'delete_post', $item->ID ) ) {
 			$actions['delete'] = '<a href="' . esc_url( $item_delete_link ) . '">' . __( 'Delete', 'co-authors-plus' ) . '</a>';
+		}
 		$actions['view'] = '<a href="' . esc_url( $item_view_link ) . '">' . __( 'View Posts', 'co-authors-plus' ) . '</a>';
 		$actions = apply_filters( 'coauthors_guest_author_row_actions', $actions, $item );
 		$output .= $this->row_actions( $actions, false );
