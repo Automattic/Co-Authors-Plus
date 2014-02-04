@@ -94,7 +94,7 @@ class CoAuthors_Guest_Authors
 				'labels' => array(
 						'name' => $this->labels['plural'],
 						'singular_name' => $this->labels['singular'],
-						'add_new' => _x( 'Add New', 'co-authors-plus' ),
+						'add_new' => _x( 'Add New', 'guest author', 'co-authors-plus' ),
 						'all_items' => $this->labels['all_items'],
 						'add_new_item' => $this->labels['add_new_item'],
 						'edit_item' => $this->labels['edit_item'],
