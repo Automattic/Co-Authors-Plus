@@ -221,7 +221,7 @@ class coauthors_plus {
 		if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
 			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value, $force );
 			if ( is_object( $guest_author ) ) {
-				return $guest_author;
+				return apply_filters( 'coauthors_coauthor', $guest_author );
 			}
 		}
 
@@ -252,7 +252,7 @@ class coauthors_plus {
 					if ( is_object( $guest_author ) )
 						$user = $guest_author;
 				}
-				return $user;
+				return apply_filters( 'coauthors_coauthor', $user );
 				break;
 		}
 		return false;
