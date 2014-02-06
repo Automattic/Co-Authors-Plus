@@ -56,6 +56,7 @@ Bug fixes and minor enhancements
 
 = 3.1 (??? ?? ????) =
 * Manage co-authors from Quick Edit. Props [mpatek](https://github.com/mpatek).
+* Packages a composer.json file for those using Composer.
 
 = 3.0.7 (Jan. 27, 2014) =
 * Better support for installing Co-Authors Plus as a symlinked directory. [Follow these instructions](http://kaspars.net/blog/wordpress/plugins-via-symlinks) to filter `plugins_url`.
