@@ -1,0 +1,20 @@
+{
+	"name"       : "automattic/co-authors-plus",
+	"description": "Multiple bylines and Guest Authors for WordPress",
+	"homepage"   : "http://vip.wordpress.com/plugins/co-authors-plus/",
+	"type"       : "wordpress-plugin",
+	"license"    : "GPL-2.0+",
+	"authors"    : [
+		{
+			"name"    : "Automattic",
+			"homepage": "http://automattic.com/"
+		}
+	],
+	"support"    : {
+			"issues": "https://github.com/Automattic/Co-Authors-Plus/issues",
+			"source": "https://github.com/Automattic/Co-Authors-Plus"
+	},
+	"require": {
+		"composer/installers": "~1.0"
+	}
+}
