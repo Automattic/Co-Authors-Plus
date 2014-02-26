@@ -646,7 +646,12 @@ class CoAuthors_Guest_Authors
 		if ( !isset( $_POST['guest-author-nonce'] ) || !wp_verify_nonce( $_POST['guest-author-nonce'], 'guest-author-nonce' ) )
 			return $post_data;
 
+		// Validate the display name
+		if ( empty( $_POST['cap-display_name'] ) ) {
+			wp_die( __( 'Guest authors cannot be created without display names.', 'co-authors-plus' ) );
+		}
 		$post_data['post_title'] = sanitize_text_field( $_POST['cap-display_name'] );
+
 		$slug = sanitize_title( get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'user_login' ), true ) );
 		if ( ! $slug )
 			$slug = sanitize_title( $_POST['cap-display_name'] );
