@@ -56,6 +56,7 @@ Bug fixes and minor enhancements
 
 = 3.1 (??? ?? ????) =
 * Manage co-authors from Quick Edit. Props [mpatek](https://github.com/mpatek).
+* Updated Spanish translation, courtesy of [sergiomajluf](https://github.com/sergiomajluf).
 * Packages a composer.json file for those using Composer.
 
 = 3.0.7 (Jan. 27, 2014) =
