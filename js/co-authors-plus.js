@@ -466,7 +466,7 @@ jQuery(document).ready(function () {
 			hide_loading();
 	});
 
-	if ( 'post' == pagenow ) {
+	if ( 'post-php' == adminpage ) {
 		var $post_coauthor_logins = jQuery('input[name="coauthors[]"]');
 		var $post_coauthor_names = jQuery('input[name="coauthorsinput[]"]');
 		var $post_coauthor_emails = jQuery('input[name="coauthorsemails[]"]');
@@ -487,7 +487,7 @@ jQuery(document).ready(function () {
 		jQuery('#coauthors-readonly').remove();
 		coauthors_initialize(post_coauthors);
 	}
-	else if ( 'edit-post' == pagenow ) {
+	else if ( 'edit-php' == adminpage ) {
 
 		var wpInlineEdit = inlineEditPost.edit;
 
