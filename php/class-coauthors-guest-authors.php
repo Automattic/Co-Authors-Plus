@@ -579,14 +579,16 @@ class CoAuthors_Guest_Authors
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
 			
-			if(!isset($field['input'])){ $field['input'] = "text"; }
-			$field['input'] = apply_filters("$pm_key_input", $field['input']);
-			switch($field['input']){
+			if( !isset( $field['input'] ) ) {
+				$field['input'] = "text"; 
+			}
+			$field['input'] = apply_filters( 'cap-contact_info-'. $pm_key , $field['input']);
+			switch( $field['input'] ) {
 				case "checkbox":
-					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('1',$value,false) .' value="1"/>';
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
 				break;
 				default:
-					echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+					echo '<input type="'. esc_attr( $field['input'] )  .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			break;
 			} 
 			echo '</td></tr>';
@@ -612,14 +614,16 @@ class CoAuthors_Guest_Authors
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
 			
-			if(!isset($field['input'])){ $field['input'] = "text"; }
-			$field['input'] = apply_filters("$pm_key_input", $field['input']);
-			switch($field['input']){
+			if( !isset( $field['input'] ) ) {
+				$field['input'] = "text";
+			}
+			$field['input'] = apply_filters( 'cap-contact_info-'. $pm_key , $field['input']);
+			switch( $field['input'] ) {
 				case "checkbox":
-					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked('1',$value,false) .' value="1"/>';
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
 				break;
 				default:
-					echo '<input type="'. esc_attr($field['input']) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+					echo '<input type="'. esc_attr( $field['input'] ) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			break;
 			} 
 
@@ -873,7 +877,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'ID',
 						'label'    => __( 'ID', 'co-authors-plus' ),
 						'group'    => 'hidden',
-						'input'	=> 'hidden',
+						'input'	   => 'hidden',
 					),
 				// Name
 				array(
@@ -903,7 +907,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'user_email',
 						'label'    => __( 'E-mail', 'co-authors-plus' ),
 						'group'    => 'contact-info',
-						'input'	=> 'email',
+						'input'	   => 'email',
 					),
 				array(
 						'key'      => 'linked_account',
@@ -914,7 +918,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'website',
 						'label'    => __( 'Website', 'co-authors-plus' ),
 						'group'    => 'contact-info',
-						'input'	=> 'url',
+						'input'	   => 'url',
 					),
 				array(
 						'key'      => 'aim',
