@@ -744,26 +744,37 @@ class coauthors_plus {
 
 	/**
 	 * Add one or more co-authors as bylines for a post
+	 * 
+	 * @param int
+	 * @param array
+	 * @param bool
 	 */
-	function add_coauthors( $post_id, $coauthors, $append = false ) {
+	public function add_coauthors( $post_id, $coauthors, $append = false ) {
 		global $current_user;
 
 		$post_id = (int) $post_id;
 		$insert = false;
 
-		// if an array isn't returned, create one and populate with default author
-		if ( !is_array( $coauthors ) || 0 == count( $coauthors ) || empty( $coauthors ) ) {
+		// Best way to persist order
+		if ( $append ) {
+			$existing_coauthors = wp_list_pluck( get_coauthors( $post_id ), 'user_login' );
+		} else {
+			$existing_coauthors = array();
+		}
+
+		// A co-author is always required
+		if ( empty( $coauthors ) ) {
 			$coauthors = array( $current_user->user_login );
 		}
 
-		// Add each co-author to the post meta
-		foreach( array_unique( $coauthors ) as $key => $author_name ){
+		$coauthors = array_unique( array_merge( $existing_coauthors, $coauthors ) );
+		foreach( $coauthors as &$author_name ){
 
 			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
 			$term = $this->update_author_term( $author );
-			$coauthors[$key] = $term->slug;
+			$author_name = $term->slug;
 		}
-		return wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, $append );
+		return wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, false );
 	}
 
 	/**
