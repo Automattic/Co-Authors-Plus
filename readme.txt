@@ -57,6 +57,7 @@ Bug fixes and minor enhancements
 = 3.1 (??? ?? ????) =
 * Manage co-authors from Quick Edit. Props [mpatek](https://github.com/mpatek).
 * Updated Spanish translation, courtesy of [sergiomajluf](https://github.com/sergiomajluf).
+* Bug fix: Ensure `post_author` is set to one of the co-authors assigned to a post.
 * Packages a composer.json file for those using Composer.
 * Beginnings of unit test coverage for core features.
 
