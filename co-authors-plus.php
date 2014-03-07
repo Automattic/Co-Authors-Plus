@@ -242,7 +242,7 @@ class coauthors_plus {
 				if ( 'login' == $key || 'slug' == $key )
 					$value = preg_replace( '#^cap\-#', '', $value );
 				$user = get_user_by( $key, $value );
-				if ( !$user || !is_user_member_of_blog( $user->ID ) )
+				if ( ! $user )
 					return false;
 				$user->type = 'wpuser';
 				// However, if guest authors are enabled and there's a guest author linked to this
