@@ -997,9 +997,9 @@ class coauthors_plus {
 				),
 				'fields' => 'all_with_meta',
 			);
-		add_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
+		add_action( 'pre_user_query', array( $this, 'action_pre_user_query' ) );
 		$found_users = get_users( $args );
-		remove_filter( 'pre_user_query', array( $this, 'filter_pre_user_query' ) );
+		remove_action( 'pre_user_query', array( $this, 'action_pre_user_query' ) );
 
 		foreach( $found_users as $found_user ) {
 			$term = $this->get_author_term( $found_user );
@@ -1044,11 +1044,12 @@ class coauthors_plus {
 	/**
 	 * Modify get_users() to search display_name instead of user_nicename
 	 */
-	function filter_pre_user_query( &$user_query ) {
+	function action_pre_user_query( &$user_query ) {
 
-		if ( is_object( $user_query ) )
+		if ( is_object( $user_query ) ) {
 			$user_query->query_where = str_replace( "user_nicename LIKE", "display_name LIKE", $user_query->query_where );
-		return $user_query;
+		}
+
 	}
 
 	/**
