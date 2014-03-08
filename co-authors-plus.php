@@ -811,10 +811,10 @@ class coauthors_plus {
 	function delete_user_action($delete_id){
 		global $wpdb;
 
-		$reassign_id = absint( $_POST['reassign_user'] );
+		$reassign_id = isset( $_POST['reassign_user'] ) ? absint( $_POST['reassign_user'] ) : false;
 
 		// If reassign posts, do that -- use coauthors_update_post
-		if($reassign_id) {
+		if ( $reassign_id ) {
 			// Get posts belonging to deleted author
 			$reassign_user = get_user_by( 'id', $reassign_id );
 			// Set to new author
