@@ -242,7 +242,7 @@ class coauthors_plus {
 				if ( 'login' == $key || 'slug' == $key )
 					$value = preg_replace( '#^cap\-#', '', $value );
 				$user = get_user_by( $key, $value );
-				if ( !$user || !is_user_member_of_blog( $user->ID ) )
+				if ( ! $user )
 					return false;
 				$user->type = 'wpuser';
 				// However, if guest authors are enabled and there's a guest author linked to this
@@ -811,10 +811,10 @@ class coauthors_plus {
 	function delete_user_action($delete_id){
 		global $wpdb;
 
-		$reassign_id = absint( $_POST['reassign_user'] );
+		$reassign_id = isset( $_POST['reassign_user'] ) ? absint( $_POST['reassign_user'] ) : false;
 
 		// If reassign posts, do that -- use coauthors_update_post
-		if($reassign_id) {
+		if ( $reassign_id ) {
 			// Get posts belonging to deleted author
 			$reassign_user = get_user_by( 'id', $reassign_id );
 			// Set to new author
@@ -912,8 +912,10 @@ class coauthors_plus {
 	/**
 	 * Fix for author pages 404ing or not properly displaying on author pages
 	 *
-	 * If an author has no posts, we need to still force the queried object to be
-	 * set in case a site wants to still display the author's profile.
+	 * If an author has no posts, we only want to force the queried object to be
+	 * the author if they're a member of the blog.
+	 * 
+	 * If the author does have posts, it doesn't matter that they're not an author.
 	 *
 	 * Alternatively, on an author archive, if the first story has coauthors and
 	 * the first author is NOT the same as the author for the archive,
@@ -921,19 +923,33 @@ class coauthors_plus {
 	 *
 	 * Also, we have to do some hacky WP_Query modification for guest authors
 	 */
-	function fix_author_page() {
+	public function fix_author_page() {
 
-		if ( !is_author() )
+		if ( ! is_author() ) {
 			return;
+		}
+
+		$author_name = sanitize_title( get_query_var( 'author_name' ) );
+		if ( ! $author_name ) {
+			return;
+		}
+
+		$author = $this->get_coauthor_by( 'user_nicename', $author_name );
 
 		global $wp_query, $authordata;
 
-		if ( $author_name = sanitize_title( get_query_var( 'author_name' ) ) ) {
-			$authordata = $this->get_coauthor_by( 'user_nicename', $author_name );
-			if ( is_object( $authordata ) ) {
-				$wp_query->queried_object = $authordata;
-				$wp_query->queried_object_id = $authordata->ID;
-			}
+		if ( is_object( $author ) ) {
+			$authordata = $author;
+			$term = $this->get_author_term( $authordata );
+		}
+		if ( ( is_object( $authordata ) && is_user_member_of_blog( $authordata->ID ) )
+			|| ( ! empty( $term ) && $term->count ) ) {
+			$wp_query->queried_object = $authordata;
+			$wp_query->queried_object_id = $authordata->ID;
+		} else {
+			$wp_query->queried_object = $wp_query->queried_object_id = null;
+			$wp_query->is_author = $wp_query->is_archive = false;
+			$wp_query->is_404 = false;
 		}
 	}
 
