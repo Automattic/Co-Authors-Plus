@@ -72,6 +72,16 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		$this->go_to( get_author_posts_url( $author2 ) );
 		$this->assertQueryTrue( 'is_author', 'is_archive' );
 
+		// Delete the user from the network
+		wpmu_delete_user( $author2 );
+
+		/**
+		 * Author 2 is no more
+		 */
+		$this->go_to( get_author_posts_url( $author2 ) );
+		$this->assertQueryTrue( 'is_404' );
+		$this->assertEquals( false, get_user_by( 'id', $author2 ) );
+
 		restore_current_blog();
 
 	} 
