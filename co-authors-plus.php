@@ -334,7 +334,7 @@ class coauthors_plus {
 		$count = 0;
 		if( !empty( $coauthors ) ) :
 			?>
-			<div id="coauthors-readonly" class="hide-if-js1">
+			<div id="coauthors-readonly" class="hide-if-js">
 				<ul>
 				<?php
 				foreach( $coauthors as $coauthor ) :
