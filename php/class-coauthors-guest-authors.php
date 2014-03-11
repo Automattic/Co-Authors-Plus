@@ -582,7 +582,7 @@ class CoAuthors_Guest_Authors
 			if( !isset( $field['input'] ) ) {
 				$field['input'] = "text"; 
 			}
-			$field['input'] = apply_filters( 'cap-contact_info-'. $pm_key , $field['input']);
+			$field['input'] = apply_filters( 'coauthors_name_field_type_'. $pm_key , $field['input'] );
 			switch( $field['input'] ) {
 				case "checkbox":
 					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
@@ -617,7 +617,7 @@ class CoAuthors_Guest_Authors
 			if( !isset( $field['input'] ) ) {
 				$field['input'] = "text";
 			}
-			$field['input'] = apply_filters( 'cap-contact_info-'. $pm_key , $field['input']);
+			$field['input'] = apply_filters( 'coauthors_name_field_type_'. $pm_key , $field['input'] );
 			switch( $field['input'] ) {
 				case "checkbox":
 					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
