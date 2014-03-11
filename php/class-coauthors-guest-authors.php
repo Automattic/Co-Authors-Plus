@@ -1248,7 +1248,9 @@ class CoAuthors_Guest_Authors
 					'nonce' => wp_create_nonce( 'create-guest-author' ),
 				);
 			$create_guest_author_link = add_query_arg( $query_args, admin_url( $this->parent_page ) );
-			$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create Profile', 'co-authors-plus' ) . '</a>';
+			if ( apply_filters( 'coauthors_show_create_profile_user_link', false ) ) {
+				$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create Profile', 'co-authors-plus' ) . '</a>';
+			}
 		}
 
 		return $new_actions + $actions;
