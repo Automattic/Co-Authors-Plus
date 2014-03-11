@@ -58,6 +58,7 @@ Bug fixes and minor enhancements
 * Manage co-authors from Quick Edit. Props [mpatek](https://github.com/mpatek).
 * Updated Spanish translation, courtesy of [sergiomajluf](https://github.com/sergiomajluf).
 * Now matches core behavior when displaying author archive on multisite: user of the blog, or previously published author on the blog.
+* Breaking change: "Create Profile" link is no longer shown by default on the Manage Users screen. Instead, it can be enabled with the `coauthors_show_create_profile_user_link` filter.
 * Bug fix: Ensure `post_author` is set to one of the co-authors assigned to a post.
 * Packages a composer.json file for those using Composer.
 * Beginnings of unit test coverage for core features.
