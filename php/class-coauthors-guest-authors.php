@@ -1234,7 +1234,8 @@ class CoAuthors_Guest_Authors
 	 */
 	function filter_user_row_actions( $actions, $user_object ) {
 
-		if ( ! current_user_can( $this->list_guest_authors_cap ) )
+		if ( ! current_user_can( $this->list_guest_authors_cap )
+			|| is_network_admin() )
 			return $actions;
 
 		$new_actions = array();
