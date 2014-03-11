@@ -578,7 +578,19 @@ class CoAuthors_Guest_Authors
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
-			echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			
+			if( !isset( $field['input'] ) ) {
+				$field['input'] = "text"; 
+			}
+			$field['input'] = apply_filters( 'cap-contact_info-'. $pm_key , $field['input']);
+			switch( $field['input'] ) {
+				case "checkbox":
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
+				break;
+				default:
+					echo '<input type="'. esc_attr( $field['input'] )  .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			break;
+			} 
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
@@ -601,7 +613,20 @@ class CoAuthors_Guest_Authors
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
-			echo '<input type="text" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			
+			if( !isset( $field['input'] ) ) {
+				$field['input'] = "text";
+			}
+			$field['input'] = apply_filters( 'cap-contact_info-'. $pm_key , $field['input']);
+			switch( $field['input'] ) {
+				case "checkbox":
+					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
+				break;
+				default:
+					echo '<input type="'. esc_attr( $field['input'] ) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
+			break;
+			} 
+
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
@@ -867,6 +892,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'ID',
 						'label'    => __( 'ID', 'co-authors-plus' ),
 						'group'    => 'hidden',
+						'input'	   => 'hidden',
 					),
 				// Name
 				array(
@@ -896,6 +922,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'user_email',
 						'label'    => __( 'E-mail', 'co-authors-plus' ),
 						'group'    => 'contact-info',
+						'input'	   => 'email',
 					),
 				array(
 						'key'      => 'linked_account',
@@ -906,6 +933,7 @@ class CoAuthors_Guest_Authors
 						'key'      => 'website',
 						'label'    => __( 'Website', 'co-authors-plus' ),
 						'group'    => 'contact-info',
+						'input'	   => 'url',
 					),
 				array(
 						'key'      => 'aim',
