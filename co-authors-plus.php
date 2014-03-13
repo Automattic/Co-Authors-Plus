@@ -203,6 +203,8 @@ class coauthors_plus {
 	 *     add_filter( 'coauthors_guest_authors_enabled', '__return_false' )
 	 *
 	 * @since 3.0
+	 * 
+	 * @return bool
 	 */
 	public function is_guest_authors_enabled() {
 		return apply_filters( 'coauthors_guest_authors_enabled', true );
@@ -213,7 +215,7 @@ class coauthors_plus {
 	 *
 	 * @param string $key Key to search by (slug,email)
 	 * @param string $value Value to search for
-	 * @param object|false $coauthor The co-author on success, false on failure
+	 * @return object|false $coauthor The co-author on success, false on failure
 	 */
 	public function get_coauthor_by( $key, $value, $force = false ) {
 
@@ -1151,6 +1153,8 @@ class coauthors_plus {
 
 	/**
 	 * Helper to only add javascript to necessary pages. Avoids bloat in admin.
+	 * 
+	 * @return bool
 	 */
 	function is_valid_page() {
 		global $pagenow;
