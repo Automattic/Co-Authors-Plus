@@ -1321,10 +1321,15 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Filter Jetpack Open Graph Tags as Jetpack doesn't know 
-	 * about the non-native users added by Co-Author-Plus
+	 * Filter non-native users added by Co-Author-Plus in Jetpack
+	 *
+	 * @since 3.1
+	 *
+	 * @param array $og_tags Required. Array of Open Graph Tags.
+	 * @param array $image_dimensions Required. Dimensions for images used.
+	 * @return array Open Graph Tags either as they were passed or updated.
 	 */
-	function filter_jetpack_open_graph_tags( $og_tags, $image_dimensions ) {
+	public function filter_jetpack_open_graph_tags( $og_tags, $image_dimensions ) {
 		// Check if this post type supports co-authors
 		if ( ! $this->is_post_type_enabled() ) {
 			return $og_tags;
