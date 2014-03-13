@@ -1325,6 +1325,10 @@ class coauthors_plus {
 	 * about the non-native users added by Co-Author-Plus
 	 */
 	function filter_jetpack_open_graph_tags( $og_tags, $image_dimensions ) {
+		// Check if this post type supports co-authors
+		if ( ! $this->is_post_type_enabled() ) {
+			return $og_tags;
+		}
 
 		if ( is_author() ) {
 			$author = get_queried_object();
