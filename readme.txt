@@ -2,7 +2,7 @@
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.8.1
-Requires at least: 3.3
+Requires at least: 3.7
 Stable tag: 3.0.7
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
@@ -62,7 +62,7 @@ Bug fixes and minor enhancements
 * Guest author profile editor now supports a few different fields. Props [alpha1](https://github.com/alpha1).
 * Bug fix: Ensure `post_author` is set to one of the co-authors assigned to a post.
 * Packages a composer.json file for those using Composer.
-* Beginnings of unit test coverage for core features.
+* Beginnings of unit test coverage for core features. Increased minimum required WordPress version to 3.7 because WordPress.org unit testing framework doesn't work reliabilty below that.
 
 = 3.0.7 (Jan. 27, 2014) =
 * Better support for installing Co-Authors Plus as a symlinked directory. [Follow these instructions](http://kaspars.net/blog/wordpress/plugins-via-symlinks) to filter `plugins_url`.
