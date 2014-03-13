@@ -1285,6 +1285,10 @@ class coauthors_plus {
 	 * Filter Edit Flow's 'ef_calendar_item_information_fields' to add co-authors
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
+	 * 
+	 * @param array $information_fields
+	 * @param int $post_id
+	 * @return array
 	 */
 	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
 
@@ -1307,6 +1311,11 @@ class coauthors_plus {
 	 * Filter Edit Flow's 'ef_story_budget_term_column_value' to add co-authors to the story budget
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
+	 * 
+	 * @param string $column_name
+	 * @param object $post
+	 * @param object $parent_term
+	 * @return string
 	 */
 	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
 
