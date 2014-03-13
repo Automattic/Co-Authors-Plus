@@ -105,6 +105,8 @@ class coauthors_plus {
 		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
 		add_filter( 'ef_story_budget_term_column_value', array( $this, 'filter_ef_story_budget_term_column_value' ), 10, 3 );
 
+		// Support Jetpack Open Graph Tags
+		add_filter( 'jetpack_open_graph_tags', array( $this, 'filter_jetpack_open_graph_tags' ), 10, 2 );
 	}
 
 	function coauthors_plus() {
@@ -1311,6 +1313,45 @@ class coauthors_plus {
 			$co_authors_names .= $co_author->display_name . ', ';
 		}
 		return rtrim( $co_authors_names, ', ' );
+	}
+
+	/**
+	 * Filter non-native users added by Co-Author-Plus in Jetpack
+	 *
+	 * @since 3.1
+	 *
+	 * @param array $og_tags Required. Array of Open Graph Tags.
+	 * @param array $image_dimensions Required. Dimensions for images used.
+	 * @return array Open Graph Tags either as they were passed or updated.
+	 */
+	public function filter_jetpack_open_graph_tags( $og_tags, $image_dimensions ) {
+		// Check if this post type supports co-authors
+		if ( ! $this->is_post_type_enabled() ) {
+			return $og_tags;
+		}
+
+		if ( is_author() ) {
+			$author = get_queried_object();
+			$og_tags['og:title']           = $author->display_name;
+			$og_tags['og:url']             = get_author_posts_url( $author->ID, $author->user_nicename );
+			$og_tags['og:description']     = $author->description;
+			$og_tags['profile:first_name'] = $author->first_name;
+			$og_tags['profile:last_name']  = $author->last_name;
+			if ( isset( $og_tags['article:author'] ) ) {
+				$og_tags['article:author'] = get_author_posts_url( $author->ID, $author->user_nicename );
+			}
+		} else if ( is_singular() ) {
+			$authors = get_coauthors();
+			if ( ! empty( $authors ) ) {
+				$author = array_shift( $authors );
+				if ( isset( $og_tags['article:author'] ) ) {
+					$og_tags['article:author'] = get_author_posts_url( $author->ID, $author->user_nicename );
+				}
+			}
+		}
+
+		// Send back the updated Open Graph Tags
+		return $og_tags;
 	}
 
 }
