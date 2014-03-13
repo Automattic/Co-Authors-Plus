@@ -1162,24 +1162,6 @@ class coauthors_plus {
 		return (bool)in_array( $pagenow, $this->_pages_whitelist );
 	}
 
-	function get_post_id() {
-		global $post;
-		$post_id = 0;
-
-		if ( is_object( $post ) ) {
-			$post_id = $post->ID;
-		}
-
-		if( ! $post_id ) {
-			if ( isset( $_GET['post'] ) )
-				$post_id = (int) $_GET['post'];
-			elseif ( isset( $_POST['post_ID'] ) )
-				$post_id = (int) $_POST['post_ID'];
-		}
-
-		return $post_id;
-	}
-
 	/**
 	 * Allows coauthors to edit the post they're coauthors of
 	 */
