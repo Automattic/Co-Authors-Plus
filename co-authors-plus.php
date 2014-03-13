@@ -1156,7 +1156,7 @@ class coauthors_plus {
 	 * 
 	 * @return bool
 	 */
-	function is_valid_page() {
+	public function is_valid_page() {
 		global $pagenow;
 
 		return (bool)in_array( $pagenow, $this->_pages_whitelist );
