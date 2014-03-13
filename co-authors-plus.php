@@ -1321,9 +1321,15 @@ class coauthors_plus {
 	}
 
 	/**
-	 * Fixes the author feed url
+	 * Filter Author Feed Link for non native authors
+	 *
+	 * @since 3.1
+	 *
+	 * @param string $feed_link Required. Original feed link for the author.
+	 * @param string $feed Required. Type of feed being generated.
+	 * @return string Feed link for the author updated, if needs to be
 	 */
-	function filter_author_feed_link( $feed_link, $feed ) {
+	public function filter_author_feed_link( $feed_link, $feed ) {
 		if ( ! is_author() ) {
 			return $feed_link;
 		}
