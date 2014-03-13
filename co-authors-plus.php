@@ -115,7 +115,7 @@ class coauthors_plus {
 	 * Register the taxonomy used to managing relationships,
 	 * and the custom post type to store our author data
 	 */
-	function action_init() {
+	public function action_init() {
 
 		// Allow Co-Authors Plus to be easily translated
 		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -139,7 +139,7 @@ class coauthors_plus {
 	/**
 	 * Register the 'author' taxonomy and add post type support
 	 */
-	function action_init_late() {
+	public function action_init_late() {
 
 		// Register new taxonomy so that we can store all of the relationships
 		$args = array(
@@ -171,7 +171,7 @@ class coauthors_plus {
 	/**
 	 * Initialize the plugin for the admin
 	 */
-	function admin_init() {
+	public function admin_init() {
 		global $pagenow;
 
 		// Add the main JS script and CSS file
@@ -203,8 +203,10 @@ class coauthors_plus {
 	 *     add_filter( 'coauthors_guest_authors_enabled', '__return_false' )
 	 *
 	 * @since 3.0
+	 * 
+	 * @return bool
 	 */
-	function is_guest_authors_enabled() {
+	public function is_guest_authors_enabled() {
 		return apply_filters( 'coauthors_guest_authors_enabled', true );
 	}
 
@@ -213,9 +215,9 @@ class coauthors_plus {
 	 *
 	 * @param string $key Key to search by (slug,email)
 	 * @param string $value Value to search for
-	 * @param object|false $coauthor The co-author on success, false on failure
+	 * @return object|false $coauthor The co-author on success, false on failure
 	 */
-	function get_coauthor_by( $key, $value, $force = false ) {
+	public function get_coauthor_by( $key, $value, $force = false ) {
 
 		// If Guest Authors are enabled, prioritize those profiles
 		if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
@@ -268,7 +270,7 @@ class coauthors_plus {
 	 * @param string $post_type The name of the post type we're considering
 	 * @return bool Whether or not it's enabled
 	 */
-	function is_post_type_enabled( $post_type = null ) {
+	public function is_post_type_enabled( $post_type = null ) {
 
 		if ( ! $post_type )
 			$post_type = get_post_type();
@@ -280,7 +282,7 @@ class coauthors_plus {
 	 * Removes the standard WordPress Author box.
 	 * We don't need it because the Co-Authors one is way cooler.
 	 */
-	function remove_authors_box() {
+	public function remove_authors_box() {
 
 		if ( $this->is_post_type_enabled() )
 			remove_meta_box( $this->coreauthors_meta_box_name, get_post_type(), 'normal' );
@@ -289,7 +291,7 @@ class coauthors_plus {
 	/**
 	 * Adds a custom Authors box
 	 */
-	function add_coauthors_box() {
+	public function add_coauthors_box() {
 
 		if( $this->is_post_type_enabled() && $this->current_user_can_set_authors() )
 			add_meta_box( $this->coauthors_meta_box_name, __('Authors', 'co-authors-plus'), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal'), apply_filters( 'coauthors_meta_box_priority', 'high'));
@@ -298,7 +300,7 @@ class coauthors_plus {
 	/**
 	 * Callback for adding the custom author box
 	 */
-	function coauthors_meta_box( $post ) {
+	public function coauthors_meta_box( $post ) {
 		global $post, $coauthors_plus, $current_screen;
 
 		$post_id = $post->ID;
@@ -956,7 +958,7 @@ class coauthors_plus {
 	/**
 	 * Main function that handles search-as-you-type for adding authors
 	 */
-	function ajax_suggest() {
+	public function ajax_suggest() {
 
 		if( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'coauthors-search' ) )
 			die();
@@ -980,7 +982,7 @@ class coauthors_plus {
 	/**
 	 * Get matching authors based on a search value
 	 */
-	function search_authors( $search = '', $ignored_authors = array() ) {
+	public function search_authors( $search = '', $ignored_authors = array() ) {
 
 		// Since 2.7, we're searching against the term description for the fields
 		// instead of the user details. If the term is missing, we probably need to
@@ -1131,7 +1133,7 @@ class coauthors_plus {
 	/**
 	 * Adds necessary javascript variables to admin pages
 	 */
-	function js_vars() {
+	public function js_vars() {
 
 		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled() || ! $this-> current_user_can_set_authors() )
 			return;
@@ -1151,8 +1153,10 @@ class coauthors_plus {
 
 	/**
 	 * Helper to only add javascript to necessary pages. Avoids bloat in admin.
+	 * 
+	 * @return bool
 	 */
-	function is_valid_page() {
+	public function is_valid_page() {
 		global $pagenow;
 
 		return (bool)in_array( $pagenow, $this->_pages_whitelist );
@@ -1281,6 +1285,10 @@ class coauthors_plus {
 	 * Filter Edit Flow's 'ef_calendar_item_information_fields' to add co-authors
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
+	 * 
+	 * @param array $information_fields
+	 * @param int $post_id
+	 * @return array
 	 */
 	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
 
@@ -1303,6 +1311,11 @@ class coauthors_plus {
 	 * Filter Edit Flow's 'ef_story_budget_term_column_value' to add co-authors to the story budget
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
+	 * 
+	 * @param string $column_name
+	 * @param object $post
+	 * @param object $parent_term
+	 * @return string
 	 */
 	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
 
