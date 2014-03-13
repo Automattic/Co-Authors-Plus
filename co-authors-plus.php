@@ -1334,8 +1334,10 @@ class coauthors_plus {
 			return $feed_link;
 		}
 
+		// Get author, then check if author is guest-author because 
+		// that's the only type that will need to be adjusted
 		$author = get_queried_object();
-		if ( empty ( $author ) ) {
+		if ( empty ( $author ) || 'guest-author' != $author['type'] ) {
 			return $feed_link;
 		}
 
