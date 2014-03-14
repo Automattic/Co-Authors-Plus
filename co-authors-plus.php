@@ -105,6 +105,8 @@ class coauthors_plus {
 		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
 		add_filter( 'ef_story_budget_term_column_value', array( $this, 'filter_ef_story_budget_term_column_value' ), 10, 3 );
 
+		// Over-ride the author feed
+		add_filter( 'author_feed_link', array( $this, 'filter_author_feed_link' ), 10, 2 );
 	}
 
 	function coauthors_plus() {
@@ -1311,6 +1313,46 @@ class coauthors_plus {
 			$co_authors_names .= $co_author->display_name . ', ';
 		}
 		return rtrim( $co_authors_names, ', ' );
+	}
+
+	/**
+	 * Filter Author Feed Link for non native authors
+	 *
+	 * @since 3.1
+	 *
+	 * @param string $feed_link Required. Original feed link for the author.
+	 * @param string $feed Required. Type of feed being generated.
+	 * @return string Feed link for the author updated, if needs to be
+	 */
+	public function filter_author_feed_link( $feed_link, $feed ) {
+		if ( ! is_author() ) {
+			return $feed_link;
+		}
+
+		// Get author, then check if author is guest-author because 
+		// that's the only type that will need to be adjusted
+		$author = get_queried_object();
+		if ( empty ( $author ) || 'guest-author' != $author->type ) {
+			return $feed_link;
+		}
+
+		// The next section is similar to 
+		// get_author_feed_link() in wp-includes/link-template.php
+		$permalink_structure = get_option('permalink_structure');
+
+		if ( empty( $feed ) ) {
+			$feed = get_default_feed();
+		}
+
+		if ( '' == $permalink_structure ) {
+			$link = home_url( "?feed=$feed&amp;author=" . $author->ID );
+		} else {
+			$link = get_author_posts_url( $author->ID );
+			$feed_link = ( $feed == get_default_feed() ) ? 'feed' : "feed/$feed";
+			$link = trailingslashit($link) . user_trailingslashit($feed_link, 'feed');
+		}
+
+		return $link;
 	}
 
 }
