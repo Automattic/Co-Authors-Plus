@@ -1330,10 +1330,6 @@ class coauthors_plus {
 	 * @return array Open Graph Tags either as they were passed or updated.
 	 */
 	public function filter_jetpack_open_graph_tags( $og_tags, $image_dimensions ) {
-		// Check if this post type supports co-authors
-		if ( ! $this->is_post_type_enabled() ) {
-			return $og_tags;
-		}
 
 		if ( is_author() ) {
 			$author = get_queried_object();
@@ -1345,7 +1341,7 @@ class coauthors_plus {
 			if ( isset( $og_tags['article:author'] ) ) {
 				$og_tags['article:author'] = get_author_posts_url( $author->ID, $author->user_nicename );
 			}
-		} else if ( is_singular() ) {
+		} else if ( is_singular() && $this->is_post_type_enabled() ) {
 			$authors = get_coauthors();
 			if ( ! empty( $authors ) ) {
 				$author = array_shift( $authors );
