@@ -16,7 +16,7 @@ class CoAuthorsPlus_TestCase extends WP_UnitTestCase {
 		$_SERVER['REMOTE_ADDR'] = '';
 
 		$this->author1 = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'author1' ) );
-		$this->editor1 = $this->factory->user->create( array( 'role' => 'editor', 'user_login' => 'author2' ) );
+		$this->editor1 = $this->factory->user->create( array( 'role' => 'editor', 'user_login' => 'editor2' ) );
 
 		$post = array(
 			'post_author'     => $this->author1,
