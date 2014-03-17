@@ -556,7 +556,11 @@ class coauthors_plus {
 		if ( 'wpuser' == $coauthor->type )
 			$having_terms_and_authors .= $wpdb->prepare( " OR {$wpdb->posts}.post_author = %d", $coauthor->ID );
 
-		$query .= " WHERE ({$having_terms_and_authors}) AND {$wpdb->posts}.post_type = 'post' AND {$wpdb->posts}.post_status = 'publish'";
+		$post_types = apply_filters( 'coauthors_count_published_post_types', array( 'post' ) );
+		$post_types = array_map( 'sanitize_key', $post_types );
+		$post_types = "'" . implode( "','", $post_types ) . "'";
+
+		$query .= " WHERE ({$having_terms_and_authors}) AND {$wpdb->posts}.post_type IN ({$post_types}) AND {$wpdb->posts}.post_status = 'publish'";
 
 		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF( {$wpdb->term_taxonomy}.taxonomy = '%s', IF( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy );
 
