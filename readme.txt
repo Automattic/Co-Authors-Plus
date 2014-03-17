@@ -61,6 +61,7 @@ Bug fixes and minor enhancements
 * Breaking change: "Create Profile" link is no longer shown by default on the Manage Users screen. Instead, it can be enabled with the `coauthors_show_create_profile_user_link` filter.
 * Guest authors work properly with Jetpack Open Graph tags. Props [hibernation](https://github.com/hibernation).
 * Guest author profile editor now supports a few different fields. Props [alpha1](https://github.com/alpha1).
+* New `coauthors_count_published_post_types` filter for specifying the post type(s) used when calculating the user's number of published posts.
 * Bug fix: Ensure `post_author` is set to one of the co-authors assigned to a post.
 * Bug fix: Filter author feed link for guest authors on the author page. Props [hibernation](https://github.com/hibernation).
 * Packages a composer.json file for those using Composer.
