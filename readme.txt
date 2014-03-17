@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.8.1
 Requires at least: 3.7
-Stable tag: 3.0.7
+Stable tag: 3.1
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -43,6 +43,9 @@ Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts ma
 
 == Upgrade Notice ==
 
+= 3.1 =
+Manage co-authors from quick edit, Jetpack Open Graph support, bug fixes.
+
 = 3.0.7 =
 Support for symlink installations, updated French translation, bug fixes.
 
@@ -54,7 +57,7 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.1 (??? ?? ????) =
+= 3.1 (Mar. 17, 2014) =
 * Manage co-authors from Quick Edit. Props [mpatek](https://github.com/mpatek).
 * Updated Spanish translation, courtesy of [sergiomajluf](https://github.com/sergiomajluf).
 * Now matches core behavior when displaying author archive on multisite: user of the blog, or previously published author on the blog.
