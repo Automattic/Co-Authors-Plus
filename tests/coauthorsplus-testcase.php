@@ -23,9 +23,40 @@ class CoAuthorsPlus_TestCase extends WP_UnitTestCase {
 			'post_status'     => 'publish',
 			'post_content'    => rand_str(),
 			'post_title'      => rand_str(),
+			'post_type'       => 'post',
 		);
 
 		$this->author1_post1 = wp_insert_post( $post );
+
+		$post = array(
+			'post_author'     => $this->author1,
+			'post_status'     => 'publish',
+			'post_content'    => rand_str(),
+			'post_title'      => rand_str(),
+			'post_type'       => 'post',
+		);
+
+		$this->author1_post2 = wp_insert_post( $post );
+
+		$page = array(
+			'post_author'     => $this->author1,
+			'post_status'     => 'publish',
+			'post_content'    => rand_str(),
+			'post_title'      => rand_str(),
+			'post_type'       => 'page',
+		);
+
+		$this->author1_page1 = wp_insert_post( $page );
+
+		$page = array(
+			'post_author'     => $this->author1,
+			'post_status'     => 'publish',
+			'post_content'    => rand_str(),
+			'post_title'      => rand_str(),
+			'post_type'       => 'page',
+		);
+
+		$this->author1_page2 = wp_insert_post( $page );
 	}
 
 	public function tearDown() {

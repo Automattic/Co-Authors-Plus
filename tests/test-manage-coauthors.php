@@ -44,5 +44,55 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 	}
 
+	/**
+	 * Post published count should default to 'post', but be filterable
+	 * 
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/170
+	 */
+	public function test_post_publish_count_for_coauthor() {
+		global $coauthors_plus;
+
+		$editor1 = get_user_by( 'id', $this->editor1 );
+
+		/**
+		 * Two published posts
+		 */
+		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ) );
+		$coauthors_plus->add_coauthors( $this->author1_post2, array( $editor1->user_login ) );
+		$this->assertEquals( 2, count_user_posts( $editor1->ID ) );
+
+		/**
+		 * One published page too, but no filter
+		 */
+		$coauthors_plus->add_coauthors( $this->author1_page1, array( $editor1->user_login ) );
+		$this->assertEquals( 2, count_user_posts( $editor1->ID ) );
+
+		// Publish count to include posts and pages
+		$filter = function() {
+			return array( 'post', 'page' );
+		};
+		add_filter( 'coauthors_count_published_post_types', $filter );
+
+		/**
+		 * Two published posts and pages
+		 */
+		$coauthors_plus->add_coauthors( $this->author1_page2, array( $editor1->user_login ) );
+		$this->assertEquals( 4, count_user_posts( $editor1->ID ) );
+
+		// Publish count is just pages
+		remove_filter( 'coauthors_count_published_post_types', $filter );
+		$filter = function() {
+			return array( 'page' );
+		};
+		add_filter( 'coauthors_count_published_post_types', $filter );
+
+		/**
+		 * Just one published page now for the editor
+		 */
+		$author1 = get_user_by( 'id', $this->author1 );
+		$coauthors_plus->add_coauthors( $this->author1_page2, array( $author1->user_login ) );
+		$this->assertEquals( 1, count_user_posts( $editor1->ID ) );
+
+	}
 
 }
