@@ -57,6 +57,8 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= 3.1.1 (??? ?? ????) =
+
 = 3.1 (Mar. 17, 2014) =
 * Manage co-authors from Quick Edit. Props [mpatek](https://github.com/mpatek).
 * Updated Spanish translation, courtesy of [sergiomajluf](https://github.com/sergiomajluf).
