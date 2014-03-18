@@ -466,7 +466,7 @@ jQuery(document).ready(function () {
 			hide_loading();
 	});
 
-	if ( 'post-php' == adminpage ) {
+	if ( 'post-php' == adminpage || 'post-new-php' == adminpage ) {
 		var $post_coauthor_logins = jQuery('input[name="coauthors[]"]');
 		var $post_coauthor_names = jQuery('input[name="coauthorsinput[]"]');
 		var $post_coauthor_emails = jQuery('input[name="coauthorsemails[]"]');
