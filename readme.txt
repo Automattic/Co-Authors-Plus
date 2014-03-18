@@ -58,6 +58,7 @@ Bug fixes and minor enhancements
 == Changelog ==
 
 = 3.1.1 (??? ?? ????) =
+* Bug fix: Co-authors selection UI should appear when creating a new post too.
 
 = 3.1 (Mar. 17, 2014) =
 * Manage co-authors from Quick Edit. Props [mpatek](https://github.com/mpatek).
