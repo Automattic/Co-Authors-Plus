@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 3.8.1
 Requires at least: 3.7
-Stable tag: 3.1
+Stable tag: 3.1.1
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -57,7 +57,7 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
-= 3.1.1 (??? ?? ????) =
+= 3.1.1 (Mar. 20, 2014) =
 * Bug fix: Co-authors selection UI should appear when creating a new post too.
 
 = 3.1 (Mar. 17, 2014) =
