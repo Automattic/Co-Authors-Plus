@@ -233,16 +233,18 @@ function coauthors_posts_links_single( $author ) {
 		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), get_the_author() ),
 		'class' => 'url fn',
 		'text' => get_the_author(),
+		'email' => $author->user_email,
 		'after_html' => ''
 	);
 	$args = apply_filters( 'coauthors_posts_link', $args, $author );
 	$single_link = sprintf(
-			'<a href="%1$s" title="%2$s" class="%3$s" rel="%4$s">%5$s</a>',
+			'<a href="%1$s" title="%2$s" rel="%3$s" class="%4$s name">%5$s</a> <span class="bullet">&bull;</span> <a href="mailto:%6$s?subject=Deadline.com Tip" class="email"><i class="fa fa-envelope"></i> tip</a><div class="clear"></div>',
 			esc_url( $args['href'] ),
 			esc_attr( $args['title'] ),
-			esc_attr( $args['class'] ),
 			esc_attr( $args['rel'] ),
-			esc_html( $args['text'] )
+			esc_attr( $args['class'] ),
+			esc_html( $args['text'] ),
+			esc_attr( $args['email'] )
 	);
 	return $args['before_html'] . $single_link . $args['after_html'];
 }
