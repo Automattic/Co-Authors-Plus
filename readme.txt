@@ -57,6 +57,9 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= ??? (??? ?? ????) =
+* New Russian and Ukrainian translations, courtesy of [Jurko Chervony](http://skinik.name/).
+
 = 3.1.1 (Mar. 20, 2014) =
 * Bug fix: Co-authors selection UI should appear when creating a new post too.
 
