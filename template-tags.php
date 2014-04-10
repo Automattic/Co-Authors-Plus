@@ -230,9 +230,9 @@ function coauthors_posts_links_single( $author ) {
 		'before_html' => '',
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
 		'rel' => 'author',
-		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), get_the_author() ),
+		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $author->display_name ),
 		'class' => 'url fn',
-		'text' => get_the_author(),
+		'text' => $author->display_name,
 		'after_html' => ''
 	);
 	$args = apply_filters( 'coauthors_posts_link', $args, $author );
