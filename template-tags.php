@@ -165,7 +165,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		if ( ! $i->is_first() && $i->count() > 2 )
 			$output .= $separators['between'];
 		
-		if ( $i->is_last() && $i->count() > 1 ) {
+		if ( ( $i->is_last() || ( $limit && $i->get_position() + 1 == $limit ) ) && $i->count() > 1 ) {
 			$output = rtrim( $output, $separators['between'] );
 			$output .= $separators['betweenLast'];
 		}
