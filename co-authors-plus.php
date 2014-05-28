@@ -109,7 +109,7 @@ class coauthors_plus {
 		add_filter( 'jetpack_open_graph_tags', array( $this, 'filter_jetpack_open_graph_tags' ), 10, 2 );
 		
 		// Filter to send comment moderation notification e-mail to multiple authors
-		add_filter( 'comment_moderation_recipients', 'filter_comment_moderation_email_recipients' );
+		add_filter( 'comment_moderation_recipients', 'cap_filter_comment_moderation_email_recipients', 10, 2 );
 
 	}
 
@@ -1472,16 +1472,17 @@ endif;
  * Filter array of moderation notification email addresses
  * 
  * @param array $recipients
+ * @param int $comment_id
  * @return array
  */
-function filter_comment_moderation_email_recipients( $recipients ) {
-	global $post;
-
-	if ( isset($post->ID) ) {
-		$coauthors = get_coauthors( $post->ID );
+function cap_filter_comment_moderation_email_recipients( $recipients, $comment_id ) {
+	$comment = get_comment( $comment_id );
+	$post_id = $comment->comment_post_ID;
+	
+	if ( isset($post_id) ) {
+		$coauthors = get_coauthors( $post_id );
 		foreach ( $coauthors as $user ) {
-			// "edit_comment" capability == "edit_post" capability
-			if ( user_can($user->ID, 'edit_post', $post->ID) && !empty($user->user_email) )
+			if ( !empty($user->user_email) )
 				$extra_recipients[] = $user->user_email;
 		}
 
