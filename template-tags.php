@@ -174,6 +174,8 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	} while( $i->iterate() && ( ! $limit || $i->get_position() < $limit ) );
 	
 	$output .= $separators['after'];
+
+    $output = apply_filters( 'coauthors_echo_before_output', $output );
 	
 	if( $echo )
 		echo $output;
