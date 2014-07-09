@@ -779,7 +779,7 @@ class CoAuthors_Guest_Authors
 
 		$cache_key = $this->get_cache_key( $key, $value );
 
-		if ( false == $force && false !== ( $retval = wp_cache_get( $cache_key, self::$cache_group ) ) ) {
+		if ( false == $force && false != ( $retval = wp_cache_get( $cache_key, self::$cache_group ) ) ) {
 			// Properly catch our false condition cache
 			if ( is_object( $retval ) )
 				return $retval;

@@ -22,7 +22,7 @@ function get_coauthors( $post_id = 0 ) {
 					$coauthors[] = $post_author;
 			}
 		} else if ( !$coauthors_plus->force_guest_authors ) {
-			if ( $post ) {
+			if ( $post && $post_id == $post->ID ) {
 				$post_author = get_userdata( $post->post_author );
 			} else {
 				$post_author = get_userdata( $wpdb->get_var( $wpdb->prepare("SELECT post_author FROM $wpdb->posts WHERE ID = %d", $post_id ) ) );
