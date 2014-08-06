@@ -441,13 +441,19 @@ jQuery(document).ready(function () {
 	
 
 	function show_loading() {
-		$coauthors_loading.css('visibility', 'visible');
+		if ( typeof( $coauthors_loading) != 'undefined' ){
+			$coauthors_loading.css('visibility', 'visible');
+		}
 	}
 	function hide_loading() {
-		$coauthors_loading.css('visibility', 'hidden');
+		if ( typeof( $coauthors_loading) != 'undefined' ){
+			$coauthors_loading.css('visibility', 'hidden');
+		}
 	}
 	function move_loading($input) {
-		$coauthors_loading.insertAfter($input);
+		if ( typeof( $coauthors_loading) != 'undefined' ){
+			$coauthors_loading.insertAfter($input);
+		}
 	}
 	// Show laoding cursor for autocomplete ajax requests
 	jQuery(document).ajaxSend(function(e, xhr, settings) {
