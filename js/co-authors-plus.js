@@ -420,6 +420,7 @@ jQuery(document).ready(function () {
 	
 		// Create new author-suggest and append it to a new row
 		var newCO = coauthors_create_autosuggest('', false);
+		var $coauthors_loading;
 		coauthors_add_to_table(newCO);
 	
 		$coauthors_loading = jQuery('#ajax-loading').clone().attr('id', 'coauthors-loading');
