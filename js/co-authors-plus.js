@@ -15,10 +15,6 @@ jQuery(document).ready(function () {
 		
 		var $coauthor_row = jQuery(elem).closest('.coauthor-row');
 		$coauthor_row.remove();
-
-		// Hide the delete button when there's only one Co-Author
-		if ( jQuery( '#coauthors-list .coauthor-row .coauthor-tag' ).length <= 1 )
-			jQuery( '#coauthors-list .coauthor-row .coauthors-author-options' ).addClass('hidden');
 		
 		return true;
 	}
