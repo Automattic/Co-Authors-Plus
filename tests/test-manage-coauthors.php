@@ -27,7 +27,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	/**
 	 * When a co-author is assigned to a post, the post author value
 	 * should be set appropriately
-	 * 
+	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/140
 	 */
 	public function test_add_coauthor_updates_post_author() {
@@ -46,7 +46,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Post published count should default to 'post', but be filterable
-	 * 
+	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/170
 	 */
 	public function test_post_publish_count_for_coauthor() {
