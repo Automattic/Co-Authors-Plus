@@ -4,14 +4,14 @@
  */
 
 class Test_Author_Queries extends CoAuthorsPlus_TestCase {
-	
+
 	/**
 	 * On author pages, the queried object should only be set
 	 * to a user that's not a member of the blog if they
 	 * have at least one published post. This matches core behavior.
-	 * 
+	 *
 	 * @see https://core.trac.wordpress.org/changeset/27290
-	 */	
+	 */
 	function test_author_queried_object_fix() {
 		global $wp_rewrite, $coauthors_plus;
 
@@ -20,7 +20,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		 */
 		$author1 = $this->factory->user->create( array( 'user_login' => 'msauthor1' ) );
 		$author2 = $this->factory->user->create( array( 'user_login' => 'msauthor2' ) );
-		$blog2 = $this->factory->blog->create( array( 'user_id' => $author1 ) ); 
+		$blog2 = $this->factory->blog->create( array( 'user_id' => $author1 ) );
 
 		switch_to_blog( $blog2 );
 		$wp_rewrite->init();
@@ -84,6 +84,6 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 
 		restore_current_blog();
 
-	} 
+	}
 
 }
