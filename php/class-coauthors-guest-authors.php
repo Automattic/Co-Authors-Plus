@@ -1081,7 +1081,7 @@ class CoAuthors_Guest_Authors
 		if ( is_object( $id_or_object ) )
 			$guest_author = $id_or_object;
 		else
-			$guest_author = $this->get_guest_author_by( 'ID', $id_or_object );
+			$guest_author = $this->get_guest_author_by( 'ID', $id_or_object, true );
 
 		// Delete the lookup cache associated with each old co-author value
 		$keys = wp_list_pluck( $this->get_guest_author_fields(), 'key' );
@@ -1152,6 +1152,10 @@ class CoAuthors_Guest_Authors
 		// Make sure the author term exists and that we're assigning it to this post type
 		$author_term = $coauthors_plus->update_author_term( $this->get_guest_author_by( 'ID', $post_id ) );
 		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy, false );
+
+		// Explicitly clear all caches, to remove negative caches that may have existed prior to this
+		// Guest Author's creation
+		$this->delete_guest_author_cache( $post_id );
 
 		return $post_id;
 	}
