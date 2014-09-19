@@ -797,6 +797,10 @@ class CoAuthors_Guest_Authors
 		$author_term = $coauthors_plus->update_author_term( $author );
 		// Add the author as a post term
 		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy, false );
+
+		// Explicitly clear all caches, to remove negative caches that may have existed prior to this
+		// Guest Author's creation / update
+		$this->delete_guest_author_cache( $post_id );
 	}
 
 	/**
