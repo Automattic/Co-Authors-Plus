@@ -231,7 +231,7 @@ function coauthors_posts_links_single( $author ) {
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
 		'rel' => 'author',
 		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $author->display_name ),
-		'class' => 'url fn',
+		'class' => 'author url fn',
 		'text' => $author->display_name,
 		'after_html' => ''
 	);
