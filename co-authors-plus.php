@@ -1199,10 +1199,10 @@ class coauthors_plus {
 
 		$current_user = wp_get_current_user();
 		if ( 'publish' == get_post_status( $post_id ) && 
-			( isset( $obj->cap->edit_published_posts ) && ! empty( $current_user->allcaps[$obj->cap->edit_published_posts] ) ) )
+			( isset( $obj->cap->edit_published_posts ) && empty( $current_user->allcaps[$obj->cap->edit_published_posts] ) ) )
 			$allcaps[$obj->cap->edit_published_posts] = true;
 		elseif ( 'private' == get_post_status( $post_id ) && 
-			( isset( $obj->cap->edit_private_posts ) && ! empty( $current_user->allcaps[$obj->cap->edit_private_posts] ) ) )
+			( isset( $obj->cap->edit_private_posts ) && empty( $current_user->allcaps[$obj->cap->edit_private_posts] ) ) )
 			$allcaps[$obj->cap->edit_private_posts] = true;
 
 		$allcaps[$obj->cap->edit_others_posts] = true;
