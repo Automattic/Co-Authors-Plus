@@ -111,6 +111,9 @@ class coauthors_plus {
 		// Filter to send comment moderation notification e-mail to multiple authors
 		add_filter( 'comment_moderation_recipients', 'cap_filter_comment_moderation_email_recipients', 10, 2 );
 
+		// Support infinite scroll for Guest Authors on author pages
+		add_filter( 'infinite_scroll_js_settings', array( $this, 'filter_infinite_scroll_js_settings' ), 10, 2 );
+	
 	}
 
 	function coauthors_plus() {
@@ -963,6 +966,32 @@ class coauthors_plus {
 			$wp_query->is_author = $wp_query->is_archive = false;
 			$wp_query->is_404 = false;
 		}
+	}
+
+	/**
+	 * Filters the Infinite Scroll settings to remove `author` from the query_args
+	 * when we are dealing with a Guest Author
+	 *
+	 * If this isn't removed, the author id can be sent in place of author_name, and the 
+	 * normal query interception doesn't work, resulting in incorrect results
+	 * 
+	 * @param  array $settings The existing IS settings to filter
+	 * @return array           The filtered IS settings
+	 */
+	public function filter_infinite_scroll_js_settings( $settings ) {
+		if ( ! is_author() ) {
+			return $settings;
+		}
+
+		$author = get_queried_object();
+
+		if ( $author && 'guest-author' == $author->type ) {
+			unset( $settings['query_args']['author'] );
+
+			$settings['query_args']['author_name'] = $author->user_nicename;
+		}
+
+		return $settings;
 	}
 
 	/**
