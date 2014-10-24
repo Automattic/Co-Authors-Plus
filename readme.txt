@@ -1,7 +1,7 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.8.1
+Tested up to: 4.0.0
 Requires at least: 3.7
 Stable tag: 3.1.1
 
@@ -80,7 +80,7 @@ Bug fixes and minor enhancements
 * Better support for installing Co-Authors Plus as a symlinked directory. [Follow these instructions](http://kaspars.net/blog/wordpress/plugins-via-symlinks) to filter `plugins_url`.
 * Links to authors' posts pages to comply to hCard microformat, which Google depends on.
 * New `coauthors_emails()` template tag to list email addresses of the co-authors. Props [benlk](https://github.com/benlk).
-* Bug fix: Remove extraneous space between last two co-authors output. Props [johnciacia](https://github.com/johnciacia). 
+* Bug fix: Remove extraneous space between last two co-authors output. Props [johnciacia](https://github.com/johnciacia).
 * Updated French translation, courtesy of Jojaba (via email).
 
 = 3.0.6 (Dec. 9, 2013) =
@@ -199,8 +199,8 @@ Bug fixes and minor enhancements
 = 1.2.0 (Jun. 16, 2012) =
 * FIX: Added compatibility for WordPress 2.8
 * FIX: Added new template tags (get_the_coauthor_meta & the_coauthor_meta) to fix issues related to displaying author info on author archive pages. See [Other Notes](http://wordpress.org/extend/plugins/co-authors-plus/other_notes/) for details.
-* FIX: Plugin should now work for plugins not using the 'wp_' DB prefix 
-* FIX: Coauthors should no longer be alphabetically reordered when the post is updated  
+* FIX: Plugin should now work for plugins not using the 'wp_' DB prefix
+* FIX: Coauthors should no longer be alphabetically reordered when the post is updated
 * FIX: Plugin now used WordPress native AJAX calls to tighten security
 * DOCS: Added details about the new template tags
 
