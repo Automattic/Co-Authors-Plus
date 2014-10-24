@@ -1384,7 +1384,7 @@ class coauthors_plus {
 		}
 
 		// Send back the updated Open Graph Tags
-		return $og_tags;
+		return apply_filters( 'coauthors_open_graph_tags', $og_tags );
 	}
 
 }
