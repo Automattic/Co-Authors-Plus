@@ -164,7 +164,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				}
 
 				// Make sure this original author exists as a co-author
-				if ( !$coauthors_plus->get_coauthor_by( 'user_login', $original_author ) ) {
+				if ( ( ! $coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $original_author ) ) && 
+					( ! $coauthor = $coauthors_plus->get_coauthor_by( 'user_login', sanitize_title( $original_author ) ) ) ) {
 					$posts_missing_coauthor++;
 					$missing_coauthors[] = $original_author;
 					WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' does not have "' . $original_author . '" associated as a coauthor but there is not a coauthor profile' );
@@ -172,7 +173,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				}
 
 				// Assign the coauthor to the post
-				$coauthors_plus->add_coauthors( $single_post->ID, array( $original_author ), $append_coauthors );
+				$coauthors_plus->add_coauthors( $single_post->ID, array( $coauthor->user_nicename ), $append_coauthors );
 				WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' has been assigned "' . $original_author . '" as the author' );
 				$posts_associated++;
 				clean_post_cache( $single_post->ID );
