@@ -149,7 +149,7 @@ class CoAuthors_Guest_Authors
 		global $post;
 
 		$guest_author = $this->get_guest_author_by( 'ID', $post->ID );
-		$guest_author_link = $this->filter_author_link( '', $guest_author->ID, $guest_author->user_nicename );
+		$guest_author_link = get_author_posts_url( $guest_author->ID, $guest_author->user_nicename );
 
 		$messages[$this->post_type] = array(
 			0 => '', // Unused. Messages start at index 1.
@@ -1327,23 +1327,14 @@ class CoAuthors_Guest_Authors
 
 		// If we're using this at the top of the loop on author.php,
 		// our queried object should be set correctly
-		if ( !$author_nicename && is_author() && get_queried_object() )
+		if ( !$author_nicename && is_author() && get_queried_object() ) {
 			$author_nicename = get_queried_object()->user_nicename;
 
-		if ( empty($link) ) {
-			$link = add_query_arg( 'author_name', $author_nicename, home_url() );
-		} else {
-			global $wp_rewrite;
-			$link = $wp_rewrite->get_author_permastruct();
-			if ( $link ) {
-				$link = str_replace('%author%', $author_nicename, $link);
-				$link = home_url( user_trailingslashit( $link ) );
-			} else {
-				$link = add_query_arg( 'author_name', $author_nicename, home_url() );
-			}
+			// Use get_author_posts_url() so we have access to the author_link filter
+			$link = get_author_posts_url( $author_id, $author_nicename );
 		}
-		return $link;
 
+		return $link;
 	}
 
 	/**
