@@ -2,17 +2,17 @@
 
 function get_coauthors( $post_id = 0 ) {
 	global $post, $post_ID, $coauthors_plus, $wpdb;
-	
+
 	$coauthors = array();
 	$post_id = (int)$post_id;
 	if ( !$post_id && $post_ID )
 		$post_id = $post_ID;
 	if ( !$post_id && $post )
 		$post_id = $post->ID;
-	
+
 	if ( $post_id ) {
 		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy );
-		
+
 		if ( is_array( $coauthor_terms ) && !empty( $coauthor_terms ) ) {
 			foreach( $coauthor_terms as $coauthor ) {
 				$coauthor_slug = preg_replace( '#^cap\-#', '', $coauthor->slug );
@@ -36,12 +36,12 @@ function get_coauthors( $post_id = 0 ) {
 
 /**
  * Checks to see if the the specified user is author of the current global post or post (if specified)
- * @param object|int $user 
+ * @param object|int $user
  * @param int $post_id
  */
 function is_coauthor_for_post( $user, $post_id = 0 ) {
 	global $post;
-	
+
 	if( ! $post_id && $post )
 		$post_id = $post->ID;
 	if( ! $post_id )
@@ -49,13 +49,13 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 
 	if ( ! $user )
 		return false;
-	
+
 	$coauthors = get_coauthors( $post_id );
 	if ( is_numeric( $user ) ) {
 		$user = get_userdata( $user );
 		$user = $user->user_login;
 	}
-	
+
 	foreach( $coauthors as $coauthor ) {
 		if ( $user == $coauthor->user_login || $user == $coauthor->linked_account )
 			return true;
@@ -69,7 +69,7 @@ class CoAuthorsIterator {
 	var $current_author;
 	var $authordata_array;
 	var $count;
-	
+
 	function CoAuthorsIterator( $postID = 0 ){
 		global $post, $authordata, $wpdb;
 		$postID = (int)$postID;
@@ -80,30 +80,30 @@ class CoAuthorsIterator {
 
 		$this->original_authordata = $this->current_author = $authordata;
 		$this->authordata_array = get_coauthors( $postID );
-		
+
 		$this->count = count($this->authordata_array);
 	}
-	
+
 	function iterate(){
 		global $authordata;
 		$this->position++;
-		
+
 		//At the end of the loop
 		if( $this->position > $this->count-1 ){
 			$authordata = $this->current_author = $this->original_authordata;
 			$this->position = -1;
 			return false;
 		}
-		
+
 		//At the beginning of the loop
 		if( $this->position == 0 && !empty( $authordata ) )
 			$this->original_authordata = $authordata;
-		
+
 		$authordata = $this->current_author = $this->authordata_array[$this->position];
-		
+
 		return true;
 	}
-	
+
 	function get_position(){
 		if ( $this->position === -1 )
 			return false;
@@ -143,41 +143,41 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		$separators['after'] = apply_filters( 'coauthors_default_after', $default_after );
 
 	$output = '';
-	
+
 	$i = new CoAuthorsIterator();
 	$output .= $separators['before'];
 	$i->iterate();
 	do {
 		$author_text = '';
-		
+
 		if( $type == 'tag' )
 			$author_text = $tag( $tag_args );
 		elseif( $type == 'field' && isset( $i->current_author->$tag ) )
 			$author_text = $i->current_author->$tag;
 		elseif( $type == 'callback' && is_callable( $tag ) )
 			$author_text = call_user_func( $tag, $i->current_author );
-		
+
 		// Fallback to user_login if we get something empty
 		if( empty( $author_text ) )
 			$author_text = $i->current_author->user_login;
-		
+
 		// Append separators
 		if ( ! $i->is_first() && $i->count() > 2 )
 			$output .= $separators['between'];
-		
+
 		if ( $i->is_last() && $i->count() > 1 ) {
 			$output = rtrim( $output, $separators['between'] );
 			$output .= $separators['betweenLast'];
 		}
-		
+
 		$output .= $author_text;
 	} while( $i->iterate() );
-	
+
 	$output .= $separators['after'];
-	
+
 	if( $echo )
 		echo $output;
-	
+
 	return $output;
 }
 
@@ -223,7 +223,7 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
  * Outputs a single co-author linked to their post archive.
  *
  * @param object $author
- * @return string 
+ * @return string
  */
 function coauthors_posts_links_single( $author ) {
 	$args = array(
@@ -341,7 +341,7 @@ function coauthors_emails($between = null, $betweenLast = null, $before = null, 
  * Outputs a single co-author, linked to their website if they've provided one.
  *
  * @param object $author
- * @return string 
+ * @return string
  */
 function coauthors_links_single( $author ) {
 	if ( get_the_author_meta('url') ) {
@@ -375,10 +375,10 @@ function coauthors_IDs($between = null, $betweenLast = null, $before = null, $af
 
 function get_the_coauthor_meta( $field ) {
 	global $wp_query, $post;
-	
+
 	$coauthors = get_coauthors();
 	$meta = array();
-	
+
 	foreach( $coauthors as $coauthor ) {
 		$user_id = $coauthor->ID;
 		$meta[$user_id] = get_the_author_meta( $field, $user_id );
@@ -434,7 +434,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 			continue;
 
 		$authors[$author_term->name] = $coauthor;
-	
+
 		$authors[$author_term->name]->post_count = $author_term->count;
 	}
 
@@ -517,9 +517,9 @@ function coauthors_wp_list_authors( $args = array() ) {
  * Since Guest Authors doesn't enforce unique email addresses, simply loading the avatar by email won't work when
  * multiple Guest Authors share the same address.
  *
- * This is a replacement for using get_avatar(), which only operates on email addresses and cannot differentiate 
+ * This is a replacement for using get_avatar(), which only operates on email addresses and cannot differentiate
  * between Guest Authors (who may share an email) and regular user accounts
- * 
+ *
  * @param  object   $coauthor The Co Author or Guest Author object
  * @param  int      $size     The desired size
  * @return string             The image tag for the avatar, or an empty string if none could be determined

@@ -581,9 +581,9 @@ class CoAuthors_Guest_Authors
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
-			
+
 			if( !isset( $field['input'] ) ) {
-				$field['input'] = "text"; 
+				$field['input'] = "text";
 			}
 			$field['input'] = apply_filters( 'coauthors_name_field_type_'. $pm_key , $field['input'] );
 			switch( $field['input'] ) {
@@ -593,7 +593,7 @@ class CoAuthors_Guest_Authors
 				default:
 					echo '<input type="'. esc_attr( $field['input'] )  .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			break;
-			} 
+			}
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
@@ -616,7 +616,7 @@ class CoAuthors_Guest_Authors
 			echo '<tr><th>';
 			echo '<label for="' . esc_attr( $pm_key ) . '">' . $field['label'] . '</label>';
 			echo '</th><td>';
-			
+
 			if( !isset( $field['input'] ) ) {
 				$field['input'] = "text";
 			}
@@ -628,7 +628,7 @@ class CoAuthors_Guest_Authors
 				default:
 					echo '<input type="'. esc_attr( $field['input'] ) .'" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			break;
-			} 
+			}
 
 			echo '</td></tr>';
 		}
@@ -691,7 +691,7 @@ class CoAuthors_Guest_Authors
 		// Guest authors can't be created with the same user_login as a user
 		$user_nicename = str_replace( 'cap-', '', $slug );
 		$user = get_user_by( 'slug', $user_nicename );
-		if ( $user 
+		if ( $user
 			&& is_user_member_of_blog( $user->ID, get_current_blog_id() )
 			&& $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) )
 			wp_die( __( 'Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user on the Manage Users listing instead.', 'co-authors-plus' ) );
@@ -993,7 +993,7 @@ class CoAuthors_Guest_Authors
 	 *
 	 * @param string $key A guest author field
 	 * @param string $value The guest author field value
-	 * 
+	 *
 	 * @return string The generated cache key
 	 */
 	function get_cache_key( $key, $value ) {
@@ -1106,7 +1106,7 @@ class CoAuthors_Guest_Authors
 		// Delete the 'all-linked-accounts' cache
 		wp_cache_delete( 'all-linked-accounts', self::$cache_group );
 
-	} 
+	}
 
 
 	/**
@@ -1187,7 +1187,7 @@ class CoAuthors_Guest_Authors
 			// We're reassigning the guest author's posts user to its linked account
 			if ( $guest_author->linked_account == $reassign_to )
 				$reassign_to_author = get_user_by( 'login', $reassign_to );
-			else 
+			else
 				$reassign_to_author = $coauthors_plus->get_coauthor_by( 'user_login', $reassign_to );
 			if ( ! $reassign_to_author )
 				return new WP_Error( 'reassign-to-missing', __( 'Reassignment co-author does not exist', 'co-authors-plus' ) );
@@ -1360,14 +1360,14 @@ class CoAuthors_Guest_Authors
 			return $feed_link;
 		}
 
-		// Get author, then check if author is guest-author because 
+		// Get author, then check if author is guest-author because
 		// that's the only type that will need to be adjusted
 		$author = get_queried_object();
 		if ( empty ( $author ) || 'guest-author' != $author->type ) {
 			return $feed_link;
 		}
 
-		// The next section is similar to 
+		// The next section is similar to
 		// get_author_feed_link() in wp-includes/link-template.php
 		$permalink_structure = get_option('permalink_structure');
 

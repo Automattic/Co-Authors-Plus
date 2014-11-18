@@ -107,13 +107,13 @@ class coauthors_plus {
 
 		// Support Jetpack Open Graph Tags
 		add_filter( 'jetpack_open_graph_tags', array( $this, 'filter_jetpack_open_graph_tags' ), 10, 2 );
-		
+
 		// Filter to send comment moderation notification e-mail to multiple authors
 		add_filter( 'comment_moderation_recipients', 'cap_filter_comment_moderation_email_recipients', 10, 2 );
 
 		// Support infinite scroll for Guest Authors on author pages
 		add_filter( 'infinite_scroll_js_settings', array( $this, 'filter_infinite_scroll_js_settings' ), 10, 2 );
-	
+
 	}
 
 	function coauthors_plus() {
@@ -212,7 +212,7 @@ class coauthors_plus {
 	 *     add_filter( 'coauthors_guest_authors_enabled', '__return_false' )
 	 *
 	 * @since 3.0
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function is_guest_authors_enabled() {
@@ -759,7 +759,7 @@ class coauthors_plus {
 
 	/**
 	 * Add one or more co-authors as bylines for a post
-	 * 
+	 *
 	 * @param int
 	 * @param array
 	 * @param bool
@@ -788,7 +788,7 @@ class coauthors_plus {
 		foreach( $coauthors as &$author_name ){
 
 			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
-			$coauthor_objects[] = $author; 
+			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
 			$author_name = $term->slug;
 		}
@@ -929,7 +929,7 @@ class coauthors_plus {
 	 *
 	 * If an author has no posts, we only want to force the queried object to be
 	 * the author if they're a member of the blog.
-	 * 
+	 *
 	 * If the author does have posts, it doesn't matter that they're not an author.
 	 *
 	 * Alternatively, on an author archive, if the first story has coauthors and
@@ -972,9 +972,9 @@ class coauthors_plus {
 	 * Filters the Infinite Scroll settings to remove `author` from the query_args
 	 * when we are dealing with a Guest Author
 	 *
-	 * If this isn't removed, the author id can be sent in place of author_name, and the 
+	 * If this isn't removed, the author id can be sent in place of author_name, and the
 	 * normal query interception doesn't work, resulting in incorrect results
-	 * 
+	 *
 	 * @param  array $settings The existing IS settings to filter
 	 * @return array           The filtered IS settings
 	 */
@@ -1192,7 +1192,7 @@ class coauthors_plus {
 
 	/**
 	 * Helper to only add javascript to necessary pages. Avoids bloat in admin.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function is_valid_page() {
@@ -1227,10 +1227,10 @@ class coauthors_plus {
 			return $allcaps;
 
 		$current_user = wp_get_current_user();
-		if ( 'publish' == get_post_status( $post_id ) && 
+		if ( 'publish' == get_post_status( $post_id ) &&
 			( isset( $obj->cap->edit_published_posts ) && ! empty( $current_user->allcaps[$obj->cap->edit_published_posts] ) ) )
 			$allcaps[$obj->cap->edit_published_posts] = true;
-		elseif ( 'private' == get_post_status( $post_id ) && 
+		elseif ( 'private' == get_post_status( $post_id ) &&
 			( isset( $obj->cap->edit_private_posts ) && ! empty( $current_user->allcaps[$obj->cap->edit_private_posts] ) ) )
 			$allcaps[$obj->cap->edit_private_posts] = true;
 
@@ -1306,7 +1306,7 @@ class coauthors_plus {
 	 * Filter Edit Flow's 'ef_calendar_item_information_fields' to add co-authors
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
-	 * 
+	 *
 	 * @param array $information_fields
 	 * @param int $post_id
 	 * @return array
@@ -1332,7 +1332,7 @@ class coauthors_plus {
 	 * Filter Edit Flow's 'ef_story_budget_term_column_value' to add co-authors to the story budget
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
-	 * 
+	 *
 	 * @param string $column_name
 	 * @param object $post
 	 * @param object $parent_term
@@ -1499,7 +1499,7 @@ endif;
 
 /**
  * Filter array of moderation notification email addresses
- * 
+ *
  * @param array $recipients
  * @param int $comment_id
  * @return array
@@ -1507,7 +1507,7 @@ endif;
 function cap_filter_comment_moderation_email_recipients( $recipients, $comment_id ) {
 	$comment = get_comment( $comment_id );
 	$post_id = $comment->comment_post_ID;
-	
+
 	if ( isset($post_id) ) {
 		$coauthors = get_coauthors( $post_id );
 		foreach ( $coauthors as $user ) {

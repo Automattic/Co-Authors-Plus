@@ -200,7 +200,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$output = '';
 
 		$output .= coauthors_get_avatar( $item, 32 );
-		
+
 		if ( current_user_can( 'edit_post', $item->ID ) ) {
 			$output .= '<a href="' . esc_url( $item_edit_link ) . '">' . esc_html( $item->display_name ) . '</a>';
 		} else {
