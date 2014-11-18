@@ -28,7 +28,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$users = get_users();
 		$created = 0;
 		$skipped = 0;
-		foreach( $users as $user ) {
+		foreach ( $users as $user ) {
 
 			$result = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $user->ID );
 			if ( is_wp_error( $result ) ) {
@@ -69,9 +69,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$affected = 0;
 		$count = 0;
 		WP_CLI::line( "Now inspecting or updating {$posts->found_posts} total posts." );
-		while( $posts->post_count ) {
+		while ( $posts->post_count ) {
 
-			foreach( $posts->posts as $single_post ) {
+			foreach ( $posts->posts as $single_post ) {
 
 				$count++;
 
@@ -84,11 +84,11 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					continue;
 				}
 
-				$author = ( ! empty( $authors[$single_post->post_author] ) ) ? $authors[$single_post->post_author] : get_user_by( 'id', $single_post->post_author );
-				$authors[$single_post->post_author] = $author;
+				$author = ( ! empty( $authors[ $single_post->post_author ] ) ) ? $authors[ $single_post->post_author ] : get_user_by( 'id', $single_post->post_author );
+				$authors[ $single_post->post_author ] = $author;
 
-				$author_term = ( ! empty( $author_terms[$single_post->post_author] ) ) ? $author_terms[$single_post->post_author] : $coauthors_plus->update_author_term( $author );
-				$author_terms[$single_post->post_author] = $author_term;
+				$author_term = ( ! empty( $author_terms[ $single_post->post_author ] ) ) ? $author_terms[ $single_post->post_author ] : $coauthors_plus->update_author_term( $author );
+				$author_terms[ $single_post->post_author ] = $author_term;
 
 				wp_set_post_terms( $single_post->ID, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy );
 				WP_CLI::line( "{$count}/{$posts->found_posts}) Added - Post #{$single_post->ID} '{$single_post->post_title}' now has an author term for: " . $author->user_nicename );
@@ -103,7 +103,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$posts = new WP_Query( $this->args );
 		}
 		WP_CLI::line( "Updating author terms with new counts" );
-		foreach( $authors as $author ) {
+		foreach ( $authors as $author ) {
 			$coauthors_plus->update_author_term( $author );
 		}
 
@@ -144,16 +144,16 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$missing_coauthors = array();
 
 		$posts = new WP_Query( $this->args );
-		while( $posts->post_count ) {
+		while ( $posts->post_count ) {
 
-			foreach( $posts->posts as $single_post ) {
+			foreach ( $posts->posts as $single_post ) {
 				$posts_total++;
 
 				// See if the value in the post meta field is the same as any of the existing coauthors
 				$original_author = get_post_meta( $single_post->ID, $this->args['meta_key'], true );
 				$existing_coauthors = get_coauthors( $single_post->ID );
 				$already_associated = false;
-				foreach( $existing_coauthors as $existing_coauthor ) {
+				foreach ( $existing_coauthors as $existing_coauthor ) {
 					if ( $original_author == $existing_coauthor->user_login )
 						$already_associated = true;
 				}
@@ -226,7 +226,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$post_types = implode( "','", $coauthors_plus->supported_post_types );
 		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
 		$affected = 0;
-		foreach( $posts as $post_id ) {
+		foreach ( $posts as $post_id ) {
 			if ( $coauthors = wp_get_post_terms( $post_id, $coauthors_plus->coauthor_taxonomy ) ) {
 				WP_CLI::line( sprintf( __( "Skipping - Post #%d already has co-authors assigned: %s", 'co-authors-plus' ), $post_id, implode( ', ', wp_list_pluck( $coauthors, 'slug' ) ) ) );
 				continue;
@@ -293,14 +293,14 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'new_term_exists' => 0,
 				'success' => 0,
 			);
-		foreach( $authors_to_migrate as $old_user => $new_user ) {
+		foreach ( $authors_to_migrate as $old_user => $new_user ) {
 
 			if ( is_numeric( $new_user ) )
 				$new_user = get_user_by( 'id', $new_user )->user_login;
 
 			// The old user should exist as a term
 			$old_term = $coauthors_plus->get_author_term( $coauthors_plus->get_coauthor_by( 'login', $old_user ) );
-			if ( !$old_term ) {
+			if ( ! $old_term ) {
 				WP_CLI::line( "Error: Term '{$old_user}' doesn't exist, skipping" );
 				$results->old_term_missing++;
 				continue;
@@ -452,8 +452,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		WP_CLI::line( "Found $posts->found_posts posts to update." );
 
-		while( $posts->post_count ) {
-			foreach( $posts->posts as $post ) {
+		while ( $posts->post_count ) {
+			foreach ( $posts->posts as $post ) {
 				$coauthors = get_coauthors( $post->ID );
 
 				if ( ! is_array( $coauthors ) || ! count( $coauthors ) )
@@ -465,7 +465,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 				if ( ! $dry ) {
 					// Remove the $from_userlogin from $coauthors
-					foreach( $coauthors as $index => $user_login ) {
+					foreach ( $coauthors as $index => $user_login ) {
 						if ( $from_userlogin === $user_login ) {
 							unset( $coauthors[ $index ] );
 
@@ -519,9 +519,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$this->args = wp_parse_args( $assoc_args, $defaults );
 
 		$posts = new WP_Query( $this->args );
-		while( $posts->post_count ) {
+		while ( $posts->post_count ) {
 
-			foreach( $posts->posts as $single_post ) {
+			foreach ( $posts->posts as $single_post ) {
 
 				$terms = wp_get_post_terms( $single_post->ID, $coauthors_plus->coauthor_taxonomy );
 				if ( empty( $terms ) ) {
@@ -557,7 +557,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
 		WP_CLI::line( "Now migrating up to " . count( $author_terms ) . " terms" );
-		foreach( $author_terms as $author_term ) {
+		foreach ( $author_terms as $author_term ) {
 			// Term is already prefixed. We're good.
 			if ( preg_match( '#^cap\-#', $author_term->slug, $matches ) ) {
 				WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) is already prefixed, skipping" );
@@ -594,7 +594,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		global $coauthors_plus;
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
 		WP_CLI::line( "Now updating " . count( $author_terms ) . " terms" );
-		foreach( $author_terms as $author_term ) {
+		foreach ( $author_terms as $author_term ) {
 			$old_count = $author_term->count;
 			$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $author_term->slug );
 			$coauthors_plus->update_author_term( $coauthor );
@@ -605,7 +605,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 		// Create author terms for any users that don't have them
 		$users = get_users();
-		foreach( $users as $user ) {
+		foreach ( $users as $user ) {
 			$term = $coauthors_plus->get_author_term( $user );
 			if ( empty( $term ) || empty( $term->description ) ) {
 				$coauthors_plus->update_author_term( $user );
@@ -629,8 +629,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$count = 0;
 			WP_CLI::line( "Now inspecting or updating {$posts->found_posts} Guest Authors." );
 
-			while( $posts->post_count ) {
-				foreach( $posts->posts as $guest_author_id ) {
+			while ( $posts->post_count ) {
+				foreach ( $posts->posts as $guest_author_id ) {
 					$count++;
 
 					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $guest_author_id );
@@ -674,7 +674,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		WP_CLI::line( "Found " . count( $ids ) . " revisions to look through" );
 		$affected = 0;
-		foreach( $ids as $post_id ) {
+		foreach ( $ids as $post_id ) {
 
 			$terms = wp_get_post_terms( $post_id, 'author' );
 			if ( ! $terms )
@@ -766,11 +766,11 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			} else {
 				$row_data = array_map( 'trim', $data );
 				$author_data = array();
-				foreach( (array) $row_data as $col_num => $val ) {
+				foreach ( (array) $row_data as $col_num => $val ) {
 						// Don't use the value of the field key isn't set
-						if ( empty( $field_keys[$col_num] ) )
+						if ( empty( $field_keys[ $col_num ] ) )
 							continue;
-					$author_data[$field_keys[$col_num]] = $val;
+					$author_data[ $field_keys[ $col_num ] ] = $val;
 				}
 
 				$authors[] = $author_data;
@@ -851,7 +851,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		$wpdb->queries = array(); // or define( 'WP_IMPORTING', true );
 
-		if ( !is_object( $wp_object_cache ) )
+		if ( ! is_object( $wp_object_cache ) )
 			return;
 
 		$wp_object_cache->group_ops = array();
@@ -859,7 +859,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$wp_object_cache->memcache_debug = array();
 		$wp_object_cache->cache = array();
 
-		if( is_callable( $wp_object_cache, '__remoteset' ) )
+		if ( is_callable( $wp_object_cache, '__remoteset' ) )
 			$wp_object_cache->__remoteset(); // important
 	}
 

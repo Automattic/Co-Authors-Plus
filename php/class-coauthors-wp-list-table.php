@@ -12,7 +12,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	var $is_search = false;
 
 	function __construct() {
-		if( !empty( $_REQUEST['s'] ) )
+		if ( ! empty( $_REQUEST['s'] ) )
 			$this->is_search = true;
 
 		parent::__construct( array(
@@ -36,15 +36,15 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			);
 		$_sortable = apply_filters( "coauthors_guest_author_sortable_columns", $this->get_sortable_columns() );
 
-		foreach( (array)$_sortable as $id => $data ) {
+		foreach ( (array)$_sortable as $id => $data ) {
 			if ( empty( $data ) )
 				continue;
 
 			$data = (array) $data;
-			if ( !isset( $data[1] ) )
+			if ( ! isset( $data[1] ) )
 				$data[1] = false;
 
-			$sortable[$id] = $data;
+			$sortable[ $id ] = $data;
 		}
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
@@ -62,7 +62,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			);
 
 		if ( isset( $_REQUEST['orderby'] ) ) {
-			switch( $_REQUEST['orderby'] ) {
+			switch ( $_REQUEST['orderby'] ) {
 				case 'display_name':
 					$args['orderby'] = 'title';
 					break;
@@ -89,7 +89,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			$this->active_filter = 'show-all';
 		}
 
-		switch( $this->active_filter ) {
+		switch ( $this->active_filter ) {
 			case 'with-linked-account':
 			case 'without-linked-account':
 				$args['meta_key'] = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
@@ -101,16 +101,16 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				break;
 		}
 
-		if( $this->is_search )
+		if ( $this->is_search )
 			add_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
 
 		$author_posts = new WP_Query( $args );
 		$items = array();
-		foreach( $author_posts->get_posts() as $author_post ) {
+		foreach ( $author_posts->get_posts() as $author_post ) {
 			$items[] = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $author_post->ID );
 		}
 
-		if( $this->is_search )
+		if ( $this->is_search )
 			remove_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
 
 		$this->items = $items;
@@ -124,7 +124,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function filter_query_for_search( $where ) {
 		global $wpdb;
 		$var = '%' . sanitize_text_field( $_REQUEST['s'] ) . '%';
-		$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var);
+		$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var );
 		return $where;
 	}
 
@@ -170,7 +170,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	 */
 	function column_default( $item, $column_name ) {
 
-		switch( $column_name ) {
+		switch ( $column_name ) {
 			case 'first_name':
 			case 'last_name':
 				return $item->$column_name;
@@ -257,9 +257,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 		?><div class="alignleft actions"><?php
 		if ( 'top' == $which ) {
-			if ( !empty( $this->filters ) ) {
+			if ( ! empty( $this->filters ) ) {
 				echo '<select name="filter">';
-				foreach( $this->filters as $key => $value ) {
+				foreach ( $this->filters as $key => $value ) {
 					echo '<option value="' . esc_attr( $key ) . '" ' . selected( $this->active_filter, $key, false ) . '>' . esc_attr( $value ) . '</option>';
 				}
 				echo '</select>';
