@@ -564,7 +564,7 @@ class coauthors_plus {
 
 		$query .= " WHERE ({$having_terms_and_authors}) AND {$wpdb->posts}.post_type IN ({$post_types}) AND {$wpdb->posts}.post_status = 'publish'";
 
-		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( if ( {$wpdb->term_taxonomy}.taxonomy = '%s', if ( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy );
+		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF ( {$wpdb->term_taxonomy}.taxonomy = '%s', IF ( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy );
 
 		$count = $wpdb->query( $query );
 		$wpdb->update( $wpdb->term_taxonomy, array( 'count' => $count ), array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
@@ -669,7 +669,7 @@ class coauthors_plus {
 				return $groupby;
 
 			if ( $this->having_terms ) {
-				$having = 'MAX( if ( ' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\', if ( ' . $this->having_terms . ',2,1 ),0 ) ) <> 1 ';
+				$having = 'MAX( IF ( ' . $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\', IF ( ' . $this->having_terms . ',2,1 ),0 ) ) <> 1 ';
 				$groupby = $wpdb->posts . '.ID HAVING ' . $having;
 			}
 		}
