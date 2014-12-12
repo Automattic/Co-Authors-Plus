@@ -1211,7 +1211,7 @@ class coauthors_plus {
 		$post_id = isset( $args[2] ) ? $args[2] : 0;
 
 		$obj = get_post_type_object( get_post_type( $post_id ) );
-		if ( ! $obj )
+		if ( ! $obj || 'revision' == $obj->name )
 			return $allcaps;
 
 		$caps_to_modify = array(
