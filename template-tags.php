@@ -438,6 +438,8 @@ function coauthors_wp_list_authors( $args = array() ) {
 		$authors[$author_term->name]->post_count = $author_term->count;
 	}
 
+	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
+
 	foreach ( (array) $authors as $author ) {
 
 		$link = '';
