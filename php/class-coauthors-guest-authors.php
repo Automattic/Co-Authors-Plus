@@ -746,7 +746,7 @@ class CoAuthors_Guest_Authors
 				continue;
 			}
 
-			if ( isset( $author_field['type'] ) && 'checkbox' === $author_field['type'] && ! isset( $_POST[ $key ] ) )
+			if ( isset( $author_field['input'] ) && 'checkbox' === $author_field['input'] && ! isset( $_POST[ $key ] ) )
 				delete_post_meta( $post_id, $key );
 
 			if ( ! isset( $_POST[ $key ] ) )
