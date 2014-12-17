@@ -140,7 +140,8 @@ class coauthors_plus {
 
 		// Maybe automatically apply our template tags
 		if ( apply_filters( 'coauthors_auto_apply_template_tags', false ) ) {
-			new CoAuthors_Template_Filters;
+			global $coauthors_plus_template_filters;
+			$coauthors_plus_template_filters = new CoAuthors_Template_Filters;
 		}
 
 	}
