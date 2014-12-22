@@ -691,7 +691,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * Subcommand to create guest authors from an author list in a WXR file
 	 *
 	 * @subcommand create-guest-authors-from-wxr
-	 * @synopsis --file=</path/to/file.wxr>
+	 * @synopsis --file=<file>
 	 */
 	public function create_guest_authors_from_wxr( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -738,7 +738,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * Subcommand to create guest authors from an author list in a CSV file
 	 *
 	 * @subcommand create-guest-authors-from-csv
-	 * @synopsis --file=</path/to/file.csv>
+	 * @synopsis --file=<file>
 	 */
 	public function create_guest_authors_from_csv( $args, $assoc_args ) {
 		global $coauthors_plus;
