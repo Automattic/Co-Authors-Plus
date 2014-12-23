@@ -127,7 +127,7 @@ class CoAuthors_Guest_Authors
 				32,
 				64,
 				96,
-				128
+				128,
 			);
 		$this->avatar_sizes = apply_filters( 'coauthors_guest_author_avatar_sizes', $this->avatar_sizes );
 		foreach ( $this->avatar_sizes as $size ) {
