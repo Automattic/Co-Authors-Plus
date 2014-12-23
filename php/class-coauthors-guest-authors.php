@@ -541,7 +541,7 @@ class CoAuthors_Guest_Authors
 			unset( $linked_account_user_ids[ $key ] );
 
 		echo '<p><label>' . __( 'WordPress User Mapping', 'co-authors-plus' ) . '</label> ';
-		wp_dropdown_users( array(
+		wp_dropdown_users( apply_filters( 'coauthors_guest_author_linked_account_args', array(
 			'show_option_none' => __( '-- Not mapped --', 'co-authors-plus' ),
 			'name' => esc_attr( $this->get_post_meta_key( 'linked_account' ) ),
 			// If we're adding an author or if there is no post author (0), then use -1 (which is show_option_none).
@@ -549,7 +549,7 @@ class CoAuthors_Guest_Authors
 			'selected' => $linked_account_id,
 			// Don't let user accounts to be linked to more than one guest author
 			'exclude'  => $linked_account_user_ids,
-		) );
+		) ) );
 		echo '</p>';
 
 		remove_filter( 'wp_dropdown_users', array( $this, 'filter_wp_dropdown_users_to_disable' ) );
