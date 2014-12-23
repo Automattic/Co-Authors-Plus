@@ -403,7 +403,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			'from'      => null,
 			'to'        => null,
 			'post_type'	=> 'post',
-			'dry'		=> false
+			'dry'		=> false,
 		);
 
 		$assoc_args = array_merge( $defaults, $assoc_args );
@@ -441,8 +441,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				array(
 					'taxonomy' 	=> $coauthors_plus->coauthor_taxonomy,
 					'field'		=> 'slug',
-					'terms'		=> array( $from_userlogin_prefixed )
-				)
+					'terms'		=> array( $from_userlogin_prefixed ),
+				),
 			)
 		);
 
@@ -622,7 +622,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'posts_per_page'    => 100,
 				'paged'             => 1,
 				'update_meta_cache' => false,
-				'fields'            => 'ids'
+				'fields'            => 'ids',
 			);
 
 			$posts = new WP_Query( $args );

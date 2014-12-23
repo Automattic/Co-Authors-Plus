@@ -160,7 +160,7 @@ class coauthors_plus {
 			'public' => false,
 			'sort' => true,
 			'args' => array( 'orderby' => 'term_order' ),
-			'show_ui' => false
+			'show_ui' => false,
 		);
 
 		// If we use the nasty SQL query, we need our custom callback. Otherwise, we still need to flush cache.

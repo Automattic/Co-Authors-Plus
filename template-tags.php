@@ -196,7 +196,7 @@ function coauthors( $between = null, $betweenLast = null, $before = null, $after
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), null, $echo );
 }
 
@@ -215,7 +215,7 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), null, $echo );
 }
 
@@ -233,7 +233,7 @@ function coauthors_posts_links_single( $author ) {
 		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $author->display_name ),
 		'class' => 'author url fn',
 		'text' => $author->display_name,
-		'after_html' => ''
+		'after_html' => '',
 	);
 	$args = apply_filters( 'coauthors_posts_link', $args, $author );
 	$single_link = sprintf(
@@ -261,7 +261,7 @@ function coauthors_firstnames( $between = null, $betweenLast = null, $before = n
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), 'first_name', $echo );
 }
 
@@ -279,7 +279,7 @@ function coauthors_lastnames( $between = null, $betweenLast = null, $before = nu
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), 'last_name', $echo );
 }
 
@@ -297,7 +297,7 @@ function coauthors_nicknames( $between = null, $betweenLast = null, $before = nu
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), 'nickname', $echo );
 }
 
@@ -315,7 +315,7 @@ function coauthors_links( $between = null, $betweenLast = null, $before = null, 
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), null, $echo );
 }
 
@@ -333,7 +333,7 @@ function coauthors_emails( $between = null, $betweenLast = null, $before = null,
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), 'user_email', $echo );
 }
 
@@ -369,7 +369,7 @@ function coauthors_IDs( $between = null, $betweenLast = null, $before = null, $a
 		'between' => $between,
 		'betweenLast' => $betweenLast,
 		'before' => $before,
-		'after' => $after
+		'after' => $after,
 	), null, $echo );
 }
 
