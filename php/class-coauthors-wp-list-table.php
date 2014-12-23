@@ -12,8 +12,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	var $is_search = false;
 
 	function __construct() {
-		if ( ! empty( $_REQUEST['s'] ) )
+		if ( ! empty( $_REQUEST['s'] ) ) {
 			$this->is_search = true;
+		}
 
 		parent::__construct( array(
 				'plural' => __( 'Co-Authors', 'co-authors-plus' ),
@@ -37,12 +38,14 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$_sortable = apply_filters( "coauthors_guest_author_sortable_columns", $this->get_sortable_columns() );
 
 		foreach ( (array)$_sortable as $id => $data ) {
-			if ( empty( $data ) )
+			if ( empty( $data ) ) {
 				continue;
+			}
 
 			$data = (array) $data;
-			if ( ! isset( $data[1] ) )
+			if ( ! isset( $data[1] ) ) {
 				$data[1] = false;
+			}
 
 			$sortable[ $id ] = $data;
 		}
@@ -93,16 +96,18 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			case 'with-linked-account':
 			case 'without-linked-account':
 				$args['meta_key'] = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
-				if ( 'with-linked-account' == $this->active_filter )
+				if ( 'with-linked-account' == $this->active_filter ) {
 					$args['meta_compare'] = '!=';
-				else
+				} else {
 					$args['meta_compare'] = '=';
+				}
 				$args['meta_value'] = '0';
 				break;
 		}
 
-		if ( $this->is_search )
+		if ( $this->is_search ) {
 			add_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
+		}
 
 		$author_posts = new WP_Query( $args );
 		$items = array();
@@ -110,8 +115,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			$items[] = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $author_post->ID );
 		}
 
-		if ( $this->is_search )
+		if ( $this->is_search ) {
 			remove_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
+		}
 
 		$this->items = $items;
 
@@ -243,10 +249,11 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function column_posts( $item ) {
 		global $coauthors_plus;
 		$term = $coauthors_plus->get_author_term( $item );
-		if ( $term )
+		if ( $term ) {
 			$count = $term->count;
-		else
+		} else {
 			$count = 0;
+		}
 		return '<a href="' . esc_url( add_query_arg( 'author_name', $item->user_login, admin_url( 'edit.php' ) ) ) . '">' . $count . '</a>';
 	}
 
