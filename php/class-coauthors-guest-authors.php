@@ -688,12 +688,25 @@ class CoAuthors_Guest_Authors
 			wp_die( __( 'Guest authors cannot be created without display names.', 'co-authors-plus' ) );
 		$post_data['post_name'] = $this->get_post_meta_key( $slug );
 
+		// get linked account for validation
+		if ( !empty( $original_args['cap-linked_account'] ) ) {
+			$user = get_user_by( 'id', $original_args['cap-linked_account'] );
+			if ( !empty( $user ) ) {
+				$linked_account = $user->user_login;
+			}
+		}
+
+		// No link account passed, check existing linked account
+		if ( empty( $linked_account) ) {
+			$linked_account = get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true );
+		}
+
 		// Guest authors can't be created with the same user_login as a user
 		$user_nicename = str_replace( 'cap-', '', $slug );
 		$user = get_user_by( 'slug', $user_nicename );
 		if ( $user
 			&& is_user_member_of_blog( $user->ID, get_current_blog_id() )
-			&& $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) )
+			&& $user->user_login != $linked_account )
 			wp_die( __( 'Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user on the Manage Users listing instead.', 'co-authors-plus' ) );
 
 		// Guest authors can't have the same post_name value
