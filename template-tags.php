@@ -4,7 +4,7 @@ function get_coauthors( $post_id = 0 ) {
 	global $post, $post_ID, $coauthors_plus, $wpdb;
 
 	$coauthors = array();
-	$post_id = (int)$post_id;
+	$post_id = (int) $post_id;
 	if ( ! $post_id && $post_ID ) {
 		$post_id = $post_ID;
 	}
@@ -82,9 +82,9 @@ class CoAuthorsIterator {
 
 	function CoAuthorsIterator( $postID = 0 ){
 		global $post, $authordata, $wpdb;
-		$postID = (int)$postID;
+		$postID = (int) $postID;
 		if ( ! $postID && $post ) {
-			$postID = (int)$post->ID;
+			$postID = (int) $post->ID;
 		}
 
 		if ( ! $postID ) {
@@ -447,7 +447,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 	$term_args = array(
 			'orderby'      => 'name',
 			'hide_empty'   => 0,
-			'number'       => (int)$args['number'],
+			'number'       => (int) $args['number'],
 		);
 	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
 	$authors = array();

@@ -296,7 +296,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		// For each author to migrate, check whether the term exists,
 		// whether the target term exists, and only do the migration if both are met
-		$results = (object)array(
+		$results = (object) array(
 				'old_term_missing' => 0,
 				'new_term_exists' => 0,
 				'success' => 0,

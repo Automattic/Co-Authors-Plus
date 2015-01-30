@@ -28,7 +28,7 @@ class CoAuthors_Template_Filters {
 			return $the_author;
 		}
 
-		$coauthors = (array)get_coauthors();
+		$coauthors = (array) get_coauthors();
 		if ( count( $coauthors ) >= 1 && isset( $coauthors[0]->display_name ) ) {
 			return $coauthors[0]->display_name;
 		} else {

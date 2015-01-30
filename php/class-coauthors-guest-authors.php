@@ -229,7 +229,7 @@ class CoAuthors_Guest_Authors
 		}
 
 		// Make sure the guest author actually exists
-		$guest_author = $this->get_guest_author_by( 'ID', (int)$_POST['id'] );
+		$guest_author = $this->get_guest_author_by( 'ID', (int) $_POST['id'] );
 		if ( ! $guest_author ) {
 			wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 		}
@@ -290,7 +290,7 @@ class CoAuthors_Guest_Authors
 
 		$search = sanitize_text_field( $_GET['q'] );
 		if ( ! empty( $_GET['guest_author'] ) ) {
-			$ignore = array( $this->get_guest_author_by( 'ID', (int)$_GET['guest_author'] )->user_login );
+			$ignore = array( $this->get_guest_author_by( 'ID', (int) $_GET['guest_author'] )->user_login );
 		} else {
 			$ignore = array();
 		}
@@ -299,7 +299,7 @@ class CoAuthors_Guest_Authors
 		$retval = array();
 		foreach ( $results as $user_login ) {
 			$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $user_login );
-			$retval[] = (object)array(
+			$retval[] = (object) array(
 					'display_name'       => $coauthor->display_name,
 					'user_login'         => $coauthor->user_login,
 					'id'                 => $coauthor->user_nicename,
@@ -453,7 +453,7 @@ class CoAuthors_Guest_Authors
 			}
 
 			// Make sure the guest author actually exists
-			$guest_author = $this->get_guest_author_by( 'ID', (int)$_GET['id'] );
+			$guest_author = $this->get_guest_author_by( 'ID', (int) $_GET['id'] );
 			if ( ! $guest_author ) {
 				wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 			}
@@ -469,7 +469,7 @@ class CoAuthors_Guest_Authors
 			// Hidden stuffs
 			echo '<input type="hidden" name="action" value="delete-guest-author" />';
 			wp_nonce_field( 'delete-guest-author' );
-			echo '<input type="hidden" id="id" name="id" value="' . esc_attr( (int)$_GET['id'] ) . '" />';
+			echo '<input type="hidden" id="id" name="id" value="' . esc_attr( (int) $_GET['id'] ) . '" />';
 			echo '<fieldset><ul style="list-style-type:none;">';
 			// Reassign to another user
 			echo '<li class="hide-if-no-js"><label for="reassign-another">';
@@ -895,9 +895,9 @@ class CoAuthors_Guest_Authors
 		$guest_author['user_nicename'] = sanitize_title( $guest_author['user_login'] );
 		$guest_author['type'] = 'guest-author';
 
-		wp_cache_set( $cache_key, (object)$guest_author, self::$cache_group );
+		wp_cache_set( $cache_key, (object) $guest_author, self::$cache_group );
 
-		return (object)$guest_author;
+		return (object) $guest_author;
 	}
 
 	/**
@@ -934,7 +934,7 @@ class CoAuthors_Guest_Authors
 	 */
 	function get_guest_author_fields( $groups = 'all' ) {
 
-		$groups = (array)$groups;
+		$groups = (array) $groups;
 		$global_fields = array(
 				// Hidden (included in object, no UI elements)
 				array(
