@@ -37,7 +37,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			);
 		$_sortable = apply_filters( "coauthors_guest_author_sortable_columns", $this->get_sortable_columns() );
 
-		foreach ( (array)$_sortable as $id => $data ) {
+		foreach ( (array) $_sortable as $id => $data ) {
 			if ( empty( $data ) ) {
 				continue;
 			}

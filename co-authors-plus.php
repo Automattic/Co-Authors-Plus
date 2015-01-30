@@ -525,7 +525,7 @@ class coauthors_plus {
 		$tt_ids = implode( ', ', array_map( 'intval', $tt_ids ) );
 		$term_ids = $wpdb->get_results( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN ($tt_ids)" );
 
-		foreach ( (array)$term_ids as $term_id_result ) {
+		foreach ( (array) $term_ids as $term_id_result ) {
 			$term = get_term_by( 'id', $term_id_result->term_id, $this->coauthor_taxonomy );
 			$this->update_author_term_post_count( $term );
 		}
@@ -900,7 +900,7 @@ class coauthors_plus {
 		global $wpdb;
 		$orderby = 'ORDER BY tr.term_order';
 		$order = 'ASC';
-		$object_ids = (int)$object_ids;
+		$object_ids = (int) $object_ids;
 		$query = $wpdb->prepare( "SELECT t.slug, t.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $taxonomies, $object_ids );
 		$raw_coauthors = $wpdb->get_results( $query );
 		$terms = array();
@@ -1249,7 +1249,7 @@ class coauthors_plus {
 	public function is_valid_page() {
 		global $pagenow;
 
-		return (bool)in_array( $pagenow, $this->_pages_whitelist );
+		return (bool) in_array( $pagenow, $this->_pages_whitelist );
 	}
 
 	/**
