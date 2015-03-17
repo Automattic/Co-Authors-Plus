@@ -831,7 +831,7 @@ class CoAuthors_Guest_Authors
 		switch ( $key ) {
 			case 'ID':
 			case 'id':
-				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID=%d", $value );
+				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID=%d AND post_type = %s", $value, $this->post_type );
 				$post_id = $wpdb->get_var( $query );
 				if ( empty( $post_id ) ) {
 					$post_id = '0';
