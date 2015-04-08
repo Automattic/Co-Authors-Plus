@@ -56,7 +56,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$authors = array();
 		$author_terms = array();
 
-		$args = array(
+		$this->args = array(
 				'order'            => 'ASC',
 				'orderby'          => 'ID',
 				'post_type'         => $coauthors_plus->supported_post_types,
@@ -65,7 +65,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'update_meta_cache' => false,
 			);
 
-		$posts = new WP_Query( $args );
+		$posts = new WP_Query( $this->args );
 		$affected = 0;
 		$count = 0;
 		WP_CLI::line( "Now inspecting or updating {$posts->found_posts} total posts." );
