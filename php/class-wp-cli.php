@@ -503,6 +503,11 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				}
 			}
 
+			// In dry mode, we must manually advance the page
+			if ( $dry ) {
+				$query_args['paged']++;
+			}
+
 			$this->stop_the_insanity();
 
 			$posts = new WP_Query( $query_args );
