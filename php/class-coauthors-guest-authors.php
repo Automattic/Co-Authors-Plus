@@ -271,7 +271,7 @@ class CoAuthors_Guest_Authors
 		}
 
 		// Redirect to safety
-		$redirect_to = add_query_arg( $args, admin_url( $this->parent_page ) );
+		$redirect_to = add_query_arg( array_map( 'rawurlencode', $args ), admin_url( $this->parent_page ) );
 		wp_safe_redirect( $redirect_to );
 		exit;
 	}
@@ -1348,7 +1348,7 @@ class CoAuthors_Guest_Authors
 					'user_id' => $user_object->ID,
 					'nonce' => wp_create_nonce( 'create-guest-author' ),
 				);
-			$create_guest_author_link = add_query_arg( $query_args, admin_url( $this->parent_page ) );
+			$create_guest_author_link = add_query_arg( array_map( 'rawurlencode', $query_args ), admin_url( $this->parent_page ) );
 			if ( apply_filters( 'coauthors_show_create_profile_user_link', false ) ) {
 				$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create Profile', 'co-authors-plus' ) . '</a>';
 			}
@@ -1396,7 +1396,7 @@ class CoAuthors_Guest_Authors
 		}
 
 		if ( empty( $link ) ) {
-			$link = add_query_arg( 'author_name', $author_nicename, home_url() );
+			$link = add_query_arg( 'author_name', rawurlencode( $author_nicename ), home_url() );
 		} else {
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
@@ -1404,7 +1404,7 @@ class CoAuthors_Guest_Authors
 				$link = str_replace( '%author%', $author_nicename, $link );
 				$link = home_url( user_trailingslashit( $link ) );
 			} else {
-				$link = add_query_arg( 'author_name', $author_nicename, home_url() );
+				$link = add_query_arg( 'author_name', rawurlencode( $author_nicename ), home_url() );
 			}
 		}
 		return $link;

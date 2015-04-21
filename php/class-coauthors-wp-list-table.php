@@ -200,7 +200,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'id'           => $item->ID,
 				'_wpnonce'     => wp_create_nonce( 'guest-author-delete' ),
 			);
-		$item_delete_link = add_query_arg( $args, menu_page_url( 'view-guest-authors', false ) );
+		$item_delete_link = add_query_arg( array_map( 'rawurlencode', $args ), menu_page_url( 'view-guest-authors', false ) );
 		$item_view_link = get_author_posts_url( $item->ID, $item->user_nicename );
 
 		$output = '';
@@ -254,7 +254,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		} else {
 			$count = 0;
 		}
-		return '<a href="' . esc_url( add_query_arg( 'author_name', $item->user_login, admin_url( 'edit.php' ) ) ) . '">' . $count . '</a>';
+		return '<a href="' . esc_url( add_query_arg( 'author_name', rawurlencode( $item->user_login ), admin_url( 'edit.php' ) ) ) . '">' . $count . '</a>';
 	}
 
 	/**
