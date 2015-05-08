@@ -101,8 +101,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			$this->stop_the_insanity();
 
-			$this->args['paged']++;
-			$posts = new WP_Query( $this->args );
+			$args['paged']++;
+			$posts = new WP_Query( $args );
 		}
 		WP_CLI::line( "Updating author terms with new counts" );
 		foreach ( $authors as $author ) {
