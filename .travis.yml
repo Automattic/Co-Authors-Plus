@@ -12,4 +12,6 @@ env:
 before_script:
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION 
 
-script: phpunit
+script:
+    - make lint
+    - make phpunit
