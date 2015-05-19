@@ -201,7 +201,7 @@ class CoAuthors_Guest_Authors
 		// Redirect to the edit Guest Author screen
 		$edit_link = get_edit_post_link( $post_id, 'redirect' );
 		$redirect_to = add_query_arg( 'message', 'guest-author-created', $edit_link );
-		wp_safe_redirect( $redirect_to );
+		wp_safe_redirect( esc_url_raw( $redirect_to ) );
 		exit;
 
 	}
@@ -272,7 +272,7 @@ class CoAuthors_Guest_Authors
 
 		// Redirect to safety
 		$redirect_to = add_query_arg( array_map( 'rawurlencode', $args ), admin_url( $this->parent_page ) );
-		wp_safe_redirect( $redirect_to );
+		wp_safe_redirect( esc_url_raw( $redirect_to ) );
 		exit;
 	}
 
