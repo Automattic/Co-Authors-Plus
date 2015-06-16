@@ -172,7 +172,7 @@ jQuery(document).ready(function () {
 
 		if(!inputName) inputName = 'coauthorsinput[]';
 
-		var $co = jQuery('<input/>');
+		var $co = jQuery('<input type="text" />');
 
 		$co.attr({
 			'class': 'coauthor-suggest'

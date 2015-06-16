@@ -385,7 +385,9 @@ class coauthors_plus {
 		?>
 
 		<div id="coauthors-edit" class="hide-if-no-js">
-			<p><?php _e( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ); ?></p>
+			<?php add_thickbox(); ?>
+			<a class="button thickbox" href="<?php echo get_bloginfo('url'); ?>/wp-admin/users.php?&page=view-guest-authorsTB_iframe=true&width=1200&height=640"><small><?php _e( 'Guest Authors', 'co-authors-plus' ); ?></small></a>
+			<p><em><?php _e( 'Click to edit. Drag to order.', 'co-authors-plus' ); ?></em></p>
 		</div>
 
 		<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
@@ -1169,8 +1171,8 @@ class coauthors_plus {
 			'delete_label' => __( 'Remove', 'co-authors-plus' ),
 			'confirm_delete' => __( 'Are you sure you want to remove this author?', 'co-authors-plus' ),
 			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
-			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
-			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
+			'search_box_text' => __( 'Add from Users...', 'co-authors-plus' ),
+			'help_text' => __( 'Click to edit, and drag to order', 'co-authors-plus' ),
 			);
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
 
