@@ -101,8 +101,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			$this->stop_the_insanity();
 
-			$this->args['paged']++;
-			$posts = new WP_Query( $this->args );
+			$args['paged']++;
+			$posts = new WP_Query( $args );
 		}
 		WP_CLI::line( 'Updating author terms with new counts' );
 		foreach ( $authors as $author ) {
@@ -501,6 +501,11 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				} else {
 					WP_CLI::line( $posts_total . ': Post #' . $post->ID . ' will be assigned "' . $to_userlogin . '" as a co-author' );
 				}
+			}
+
+			// In dry mode, we must manually advance the page
+			if ( $dry ) {
+				$query_args['paged']++;
 			}
 
 			$this->stop_the_insanity();

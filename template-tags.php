@@ -183,16 +183,14 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		}
 
 		// Append separators
-		if ( ! $i->is_first() && $i->count() > 2 ) {
-			$output .= $separators['between'];
+		if ( $i->count() - $i->position == 1 ) { // last author or only author
+			$output .= $author_text;
+		} elseif ( $i->count() - $i->position == 2 ) { // second to last
+			$output .= $author_text . $separators['betweenLast'];
+		} else {
+			$output .= $author_text . $separators['between'];
 		}
-
-		if ( $i->is_last() && $i->count() > 1 ) {
-			$output = rtrim( $output, $separators['between'] );
-			$output .= $separators['betweenLast'];
-		}
-
-		$output .= $author_text;
+		
 	} while ( $i->iterate() );
 
 	$output .= $separators['after'];
