@@ -35,7 +35,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'first_name'         => array( 'first_name', 'ASC' ),
 				'last_name'          => array( 'last_name', 'ASC' ),
 			);
-		$_sortable = apply_filters( "coauthors_guest_author_sortable_columns", $this->get_sortable_columns() );
+		$_sortable = apply_filters( 'coauthors_guest_author_sortable_columns', $this->get_sortable_columns() );
 
 		foreach ( (array) $_sortable as $id => $data ) {
 			if ( empty( $data ) ) {
@@ -154,7 +154,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'posts'          => __( 'Posts', 'co-authors-plus' ),
 			);
 
-		$columns = apply_filters( "coauthors_guest_author_manage_columns", $columns );
+		$columns = apply_filters( 'coauthors_guest_author_manage_columns', $columns );
 		return $columns;
 	}
 
@@ -184,7 +184,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				return '<a href="' . esc_attr( 'mailto:' . $item->user_email ) . '">' . esc_html( $item->user_email ) . '</a>';
 
 			default:
-				do_action( "coauthors_guest_author_custom_columns", $column_name, $item->ID );
+				do_action( 'coauthors_guest_author_custom_columns', $column_name, $item->ID );
 			break;
 		}
 	}
@@ -263,16 +263,16 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function extra_tablenav( $which ) {
 
 		?><div class="alignleft actions"><?php
-		if ( 'top' == $which ) {
-			if ( ! empty( $this->filters ) ) {
-				echo '<select name="filter">';
-				foreach ( $this->filters as $key => $value ) {
-					echo '<option value="' . esc_attr( $key ) . '" ' . selected( $this->active_filter, $key, false ) . '>' . esc_attr( $value ) . '</option>';
-				}
-				echo '</select>';
-			}
-			submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
+if ( 'top' == $which ) {
+	if ( ! empty( $this->filters ) ) {
+		echo '<select name="filter">';
+		foreach ( $this->filters as $key => $value ) {
+			echo '<option value="' . esc_attr( $key ) . '" ' . selected( $this->active_filter, $key, false ) . '>' . esc_attr( $value ) . '</option>';
 		}
+		echo '</select>';
+	}
+	submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
+}
 		?></div><?php
 	}
 
