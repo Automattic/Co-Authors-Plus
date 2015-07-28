@@ -178,7 +178,7 @@ class CoAuthors_Guest_Authors
 	 */
 	function handle_create_guest_author_action() {
 
-		if ( ! isset( $_GET['action'], $_GET['nonce'], $_GET['user_id'] ) || $_GET['action'] != 'cap-create-guest-author' ) {
+		if ( ! isset( $_GET['action'], $_GET['nonce'], $_GET['user_id'] ) || 'cap-create-guest-author' !== $_GET['action'] ) {
 			return;
 		}
 
@@ -364,7 +364,7 @@ class CoAuthors_Guest_Authors
 	function action_admin_enqueue_scripts() {
 		global $pagenow;
 		// Enqueue our guest author CSS on the related pages
-		if ( $this->parent_page == $pagenow && isset( $_GET['page'] ) && $_GET['page'] == 'view-guest-authors' ) {
+		if ( $this->parent_page == $pagenow && isset( $_GET['page'] ) && 'view-guest-authors' === $_GET['page'] ) {
 			wp_enqueue_script( 'jquery-select2', plugins_url( 'lib/select2/select2.min.js', dirname( __FILE__ ) ), array( 'jquery' ), COAUTHORS_PLUS_VERSION );
 			wp_enqueue_style( 'cap-jquery-select2-css', plugins_url( 'lib/select2/select2.css', dirname( __FILE__ ) ), false, COAUTHORS_PLUS_VERSION );
 
@@ -1008,7 +1008,7 @@ class CoAuthors_Guest_Authors
 			);
 		$fields_to_return = array();
 		foreach ( $global_fields as $single_field ) {
-			if ( in_array( $single_field['group'], $groups ) || $groups[0] == 'all' && $single_field['group'] != 'hidden' ) {
+			if ( in_array( $single_field['group'], $groups ) || 'all' === $groups[0] && 'hidden' !== $single_field['group'] ) {
 				$fields_to_return[] = $single_field;
 			}
 		}
@@ -1108,12 +1108,12 @@ class CoAuthors_Guest_Authors
 		// If the linked_account is changing, invalidate the cache of all linked accounts
 		// Don't regenerate though, as we haven't saved the new value
 		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
-		if ( $linked_account_key == $meta_key && $meta_value != get_post_meta( $object_id, $linked_account_key, true ) ) {
+		if ( $linked_account_key == $meta_key && get_post_meta( $object_id, $linked_account_key, true ) !== $meta_value ) {
 			$this->delete_guest_author_cache( $object_id );
 		}
 
 		// If one of the guest author meta values has changed, we'll need to invalidate all keys
-		if ( false !== strpos( $meta_key, 'cap-' ) && $meta_value != get_post_meta( $object_id, $meta_key, true ) ) {
+		if ( false !== strpos( $meta_key, 'cap-' ) && get_post_meta( $object_id, $meta_key, true ) !== $meta_value ) {
 			$this->delete_guest_author_cache( $object_id );
 		}
 
@@ -1443,7 +1443,7 @@ class CoAuthors_Guest_Authors
 			$link = home_url( "?feed=$feed&amp;author=" . $author->ID );
 		} else {
 			$link = get_author_posts_url( $author->ID );
-			$feed_link = ( $feed == get_default_feed() ) ? 'feed' : "feed/$feed";
+			$feed_link = ( get_default_feed() === $feed ) ? 'feed' : "feed/$feed";
 			$link = trailingslashit( $link ) . user_trailingslashit( $feed_link, 'feed' );
 		}
 

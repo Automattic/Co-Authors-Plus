@@ -94,7 +94,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				wp_set_post_terms( $single_post->ID, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy );
 				WP_CLI::line( "{$count}/{$posts->found_posts}) Added - Post #{$single_post->ID} '{$single_post->post_title}' now has an author term for: " . $author->user_nicename );
 				$affected++;
-				if ( $affected && $affected % 10 == 0 ) {
+				if ( $affected && 0 === $affected % 10 ) {
 					sleep( 3 );
 				}
 			}
@@ -242,7 +242,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$coauthors_plus->add_coauthors( $post_id, array( $coauthor->user_login ) );
 			WP_CLI::line( sprintf( __( "Updating - Adding %s's byline to post #%d", 'co-authors-plus' ), $coauthor->user_login, $post_id ) );
 			$affected++;
-			if ( $affected && $affected % 20 == 0 ) {
+			if ( $affected && 0 === $affected % 20 ) {
 				sleep( 5 );
 			}
 		}
@@ -787,7 +787,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		$row = 0;
 		while ( false !== ( $data = fgetcsv( $file ) ) ) {
-			if ( $row == 0 ) {
+			if ( 0 === $row ) {
 				$field_keys = array_map( 'trim', $data );
 				// TODO: bail if required fields not found
 			} else {

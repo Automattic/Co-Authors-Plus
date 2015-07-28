@@ -148,16 +148,16 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	$default_between_last = ( defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) ) ? COAUTHORS_DEFAULT_BETWEEN_LAST :  __( ' and ', 'co-authors-plus' );
 	$default_after = ( defined( 'COAUTHORS_DEFAULT_AFTER' ) ) ? COAUTHORS_DEFAULT_AFTER : '';
 
-	if ( ! isset( $separators['before'] ) || $separators['before'] === null ) {
+	if ( ! isset( $separators['before'] ) || null === $separators['before'] ) {
 		$separators['before'] = apply_filters( 'coauthors_default_before', $default_before );
 	}
-	if ( ! isset( $separators['between'] ) || $separators['between'] === null ) {
+	if ( ! isset( $separators['between'] ) || null ===  $separators['between'] ) {
 		$separators['between'] = apply_filters( 'coauthors_default_between', $default_between );
 	}
-	if ( ! isset( $separators['betweenLast'] ) || $separators['betweenLast'] === null ) {
+	if ( ! isset( $separators['betweenLast'] ) || null === $separators['betweenLast'] ) {
 		$separators['betweenLast'] = apply_filters( 'coauthors_default_between_last', $default_between_last );
 	}
-	if ( ! isset( $separators['after'] ) || $separators['after'] === null ) {
+	if ( ! isset( $separators['after'] ) || null === $separators['after'] ) {
 		$separators['after'] = apply_filters( 'coauthors_default_after', $default_after );
 	}
 
@@ -169,11 +169,11 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	do {
 		$author_text = '';
 
-		if ( $type == 'tag' ) {
+		if ( 'tag' === $type ) {
 			$author_text = $tag( $tag_args );
-		} elseif ( $type == 'field' && isset( $i->current_author->$tag ) ) {
+		} elseif ( 'field' === $type && isset( $i->current_author->$tag ) ) {
 			$author_text = $i->current_author->$tag;
-		} elseif ( $type == 'callback' && is_callable( $tag ) ) {
+		} elseif ( 'callback' === $type && is_callable( $tag ) ) {
 			$author_text = call_user_func( $tag, $i->current_author );
 		}
 

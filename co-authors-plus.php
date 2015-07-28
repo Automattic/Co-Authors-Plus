@@ -332,7 +332,7 @@ class coauthors_plus {
 		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
 		// and the else case below was always able to properly assign users based on wp_posts.post_author,
 		// but that's not possible with force_guest_authors = true.
-		if ( ! $post_id || $post_id == 0 || ( ! $post->post_author && ! $coauthors_plus->force_guest_authors ) || ( $current_screen->base == 'post' && $current_screen->action == 'add' ) ) {
+		if ( ! $post_id || 0 === $post_id || ( ! $post->post_author && ! $coauthors_plus->force_guest_authors ) || ( 'post' === $current_screen->base && 'add' === $current_screen->action ) ) {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
 			if ( $this->is_guest_authors_enabled() ) {
@@ -418,11 +418,11 @@ class coauthors_plus {
 
 		foreach ( $posts_columns as $key => $value ) {
 			$new_columns[ $key ] = $value;
-			if ( $key == 'title' ) {
+			if ( 'title' === $key ) {
 				$new_columns['coauthors'] = __( 'Authors', 'co-authors-plus' );
 			}
 
-			if ( $key == 'author' ) {
+			if ( 'author' === $key ) {
 				unset( $new_columns[ $key ] );
 			}
 		}
@@ -435,7 +435,7 @@ class coauthors_plus {
 	 * @param string $column_name
 	 */
 	function _filter_manage_posts_custom_column( $column_name ) {
-		if ( $column_name == 'coauthors' ) {
+		if ( 'coauthors' === $column_name ) {
 			global $post;
 			$authors = get_coauthors( $post->ID );
 
@@ -893,7 +893,7 @@ class coauthors_plus {
 	 */
 	function filter_wp_get_object_terms( $terms, $object_ids, $taxonomies, $args ) {
 
-		if ( ! isset( $_REQUEST['bulk_edit'] ) || $taxonomies != "'author'" ) {
+		if ( ! isset( $_REQUEST['bulk_edit'] ) || "'author'" !== $taxonomies ) {
 			return $terms;
 		}
 
