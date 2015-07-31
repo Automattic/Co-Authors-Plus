@@ -332,7 +332,7 @@ class coauthors_plus {
 		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
 		// and the else case below was always able to properly assign users based on wp_posts.post_author,
 		// but that's not possible with force_guest_authors = true.
-		if ( ! $post_id || 0 === $post_id || ( ! $post->post_author && ! $coauthors_plus->force_guest_authors ) || ( 'post' === $current_screen->base && 'add' === $current_screen->action ) ) {
+		if ( ! $post_id || 0 == $post_id || ( ! $post->post_author && ! $coauthors_plus->force_guest_authors ) || ( 'post' === $current_screen->base && 'add' === $current_screen->action ) ) {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
 			if ( $this->is_guest_authors_enabled() ) {
