@@ -1,8 +1,8 @@
 jQuery( document ).ready(function () {
 
 	/*
-     * Click handler for the delete button
-     * @param event
+	 * Click handler for the delete button
+	 * @param event
 	 */
 	var coauthors_delete_onclick = function(e){
 		if (confirm( coAuthorsPlusStrings.confirm_delete )) {
@@ -36,10 +36,10 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Save coauthor
-     * @param int Author ID
-     * @param string Author Name
-     * @param object The autosuggest input box
+	 * Save coauthor
+	 * @param int Author ID
+	 * @param string Author Name
+	 * @param object The autosuggest input box
 	 */
 	function coauthors_save_coauthor(author, co) {
 
@@ -54,10 +54,10 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Add coauthor
-     * @param string Author Name
-     * @param object The autosuggest input box
-     * @param boolean Initial set up or not?
+	 * Add coauthor
+	 * @param string Author Name
+	 * @param object The autosuggest input box
+	 * @param boolean Initial set up or not?
 	 */
 	//  function coauthors_add_coauthor(authorID, authorName, co, init, count){
 	function coauthors_add_coauthor(author, co, init, count){
@@ -103,10 +103,10 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Add the autosuggest box and text tag to the Co-Authors table
-     * @param object Autosuggest input box
-     * @param object Text tag
-     * @param
+	 * Add the autosuggest box and text tag to the Co-Authors table
+	 * @param object Autosuggest input box
+	 * @param object Text tag
+	 * @param
 	 */
 	function coauthors_add_to_table( co, tag, input, options ) {
 		if (co) {
@@ -125,8 +125,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Adds a delete and edit button next to an author
-     * @param object The row to which the new author should be added
+	 * Adds a delete and edit button next to an author
+	 * @param object The row to which the new author should be added
 	 */
 	function coauthors_insert_author_edit_cells($div, options){
 
@@ -156,9 +156,9 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Creates autosuggest input box
-     * @param string [optional] Name of the author
-     * @param string [optional] Name to be applied to the input box
+	 * Creates autosuggest input box
+	 * @param string [optional] Name of the author
+	 * @param string [optional] Name to be applied to the input box
 	 */
 	function coauthors_create_autosuggest(authorName, inputName) {
 
@@ -224,8 +224,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Blur handler for autosuggest input box
-     * @param event
+	 * Blur handler for autosuggest input box
+	 * @param event
 	 */
 	function coauthors_stop_editing(event) {
 
@@ -241,8 +241,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Creates the text tag for an author
-     * @param string Name of the author
+	 * Creates the text tag for an author
+	 * @param string Name of the author
 	 */
 	function coauthors_create_author_tag(author) {
 
@@ -284,8 +284,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Creates the text tag for an author
-     * @param string Name of the author
+	 * Creates the text tag for an author
+	 * @param string Name of the author
 	 */
 	function coauthors_create_author_hidden_input (author) {
 		var input = jQuery( '<input />' )
@@ -300,8 +300,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-     * Creates display for adding new author
-     * @param string Name of the author
+	 * Creates display for adding new author
+	 * @param string Name of the author
 	 */
 	/*
     function coauthors_new_author_create_display ( ) {
