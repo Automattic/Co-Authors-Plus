@@ -125,7 +125,6 @@ class CoAuthors_Guest_Authors
 		// Some of the common sizes used by get_avatar
 		$this->avatar_sizes = array(
 				32,
-				50,
 				64,
 				96,
 				128,
