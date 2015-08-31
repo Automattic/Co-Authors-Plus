@@ -43,8 +43,8 @@
 			}
 			#coauthors-list .ui-sortable-helper .coauthor-tag {
 				cursor: cursor:grabbing;
-  				cursor:-moz-grabbing;
-  				cursor:-webkit-grabbing;
+					cursor:-moz-grabbing;
+					cursor:-webkit-grabbing;
 			}
 		#coauthors-list .coauthor-gravatar {
 			float: right;
