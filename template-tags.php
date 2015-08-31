@@ -190,7 +190,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		} else {
 			$output .= $author_text . $separators['between'];
 		}
-		
+
 	} while ( $i->iterate() );
 
 	$output .= $separators['after'];
@@ -251,9 +251,9 @@ function coauthors_posts_links_single( $author ) {
 		'before_html' => '',
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
 		'rel' => 'author',
-		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $author->display_name ),
+		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), apply_filters( 'the_author', $author->display_name ) ),
 		'class' => 'author url fn',
-		'text' => $author->display_name,
+		'text' => apply_filters( 'the_author', $author->display_name ),
 		'after_html' => '',
 	);
 	$args = apply_filters( 'coauthors_posts_link', $args, $author );

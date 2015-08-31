@@ -68,6 +68,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$posts = new WP_Query( $args );
 		$affected = 0;
 		$count = 0;
+		$total_posts = $posts->found_posts;
 		WP_CLI::line( "Now inspecting or updating {$posts->found_posts} total posts." );
 		while ( $posts->post_count ) {
 
@@ -92,14 +93,14 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$author_terms[ $single_post->post_author ] = $author_term;
 
 				wp_set_post_terms( $single_post->ID, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy );
-				WP_CLI::line( "{$count}/{$posts->found_posts}) Added - Post #{$single_post->ID} '{$single_post->post_title}' now has an author term for: " . $author->user_nicename );
+				WP_CLI::line( "{$count}/{$total_posts}) Added - Post #{$single_post->ID} '{$single_post->post_title}' now has an author term for: " . $author->user_nicename );
 				$affected++;
-				if ( $affected && 0 === $affected % 10 ) {
-					sleep( 3 );
-				}
 			}
 
-			$this->stop_the_insanity();
+			if ( $count && $count % 500 == 0 ){
+				$this->stop_the_insanity();
+				sleep( 1 );
+			}
 
 			$args['paged']++;
 			$posts = new WP_Query( $args );
@@ -109,7 +110,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$coauthors_plus->update_author_term( $author );
 		}
 
-		WP_CLI::success( "Done! Of {$posts->found_posts} posts, {$affected} now have author terms." );
+		WP_CLI::success( "Done! Of {$total_posts} posts, {$affected} now have author terms." );
 
 	}
 
