@@ -12,9 +12,6 @@ function _manually_load_plugin() {
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
-// See `Test_Template_Tags()`
-tests_add_filter( 'coauthors_auto_apply_template_tags', '__return_true' );
-
 require $_tests_dir . '/includes/bootstrap.php';
 
 require dirname( __FILE__ ) . '/coauthorsplus-testcase.php';
