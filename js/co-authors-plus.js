@@ -139,7 +139,7 @@ jQuery( document ).ready(function () {
 			.addClass( 'coauthors-author-options' )
 			;
 
-			if ( options.addDelete ) {
+		if ( options.addDelete ) {
 			var deleteBtn = jQuery( '<span/>' )
 								.addClass( 'delete-coauthor' )
 								.text( coAuthorsPlusStrings.delete_label )
