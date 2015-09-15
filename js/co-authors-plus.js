@@ -4,8 +4,8 @@ jQuery( document ).ready(function () {
 	 * Click handler for the delete button
 	 * @param event
 	 */
-	var coauthors_delete_onclick = function( e ){
-		if( confirm( coAuthorsPlusStrings.confirm_delete ) ) {
+	var coauthors_delete_onclick = function( e ) {
+		if ( confirm( coAuthorsPlusStrings.confirm_delete ) ) {
 			return coauthors_delete( this );
 		}
 		return false;
@@ -66,11 +66,11 @@ jQuery( document ).ready(function () {
 	function coauthors_add_coauthor( author, co, init, count ){
 
 		// Check if editing
-		if( co && co.siblings( '.coauthor-tag' ).length ) {
+		if ( co && co.siblings( '.coauthor-tag' ).length ) {
 			coauthors_save_coauthor( author, co );
 		} else {
 			// Not editing, so we create a new author entry
-			if( count == 0 ) {
+			if ( count == 0 ) {
 				var coName = ( count == 0 ) ? 'coauthors-main' : '';
 				// Add new author to <select>
 				//coauthors_select_author( author );
@@ -78,7 +78,7 @@ jQuery( document ).ready(function () {
 			var options = { addDelete: true, addEdit: false };
 
 			// Create autosuggest box and text tag
-			if( ! co ) var co = coauthors_create_autosuggest( author, coName )
+			if ( ! co ) var co = coauthors_create_autosuggest( author, coName )
 			var tag = coauthors_create_author_tag( author );
 			var input = coauthors_create_author_hidden_input( author );
 			var $gravatar = coauthors_create_author_gravatar( author, 25 );
@@ -87,7 +87,7 @@ jQuery( document ).ready(function () {
 
 			coauthors_add_to_table( co, tag, input, options );
 
-			if( ! init ) {
+			if ( ! init ) {
 				// Create new author-suggest and append it to a new row
 				var newCO = coauthors_create_autosuggest( '', false );
 				coauthors_add_to_table( newCO );
@@ -114,7 +114,7 @@ jQuery( document ).ready(function () {
 	 * @param
 	 */
 	function coauthors_add_to_table( co, tag, input, options ) {
-		if( co ) {
+		if ( co ) {
 			var $div = jQuery( '<div/>' )
 						.addClass( 'suggest' )
 						.addClass( 'coauthor-row' )
@@ -124,7 +124,7 @@ jQuery( document ).ready(function () {
 						;
 
 			//Add buttons to row
-			if( tag ) coauthors_insert_author_edit_cells( $div, options );
+			if ( tag ) coauthors_insert_author_edit_cells( $div, options );
 
 			jQuery( '#coauthors-list' ).append( $div );
 		}
@@ -141,7 +141,7 @@ jQuery( document ).ready(function () {
 			;
 
 		/*
-		if(options.addEdit) {
+		if (options.addEdit) {
 			var editBtn = jQuery('<span></span>')
 							.addClass('edit-coauthor')
 							.text(coAuthorsPlusStrings.edit_label)
@@ -150,7 +150,7 @@ jQuery( document ).ready(function () {
 			td.append(editBtn);
 		}
 		*/
-		if( options.addDelete ) {
+		if ( options.addDelete ) {
 			var deleteBtn = jQuery( '<span/>' )
 								.addClass( 'delete-coauthor' )
 								.text( coAuthorsPlusStrings.delete_label )
@@ -170,7 +170,7 @@ jQuery( document ).ready(function () {
 	 */
 	function coauthors_create_autosuggest( authorName, inputName ) {
 
-		if( ! inputName ) inputName = 'coauthorsinput[]';
+		if ( ! inputName ) inputName = 'coauthorsinput[]';
 
 		var $co = jQuery( '<input/>' );
 
@@ -193,7 +193,7 @@ jQuery( document ).ready(function () {
 			.keydown( coauthors_autosuggest_keydown )
 			;
 
-		if( authorName )
+		if ( authorName )
 			$co.attr( 'value', unescape( authorName ) );
 		else
 			$co.attr( 'value', coAuthorsPlusStrings.search_box_text )
@@ -217,7 +217,7 @@ jQuery( document ).ready(function () {
 		author.email = jQuery.trim( vals[3] );
 		author.nicename = jQuery.trim( vals[4] );
 
-		if( author.id=='New' ) {
+		if ( author.id=='New' ) {
 			//alert('Eventually, this will allow you to add a new author right from here. But it\'s not ready yet. *sigh*');
 			coauthors_new_author_display( name );
 		} else {
@@ -231,7 +231,7 @@ jQuery( document ).ready(function () {
 
 	// Prevent the enter key from triggering a submit
 	function coauthors_autosuggest_keydown( e ) {
-		if( e.keyCode == 13 ) {return false;}
+		if ( e.keyCode == 13 ) {return false;}
 	}
 
 	/*
@@ -396,7 +396,7 @@ jQuery( document ).ready(function () {
 
 		$coauthors_div = jQuery( '#coauthors-edit' );
 
-		if( $coauthors_div.length ) {
+		if ( $coauthors_div.length ) {
 			// Create the co-authors table
 			var table = jQuery( '<div/>' )
 				.attr( 'id', 'coauthors-list' )
@@ -420,6 +420,7 @@ jQuery( document ).ready(function () {
 
 		// Create new author-suggest and append it to a new row
 		var newCO = coauthors_create_autosuggest( '', false );
+		var $coauthors_loading;
 		coauthors_add_to_table( newCO );
 
 		$coauthors_loading = jQuery( '#ajax-loading' ).clone().attr( 'id', 'coauthors-loading' );
@@ -451,7 +452,7 @@ jQuery( document ).ready(function () {
 	}
 	// Show laoding cursor for autocomplete ajax requests
 	jQuery( document ).ajaxSend(function( e, xhr, settings ) {
-		if( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 ) {
+		if ( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 ) {
 			// Including existing authors on the AJAX suggest link
 			// allows us to filter them out of the search request
 			var existing_authors = jQuery( 'input[name="coauthors[]"]' ).map(function(){return jQuery( this ).val();}).get();
@@ -462,7 +463,7 @@ jQuery( document ).ready(function () {
 	});
 	// Hide laoding cursor when autocomplete ajax requests are finished
 	jQuery( document ).ajaxComplete(function( e, xhr, settings ) {
-		if( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 )
+		if ( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 )
 			hide_loading();
 	});
 
@@ -474,7 +475,7 @@ jQuery( document ).ready(function () {
 
 		var post_coauthors = [];
 
-		for( var i = 0; i < $post_coauthor_logins.length; i++ ) {
+		for ( var i = 0; i < $post_coauthor_logins.length; i++ ) {
 			post_coauthors.push({
 				login: $post_coauthor_logins[i].value,
 				name: $post_coauthor_names[i].value,
@@ -527,7 +528,7 @@ jQuery( document ).ready(function () {
 
 });
 
-if( typeof( console ) === 'undefined' ) {
+if ( typeof( console ) === 'undefined' ) {
 	var console = {}
 	console.log = console.error = function() {};
 }
