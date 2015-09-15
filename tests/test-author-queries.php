@@ -85,5 +85,4 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		restore_current_blog();
 
 	}
-
 }
