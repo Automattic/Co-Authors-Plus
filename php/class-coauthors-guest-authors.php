@@ -1449,5 +1449,4 @@ class CoAuthors_Guest_Authors
 
 		return $link;
 	}
-
 }

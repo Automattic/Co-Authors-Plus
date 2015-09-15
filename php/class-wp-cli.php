@@ -97,7 +97,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$affected++;
 			}
 
-			if ( $count && $count % 500 == 0 ){
+			if ( $count && $count % 500 == 0 ) {
 				$this->stop_the_insanity();
 				sleep( 1 );
 			}
@@ -459,7 +459,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					'field'		=> 'slug',
 					'terms'		=> array( $from_userlogin_prefixed ),
 				),
-			)
+			),
 		);
 
 		$posts = new WP_Query( $query_args );
@@ -894,5 +894,4 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$wp_object_cache->__remoteset(); // important
 		}
 	}
-
 }

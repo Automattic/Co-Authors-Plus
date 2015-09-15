@@ -80,7 +80,7 @@ class CoAuthorsIterator {
 	var $authordata_array;
 	var $count;
 
-	function CoAuthorsIterator( $postID = 0 ){
+	function CoAuthorsIterator( $postID = 0 ) {
 		global $post, $authordata, $wpdb;
 		$postID = (int) $postID;
 		if ( ! $postID && $post ) {
@@ -97,7 +97,7 @@ class CoAuthorsIterator {
 		$this->count = count( $this->authordata_array );
 	}
 
-	function iterate(){
+	function iterate() {
 		global $authordata;
 		$this->position++;
 
@@ -118,22 +118,22 @@ class CoAuthorsIterator {
 		return true;
 	}
 
-	function get_position(){
+	function get_position() {
 		if ( $this->position === -1 ) {
 			return false;
 		}
 		return $this->position;
 	}
-	function is_last(){
+	function is_last() {
 		return  $this->position === $this->count - 1;
 	}
-	function is_first(){
+	function is_first() {
 		return $this->position === 0;
 	}
-	function count(){
+	function count() {
 		return $this->count;
 	}
-	function get_all(){
+	function get_all() {
 		return $this->authordata_array;
 	}
 }
@@ -151,7 +151,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	if ( ! isset( $separators['before'] ) || null === $separators['before'] ) {
 		$separators['before'] = apply_filters( 'coauthors_default_before', $default_before );
 	}
-	if ( ! isset( $separators['between'] ) || null ===  $separators['between'] ) {
+	if ( ! isset( $separators['between'] ) || null === $separators['between'] ) {
 		$separators['between'] = apply_filters( 'coauthors_default_between', $default_between );
 	}
 	if ( ! isset( $separators['betweenLast'] ) || null === $separators['betweenLast'] ) {
@@ -190,7 +190,6 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		} else {
 			$output .= $author_text . $separators['between'];
 		}
-
 	} while ( $i->iterate() );
 
 	$output .= $separators['after'];
@@ -212,7 +211,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
  * @param string $after What should appear after the presentation of co-authors
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
-function coauthors( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
+function coauthors( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('display_name', 'field', array(
 		'between' => $between,
 		'betweenLast' => $betweenLast,
@@ -231,7 +230,7 @@ function coauthors( $between = null, $betweenLast = null, $before = null, $after
  * @param string $after What should appear after the presentation of co-authors
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
-function coauthors_posts_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ){
+function coauthors_posts_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo('coauthors_posts_links_single', 'callback', array(
 		'between' => $between,
 		'betweenLast' => $betweenLast,

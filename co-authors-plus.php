@@ -600,7 +600,7 @@ class coauthors_plus {
 	/**
 	 * Modify the author query posts SQL to include posts co-authored
 	 */
-	function posts_join_filter( $join, $query ){
+	function posts_join_filter( $join, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
@@ -631,7 +631,7 @@ class coauthors_plus {
 	/**
 	 * Modify the author query posts SQL to include posts co-authored
 	 */
-	function posts_where_filter( $where, $query ){
+	function posts_where_filter( $where, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
@@ -1447,7 +1447,6 @@ class coauthors_plus {
 		// Send back the updated Open Graph Tags
 		return apply_filters( 'coauthors_open_graph_tags', $og_tags );
 	}
-
 }
 
 global $coauthors_plus;
