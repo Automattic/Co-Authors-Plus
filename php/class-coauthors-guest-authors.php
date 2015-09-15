@@ -158,12 +158,12 @@ class CoAuthors_Guest_Authors
 			3 => __( 'Custom field deleted.', 'co-authors-plus' ),
 			4 => __( 'Guest author updated.', 'co-authors-plus' ),
 			/* translators: %s: date and time of the revision */
-			5 => isset($_GET['revision']) ? sprintf( __( 'Guest author restored to revision from %s', 'co-authors-plus' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5 => isset( $_GET['revision'] ) ? sprintf( __( 'Guest author restored to revision from %s', 'co-authors-plus' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6 => sprintf( __( 'Guest author updated. <a href="%s">View profile</a>', 'co-authors-plus' ), esc_url( $guest_author_link ) ),
 			7 => __( 'Guest author saved.', 'co-authors-plus' ),
 			8 => sprintf( __( 'Guest author submitted. <a target="_blank" href="%s">Preview profile</a>', 'co-authors-plus' ), esc_url( add_query_arg( 'preview', 'true', $guest_author_link ) ) ),
 			9 => sprintf( __( 'Guest author scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview profile</a>', 'co-authors-plus' ),
-			// translators: Publish box date format, see http://php.net/date
+				// translators: Publish box date format, see http://php.net/date
 			date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( $guest_author_link ) ),
 			10 => sprintf( __( 'Guest author updated. <a target="_blank" href="%s">Preview profile</a>', 'co-authors-plus' ), esc_url( add_query_arg( 'preview', 'true', $guest_author_link ) ) ),
 		);
@@ -201,7 +201,7 @@ class CoAuthors_Guest_Authors
 		// Redirect to the edit Guest Author screen
 		$edit_link = get_edit_post_link( $post_id, 'redirect' );
 		$redirect_to = add_query_arg( 'message', 'guest-author-created', $edit_link );
-		wp_safe_redirect( $redirect_to );
+		wp_safe_redirect( esc_url_raw( $redirect_to ) );
 		exit;
 
 	}
@@ -255,7 +255,7 @@ class CoAuthors_Guest_Authors
 				$reassign_to = false;
 				break;
 			default:
-				wp_die( __( "Please make sure to pick an option.", 'co-authors-plus' ) );
+				wp_die( __( 'Please make sure to pick an option.', 'co-authors-plus' ) );
 				break;
 		}
 
@@ -271,8 +271,8 @@ class CoAuthors_Guest_Authors
 		}
 
 		// Redirect to safety
-		$redirect_to = add_query_arg( $args, admin_url( $this->parent_page ) );
-		wp_safe_redirect( $redirect_to );
+		$redirect_to = add_query_arg( array_map( 'rawurlencode', $args ), admin_url( $this->parent_page ) );
+		wp_safe_redirect( esc_url_raw( $redirect_to ) );
 		exit;
 	}
 
@@ -331,7 +331,7 @@ class CoAuthors_Guest_Authors
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
 
-			if ( empty($link) ) {
+			if ( empty( $link ) ) {
 				$file = home_url( '/' );
 				$link = $file . '?author_name=' . $coauthor->user_login;
 			} else {
@@ -463,7 +463,7 @@ class CoAuthors_Guest_Authors
 			echo '<h2>' . sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) . '</h2>';
 			echo '<p>' . __( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
 			echo '<p>#' . $guest_author->ID . ': ' . esc_html( $guest_author->display_name ) . '</p>';
-			echo '<p>' . __( "What should be done with posts assigned to this guest author?", 'co-authors-plus' ) . '</p>';
+			echo '<p>' . __( 'What should be done with posts assigned to this guest author?', 'co-authors-plus' ) . '</p>';
 			echo '<p class="description">' . __( "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author.", 'co-authors-plus' ) . '</p>';
 			echo '<form method="POST" action="' . esc_url( add_query_arg( 'page', 'view-guest-authors', admin_url( $this->parent_page ) ) ) . '">';
 			// Hidden stuffs
@@ -604,11 +604,11 @@ class CoAuthors_Guest_Authors
 			echo '</th><td>';
 
 			if ( ! isset( $field['input'] ) ) {
-				$field['input'] = "text";
+				$field['input'] = 'text';
 			}
 			$field['input'] = apply_filters( 'coauthors_name_field_type_'. $pm_key , $field['input'] );
 			switch ( $field['input'] ) {
-				case "checkbox":
+				case 'checkbox':
 					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
 				break;
 				default:
@@ -639,11 +639,11 @@ class CoAuthors_Guest_Authors
 			echo '</th><td>';
 
 			if ( ! isset( $field['input'] ) ) {
-				$field['input'] = "text";
+				$field['input'] = 'text';
 			}
 			$field['input'] = apply_filters( 'coauthors_name_field_type_'. $pm_key , $field['input'] );
 			switch ( $field['input'] ) {
-				case "checkbox":
+				case 'checkbox':
 					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"'. checked( '1', $value, false ) .' value="1"/>';
 				break;
 				default:
@@ -831,7 +831,7 @@ class CoAuthors_Guest_Authors
 		switch ( $key ) {
 			case 'ID':
 			case 'id':
-				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID=%d", $value );
+				$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID=%d AND post_type = %s", $value, $this->post_type );
 				$post_id = $wpdb->get_var( $query );
 				if ( empty( $post_id ) ) {
 					$post_id = '0';
@@ -1008,7 +1008,7 @@ class CoAuthors_Guest_Authors
 			);
 		$fields_to_return = array();
 		foreach ( $global_fields as $single_field ) {
-			if ( in_array( $single_field['group'], $groups ) || 'all' === $groups[0] && 'hidden' !== $single_field['group']  ) {
+			if ( in_array( $single_field['group'], $groups ) || 'all' === $groups[0] && 'hidden' !== $single_field['group'] ) {
 				$fields_to_return[] = $single_field;
 			}
 		}
@@ -1108,12 +1108,12 @@ class CoAuthors_Guest_Authors
 		// If the linked_account is changing, invalidate the cache of all linked accounts
 		// Don't regenerate though, as we haven't saved the new value
 		$linked_account_key = $this->get_post_meta_key( 'linked_account' );
-		if ( $linked_account_key == $meta_key && $meta_value != get_post_meta( $object_id, $linked_account_key, true ) ) {
+		if ( $linked_account_key == $meta_key && get_post_meta( $object_id, $linked_account_key, true ) !== $meta_value ) {
 			$this->delete_guest_author_cache( $object_id );
 		}
 
 		// If one of the guest author meta values has changed, we'll need to invalidate all keys
-		if ( false !== strpos( $meta_key, 'cap-' ) && $meta_value != get_post_meta( $object_id, $meta_key, true ) ) {
+		if ( false !== strpos( $meta_key, 'cap-' ) && get_post_meta( $object_id, $meta_key, true ) !== $meta_value ) {
 			$this->delete_guest_author_cache( $object_id );
 		}
 
@@ -1252,7 +1252,6 @@ class CoAuthors_Guest_Authors
 			if ( $guest_author_term->term_id != $reassign_to_term->term_id ) {
 				wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy, array( 'default' => $reassign_to_term->term_id, 'force_default' => true ) );
 			}
-
 		} else {
 			wp_delete_term( $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy );
 		}
@@ -1348,7 +1347,7 @@ class CoAuthors_Guest_Authors
 					'user_id' => $user_object->ID,
 					'nonce' => wp_create_nonce( 'create-guest-author' ),
 				);
-			$create_guest_author_link = add_query_arg( $query_args, admin_url( $this->parent_page ) );
+			$create_guest_author_link = add_query_arg( array_map( 'rawurlencode', $query_args ), admin_url( $this->parent_page ) );
 			if ( apply_filters( 'coauthors_show_create_profile_user_link', false ) ) {
 				$new_actions['create-guest-author'] = '<a href="' . esc_url( $create_guest_author_link ) . '">' . __( 'Create Profile', 'co-authors-plus' ) . '</a>';
 			}
@@ -1396,7 +1395,7 @@ class CoAuthors_Guest_Authors
 		}
 
 		if ( empty( $link ) ) {
-			$link = add_query_arg( 'author_name', $author_nicename, home_url() );
+			$link = add_query_arg( 'author_name', rawurlencode( $author_nicename ), home_url() );
 		} else {
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
@@ -1404,7 +1403,7 @@ class CoAuthors_Guest_Authors
 				$link = str_replace( '%author%', $author_nicename, $link );
 				$link = home_url( user_trailingslashit( $link ) );
 			} else {
-				$link = add_query_arg( 'author_name', $author_nicename, home_url() );
+				$link = add_query_arg( 'author_name', rawurlencode( $author_nicename ), home_url() );
 			}
 		}
 		return $link;
@@ -1428,7 +1427,7 @@ class CoAuthors_Guest_Authors
 		// Get author, then check if author is guest-author because
 		// that's the only type that will need to be adjusted
 		$author = get_queried_object();
-		if ( empty ( $author ) || 'guest-author' != $author->type ) {
+		if ( empty( $author ) || 'guest-author' != $author->type ) {
 			return $feed_link;
 		}
 
@@ -1444,7 +1443,7 @@ class CoAuthors_Guest_Authors
 			$link = home_url( "?feed=$feed&amp;author=" . $author->ID );
 		} else {
 			$link = get_author_posts_url( $author->ID );
-			$feed_link = ( $feed == get_default_feed() ) ? 'feed' : "feed/$feed";
+			$feed_link = ( get_default_feed() === $feed ) ? 'feed' : "feed/$feed";
 			$link = trailingslashit( $link ) . user_trailingslashit( $feed_link, 'feed' );
 		}
 

@@ -1,7 +1,7 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 3.8.1
+Tested up to: 4.1
 Requires at least: 3.7
 Stable tag: 3.1.1
 
@@ -56,6 +56,10 @@ Bug fixes and the ability to automatically add co-authors to your feeds.
 Bug fixes and minor enhancements
 
 == Changelog ==
+
+= 3.1.2 (Aug. 31, 2015) =
+* Minor bug fixes and coding standards changes.
+* The author's display name is now filtered through the_author in coauthors_posts_links_single()
 
 = ??? (??? ?? ????) =
 * New Russian and Ukrainian translations, courtesy of [Jurko Chervony](http://skinik.name/).

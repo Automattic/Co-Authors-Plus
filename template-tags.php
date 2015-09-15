@@ -102,7 +102,7 @@ class CoAuthorsIterator {
 		$this->position++;
 
 		//At the end of the loop
-		if ( $this->position > $this->count - 1 ){
+		if ( $this->position > $this->count - 1 ) {
 			$authordata = $this->current_author = $this->original_authordata;
 			$this->position = -1;
 			return false;
@@ -148,16 +148,16 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	$default_between_last = ( defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) ) ? COAUTHORS_DEFAULT_BETWEEN_LAST :  __( ' and ', 'co-authors-plus' );
 	$default_after = ( defined( 'COAUTHORS_DEFAULT_AFTER' ) ) ? COAUTHORS_DEFAULT_AFTER : '';
 
-	if ( ! isset( $separators['before'] ) || $separators['before'] === NULL ) {
+	if ( ! isset( $separators['before'] ) || null === $separators['before'] ) {
 		$separators['before'] = apply_filters( 'coauthors_default_before', $default_before );
 	}
-	if ( ! isset( $separators['between'] ) || $separators['between'] === NULL ) {
+	if ( ! isset( $separators['between'] ) || null ===  $separators['between'] ) {
 		$separators['between'] = apply_filters( 'coauthors_default_between', $default_between );
 	}
-	if ( ! isset( $separators['betweenLast'] ) || $separators['betweenLast'] === NULL ) {
+	if ( ! isset( $separators['betweenLast'] ) || null === $separators['betweenLast'] ) {
 		$separators['betweenLast'] = apply_filters( 'coauthors_default_between_last', $default_between_last );
 	}
-	if ( ! isset( $separators['after'] ) || $separators['after'] === NULL ) {
+	if ( ! isset( $separators['after'] ) || null === $separators['after'] ) {
 		$separators['after'] = apply_filters( 'coauthors_default_after', $default_after );
 	}
 
@@ -183,16 +183,14 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		}
 
 		// Append separators
-		if ( ! $i->is_first() && $i->count() > 2 ) {
-			$output .= $separators['between'];
+		if ( $i->count() - $i->position == 1 ) { // last author or only author
+			$output .= $author_text;
+		} elseif ( $i->count() - $i->position == 2 ) { // second to last
+			$output .= $author_text . $separators['betweenLast'];
+		} else {
+			$output .= $author_text . $separators['between'];
 		}
 
-		if ( $i->is_last() && $i->count() > 1 ) {
-			$output = rtrim( $output, $separators['between'] );
-			$output .= $separators['betweenLast'];
-		}
-
-		$output .= $author_text;
 	} while ( $i->iterate() );
 
 	$output .= $separators['after'];
@@ -253,19 +251,19 @@ function coauthors_posts_links_single( $author ) {
 		'before_html' => '',
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
 		'rel' => 'author',
-		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $author->display_name ),
+		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), apply_filters( 'the_author', $author->display_name ) ),
 		'class' => 'author url fn',
-		'text' => $author->display_name,
+		'text' => apply_filters( 'the_author', $author->display_name ),
 		'after_html' => '',
 	);
 	$args = apply_filters( 'coauthors_posts_link', $args, $author );
 	$single_link = sprintf(
-			'<a href="%1$s" title="%2$s" class="%3$s" rel="%4$s">%5$s</a>',
-			esc_url( $args['href'] ),
-			esc_attr( $args['title'] ),
-			esc_attr( $args['class'] ),
-			esc_attr( $args['rel'] ),
-			esc_html( $args['text'] )
+		'<a href="%1$s" title="%2$s" class="%3$s" rel="%4$s">%5$s</a>',
+		esc_url( $args['href'] ),
+		esc_attr( $args['title'] ),
+		esc_attr( $args['class'] ),
+		esc_attr( $args['rel'] ),
+		esc_html( $args['text'] )
 	);
 	return $args['before_html'] . $single_link . $args['after_html'];
 }
@@ -370,7 +368,7 @@ function coauthors_links_single( $author ) {
 	if ( get_the_author_meta( 'url' ) ) {
 		return sprintf( '<a href="%s" title="%s" rel="external">%s</a>',
 			get_the_author_meta( 'url' ),
-			esc_attr( sprintf( __( "Visit %s&#8217;s website" ), get_the_author() ) ),
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), get_the_author() ) ),
 			get_the_author()
 		);
 	} else {
@@ -495,7 +493,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 				$link = $name;
 			}
 		} else {
-			$link = '<a href="' . get_author_posts_url( $author->ID, $author->user_nicename ) . '" title="' . esc_attr( sprintf( __( "Posts by %s", 'co-authors-plus' ), $name ) ) . '">' . esc_html( $name ) . '</a>';
+			$link = '<a href="' . get_author_posts_url( $author->ID, $author->user_nicename ) . '" title="' . esc_attr( sprintf( __( 'Posts by %s', 'co-authors-plus' ), $name ) ) . '">' . esc_html( $name ) . '</a>';
 
 			if ( ( ! empty( $args['feed_image'] ) ) || ( ! empty( $args['feed'] ) ) ) {
 				$link .= ' ';
@@ -514,7 +512,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 				$link .= '>';
 
 				if ( ! empty( $args['feed_image'] ) ) {
-					$link .= "<img src=\"" . esc_url( $args['feed_image'] ) . "\" style=\"border: none;\"$alt$title" . ' />';
+					$link .= '<img src="' . esc_url( $args['feed_image'] ) . "\" style=\"border: none;\"$alt$title" . ' />';
 				} else {
 					$link .= $name;
 				}
@@ -529,7 +527,6 @@ function coauthors_wp_list_authors( $args = array() ) {
 			if ( $args['optioncount'] ) {
 				$link .= ' ('. $author->post_count . ')';
 			}
-
 		}
 
 		if ( ! ( 0 === $author->post_count && $args['hide_empty'] ) && 'list' == $args['style'] ) {
