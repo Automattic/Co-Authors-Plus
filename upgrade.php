@@ -2,7 +2,9 @@
 function coauthors_plus_upgrade( $from ) {
 	// TODO: handle upgrade failures
 
-	if ( $from < 2.0 ) coauthors_plus_upgrade_20();
+	if ( $from < 2.0 ) {
+		coauthors_plus_upgrade_20();
+	}
 }
 
 /**
@@ -24,17 +26,20 @@ function coauthors_plus_upgrade_20() {
 			// create new array
 			$coauthors = array();
 			// get author id -- try to use get_profile
-			$coauthor = get_user_by( 'id', (int)$single_post->post_author );
-			if ( is_object( $coauthor ) )
+			$coauthor = get_user_by( 'id', (int) $single_post->post_author );
+			if ( is_object( $coauthor ) ) {
 				$coauthors[] = $coauthor->user_login;
+			}
 			// get coauthors id
 			$legacy_coauthors = get_post_meta( $single_post->ID, '_coauthor' );
 
 			if ( is_array( $legacy_coauthors ) ) {
 				//echo '<p>Has Legacy coauthors';
 				foreach ( $legacy_coauthors as $legacy_coauthor ) {
-					$legacy_coauthor_login = get_user_by( 'id', (int)$legacy_coauthor );
-					if ( is_object( $legacy_coauthor_login ) && ! in_array( $legacy_coauthor_login->user_login, $coauthors ) ) $coauthors[] = $legacy_coauthor_login->user_login;
+					$legacy_coauthor_login = get_user_by( 'id', (int) $legacy_coauthor );
+					if ( is_object( $legacy_coauthor_login ) && ! in_array( $legacy_coauthor_login->user_login, $coauthors ) ) {
+						$coauthors[] = $legacy_coauthor_login->user_login;
+					}
 				}
 			} else {
 				// No Legacy coauthors
