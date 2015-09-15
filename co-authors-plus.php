@@ -332,7 +332,7 @@ class coauthors_plus {
 		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
 		// and the else case below was always able to properly assign users based on wp_posts.post_author,
 		// but that's not possible with force_guest_authors = true.
-		if ( ! $post_id || 0 == $post_id || ( ! $post->post_author && ! $coauthors_plus->force_guest_authors ) || ( 'post' === $current_screen->base && 'add' === $current_screen->action ) ) {
+		if ( ! $post_id || 0 === $post_id || ( ! $post->post_author && ! $coauthors_plus->force_guest_authors ) || ( 'post' === $current_screen->base && 'add' === $current_screen->action ) ) {
 			$coauthors = array();
 			// If guest authors is enabled, try to find a guest author attached to this user ID
 			if ( $this->is_guest_authors_enabled() ) {
@@ -617,11 +617,11 @@ class coauthors_plus {
 			$term_relationship_join = " INNER JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
 			$term_taxonomy_join = " INNER JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
 
-			if ( strpos( $join, trim( $term_relationship_join ) ) === false ) {
-				$join .= str_replace( 'INNER JOIN', 'LEFT JOIN', $term_relationship_join );
+			if ( false === strpos( $join, trim( $term_relationship_join ) ) ) {
+				$join .= str_replace( "INNER JOIN", "LEFT JOIN", $term_relationship_join );
 			}
-			if ( strpos( $join, trim( $term_taxonomy_join ) ) === false ) {
-				$join .= str_replace( 'INNER JOIN', 'LEFT JOIN', $term_taxonomy_join );
+			if ( false === strpos( $join, trim( $term_taxonomy_join ) ) ) {
+				$join .= str_replace( "INNER JOIN", "LEFT JOIN", $term_taxonomy_join );
 			}
 		}
 
@@ -733,7 +733,7 @@ class coauthors_plus {
 				// because it'll be the valid user ID
 				if ( 'guest-author' == $author_data->type && ! empty( $author_data->linked_account ) ) {
 					$data['post_author'] = get_user_by( 'login', $author_data->linked_account )->ID;
-				} else if ( $author_data->type == 'wpuser' ) {
+				} else if ( 'wpuser' === $author_data->type ) {
 					$data['post_author'] = $author_data->ID;
 				}
 			}
@@ -1136,7 +1136,7 @@ class coauthors_plus {
 			// Make sure the user is contributor and above (or a custom cap)
 			if ( in_array( $found_user->user_login, $ignored_authors ) ) {
 				unset( $found_users[ $key ] );
-			} else if ( $found_user->type == 'wpuser' && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) ) {
+			} else if ( 'wpuser' === $found_user->type && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) ) {
 				unset( $found_users[ $key ] );
 			}
 		}
