@@ -901,11 +901,26 @@ class coauthors_plus {
 		$orderby = 'ORDER BY tr.term_order';
 		$order = 'ASC';
 		$object_ids = (int) $object_ids;
-		$query = $wpdb->prepare( "SELECT t.slug, t.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $taxonomies, $object_ids );
+		$query = $wpdb->prepare( "SELECT t.name, t.term_id, tt.term_taxonomy_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $this->coauthor_taxonomy, $object_ids );
 		$raw_coauthors = $wpdb->get_results( $query );
 		$terms = array();
 		foreach ( $raw_coauthors as $author ) {
-			$terms[] = $author->slug;
+			if ( true === is_array( $args ) && true === isset( $args['fields'] ) ) {
+				switch( $args['fields'] ) {
+					case 'names' :
+						$terms[] = $author->name;
+						break;
+					case 'tt_ids' :
+						$terms[] = $author->term_taxonomy_id;
+						break;
+					case 'all' :
+					default :
+						$terms[] = get_term( $author->term_id, $this->coauthor_taxonomy );
+						break;
+				}
+			} else {
+				$terms[] = get_term( $author->term_id, $this->coauthor_taxonomy );
+			}
 		}
 
 		return $terms;
