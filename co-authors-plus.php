@@ -600,7 +600,7 @@ class coauthors_plus {
 	/**
 	 * Modify the author query posts SQL to include posts co-authored
 	 */
-	function posts_join_filter( $join, $query ){
+	function posts_join_filter( $join, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
@@ -631,7 +631,7 @@ class coauthors_plus {
 	/**
 	 * Modify the author query posts SQL to include posts co-authored
 	 */
-	function posts_where_filter( $where, $query ){
+	function posts_where_filter( $where, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
@@ -683,7 +683,7 @@ class coauthors_plus {
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
 				$this->having_terms = rtrim( $this->having_terms, ' OR' );
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
 			}
 		}
 		return $where;
@@ -901,11 +901,26 @@ class coauthors_plus {
 		$orderby = 'ORDER BY tr.term_order';
 		$order = 'ASC';
 		$object_ids = (int) $object_ids;
-		$query = $wpdb->prepare( "SELECT t.slug, t.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $taxonomies, $object_ids );
+		$query = $wpdb->prepare( "SELECT t.name, t.term_id, tt.term_taxonomy_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $this->coauthor_taxonomy, $object_ids );
 		$raw_coauthors = $wpdb->get_results( $query );
 		$terms = array();
 		foreach ( $raw_coauthors as $author ) {
-			$terms[] = $author->slug;
+			if ( true === is_array( $args ) && true === isset( $args['fields'] ) ) {
+				switch( $args['fields'] ) {
+					case 'names' :
+						$terms[] = $author->name;
+						break;
+					case 'tt_ids' :
+						$terms[] = $author->term_taxonomy_id;
+						break;
+					case 'all' :
+					default :
+						$terms[] = get_term( $author->term_id, $this->coauthor_taxonomy );
+						break;
+				}
+			} else {
+				$terms[] = get_term( $author->term_id, $this->coauthor_taxonomy );
+			}
 		}
 
 		return $terms;
@@ -997,7 +1012,8 @@ class coauthors_plus {
 			$authordata = $author;
 			$term = $this->get_author_term( $authordata );
 		}
-		if ( ( is_object( $authordata ) && is_user_member_of_blog( $authordata->ID )  )
+
+		if ( ( is_object( $authordata ) )
 			|| ( ! empty( $term ) && $term->count ) ) {
 			$wp_query->queried_object = $authordata;
 			$wp_query->queried_object_id = $authordata->ID;
@@ -1447,7 +1463,6 @@ class coauthors_plus {
 		// Send back the updated Open Graph Tags
 		return apply_filters( 'coauthors_open_graph_tags', $og_tags );
 	}
-
 }
 
 global $coauthors_plus;

@@ -64,5 +64,4 @@ class CoAuthorsPlus_TestCase extends WP_UnitTestCase {
 		parent::tearDown();
 		$wpdb->suppress_errors( $this->suppress );
 	}
-
 }

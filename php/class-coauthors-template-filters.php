@@ -46,5 +46,4 @@ class CoAuthors_Template_Filters {
 			echo '      <dc:creator><![CDATA[' . $coauthor->display_name . "]]></dc:creator>\n";
 		}
 	}
-
 }

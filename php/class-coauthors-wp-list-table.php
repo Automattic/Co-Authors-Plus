@@ -281,5 +281,4 @@ if ( 'top' == $which ) {
 		$this->search_box( $coauthors_plus->guest_authors->labels['search_items'], 'guest-authors' );
 		parent::display();
 	}
-
 }

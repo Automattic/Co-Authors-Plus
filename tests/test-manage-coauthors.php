@@ -94,5 +94,4 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( 1, count_user_posts( $editor1->ID ) );
 
 	}
-
 }
