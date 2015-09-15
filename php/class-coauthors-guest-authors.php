@@ -150,7 +150,7 @@ class CoAuthors_Guest_Authors
 
 		$guest_author = $this->get_guest_author_by( 'ID', $post->ID );
 
-		if( !$guest_author ) {
+		if ( ! $guest_author ) {
 			return;
 		}
 
