@@ -147,17 +147,12 @@ class CoAuthors_Guest_Authors
 	 */
 	function filter_post_updated_messages( $messages ) {
 		global $post;
-		
+
 		if ( $this->post_type !== $post->post_type ) {
 			return $messages;
 		}
 
 		$guest_author = $this->get_guest_author_by( 'ID', $post->ID );
-
-		if ( ! $guest_author ) {
-			return;
-		}
-
 		$guest_author_link = $this->filter_author_link( '', $guest_author->ID, $guest_author->user_nicename );
 
 		$messages[ $this->post_type ] = array(
