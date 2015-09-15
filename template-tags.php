@@ -109,7 +109,7 @@ class CoAuthorsIterator {
 		}
 
 		//At the beginning of the loop
-		if ( $this->position == 0 && ! empty( $authordata ) ) {
+		if ( 0 === $this->position && ! empty( $authordata ) ) {
 			$this->original_authordata = $authordata;
 		}
 
@@ -472,7 +472,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 		}
 
 		if ( ! $args['html'] ) {
-			if ( $author->post_count == 0 ) {
+			if ( 0 === $author->post_count ) {
 				if ( ! $args['hide_empty'] ) {
 					$return .= $name . ', ';
 				}
@@ -484,10 +484,10 @@ function coauthors_wp_list_authors( $args = array() ) {
 			continue;
 		}
 
-		if ( ! ( $author->post_count == 0 && $args['hide_empty'] ) && 'list' == $args['style'] ) {
+		if ( ! ( 0 === $author->post_count && $args['hide_empty'] ) && 'list' == $args['style'] ) {
 			$return .= '<li>';
 		}
-		if ( $author->post_count == 0 ) {
+		if ( 0 === $author->post_count ) {
 			if ( ! $args['hide_empty'] ) {
 				$link = $name;
 			}
@@ -528,7 +528,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 			}
 		}
 
-		if ( ! ( $author->post_count == 0 && $args['hide_empty'] ) && 'list' == $args['style'] ) {
+		if ( ! ( 0 === $author->post_count && $args['hide_empty'] ) && 'list' == $args['style'] ) {
 			$return .= $link . '</li>';
 		} else if ( ! $args['hide_empty'] ) {
 			$return .= $link . ', ';
