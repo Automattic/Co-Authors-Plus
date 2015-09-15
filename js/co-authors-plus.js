@@ -424,7 +424,9 @@ jQuery( document ).ready(function () {
 		coauthors_add_to_table( newCO );
 
 		$coauthors_loading = jQuery( '#ajax-loading' ).clone().attr( 'id', 'coauthors-loading' );
-		move_loading( newCO );
+		if ( $coauthors_loading.length > 0 ) {
+			move_loading(newCO);
+		}
 
 
 		// Make co-authors sortable so an editor can control the order of the authors
