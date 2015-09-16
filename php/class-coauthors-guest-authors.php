@@ -1106,7 +1106,7 @@ class CoAuthors_Guest_Authors
 	function filter_update_post_metadata( $retnull, $object_id, $meta_key, $meta_value, $prev_value ) {
 
 		if ( $this->post_type != get_post_type( $object_id ) ) {
-			return null;
+			return $retnull;
 		}
 
 		// If the linked_account is changing, invalidate the cache of all linked accounts
