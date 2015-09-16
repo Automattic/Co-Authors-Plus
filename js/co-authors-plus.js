@@ -62,7 +62,6 @@ jQuery( document ).ready(function () {
 	 * @param object The autosuggest input box
 	 * @param boolean Initial set up or not?
 	 */
-//	function coauthors_add_coauthor(authorID, authorName, co, init, count){
 	function coauthors_add_coauthor( author, co, init, count ){
 
 		// Check if editing
@@ -140,16 +139,6 @@ jQuery( document ).ready(function () {
 			.addClass( 'coauthors-author-options' )
 			;
 
-		/*
-		if (options.addEdit) {
-			var editBtn = jQuery('<span></span>')
-							.addClass('edit-coauthor')
-							.text(coAuthorsPlusStrings.edit_label)
-							.bind('click', coauthors_edit_onclick)
-							;
-			td.append(editBtn);
-		}
-		*/
 		if ( options.addDelete ) {
 			var deleteBtn = jQuery( '<span/>' )
 								.addClass( 'delete-coauthor' )
@@ -179,14 +168,6 @@ jQuery( document ).ready(function () {
 			, 'name': inputName
 			})
 			.appendTo( $coauthors_div )
-			/*
-			.autocomplete(coauthors_all, {
-				matchContains: true
-				, scroll: false
-				, formatItem: function(row) { return row[2] + ' ' + row[0] + ' | ' + row[1] }
-				, formatResult: function(row) { return row[1]; }
-			})
-			*/
 			.suggest( coAuthorsPlus_ajax_suggest_link, {
 				onSelect: coauthors_autosuggest_select
 			})
@@ -218,10 +199,8 @@ jQuery( document ).ready(function () {
 		author.nicename = jQuery.trim( vals[4] );
 
 		if ( author.id=='New' ) {
-			//alert('Eventually, this will allow you to add a new author right from here. But it\'s not ready yet. *sigh*');
 			coauthors_new_author_display( name );
 		} else {
-			//coauthors_add_coauthor(login, name, co);
 			coauthors_add_coauthor( author, $this );
 			// Show the delete button if we now have more than one co-author
 			if ( jQuery( '#coauthors-list .coauthor-row .coauthor-tag' ).length > 1 )
@@ -311,73 +290,6 @@ jQuery( document ).ready(function () {
 
 		return input;
 	}
-
-	/*
-	 * Creates display for adding new author
-	 * @param string Name of the author
-	 */
-	/*
-	function coauthors_new_author_create_display ( ) {
-
-		var author_window = jQuery('<div></div>')
-								.appendTo(jQuery('body'))
-								.attr('id','new-author-window')
-								.addClass('wrap')
-								.append(
-									jQuery('<div></div>')
-										.addClass('icon32')
-										.attr('id','icon-users')
-									)
-								.append(
-									jQuery('<h2></h2>')
-										.text('Add new author')
-										.attr('id', 'add-new-user')
-
-									)
-								.append(
-									jQuery('<div/>')
-										.attr('id', 'createauthor-ajax-response')
-									)
-								;
-
-		var author_form	= jQuery('<form />')
-							.appendTo(author_window)
-							.attr({
-								id: 'createauthor',
-								name: 'createauthor',
-								method: 'post',
-								action: ''
-							})
-							;
-
-
-
-		var create_text_field = function( name, id, label) {
-
-			var field = jQuery('<input />')
-							.attr({
-								type:'text',
-								name: name,
-								id: id,
-							})
-			var label = jQuery('<label></label>')
-							.attr('for',name)
-							.text(label)
-
-			//return {field, label};
-
-		};
-
-		create_field('user_login', 'user_login', 'User Name');
-		create_field('first_name', 'first_name', 'First Name');
-
-		//last_name
-		//email
-		//pass1
-		//email password checkbox
-		//role
-	}
-	*/
 
 	var $coauthors_div = null;
 
