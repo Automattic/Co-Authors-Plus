@@ -97,7 +97,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$affected++;
 			}
 
-			if ( $count && $count % 500 == 0 ) {
+			if ( $count && 0 === $count % 500 ) {
 				$this->stop_the_insanity();
 				sleep( 1 );
 			}
