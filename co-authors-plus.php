@@ -378,16 +378,14 @@ class coauthors_plus {
 				?>
 				</ul>
 				<div class="clear"></div>
-				<p><?php _e( '<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser', 'co-authors-plus' ); ?></p>
+				<p><?php esc_html_e( '<strong>Note:</strong> To edit Authors, please enable JavaScript or use a JavaScript-capable browser', 'co-authors-plus' ); ?></p>
 			</div>
 			<?php
 		endif;
 		?>
 
 		<div id="coauthors-edit" class="hide-if-no-js">
-			<?php add_thickbox(); ?>
-			<a class="button thickbox" href="<?php echo get_bloginfo('url'); ?>/wp-admin/users.php?&page=view-guest-authorsTB_iframe=true&width=1200&height=640"><small><?php _e( 'Guest Authors', 'co-authors-plus' ); ?></small></a>
-			<p><em><?php _e( 'Click to edit. Drag to order.', 'co-authors-plus' ); ?></em></p>
+			<p><?php esc_html_e( 'Click to edit. Drag to order.', 'co-authors-plus' ); ?></p>
 		</div>
 
 		<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
@@ -509,9 +507,9 @@ class coauthors_plus {
 		}
 		?>
 		<label class="inline-edit-group inline-edit-coauthors">
-			<span class="title"><?php _e( 'Authors', 'co-authors-plus' ) ?></span>
+			<span class="title"><?php _esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
 			<div id="coauthors-edit" class="hide-if-no-js">
-				<p><?php _e( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ); ?></p>
+				<p><?php _esc_html_e( 'Click to change. Drag to order.', 'co-authors-plus' ); ?></p>
 			</div>
 			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 		</label>

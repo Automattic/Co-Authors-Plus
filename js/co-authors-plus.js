@@ -153,10 +153,12 @@ jQuery(document).ready(function () {
 		if(options.addDelete) {
 			var deleteBtn = jQuery('<span/>')
 								.addClass('delete-coauthor')
-								.text(coAuthorsPlusStrings.delete_label)
+								.html('<span class="dashicons dashicons-no-alt"></span><span class="screen-reader-text"></span>')
 								.bind('click', coauthors_delete_onclick)
 								;
 			$options.append(deleteBtn);
+			
+			jQuery('.screen-reader-text').append(coAuthorsPlusStrings.delete_label);
 		}
 
 		$div.append($options);
