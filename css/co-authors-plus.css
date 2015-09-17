@@ -28,8 +28,8 @@
 
 #coauthors-list .coauthor-row {
     overflow:hidden;
-    margin-bottom:2px;
-    padding:0 2px 0 8px
+    margin-bottom:4px;
+    padding:0 2px 0 6px
 }
 
 #coauthors-list span.coauthor-tag {
@@ -56,7 +56,7 @@
 #coauthors-list .ui-state-highlight {
     border:2px dashed #555;
     height:31px;
-    margin-top:3px;
+    margin:5px 0 5px 10px;
     width:80%
 }
 
@@ -123,38 +123,22 @@
 #coauthors-list .delete-coauthor  {
     display:block;
     color:#a00;
-    float:left;
+    float:right;
     padding:5px;
-    width:20%;
 }
 
 #coauthors-list .delete-coauthor:hover {
     cursor:pointer
 }
 
-#coauthors-list .dashicon:before {
-    font-size:18px
-}
-
-#coauthors-list span.delete-coauthor {
-    min-width:64px;
-    height:28px
-}
-
 #coauthors-loading {
     margin:10px 0 5px 10px
-}
-
-#coauthors-readonly {
 }
 
 #coauthors-readonly ul {
     list-style:none;
     padding:0;
     margin:0
-}
-
-#coauthors-readonly ul li {
 }
 
 #coauthors-readonly ul li .avatar {
