@@ -906,7 +906,7 @@ class coauthors_plus {
 		$terms = array();
 		foreach ( $raw_coauthors as $author ) {
 			if ( true === is_array( $args ) && true === isset( $args['fields'] ) ) {
-				switch( $args['fields'] ) {
+				switch ( $args['fields'] ) {
 					case 'names' :
 						$terms[] = $author->name;
 						break;
