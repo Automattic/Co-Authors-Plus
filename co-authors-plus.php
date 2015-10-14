@@ -1122,12 +1122,24 @@ class coauthors_plus {
 		}
 
 		// Get the co-author objects
+		$wp_users = $found_users; // We keep a copy of the found user matching the searched string
 		$found_users = array();
 		foreach ( $found_terms as $found_term ) {
 			$found_user = $this->get_coauthor_by( 'user_nicename', $found_term->slug );
 			if ( ! empty( $found_user ) ) {
 				$found_users[ $found_user->user_login ] = $found_user;
 			}
+		}
+
+		/**
+		 * We now transform WP_Users to coauthor_objects so that we can use them to fetch against roles.
+		 * Doing this we will have a more wide result set.
+		 * @var WP_User $wpUser
+		 */
+		foreach ($wp_users as $wpUser) {
+			$found_user = $this->get_coauthor_by('user_nicename' , $wpUser->user_nicename);
+			if ( !empty( $found_user ) )
+				$found_users[$found_user->user_login] = $found_user;
 		}
 
 		// Allow users to always filter out certain users if needed (e.g. administrators)
