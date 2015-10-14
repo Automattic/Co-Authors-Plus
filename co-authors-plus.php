@@ -1152,7 +1152,7 @@ class coauthors_plus {
 				unset( $found_users[ $key ] );
 			}
 		}
-		return (array) $found_users;
+		return (array) array_slice($found_users,0,10);
 	}
 
 	/**
