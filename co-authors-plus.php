@@ -51,7 +51,7 @@ class coauthors_plus {
 
 	var $supported_post_types = array();
 
-	var $ajax_search_fields = array( 'display_name', 'first_name', 'last_name', 'user_login', 'ID', 'user_email' );
+	var $ajax_search_fields = array( 'display_name', 'first_name', 'last_name', 'user_login', 'ID' );
 
 	var $having_terms = '';
 
@@ -208,7 +208,30 @@ class coauthors_plus {
 		// Apply some targeted filters
 		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
 
+//        $this->updateTermTaxonomyCount();
+
 	}
+
+    private function updateTermTaxonomyCount()
+    {
+        $updateInterval = 86400; // 1 giorno
+        global $wpdb;
+        $lastUpdate = get_option("cap-last-tax-update",time());
+        if( (time() - $lastUpdate) > $updateInterval ){
+            $wpdb->query(
+                "
+            UPDATE wp_term_taxonomy SET count = (
+                SELECT COUNT(*) FROM wp_term_relationships rel
+                LEFT JOIN wp_posts po ON (po.ID = rel.object_id)
+                WHERE
+                rel.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id AND
+                wp_term_taxonomy.taxonomy NOT IN ('link_category') AND
+                po.post_status IN ('publish', 'future')
+            )
+        ");
+            update_option("cap-last-tax-update",time());
+        }
+    }
 
 	/**
 	 * Check whether the guest authors functionality is enabled or not
@@ -259,10 +282,16 @@ class coauthors_plus {
 				// Ensure we aren't doing the lookup by the prefixed value
 				if ( 'login' == $key || 'slug' == $key ) {
 					$value = preg_replace( '#^cap\-#', '', $value );
+					$value = preg_replace( '#^cap2\-#', '', $value );
 				}
 				$user = get_user_by( $key, $value );
 				if ( ! $user ) {
-					return false;
+                    if( $key != "login" ){
+                        $user = get_user_by( "login", $value );
+                    }
+                    if( !$user ){
+					    return false;
+                    }
 				}
 				$user->type = 'wpuser';
 				// However, if guest authors are enabled and there's a guest author linked to this
@@ -655,6 +684,15 @@ class coauthors_plus {
 			$coauthor = $this->get_coauthor_by( 'user_nicename', $author_name );
 			if ( $author_term = $this->get_author_term( $coauthor ) ) {
 				$terms[] = $author_term;
+                if( stripos($author_term->slug,"cap-") === 0 ){
+                    $termLegacy = $this->getTermBy($coauthor , "cap2-");
+                    if( !$termLegacy ){
+                        $termLegacy = $this->getTermBy($coauthor , "cap2-","user_login");
+                    }
+                    if( $termLegacy && !is_wp_error( $termLegacy ) ){
+                        $terms[] = $termLegacy;
+                    }
+                }
 			}
 			// If this coauthor has a linked account, we also need to get posts with those terms
 			if ( ! empty( $coauthor->linked_account ) ) {
@@ -931,15 +969,26 @@ class coauthors_plus {
 	 * Filter the count_users_posts() core function to include our correct count
 	 */
 	function filter_count_user_posts( $count, $user_id ) {
+        $termLegacy = null;
 		$user = get_userdata( $user_id );
 
 		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
 		$term = $this->get_author_term( $user );
+        if( stripos($term->slug,"cap-") === 0 ){
+            $termLegacy = $this->getTermBy($user , "cap2-");
+            if( !$termLegacy ){
+                $termLegacy = $this->getTermBy($user , "cap2-","user_login");
+            }
+        }
+
 		// Only modify the count if the author already exists as a term
 		if ( $term && ! is_wp_error( $term ) ) {
 			$count = $term->count;
 		}
+        if( $termLegacy && !is_wp_error( $termLegacy ) ){
+            $count += $termLegacy->count;
+        }
 
 		return $count;
 	}
@@ -1341,14 +1390,49 @@ class coauthors_plus {
 			return $term;
 		}
 
+
+        $term = $this->legacyGetCoauthorTerm($coauthor);
+
+
 		// See if the prefixed term is available, otherwise default to just the nicename
-		$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
-		if ( ! $term ) {
-			$term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy );
-		}
+//		$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
+//		if ( ! $term ) {
+//			$term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy );
+//		}
+//        if( !$term ){
+//            $term = get_term_by( 'slug', 'cap2-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
+//        }
+
 		wp_cache_set( $cache_key, $term, 'co-authors-plus' );
 		return $term;
 	}
+
+    private function legacyGetCoauthorTerm($coauthor , $userData = "user_nicename")
+    {
+        $term = $this->getTermBy($coauthor , "cap-" ,$userData);
+        if ( ! $term ) {
+            $term = $this->getTermBy($coauthor , "",$userData);
+        }
+        if( !$term ){
+            $term = $this->getTermBy($coauthor , "cap2-",$userData);
+        }
+        if( !$term && $userData != "user_login" ){
+            $term = $this->legacyGetCoauthorTerm($coauthor,"user_login");
+        }
+        return $term;
+    }
+
+    private function getTermBy( $coauthor, $prefix = "cap-", $userData = "user_nicename" )
+    {
+        switch($userData){
+            case "user_nicename":
+                return get_term_by( 'slug', $prefix.$coauthor->user_nicename , $this->coauthor_taxonomy );
+                break;
+            case "user_login":
+                return get_term_by( 'slug', $prefix.$coauthor->user_login , $this->coauthor_taxonomy );
+                break;
+        }
+    }
 
 	/**
 	 * Update the author term for a given co-author

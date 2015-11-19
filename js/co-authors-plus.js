@@ -1,5 +1,7 @@
 jQuery( document ).ready(function () {
 
+    var $coauthors_loading;
+    $coauthors_loading = jQuery( '#ajax-loading' ).clone().attr( 'id', 'coauthors-loading' );
 	/*
 	 * Click handler for the delete button
 	 * @param event
@@ -169,7 +171,8 @@ jQuery( document ).ready(function () {
 			})
 			.appendTo( $coauthors_div )
 			.suggest( coAuthorsPlus_ajax_suggest_link, {
-				onSelect: coauthors_autosuggest_select
+				onSelect: coauthors_autosuggest_select,
+                delay: 500
 			})
 			.keydown( coauthors_autosuggest_keydown )
 			;
@@ -378,6 +381,7 @@ jQuery( document ).ready(function () {
 		if ( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 )
 			hide_loading();
 	});
+
 
 	if ( 'post-php' == adminpage || 'post-new-php' == adminpage ) {
 		var $post_coauthor_logins = jQuery( 'input[name="coauthors[]"]' );

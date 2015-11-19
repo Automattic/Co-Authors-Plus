@@ -720,6 +720,7 @@ class CoAuthors_Guest_Authors
 
 		// Guest authors can't be created with the same user_login as a user
 		$user_nicename = str_replace( 'cap-', '', $slug );
+		$user_nicename = str_replace( 'cap2-', '', $user_nicename );
 		$user = get_user_by( 'slug', $user_nicename );
 		if ( $user
 			&& is_user_member_of_blog( $user->ID, get_current_blog_id() )
@@ -860,6 +861,7 @@ class CoAuthors_Guest_Authors
 				// Ensure we aren't doing the lookup by the prefixed value
 				if ( 'user_login' == $key ) {
 					$value = preg_replace( '#^cap\-#', '', $value );
+					$value = preg_replace( '#^cap2\-#', '', $value );
 				}
 				$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
 				$post_id = $wpdb->get_var( $query );
@@ -1032,6 +1034,17 @@ class CoAuthors_Guest_Authors
 		if ( 0 !== stripos( $key, 'cap-' ) ) {
 			$key = 'cap-' . $key;
 		}
+        $capTerm = get_term_by("slug",$key,"author");
+        if( !$capTerm ){
+            $key = str_replace("cap-","",$key);
+            if ( 0 !== stripos( $key, 'cap2-' ) ) {
+                $key = 'cap2-' . $key;
+            }
+            $capTerm = get_term_by("slug",$key,"author");
+            if( $capTerm ){
+                return $key;
+            }
+        }
 
 		return $key;
 	}

@@ -19,6 +19,7 @@ function get_coauthors( $post_id = 0 ) {
 		if ( is_array( $coauthor_terms ) && ! empty( $coauthor_terms ) ) {
 			foreach ( $coauthor_terms as $coauthor ) {
 				$coauthor_slug = preg_replace( '#^cap\-#', '', $coauthor->slug );
+				$coauthor_slug = preg_replace( '#^cap2\-#', '', $coauthor_slug );
 				$post_author = $coauthors_plus->get_coauthor_by( 'user_nicename', $coauthor_slug );
 				// In case the user has been deleted while plugin was deactivated
 				if ( ! empty( $post_author ) ) {
