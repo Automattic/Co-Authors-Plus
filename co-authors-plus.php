@@ -208,29 +208,30 @@ class coauthors_plus {
 		// Apply some targeted filters
 		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
 
-//        $this->updateTermTaxonomyCount();
+        // If you want to schedule automatical term count update daily uncomment the following lines
+//        if( !wp_next_scheduled('cap-update-term-tax-count') ){
+//            wp_schedule_event(time(),'daily','cap-update-term-tax-count');
+//        }
+//        add_action('cap-update-term-tax-count',array($this,'updateTermTaxonomyCount'));
 
 	}
 
     private function updateTermTaxonomyCount()
     {
-        $updateInterval = 86400; // 1 giorno
         global $wpdb;
-        $lastUpdate = get_option("cap-last-tax-update",time());
-        if( (time() - $lastUpdate) > $updateInterval ){
-            $wpdb->query(
-                "
-            UPDATE wp_term_taxonomy SET count = (
-                SELECT COUNT(*) FROM wp_term_relationships rel
-                LEFT JOIN wp_posts po ON (po.ID = rel.object_id)
-                WHERE
-                rel.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id AND
-                wp_term_taxonomy.taxonomy NOT IN ('link_category') AND
-                po.post_status IN ('publish', 'future')
-            )
+        $wpdb->query(
+            "
+                UPDATE wp_term_taxonomy SET count = (
+                    SELECT COUNT(*) FROM wp_term_relationships rel
+                    LEFT JOIN wp_posts po ON (po.ID = rel.object_id)
+                    WHERE
+                    rel.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id AND
+                    wp_term_taxonomy.taxonomy NOT IN ('link_category') AND
+                    po.post_status IN ('publish', 'future') AND
+                    rel.term_order = 2
+                )
+                WHERE wp_term_taxonomy.taxonomy = 'author'
         ");
-            update_option("cap-last-tax-update",time());
-        }
     }
 
 	/**
@@ -965,6 +966,13 @@ class coauthors_plus {
 
 	}
 
+    function count_user_posts_by_type( $userid, $post_type = 'post' ) {
+        global $wpdb;
+        $where = get_posts_by_author_sql( $post_type, true, $userid );
+        $count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts $where" );
+        return $count;
+    }
+
 	/**
 	 * Filter the count_users_posts() core function to include our correct count
 	 */
@@ -982,6 +990,8 @@ class coauthors_plus {
             }
         }
 
+
+
 		// Only modify the count if the author already exists as a term
 		if ( $term && ! is_wp_error( $term ) ) {
 			$count = $term->count;
@@ -989,6 +999,8 @@ class coauthors_plus {
         if( $termLegacy && !is_wp_error( $termLegacy ) ){
             $count += $termLegacy->count;
         }
+
+        $count += $this->count_user_posts_by_type($user_id);
 
 		return $count;
 	}
