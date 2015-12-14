@@ -235,7 +235,7 @@ class CoAuthors_Guest_Authors
 		// Make sure the guest author actually exists
 		$guest_author = $this->get_guest_author_by( 'ID', (int) $_POST['id'] );
 		if ( ! $guest_author ) {
-			wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
+			wp_die( sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $this->labels['singular'] ) );
 		}
 
 		// Perform the reassignment if needed
@@ -459,16 +459,16 @@ class CoAuthors_Guest_Authors
 			// Make sure the guest author actually exists
 			$guest_author = $this->get_guest_author_by( 'ID', (int) $_GET['id'] );
 			if ( ! $guest_author ) {
-				wp_die( __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
+				wp_die( sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $this->labels['singular'] ) );
 			}
 
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
 			echo '<h2>' . sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) . '</h2>';
-			echo '<p>' . __( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
+			echo '<p>' . sprintf( __( 'You have specified this %s for deletion:', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) . '</p>';
 			echo '<p>#' . $guest_author->ID . ': ' . esc_html( $guest_author->display_name ) . '</p>';
-			echo '<p>' . __( 'What should be done with posts assigned to this guest author?', 'co-authors-plus' ) . '</p>';
-			echo '<p class="description">' . __( "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author.", 'co-authors-plus' ) . '</p>';
+			echo '<p>' . sprintf( __( 'What should be done with posts assigned to this %s?', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) . '</p>';
+			echo '<p class="description">' . sprintf( __( "Note: If you'd like to delete the %s and all of their posts, you should delete their posts first and then come back to delete the %s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) . '</p>';
 			echo '<form method="POST" action="' . esc_url( add_query_arg( 'page', 'view-guest-authors', admin_url( $this->parent_page ) ) ) . '">';
 			// Hidden stuffs
 			echo '<input type="hidden" name="action" value="delete-guest-author" />';
@@ -1106,7 +1106,7 @@ class CoAuthors_Guest_Authors
 	function filter_update_post_metadata( $retnull, $object_id, $meta_key, $meta_value, $prev_value ) {
 
 		if ( $this->post_type != get_post_type( $object_id ) ) {
-			return null;
+			return $retnull;
 		}
 
 		// If the linked_account is changing, invalidate the cache of all linked accounts

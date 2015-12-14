@@ -618,10 +618,10 @@ class coauthors_plus {
 			$term_taxonomy_join = " INNER JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
 
 			if ( false === strpos( $join, trim( $term_relationship_join ) ) ) {
-				$join .= str_replace( "INNER JOIN", "LEFT JOIN", $term_relationship_join );
+				$join .= str_replace( 'INNER JOIN', 'LEFT JOIN', $term_relationship_join );
 			}
 			if ( false === strpos( $join, trim( $term_taxonomy_join ) ) ) {
-				$join .= str_replace( "INNER JOIN", "LEFT JOIN", $term_taxonomy_join );
+				$join .= str_replace( 'INNER JOIN', 'LEFT JOIN', $term_taxonomy_join );
 			}
 		}
 
@@ -906,7 +906,7 @@ class coauthors_plus {
 		$terms = array();
 		foreach ( $raw_coauthors as $author ) {
 			if ( true === is_array( $args ) && true === isset( $args['fields'] ) ) {
-				switch( $args['fields'] ) {
+				switch ( $args['fields'] ) {
 					case 'names' :
 						$terms[] = $author->name;
 						break;
