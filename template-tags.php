@@ -63,6 +63,10 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 	if ( is_numeric( $user ) ) {
 		$user = get_userdata( $user );
 		$user = $user->user_login;
+	} else if ( isset( $user->user_login ) ) {
+		$user = $user->user_login;
+	} else {
+		return false;
 	}
 
 	foreach ( $coauthors as $coauthor ) {
