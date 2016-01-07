@@ -246,6 +246,15 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
  * @return string
  */
 function coauthors_posts_links_single( $author ) {
+	// Return if the fields we are trying to use are not sent
+	if ( ! isset( $author->ID, $author->user_nicename, $author->display_name ) ) {
+		_doing_it_wrong(
+			'coauthors_posts_links_single',
+			'Invalid author object used',
+			'3.2'
+		);
+		return;
+	}
 	$args = array(
 		'before_html' => '',
 		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
