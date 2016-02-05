@@ -84,7 +84,7 @@ class CoAuthorsIterator {
 	var $authordata_array;
 	var $count;
 
-	function CoAuthorsIterator( $postID = 0 ) {
+	function __construct( $postID = 0 ) {
 		global $post, $authordata, $wpdb;
 		$postID = (int) $postID;
 		if ( ! $postID && $post ) {
