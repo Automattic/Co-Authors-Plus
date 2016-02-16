@@ -17,6 +17,8 @@ class CoAuthorsPlus_TestCase extends WP_UnitTestCase {
 
 		$this->author1 = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'author1' ) );
 		$this->editor1 = $this->factory->user->create( array( 'role' => 'editor', 'user_login' => 'editor2' ) );
+		$this->contributor = $this->factory->user->create( array( 'role' => 'contributor', 'user_login' => 'contributor1' ) );
+		$this->subscriber = $this->factory->user->create( array( 'role' => 'subscriber', 'user_login' => 'subscriber1' ) );
 
 		$post = array(
 			'post_author'     => $this->author1,
