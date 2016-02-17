@@ -14,12 +14,12 @@ class CoAuthors_API {
     private $coauthors_plus;
 
     public function __construct( coauthors_plus $coauthors_plus ) {
-
         // Instead of relying of global variables, we inject the parent class here
         $this->coauthors_plus = $coauthors_plus;
 
         // Action to loads the API class
         add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+
 
     }
 

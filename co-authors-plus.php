@@ -127,6 +127,7 @@ class coauthors_plus {
 	 * and the custom post type to store our author data
 	 */
 	public function action_init() {
+        global $wp_version;
 
 		// Allow Co-Authors Plus to be easily translated
 		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -140,10 +141,12 @@ class coauthors_plus {
 			}
 		}
 
-        // Load the API REST class
+        // Load the API REST class, if current installed WP is supported
         // @todo Allow this to be enable/disabled like Guest Author functionality
-        require_once( dirname( __FILE__ ) . '/php/class-coauthors-api.php' );
-        $this->api = new CoAuthors_API($this);
+        if (version_compare($wp_version, '4.4', '>=')) {
+            require_once( dirname( __FILE__ ) . '/php/class-coauthors-api.php' );
+            $this->api = new CoAuthors_API( $this );
+        }
 
 		// Maybe automatically apply our template tags
 		if ( apply_filters( 'coauthors_auto_apply_template_tags', false ) ) {
