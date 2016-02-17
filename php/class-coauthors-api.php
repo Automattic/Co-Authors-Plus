@@ -27,11 +27,11 @@ class CoAuthors_API {
      */
     public function register_routes() {
 
-        register_rest_route( $this->build_namespace(), '/search', [
+        register_rest_route( $this->build_namespace(), '/search', array(
             'methods'             => WP_REST_Server::CREATABLE,
-            'callback'            => [ $this, 'get_search' ],
-            'permission_callback' => [ $this, 'get_permission' ]
-        ] );
+            'callback'            => array( $this, 'get_search' ),
+            'permission_callback' => array( $this, 'get_permission' )
+        ) );
 
     }
 
@@ -49,7 +49,7 @@ class CoAuthors_API {
         }
 
         // @todo allow existing_authors to be removed from the search results
-        $ignore = [ ];
+        $ignore = array();
         if ( isset( $request['existing_authors'] ) && is_array( $request['existing_authors'] ) ) {
             $ignore = array_map( 'sanitize_text_field', $request['existing_authors'] );
         } elseif ( isset( $request['existing_authors'] ) && ! is_array( $request['existing_authors'] ) ) {
@@ -58,16 +58,16 @@ class CoAuthors_API {
 
         $authors = $this->coauthors_plus->search_authors( $search, $ignore );
 
-        $data = [ 'authors' => [ ] ];
+        $data = array( 'authors' => array() );
 
         foreach ( $authors as $author ) {
-            $data['authors'][] = [
+            $data['authors'][] = array(
                 'id'            => $author->ID,
                 'user_login'    => $author->user_login,
                 'display_name'  => $author->display_name,
                 'user_email'    => $author->user_email,
                 'user_nicename' => $author->user_nicename
-            ];
+            );
         }
 
         return $this->send_response( $data );

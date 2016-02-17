@@ -46,7 +46,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         public function testSearchAuthenticatedWithPermission() {
             wp_set_current_user( 1 );
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( [ 'q' => 'foo' ] );
+            $request->set_body_params( array( 'q' => 'foo' ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 200, $response->get_status() );
         }
@@ -54,7 +54,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         public function testSearchResults() {
             wp_set_current_user( 1 );
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( [ 'q' => 'tor' ] );
+            $request->set_body_params( array( 'q' => 'tor' ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 200, $response->get_status() );
             $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
@@ -63,7 +63,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         public function testExistingAuthorsInvalid() {
             wp_set_current_user( 1 );
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => "foo" ] );
+            $request->set_body_params( array( 'q' => 'tor', 'existing_authors' => "foo" ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 400, $response->get_status() );
             $this->assertErrorResponse( 'rest_invalid_field_type', $response );
@@ -73,13 +73,13 @@ if (version_compare($wp_version, '4.4', '>=')) {
         public function testExistingAuthorsValid() {
             wp_set_current_user( 1 );
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => [ 'contributor1' ] ] );
+            $request->set_body_params( array(  'q' => 'tor', 'existing_authors' => array(  'contributor1' ) ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 200, $response->get_status() );
             $this->assertEquals( 1, count( $response->get_data()['authors'] ) );
 
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => [ 'contributor1', 'editor2' ] ] );
+            $request->set_body_params( array(  'q' => 'tor', 'existing_authors' => array(  'contributor1', 'editor2' ) ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 200, $response->get_status() );
             $this->assertEquals( 0, count( $response->get_data()['authors'] ) );
