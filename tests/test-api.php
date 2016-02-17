@@ -1,8 +1,8 @@
 <?php
+
 /**
  * Test Co-Authors Plus' REST API
  */
-
 class Test_API extends CoAuthorsPlus_TestCase {
 
     protected $server;
@@ -25,35 +25,71 @@ class Test_API extends CoAuthorsPlus_TestCase {
     }
 
     public function testSearchWithoutAuthentication() {
-        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
+        $request  = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
         $response = $this->server->dispatch( $request );
         $this->assertEquals( 403, $response->get_status() );
-        $this->assertErrorResponse( 'rest_forbidden', $response);
+        $this->assertErrorResponse( 'rest_forbidden', $response );
     }
 
     public function testSearchAuthenticatedWithoutPermission() {
-        wp_set_current_user($this->subscriber);
-        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
+        wp_set_current_user( $this->subscriber );
+        $request  = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
         $response = $this->server->dispatch( $request );
         $this->assertEquals( 403, $response->get_status() );
-        $this->assertErrorResponse( 'rest_forbidden', $response);
+        $this->assertErrorResponse( 'rest_forbidden', $response );
     }
 
     public function testSearchAuthenticatedWithPermission() {
-        wp_set_current_user(1);
+        wp_set_current_user( 1 );
         $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-        $request->set_body_params( ['q' => 'foo'] );
+        $request->set_body_params( [ 'q' => 'foo' ] );
         $response = $this->server->dispatch( $request );
         $this->assertEquals( 200, $response->get_status() );
     }
 
     public function testSearchResults() {
-        wp_set_current_user(1);
+        wp_set_current_user( 1 );
         $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-        $request->set_body_params( ['q' => 'tor'] );
+        $request->set_body_params( [ 'q' => 'tor' ] );
         $response = $this->server->dispatch( $request );
         $this->assertEquals( 200, $response->get_status() );
-        $this->assertEquals( 2, count($response->get_data()['authors'] ) );
+        $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
+    }
+
+    public function testExistingAuthorsInvalid() {
+        wp_set_current_user( 1 );
+        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
+        $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => null ] );
+        $response = $this->server->dispatch( $request );
+        $this->assertEquals( 200, $response->get_status() );
+        $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
+
+
+        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
+        $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => 1 ] );
+        $response = $this->server->dispatch( $request );
+        $this->assertEquals( 200, $response->get_status() );
+        $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
+
+        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
+        $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => "foo" ] );
+        $response = $this->server->dispatch( $request );
+        $this->assertEquals( 200, $response->get_status() );
+        $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
+    }
+
+    public function testExistingAuthorsValid() {
+        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
+        $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => [ 'contributor1' ] ] );
+        $response = $this->server->dispatch( $request );
+        $this->assertEquals( 200, $response->get_status() );
+        $this->assertEquals( 1, count( $response->get_data()['authors'] ) );
+
+        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
+        $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => [ 'contributor1', 'editor2' ] ] );
+        $response = $this->server->dispatch( $request );
+        $this->assertEquals( 200, $response->get_status() );
+        $this->assertEquals( 0, count( $response->get_data()['authors'] ) );
     }
 
     protected function assertErrorResponse( $code, $response, $status = null ) {
@@ -83,16 +119,19 @@ class WP_Test_Spy_REST_Server extends WP_REST_Server {
     public function get_raw_endpoint_data() {
         return $this->endpoints;
     }
+
     /**
      * Allow calling protected methods from tests
      *
      * @param string $method Method to call
      * @param array $args Arguments to pass to the method
+     *
      * @return mixed
      */
     public function __call( $method, $args ) {
         return call_user_func_array( array( $this, $method ), $args );
     }
+
     /**
      * Call dispatch() with the rest_post_dispatch filter
      */
@@ -102,6 +141,7 @@ class WP_Test_Spy_REST_Server extends WP_REST_Server {
         if ( is_wp_error( $result ) ) {
             $result = $this->error_to_response( $result );
         }
+
         return apply_filters( 'rest_post_dispatch', rest_ensure_response( $result ), $this, $request );
     }
 }

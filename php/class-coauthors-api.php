@@ -20,7 +20,6 @@ class CoAuthors_API {
         // Action to loads the API class
         add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 
-
     }
 
     /**
@@ -50,9 +49,11 @@ class CoAuthors_API {
         }
 
         // @todo allow existing_authors to be removed from the search results
-        //$ignore = array_map( 'sanitize_text_field', explode( ',', $_REQUEST['existing_authors'] ) );
-
-        $authors = $this->coauthors_plus->search_authors( $search, [ ] );
+        $ignore = [ ];
+        if ( isset( $request['existing_authors'] ) && is_array( $request['existing_authors'] ) ) {
+            $ignore = array_map( 'sanitize_text_field', $request['existing_authors'] );
+        }
+        $authors = $this->coauthors_plus->search_authors( $search, $ignore );
 
         $data = [ 'authors' => [ ] ];
 
