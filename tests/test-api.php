@@ -13,6 +13,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         public function setUp() {
             parent::setUp();
 
+            $this->logout();
             /** @var WP_REST_Server $wp_rest_server */
             global $wp_rest_server;
             $this->server = $wp_rest_server = new WP_Test_Spy_REST_Server;
@@ -60,7 +61,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         }
 
         public function testExistingAuthorsInvalid() {
-
+            wp_set_current_user( 1 );
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
             $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => "foo" ] );
             $response = $this->server->dispatch( $request );
@@ -70,6 +71,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         }
 
         public function testExistingAuthorsValid() {
+            wp_set_current_user( 1 );
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
             $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => [ 'contributor1' ] ] );
             $response = $this->server->dispatch( $request );
@@ -94,6 +96,13 @@ if (version_compare($wp_version, '4.4', '>=')) {
                 $this->assertArrayHasKey( 'status', $data );
                 $this->assertEquals( $status, $data['status'] );
             }
+        }
+
+        /**
+         * Clears any persisted authentication
+         */
+        protected function logout() {
+            wp_set_current_user( -1 );
         }
     }
 
