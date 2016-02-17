@@ -52,7 +52,10 @@ class CoAuthors_API {
         $ignore = [ ];
         if ( isset( $request['existing_authors'] ) && is_array( $request['existing_authors'] ) ) {
             $ignore = array_map( 'sanitize_text_field', $request['existing_authors'] );
+        } elseif ( isset( $request['existing_authors'] ) && ! is_array( $request['existing_authors'] ) ) {
+            return new WP_Error( 'rest_invalid_field_type', __( 'The existing_authors parameter must be an array.' ), array( 'status' => 400 ) );
         }
+
         $authors = $this->coauthors_plus->search_authors( $search, $ignore );
 
         $data = [ 'authors' => [ ] ];

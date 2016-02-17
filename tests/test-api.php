@@ -57,25 +57,13 @@ class Test_API extends CoAuthorsPlus_TestCase {
     }
 
     public function testExistingAuthorsInvalid() {
-        wp_set_current_user( 1 );
-        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-        $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => null ] );
-        $response = $this->server->dispatch( $request );
-        $this->assertEquals( 200, $response->get_status() );
-        $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
-
-
-        $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-        $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => 1 ] );
-        $response = $this->server->dispatch( $request );
-        $this->assertEquals( 200, $response->get_status() );
-        $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
 
         $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
         $request->set_body_params( [ 'q' => 'tor', 'existing_authors' => "foo" ] );
         $response = $this->server->dispatch( $request );
-        $this->assertEquals( 200, $response->get_status() );
-        $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
+        $this->assertEquals( 400, $response->get_status() );
+        $this->assertErrorResponse( 'rest_invalid_field_type', $response );
+
     }
 
     public function testExistingAuthorsValid() {
