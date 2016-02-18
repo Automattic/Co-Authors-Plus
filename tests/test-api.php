@@ -149,7 +149,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
          *
          * @return mixed
          */
-        protected function get_request_response($method, $path, array $params = [])
+        protected function get_request_response($method, $path, array $params = array())
         {
             $request = new WP_REST_Request( $method, '/coauthors/v1/' . $path );
             $request->set_body_params( $params );
