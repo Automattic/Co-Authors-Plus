@@ -956,24 +956,27 @@ class coauthors_plus {
 	/**
 	 * Checks to see if the current user can set authors or not
 	 */
-	function current_user_can_set_authors( $post = null ) {
+	function current_user_can_set_authors( $post = null, $is_api_request = false ) {
 		global $typenow;
 
 		if ( ! $post ) {
 			$post = get_post();
-			if ( ! $post ) {
+			if ( ! $post && ! $is_api_request) {
 				return false;
 			}
 		}
 
-		$post_type = $post->post_type;
+		if ( $post ) {
+			$post_type = $post->post_type;
 
-		// TODO: need to fix this; shouldn't just say no if don't have post_type
-		if ( ! $post_type ) {
-			return false;
+			// TODO: need to fix this; shouldn't just say no if don't have post_type
+			if ( ! $post_type ) {
+				return false;
+			}
+
+			$post_type_object = get_post_type_object( $post_type );
 		}
 
-		$post_type_object = get_post_type_object( $post_type );
 		$current_user = wp_get_current_user();
 		if ( ! $current_user ) {
 			return false;

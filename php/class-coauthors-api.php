@@ -5,8 +5,11 @@
  */
 class CoAuthors_API {
 
-    const api_namespace = "coauthors/";
-    const api_version = "v1";
+    const API_NAMESPACE = "coauthors/";
+    const API_VERSION = "v1";
+
+    const ROUTE_SEARCH  = '/search';
+    const ROUTE_POST = '/post/(?P<id>\d+)';
 
     /**
      * @var coauthors_plus
@@ -27,12 +30,25 @@ class CoAuthors_API {
      */
     public function register_routes() {
 
-        register_rest_route( $this->build_namespace(), '/search', array(
+        // Search
+        register_rest_route( $this->build_namespace(), self::ROUTE_SEARCH, array(
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array( $this, 'get_search' ),
-            'permission_callback' => array( $this, 'get_permission' )
+            'permission_callback' => array( $this, 'has_permission' )
         ) );
 
+        // Post
+        register_rest_route( $this->build_namespace(), self::ROUTE_POST, array(
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => array( $this, 'post_create' ),
+            'permission_callback' => array( $this, 'has_permission' ),
+            'args' => array(
+                'id' => array(
+                    'validate_callback' => array( $this, 'post_validate_callback' )
+                )
+            )
+
+        ) );
     }
 
     /**
@@ -73,13 +89,54 @@ class CoAuthors_API {
         return $this->send_response( $data );
     }
 
+    public function post_create( WP_REST_Request $request ) {
+
+        // @todo add this to validate_callback in the register_routes()
+        $post_id = (int) sanitize_text_field($request['id']);
+
+        // @todo refactor these next 10 lines into an private method
+        $post = get_post( $post_id );
+
+        if ( ! $post ) {
+            return new WP_Error( 'rest_post_not_found', __( 'Post was not found.' ), array( 'status' => 404 ) );
+        }
+
+        if ( ! $this->coauthors_plus->is_post_type_enabled( $post->post_type ) ) {
+            return new WP_Error( 'rest_post_disabled', __( 'You do not have permissions to access this post.' ),
+                array( 'status' => 400 ) );
+        }
+
+        $append = (bool) sanitize_text_field($request['append']);
+
+        if ( $this->coauthors_plus->current_user_can_set_authors( $post, true ) ) {
+            $coauthors = (array) $request['coauthors'];
+            $coauthors = array_map( 'sanitize_text_field', $coauthors );
+            $this->coauthors_plus->add_coauthors( $post_id, $coauthors, $append );
+        }
+
+        if ( isset( $coauthors ) ) {
+            return $this->send_response( array( __( 'Post authors updated.' ) ) );
+        }
+    }
+
+    /**
+     * @param array $param
+     * @param WP_REST_Request $request
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function post_validate_callback($param, WP_REST_Request $request, $key) {
+        return is_numeric( sanitize_text_field ($request['id'] ) );
+    }
+
     /**
      * Returns true or false if the user has access permission.
      *
      * @return bool
      */
-    public function get_permission() {
-        return current_user_can( 'edit_others_posts' );
+    public function has_permission() {
+        return $this->coauthors_plus->current_user_can_set_authors(null, true);
     }
 
     /**
@@ -102,6 +159,6 @@ class CoAuthors_API {
      * @return string
      */
     private function build_namespace() {
-        return self::api_namespace . self::api_version;
+        return self::API_NAMESPACE . self::API_VERSION;
     }
 }

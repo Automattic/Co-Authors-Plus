@@ -29,33 +29,27 @@ if (version_compare($wp_version, '4.4', '>=')) {
         }
 
         public function testSearchWithoutAuthentication() {
-            $request  = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $response = $this->server->dispatch( $request );
+            $response = $this->get_request_response('POST', 'search');
             $this->assertEquals( 403, $response->get_status() );
             $this->assertErrorResponse( 'rest_forbidden', $response );
         }
 
         public function testSearchAuthenticatedWithoutPermission() {
             wp_set_current_user( $this->subscriber );
-            $request  = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $response = $this->server->dispatch( $request );
+            $response = $this->get_request_response('POST', 'search');
             $this->assertEquals( 403, $response->get_status() );
             $this->assertErrorResponse( 'rest_forbidden', $response );
         }
 
         public function testSearchAuthenticatedWithPermission() {
             wp_set_current_user( 1 );
-            $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( array( 'q' => 'foo' ) );
-            $response = $this->server->dispatch( $request );
+            $response = $this->get_request_response('POST', 'search', array( 'q' => 'foo' ) );
             $this->assertEquals( 200, $response->get_status() );
         }
 
         public function testSearchResults() {
             wp_set_current_user( 1 );
-            $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( array( 'q' => 'tor' ) );
-            $response = $this->server->dispatch( $request );
+            $response = $this->get_request_response('POST', 'search', array( 'q' => 'tor' ) );
             $this->assertEquals( 200, $response->get_status() );
             $data = $response->get_data();
             $this->assertEquals( 2, count( $data['authors'] ) );
@@ -63,9 +57,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
 
         public function testExistingAuthorsInvalid() {
             wp_set_current_user( 1 );
-            $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( array( 'q' => 'tor', 'existing_authors' => "foo" ) );
-            $response = $this->server->dispatch( $request );
+            $response = $this->get_request_response('POST', 'search', array( 'q' => 'tor', 'existing_authors' => "foo" ) );
             $this->assertEquals( 400, $response->get_status() );
             $this->assertErrorResponse( 'rest_invalid_field_type', $response );
 
@@ -73,21 +65,70 @@ if (version_compare($wp_version, '4.4', '>=')) {
 
         public function testExistingAuthorsValid() {
             wp_set_current_user( 1 );
-            $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( array(  'q' => 'tor', 'existing_authors' => array(  'contributor1' ) ) );
-            $response = $this->server->dispatch( $request );
+            $response = $this->get_request_response('POST', 'search', array(  'q' => 'tor', 'existing_authors' => array(  'contributor1' ) ) );
             $this->assertEquals( 200, $response->get_status() );
             $data = $response->get_data();
             $this->assertEquals( 1, count( $data['authors'] ) );
 
-            $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
-            $request->set_body_params( array(  'q' => 'tor', 'existing_authors' => array(  'contributor1', 'editor2' ) ) );
-            $response = $this->server->dispatch( $request );
+            $response = $this->get_request_response('POST', 'search', array(  'q' => 'tor', 'existing_authors' => array(  'contributor1', 'editor2' ) ) );
             $this->assertEquals( 200, $response->get_status() );
             $data = $response->get_data();
             $this->assertEquals( 0, count( $data['authors'] ) );
         }
 
+        public function testPostAuthorsAdmin()
+        {
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('POST', 'post/' . $this->author1_post1,
+                array(  'coauthors' => array( 'author1', 'editor2' ) ) );
+            $this->assertEquals( 200, $response->get_status() );
+            $data = $response->get_data();
+            $this->assertEquals( 'Post authors updated.',  $data[0] );
+
+            $coauthors = get_coauthors( $this->author1_post1 );
+            $this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
+        }
+
+        public function testPostAuthorsAuthor()
+        {
+            wp_set_current_user( $this->author1 );
+            $response = $this->get_request_response('POST', 'post/' . $this->author1_post1,
+                array(  'coauthors' => array( 'author1', 'editor2' ) ) );
+            $this->assertEquals( 403, $response->get_status() );
+        }
+
+        public function testPostAuthorsAppend()
+        {
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('POST', 'post/' . $this->author1_post1,
+                array(  'coauthors' => array( 'author1') ) );
+            $this->assertEquals( 200, $response->get_status() );
+            $coauthors = get_coauthors( $this->author1_post1 );
+            $this->assertEquals( array( $this->author1), wp_list_pluck( $coauthors, 'ID' ) );
+
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('POST', 'post/' . $this->author1_post1,
+                array(  'coauthors' => array( 'editor2'), 'append' => true ) );
+            $this->assertEquals( 200, $response->get_status() );
+            $coauthors = get_coauthors( $this->author1_post1 );
+            $this->assertEquals( array( $this->author1, $this->editor1), wp_list_pluck( $coauthors, 'ID' ) );
+        }
+
+        public function testPostAuthorsUnauthorized()
+        {
+            wp_set_current_user( $this->editor1 );
+            $response = $this->get_request_response('POST', 'post/' . $this->author1_post1,
+                array(  'coauthors' => array( 'author1', 'editor2' ) ) );
+            $this->assertEquals( 200, $response->get_status() );
+            $coauthors = get_coauthors( $this->author1_post1 );
+            $this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
+        }
+
+        /**
+         * @param String $code
+         * @param WP_REST_Response $response
+         * @param null $status
+         */
         protected function assertErrorResponse( $code, $response, $status = null ) {
             if ( is_a( $response, 'WP_REST_Response' ) ) {
                 $response = $response->as_error();
@@ -99,6 +140,20 @@ if (version_compare($wp_version, '4.4', '>=')) {
                 $this->assertArrayHasKey( 'status', $data );
                 $this->assertEquals( $status, $data['status'] );
             }
+        }
+
+        /**
+         * @param string $method
+         * @param string $path
+         * @param array $params
+         *
+         * @return mixed
+         */
+        protected function get_request_response($method, $path, array $params = [])
+        {
+            $request = new WP_REST_Request( $method, '/coauthors/v1/' . $path );
+            $request->set_body_params( $params );
+            return $this->server->dispatch( $request );
         }
 
         /**
