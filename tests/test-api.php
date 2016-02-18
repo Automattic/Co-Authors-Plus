@@ -57,7 +57,8 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $request->set_body_params( array( 'q' => 'tor' ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 200, $response->get_status() );
-            $this->assertEquals( 2, count( $response->get_data()['authors'] ) );
+            $data = $response->get_data();
+            $this->assertEquals( 2, count( $data['authors'] ) );
         }
 
         public function testExistingAuthorsInvalid() {
@@ -76,13 +77,15 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $request->set_body_params( array(  'q' => 'tor', 'existing_authors' => array(  'contributor1' ) ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 200, $response->get_status() );
-            $this->assertEquals( 1, count( $response->get_data()['authors'] ) );
+            $data = $response->get_data();
+            $this->assertEquals( 1, count( $data['authors'] ) );
 
             $request = new WP_REST_Request( 'POST', '/coauthors/v1/search' );
             $request->set_body_params( array(  'q' => 'tor', 'existing_authors' => array(  'contributor1', 'editor2' ) ) );
             $response = $this->server->dispatch( $request );
             $this->assertEquals( 200, $response->get_status() );
-            $this->assertEquals( 0, count( $response->get_data()['authors'] ) );
+            $data = $response->get_data();
+            $this->assertEquals( 0, count( $data['authors'] ) );
         }
 
         protected function assertErrorResponse( $code, $response, $status = null ) {
