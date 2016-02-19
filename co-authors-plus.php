@@ -315,7 +315,7 @@ class coauthors_plus {
 	public function add_coauthors_box() {
 
 		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
-			add_meta_box( $this->coauthors_meta_box_name, __( 'Authors', 'co-authors-plus' ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
+			add_meta_box( $this->coauthors_meta_box_name, __( apply_filters( 'coauthors_meta_box_title', 'Authors' ), 'co-authors-plus' ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
 		}
 	}
 
