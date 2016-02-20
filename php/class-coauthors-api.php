@@ -8,7 +8,7 @@ class CoAuthors_API {
     const API_NAMESPACE = "coauthors/";
     const API_VERSION = "v1";
 
-    const ROUTE_SEARCH  = '/search';
+    const ROUTE_SEARCH = '/search';
     const ROUTE_POST = '/post/(?P<id>\d+)';
 
     /**
@@ -22,7 +22,6 @@ class CoAuthors_API {
 
         // Action to loads the API class
         add_action( 'rest_api_init', array( $this, 'register_routes' ) );
-
     }
 
     /**
@@ -42,16 +41,30 @@ class CoAuthors_API {
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array( $this, 'post_create' ),
             'permission_callback' => array( $this, 'has_permission' ),
-            'args' => array(
+            'args'                => array(
                 'id' => array(
-                    'validate_callback' => array( $this, 'post_validate_callback' )
+                    'validate_callback' => array( $this, 'post_validate_callback' ),
+                    'sanitize_callback' => 'sanitize_key'
                 )
             )
+        ) );
 
+        register_rest_route( $this->build_namespace(), self::ROUTE_POST, array(
+            'methods'             => WP_REST_Server::DELETABLE,
+            'callback'            => array( $this, 'post_delete' ),
+            'permission_callback' => array( $this, 'has_permission' ),
+            'args'                => array(
+                'id' => array(
+                    'validate_callback' => array( $this, 'post_validate_callback' ),
+                    'sanitize_callback' => 'sanitize_key'
+                )
+            )
         ) );
     }
 
     /**
+     * Search for authors
+     *
      * @param $request
      *
      * @return array
@@ -89,34 +102,52 @@ class CoAuthors_API {
         return $this->send_response( $data );
     }
 
+    /**
+     * Replaces or appends a post coauthors.
+     *
+     * @param WP_REST_Request $request
+     *
+     * @return WP_REST_Response
+     */
     public function post_create( WP_REST_Request $request ) {
 
-        // @todo add this to validate_callback in the register_routes()
-        $post_id = (int) sanitize_text_field($request['id']);
+        $post = get_post( (int) $request['id'] );
 
-        // @todo refactor these next 10 lines into an private method
-        $post = get_post( $post_id );
-
-        if ( ! $post ) {
-            return new WP_Error( 'rest_post_not_found', __( 'Post was not found.' ), array( 'status' => 404 ) );
-        }
-
-        if ( ! $this->coauthors_plus->is_post_type_enabled( $post->post_type ) ) {
-            return new WP_Error( 'rest_post_disabled', __( 'You do not have permissions to access this post.' ),
-                array( 'status' => 400 ) );
-        }
-
-        $append = (bool) sanitize_text_field($request['append']);
+        $append = (bool) sanitize_text_field( $request['append'] );
 
         if ( $this->coauthors_plus->current_user_can_set_authors( $post, true ) ) {
             $coauthors = (array) $request['coauthors'];
             $coauthors = array_map( 'sanitize_text_field', $coauthors );
-            $this->coauthors_plus->add_coauthors( $post_id, $coauthors, $append );
+            $this->coauthors_plus->add_coauthors( $post->ID, $coauthors, $append );
         }
 
-        if ( isset( $coauthors ) ) {
-            return $this->send_response( array( __( 'Post authors updated.' ) ) );
+        return $this->send_response( array( __( 'Post authors updated.' ) ) );
+    }
+
+    /**
+     * Removes authors from a post
+     *
+     * @param WP_REST_Request $request
+     *
+     * @return WP_Error|WP_REST_Response
+     */
+    public function post_delete( WP_REST_Request $request ) {
+
+        $post = get_post( (int) $request['id'] );
+
+        if ( $this->coauthors_plus->current_user_can_set_authors( $post, true ) ) {
+            $coauthors_to_remove = (array) $request['coauthors'];
+            $coauthors_to_remove = array_map( 'sanitize_text_field', $coauthors_to_remove );
+            $current_coauthors = wp_list_pluck( get_coauthors( $post->ID ), 'user_nicename' );
+            $coauthors = array_values( array_diff( $current_coauthors, $coauthors_to_remove ) );
+
+            if ( ! $this->coauthors_plus->add_coauthors( $post->ID, $coauthors ) ) {
+                return new WP_Error( 'rest_unsigned_author', __( 'No WP_Users assigned to the post.' ),
+                    array( 'status' => 400 ) );
+            }
         }
+
+        return $this->send_response( array( __( 'Post authors deleted.' ) ) );
     }
 
     /**
@@ -126,17 +157,39 @@ class CoAuthors_API {
      *
      * @return bool
      */
-    public function post_validate_callback($param, WP_REST_Request $request, $key) {
-        return is_numeric( sanitize_text_field ($request['id'] ) );
+    public function post_validate_callback( $param, WP_REST_Request $request, $key ) {
+        return is_numeric( sanitize_text_field( $request['id'] ) );
     }
 
     /**
      * Returns true or false if the user has access permission.
      *
+     * @param WP_REST_Request $request
+     *
      * @return bool
      */
-    public function has_permission() {
-        return $this->coauthors_plus->current_user_can_set_authors(null, true);
+    public function has_permission( WP_REST_Request $request ) {
+        if ( isset( $request['id'] ) ) {
+            if ( ! $this->is_post_accessible( $request['id'] ) ) {
+                return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.' ),
+                    array( 'status' => 404 ) );
+            }
+        }
+        return $this->coauthors_plus->current_user_can_set_authors( null, true );
+    }
+
+    /**
+     * Checks if a Post exist and it's enabled.
+     *
+     * @param $post_id
+     *
+     * @return bool
+     */
+    private function is_post_accessible( $post_id ) {
+
+        $post = get_post( $post_id );
+
+        return ( ! $post || ! $this->coauthors_plus->is_post_type_enabled( $post->post_type ) ) ? false : true;
     }
 
     /**

@@ -124,6 +124,35 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
         }
 
+        public function testPostAuthorsDelete()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->add_coauthors( $this->author1_post1, array('author1', 'subscriber1'));
+
+            $response = $this->get_request_response('DELETE', 'post/' . $this->author1_post1,
+                array(  'coauthors' => array( 'subscriber1' ) ) );
+
+            $this->assertEquals( 200, $response->get_status() );
+            $coauthors = get_coauthors( $this->author1_post1 );
+            $this->assertEquals( array( $this->author1 ) , wp_list_pluck( $coauthors, 'ID' ) );
+        }
+
+        public function testPostAuthorsEmptyDeleteAll()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->add_coauthors( $this->author1_post1, array('author1', 'subscriber1'));
+
+            $response = $this->get_request_response('DELETE', 'post/' . $this->author1_post1,
+                array(  'coauthors' => array( 'subscriber1', 'author1' ) ) );
+
+            $this->assertEquals( 200, $response->get_status() );
+            $coauthors = get_coauthors( $this->author1_post1 );
+            $this->assertEquals( array( 1 ) , wp_list_pluck( $coauthors, 'ID' ) );
+        }
         /**
          * @param String $code
          * @param WP_REST_Response $response
@@ -152,7 +181,10 @@ if (version_compare($wp_version, '4.4', '>=')) {
         protected function get_request_response($method, $path, array $params = array())
         {
             $request = new WP_REST_Request( $method, '/coauthors/v1/' . $path );
-            $request->set_body_params( $params );
+            $request->set_header('Content-Type', 'application/json');
+            foreach ( $params as $key => $value ) {
+                $request->set_param($key, $value);
+            }
             return $this->server->dispatch( $request );
         }
 
