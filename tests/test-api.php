@@ -29,14 +29,14 @@ if (version_compare($wp_version, '4.4', '>=')) {
         }
 
         public function testSearchWithoutAuthentication() {
-            $response = $this->get_request_response('POST', 'search');
+            $response = $this->get_request_response('POST', 'search', array( 'q' => 'foo' ));
             $this->assertEquals( 403, $response->get_status() );
             $this->assertErrorResponse( 'rest_forbidden', $response );
         }
 
         public function testSearchAuthenticatedWithoutPermission() {
             wp_set_current_user( $this->subscriber );
-            $response = $this->get_request_response('POST', 'search');
+            $response = $this->get_request_response('POST', 'search', array( 'q' => 'foo' ));
             $this->assertEquals( 403, $response->get_status() );
             $this->assertErrorResponse( 'rest_forbidden', $response );
         }
@@ -53,14 +53,6 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $this->assertEquals( 200, $response->get_status() );
             $data = $response->get_data();
             $this->assertEquals( 2, count( $data['authors'] ) );
-        }
-
-        public function testExistingAuthorsInvalid() {
-            wp_set_current_user( 1 );
-            $response = $this->get_request_response('POST', 'search', array( 'q' => 'tor', 'existing_authors' => "foo" ) );
-            $this->assertEquals( 400, $response->get_status() );
-            $this->assertErrorResponse( 'rest_invalid_field_type', $response );
-
         }
 
         public function testExistingAuthorsValid() {

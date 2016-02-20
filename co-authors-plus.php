@@ -31,7 +31,7 @@ require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 
-require_once( dirname( __FILE__ ) . '/php/class-coauthors-api.php' );
+require_once( dirname( __FILE__ ) . '/php/api/boot.php' );
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once( dirname( __FILE__ ) . '/php/class-wp-cli.php' );
@@ -140,13 +140,6 @@ class coauthors_plus {
 				$this->force_guest_authors = true;
 			}
 		}
-
-        // Load the API REST class, if current installed WP is supported
-        // @todo Allow this to be enable/disabled like Guest Author functionality
-        if (version_compare($wp_version, '4.4', '>=')) {
-            require_once( dirname( __FILE__ ) . '/php/class-coauthors-api.php' );
-            $this->api = new CoAuthors_API( $this );
-        }
 
 		// Maybe automatically apply our template tags
 		if ( apply_filters( 'coauthors_auto_apply_template_tags', false ) ) {
