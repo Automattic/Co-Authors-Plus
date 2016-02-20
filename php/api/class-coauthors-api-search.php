@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class CoAuthors_API_Search
+ */
 class CoAuthors_API_Search extends CoAuthors_API_Controller {
 
     /**
@@ -7,6 +10,9 @@ class CoAuthors_API_Search extends CoAuthors_API_Controller {
      */
     protected $route = 'search/';
 
+    /**
+     * @inheritdoc
+     */
     protected function get_args() {
         return array(
             'q' => array(
@@ -25,6 +31,9 @@ class CoAuthors_API_Search extends CoAuthors_API_Controller {
         );
     }
 
+    /**
+     * @inheritdoc
+     */
     public function create_routes() {
         register_rest_route( $this->get_namespace(), $this->get_route(), array(
             'methods'             => WP_REST_Server::CREATABLE,
@@ -35,9 +44,7 @@ class CoAuthors_API_Search extends CoAuthors_API_Controller {
     }
 
     /**
-     * @param WP_REST_Request $request
-     *
-     * @return WP_Error|WP_REST_Response
+     * @inheritdoc
      */
     public function post( WP_REST_Request $request ) {
         global $coauthors_plus;
@@ -66,9 +73,7 @@ class CoAuthors_API_Search extends CoAuthors_API_Controller {
     }
 
     /**
-     * @param WP_REST_Request $request
-     *
-     * @return bool|mixed|void
+     * @inheritdoc
      */
     public function authorization( WP_REST_Request $request ) {
         global $coauthors_plus;

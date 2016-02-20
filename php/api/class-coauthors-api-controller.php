@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * The base class for all API Controllers.
+ *
+ * Class CoAuthors_API_Controller
+ */
 class CoAuthors_API_Controller {
 
     /**
@@ -7,6 +12,12 @@ class CoAuthors_API_Controller {
      */
     protected $route = null;
 
+    /**
+     * Use this method to define the routes using WP register_rest_route() function.
+     *
+     * @throws Exception
+     * @return array
+     */
     public function create_routes() {
         throw new Exception( 'Child class needs to implement this method.' );
     }
