@@ -71,7 +71,6 @@ if (version_compare($wp_version, '4.4', '>=')) {
         public function testPostAuthorsAdmin()
         {
             wp_set_current_user( 1 );
-            xdebug_break();
             $response = $this->get_request_response('POST', 'post/' . $this->author1_post1,
                 array(  'coauthors' => array( 'author1', 'editor2' ) ) );
             $this->assertEquals( 200, $response->get_status() );

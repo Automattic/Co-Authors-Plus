@@ -47,7 +47,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => array( $this, 'get' ),
             'permission_callback' => array( $this, 'authorization' ),
-            'args'                => $args['id']
+            'args'                => array( 'id' => $args['id'] )
         ) );
 
         register_rest_route( $this->get_namespace(), $this->get_route(), array(
