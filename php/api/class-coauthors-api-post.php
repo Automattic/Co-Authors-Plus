@@ -41,19 +41,39 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
      */
     public function create_routes() {
 
+        $args = $this->get_args();
+
+        register_rest_route( $this->get_namespace(), $this->get_route(), array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => array( $this, 'get' ),
+            'permission_callback' => array( $this, 'authorization' ),
+            'args'                => array( $args )
+        ) );
+
         register_rest_route( $this->get_namespace(), $this->get_route(), array(
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array( $this, 'post' ),
             'permission_callback' => array( $this, 'authorization' ),
-            'args'                => $this->get_args()
+            'args'                => $args
         ) );
 
         register_rest_route( $this->get_namespace(), $this->get_route(), array(
             'methods'             => WP_REST_Server::DELETABLE,
             'callback'            => array( $this, 'delete' ),
             'permission_callback' => array( $this, 'authorization' ),
-            'args'                => $this->get_args()
+            'args'                => $args
         ) );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get( WP_REST_Request $request ) {
+        $post_id = (int) $request['id'];
+
+        $coauthors = $this->filter_authors_array( get_coauthors($post_id) );
+
+        return $this->send_response( array( 'coauthors' => $coauthors ) );
     }
 
     /**

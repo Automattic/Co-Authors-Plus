@@ -52,7 +52,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $response = $this->get_request_response('POST', 'search', array( 'q' => 'tor' ) );
             $this->assertEquals( 200, $response->get_status() );
             $data = $response->get_data();
-            $this->assertEquals( 2, count( $data['authors'] ) );
+            $this->assertEquals( 2, count( $data['coauthors'] ) );
         }
 
         public function testExistingAuthorsValid() {
@@ -60,17 +60,18 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $response = $this->get_request_response('POST', 'search', array(  'q' => 'tor', 'existing_authors' => array(  'contributor1' ) ) );
             $this->assertEquals( 200, $response->get_status() );
             $data = $response->get_data();
-            $this->assertEquals( 1, count( $data['authors'] ) );
+            $this->assertEquals( 1, count( $data['coauthors'] ) );
 
             $response = $this->get_request_response('POST', 'search', array(  'q' => 'tor', 'existing_authors' => array(  'contributor1', 'editor2' ) ) );
             $this->assertEquals( 200, $response->get_status() );
             $data = $response->get_data();
-            $this->assertEquals( 0, count( $data['authors'] ) );
+            $this->assertEquals( 0, count( $data['coauthors'] ) );
         }
 
         public function testPostAuthorsAdmin()
         {
             wp_set_current_user( 1 );
+            xdebug_break();
             $response = $this->get_request_response('POST', 'post/' . $this->author1_post1,
                 array(  'coauthors' => array( 'author1', 'editor2' ) ) );
             $this->assertEquals( 200, $response->get_status() );
@@ -145,6 +146,32 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $coauthors = get_coauthors( $this->author1_post1 );
             $this->assertEquals( array( 1 ) , wp_list_pluck( $coauthors, 'ID' ) );
         }
+
+        public function testPostGet()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->add_coauthors( $this->author1_post1, array('author1', 'subscriber1'));
+            $response = $this->get_request_response('GET', 'post/' . $this->author1_post1 );
+            $data = $response->get_data();
+            $this->assertEquals( 2 , count($data['coauthors']) );
+
+            $coauthors_plus->add_coauthors( $this->author1_post1, array('author1', 'subscriber1', 'contributor1'));
+            $response = $this->get_request_response('GET', 'post/' . $this->author1_post1 );
+            $data = $response->get_data();
+            $this->assertEquals( 3 , count($data['coauthors']) );
+        }
+
+        public function testPostGetNoPost()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('GET', 'post/' . 9999 );
+            $this->assertEquals( 404, $response->get_status() );
+        }
+
         /**
          * @param String $code
          * @param WP_REST_Response $response
@@ -174,6 +201,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         {
             $request = new WP_REST_Request( $method, '/coauthors/v1/' . $path );
             $request->set_header('Content-Type', 'application/json');
+
             foreach ( $params as $key => $value ) {
                 $request->set_param($key, $value);
             }

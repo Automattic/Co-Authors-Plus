@@ -56,20 +56,8 @@ class CoAuthors_API_Search extends CoAuthors_API_Controller {
             $exclude = array_map( 'sanitize_text_field', $request['existing_authors'] );
         }
 
-        $authors = $coauthors_plus->search_authors( $query, $exclude );
-
-        $data = array( 'authors' => array() );
-
-        foreach ( $authors as $author ) {
-            $data['authors'][] = array(
-                'id'            => $author->ID,
-                'user_login'    => $author->user_login,
-                'display_name'  => $author->display_name,
-                'user_email'    => $author->user_email,
-                'user_nicename' => $author->user_nicename
-            );
-        }
-        return $this->send_response( $data );
+        $coauthors = $this->filter_authors_array( $coauthors_plus->search_authors( $query, $exclude ) );
+        return $this->send_response( array( 'coauthors' => $coauthors ) );
     }
 
     /**

@@ -90,6 +90,33 @@ class CoAuthors_API_Controller {
     }
 
     /**
+     * Helper method that returns a filtered array for the search_authors() main class
+     * method.
+     *
+     * @param array $arr
+     *
+     * @return array
+     */
+    protected function filter_authors_array( $arr ) {
+        $coauthors = array();
+
+        if ( ! is_array( $arr ) )
+            return $coauthors;
+
+        foreach ( $arr as $author ) {
+            $coauthors[] = array(
+                'id'            => $author->ID,
+                'user_login'    => $author->user_login,
+                'display_name'  => $author->display_name,
+                'user_email'    => $author->user_email,
+                'user_nicename' => $author->user_nicename
+            );
+        }
+
+        return $coauthors;
+    }
+
+    /**
      * Returns an array with the register_rest_route args definition.
      *
      * @return array
