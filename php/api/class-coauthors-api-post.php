@@ -15,7 +15,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
      */
     protected function get_args() {
         return array(
-            'id' => array(
+            'id'        => array(
                 'required'          => true,
                 'sanitize_callback' => 'sanitize_key',
                 'validate_callback' => array( $this, 'post_validate_id' )
@@ -23,14 +23,14 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
             'coauthors' => array(
                 'required'          => true,
                 'sanitize_callback' => array( $this, 'sanitize_array' ),
-                'validate_callback' => function($param, $request, $key) {
-                    return !empty( $param ) && is_array( $param ) && count( $param ) > 0;
+                'validate_callback' => function ( $param, $request, $key ) {
+                    return ! empty( $param ) && is_array( $param ) && count( $param ) > 0;
                 }
             ),
-            'append' => array(
+            'append'    => array(
                 'sanitize_callback' => 'sanitize_key',
-                'validate_callback' => function($param, $request, $key) {
-                    return !empty( $param );
+                'validate_callback' => function ( $param, $request, $key ) {
+                    return ! empty( $param );
                 }
             )
         );
@@ -71,7 +71,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
     public function get( WP_REST_Request $request ) {
         $post_id = (int) $request['id'];
 
-        $coauthors = $this->filter_authors_array( get_coauthors($post_id) );
+        $coauthors = $this->filter_authors_array( get_coauthors( $post_id ) );
 
         return $this->send_response( array( 'coauthors' => $coauthors ) );
     }
@@ -89,10 +89,9 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
         if ( $coauthors_plus->current_user_can_set_authors( $post, true ) ) {
             $coauthors = (array) $request['coauthors'];
 
-            try {
-                $this->add_coauthors( $post->ID, $coauthors, $append );
-            } catch (Exception $e) {
-                return new WP_Error( 'rest_unsigned_author', $e->getMessage(), array( 'status' => 400 ) );
+            $result = $this->add_coauthors( $post->ID, $coauthors, $append );
+            if ( is_wp_error( $result ) ) {
+                return $result;
             }
         }
 
@@ -109,13 +108,12 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
 
         if ( $coauthors_plus->current_user_can_set_authors( $post, true ) ) {
             $coauthors_to_remove = (array) $request['coauthors'];
-            $current_coauthors = wp_list_pluck( get_coauthors( $post->ID ), 'user_nicename' );
-            $coauthors = array_values( array_diff( $current_coauthors, $coauthors_to_remove ) );
+            $current_coauthors   = wp_list_pluck( get_coauthors( $post->ID ), 'user_nicename' );
+            $coauthors           = array_values( array_diff( $current_coauthors, $coauthors_to_remove ) );
 
-            try {
-                $this->add_coauthors( $post->ID, $coauthors );
-            } catch (Exception $e) {
-                return new WP_Error( 'rest_unsigned_author', $e->getMessage(), array( 'status' => 400 ) );
+            $result = $this->add_coauthors( $post->ID, $coauthors );
+            if ( is_wp_error( $result ) ) {
+                return $result;
             }
         }
 
@@ -130,9 +128,10 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
 
         if ( ! $this->is_post_accessible( $request['id'] ) ) {
             return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.',
-                    'co-authors-plus' ),
+                'co-authors-plus' ),
                 array( 'status' => 404 ) );
         }
+
         return $coauthors_plus->current_user_can_set_authors( null, true );
     }
 
@@ -162,7 +161,8 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
         global $coauthors_plus;
 
         if ( ! $coauthors_plus->add_coauthors( $post_id, $coauthors, $append ) ) {
-            throw new Exception( __( 'No WP_Users assigned to the post', 'co-authors-plus' ) );
+            return new WP_Error( __( 'No WP_Users assigned to the post', 'co-authors-plus' ),
+                array( 'status' => 400 ) );
         }
 
         return true;
