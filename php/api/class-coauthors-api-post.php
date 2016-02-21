@@ -68,7 +68,12 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
 
         if ( $coauthors_plus->current_user_can_set_authors( $post, true ) ) {
             $coauthors = (array) $request['coauthors'];
-            $coauthors_plus->add_coauthors( $post->ID, $coauthors, $append );
+
+            try {
+                $this->add_coauthors( $post->ID, $coauthors, $append );
+            } catch (Exception $e) {
+                return new WP_Error( 'rest_unsigned_author', $e->getMessage(), array( 'status' => 400 ) );
+            }
         }
 
         return $this->send_response( array( __( 'Post authors updated.' ) ) );
@@ -87,9 +92,10 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
             $current_coauthors = wp_list_pluck( get_coauthors( $post->ID ), 'user_nicename' );
             $coauthors = array_values( array_diff( $current_coauthors, $coauthors_to_remove ) );
 
-            if ( ! $coauthors_plus->add_coauthors( $post->ID, $coauthors ) ) {
-                return new WP_Error( 'rest_unsigned_author', __( 'No WP_Users assigned to the post.' ),
-                    array( 'status' => 400 ) );
+            try {
+                $this->add_coauthors( $post->ID, $coauthors );
+            } catch (Exception $e) {
+                return new WP_Error( 'rest_unsigned_author', $e->getMessage(), array( 'status' => 400 ) );
             }
         }
 
@@ -118,6 +124,27 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
      */
     public function post_validate_id( $param, WP_REST_Request $request, $key ) {
         return is_numeric( sanitize_text_field( $request['id'] ) );
+    }
+
+    /**
+     * Adds coauthors directly to the $coauthors_plus instance.
+     * Returnes true if successfully updated, throws exception otherwise.
+     *
+     * @param int $post_id
+     * @param array $coauthors
+     * @param bool $append
+     *
+     * @return bool
+     * @throws Exception
+     */
+    private function add_coauthors( $post_id, $coauthors, $append = false ) {
+        global $coauthors_plus;
+
+        if ( ! $coauthors_plus->add_coauthors( $post_id, $coauthors, $append ) ) {
+            throw new Exception( __( 'No WP_Users assigned to the post' ) );
+        }
+
+        return true;
     }
 
     /**
