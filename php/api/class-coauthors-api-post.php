@@ -96,7 +96,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
             }
         }
 
-        return $this->send_response( array( __( 'Post authors updated.' ) ) );
+        return $this->send_response( array( __( 'Post authors updated.', 'co-authors-plus' ) ) );
     }
 
     /**
@@ -119,7 +119,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
             }
         }
 
-        return $this->send_response( array( __( 'Post authors deleted.' ) ) );
+        return $this->send_response( array( __( 'Post authors deleted.', 'co-authors-plus' ) ) );
     }
 
     /**
@@ -129,7 +129,8 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
         global $coauthors_plus;
 
         if ( ! $this->is_post_accessible( $request['id'] ) ) {
-            return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.' ),
+            return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.',
+                    'co-authors-plus' ),
                 array( 'status' => 404 ) );
         }
         return $coauthors_plus->current_user_can_set_authors( null, true );
@@ -161,7 +162,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
         global $coauthors_plus;
 
         if ( ! $coauthors_plus->add_coauthors( $post_id, $coauthors, $append ) ) {
-            throw new Exception( __( 'No WP_Users assigned to the post' ) );
+            throw new Exception( __( 'No WP_Users assigned to the post', 'co-authors-plus' ) );
         }
 
         return true;
