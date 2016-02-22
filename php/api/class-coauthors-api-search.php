@@ -13,7 +13,7 @@ class CoAuthors_API_Search extends CoAuthors_API_Controller {
     /**
      * @inheritdoc
      */
-    protected function get_args() {
+    protected function get_args( $method = null ) {
         return array(
             'q' => array(
                 'required' => true,

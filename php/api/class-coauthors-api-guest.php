@@ -13,8 +13,8 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
     /**
      * @inheritdoc
      */
-    protected function get_args() {
-        return array(
+    protected function get_args( $method = null ) {
+        $args = array(
             'display_name'   => array(
                 'required'          => true,
                 'sanitize_callback' => 'sanitize_text_field',
@@ -52,6 +52,16 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
                 'sanitize_callback' => 'wp_filter_post_kses'
             ),
         );
+
+        // We don't need to make these required on PUT, since
+        // we already have the ID.
+        if ( 'put' === $method  ) {
+            $args['display_name']['required'] = false;
+            $args['user_login']['required'] = false;
+            $args['user_email']['required'] = false;
+        }
+
+        return $args;
     }
 
     /**
@@ -62,9 +72,15 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array( $this, 'post' ),
             'permission_callback' => array( $this, 'authorization' ),
-            'args'                => $this->get_args()
+            'args'                => $this->get_args( 'post' )
         ) );
 
+        register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
+            'methods'             => WP_REST_Server::EDITABLE,
+            'callback'            => array( $this, 'put' ),
+            'permission_callback' => array( $this, 'authorization' ),
+            'args'                => $this->get_args( 'put' )
+        ) );
     }
 
     /**
@@ -92,6 +108,42 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
         update_post_meta( $guest_author_id, '_original_author_login', $request['user_login'] );
 
         return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $guest_author_id ) ) );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function put( WP_REST_Request $request ) {
+        global $coauthors_plus;
+
+        $coauthor_id = (int) sanitize_text_field( $request['id'] );
+
+        $coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
+        if ( !$coauthor ) {
+            return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
+                array( 'status' => 400 ) );
+        }
+
+        if ( $this->does_coauthor_exists( $request['user_email'], $request['user_login'] ) ) {
+            return new WP_Error( 'rest_guest_invalid_username', __( 'Invalid username or already exists.', 'co-authors-plus' ),
+                array( 'status' => 400 ) );
+        }
+
+        if ( $coauthors_plus->guest_authors->post_type === $coauthor->type ) {
+            clean_post_cache( $coauthor->ID );
+
+            $params = $this->prepare_params_for_database( $request->get_params() );
+            foreach ( $params as $param => $value ) {
+                update_post_meta( $coauthor->ID, 'cap-' . $param, $value );
+            }
+
+            $coauthors_plus->guest_authors->delete_guest_author_cache( $coauthor->ID );
+
+            return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id ) ) );
+        }
+
+        return new WP_Error( 'rest_guest_not_valid', __( 'You are trying to updante an non-valid guest.', 'co-authors-plus' ),
+            array( 'status' => 400 ) );
     }
 
     /**

@@ -246,6 +246,41 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $this->assertEquals( 'field-required', $data['code']);
         }
 
+        public function testGuestUpdate()
+        {
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('POST', 'guest', $this->guest1 );
+            $guest = $response->get_data();
+
+            unset( $this->guest1['user_login'] );
+            $this->guest1['display_name'] = 'New display name';
+            $response = $this->get_request_response('PUT', 'guest/' . $guest[0]->ID , $this->guest1 );
+            $data = $response->get_data();
+            $this->assertEquals( 200 , $response->get_status() );
+            $this->assertEquals( $data[0]->display_name, 'New display name' );
+        }
+
+        public function testGuestUpdateSameUserName()
+        {
+            wp_set_current_user( 1 );
+            $this->get_request_response('POST', 'guest', $this->guest1 );
+            $response = $this->get_request_response('POST', 'guest', $this->guest2 );
+            $guest2 = $response->get_data();
+
+            // Tests user login
+            $this->guest2['user_login'] = $this->guest1['user_login'];
+            $response = $this->get_request_response('PUT', 'guest/' . $guest2[0]->ID , $this->guest2 );
+            $this->assertEquals( 400 , $response->get_status() );
+            $this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400);
+
+            // Tests existing email
+            $this->guest2['user_login'] = 'foobar';
+            $this->guest2['user_email'] = $this->guest1['user_email'];
+            $response = $this->get_request_response('PUT', 'guest/' . $guest2[0]->ID , $this->guest2 );
+            $this->assertEquals( 400 , $response->get_status() );
+            $this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400);
+        }
+
         /**
          * @param String $code
          * @param WP_REST_Response $response

@@ -119,9 +119,10 @@ class CoAuthors_API_Controller {
     /**
      * Returns an array with the register_rest_route args definition.
      *
+     * @param string $method
      * @return array
      */
-    protected function get_args() {
+    protected function get_args( $method = null ) {
        return array();
     }
 
