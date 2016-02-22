@@ -56,8 +56,9 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
         // We don't need to make these required on PUT, since
         // we already have the ID.
         if ( 'put' === $method  ) {
+            // we don't to update user_login
+            unset($args['user_login']['required']);
             $args['display_name']['required'] = false;
-            $args['user_login']['required'] = false;
             $args['user_email']['required'] = false;
         }
 
