@@ -14,6 +14,35 @@ if (version_compare($wp_version, '4.4', '>=')) {
             parent::setUp();
 
             $this->logout();
+
+            $this->guest1 = array (
+                "display_name" => "John Doe",
+                "user_login" => "johndoe",
+                "user_email" => "jdoe@email.com",
+                "first_name" => "John",
+                "last_name" => "Doe",
+                "website" => "http://www.site.com/",
+                "aim" => "jdaim",
+                "yahooim" => "jdyahoo",
+                "jabber" => "jdjabber",
+                "description" => "Some very simple description john doe.",
+                "linked_account" => null
+            );
+
+            $this->guest2 = array (
+                "display_name" => "Foo Bar",
+                "user_login" => "foobar",
+                "user_email" => "fb@email.com",
+                "first_name" => "Foo",
+                "last_name" => "Bar",
+                "website" => "http://www.foobar.com/",
+                "aim" => "fbaim",
+                "yahooim" => "fbyahoo",
+                "jabber" => "fbjabber",
+                "description" => "Some very simple description foo bar.",
+                "linked_account" => null
+            );
+
             /** @var WP_REST_Server $wp_rest_server */
             global $wp_rest_server;
             $this->server = $wp_rest_server = new WP_Test_Spy_REST_Server;
@@ -28,6 +57,9 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $wp_rest_server = null;
         }
 
+        /**
+         * Search and Authentication
+         */
         public function testSearchWithoutAuthentication() {
             $response = $this->get_request_response('POST', 'search', array( 'q' => 'foo' ));
             $this->assertEquals( 403, $response->get_status() );
@@ -68,6 +100,9 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $this->assertEquals( 0, count( $data['coauthors'] ) );
         }
 
+        /**
+         * POST route
+         */
         public function testPostAuthorsAdmin()
         {
             wp_set_current_user( 1 );
@@ -164,11 +199,51 @@ if (version_compare($wp_version, '4.4', '>=')) {
 
         public function testPostGetNoPost()
         {
-            global $coauthors_plus;
-
             wp_set_current_user( 1 );
             $response = $this->get_request_response('GET', 'post/' . 9999 );
             $this->assertEquals( 404, $response->get_status() );
+        }
+
+        /**
+         * Guest route
+         */
+
+        public function testGuestAddNoSession()
+        {
+            $response = $this->get_request_response('POST', 'guest', $this->guest1 );
+            $this->assertEquals( 403 , $response->get_status() );
+        }
+
+        public function testGuestAdd()
+        {
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('POST', 'guest', $this->guest1 );
+            $data = $response->get_data();
+            $this->assertEquals( 200 , $response->get_status() );
+            $this->assertEquals( $data[0]->display_name, $this->guest1['display_name'] );
+            $this->assertEquals( $data[0]->user_login, $this->guest1['user_login'] );
+            $this->assertEquals( $data[0]->first_name, $this->guest1['first_name'] );
+            $this->assertEquals( $data[0]->last_name, $this->guest1['last_name'] );
+            $this->assertEquals( $data[0]->user_email, $this->guest1['user_email'] );
+            $this->assertEquals( $data[0]->linked_account, $this->guest1['linked_account'] );
+            $this->assertEquals( $data[0]->website, $this->guest1['website'] );
+            $this->assertEquals( $data[0]->aim, $this->guest1['aim'] );
+            $this->assertEquals( $data[0]->yahooim, $this->guest1['yahooim'] );
+            $this->assertEquals( $data[0]->jabber, $this->guest1['jabber'] );
+            $this->assertEquals( $data[0]->description, $this->guest1['description'] );
+        }
+
+        public function testGuestAddInvalid()
+        {
+            wp_set_current_user( 1 );
+            $this->guest1['user_login'] = 'admin';
+            $response = $this->get_request_response('POST', 'guest', $this->guest1 );
+            $this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400);
+
+            $this->guest1['user_login'] = '%?!&';
+            $response = $this->get_request_response('POST', 'guest', $this->guest1 );
+            $data = $response->get_data();
+            $this->assertEquals( 'field-required', $data['code']);
         }
 
         /**
@@ -200,7 +275,6 @@ if (version_compare($wp_version, '4.4', '>=')) {
         {
             $request = new WP_REST_Request( $method, '/coauthors/v1/' . $path );
             $request->set_header('Content-Type', 'application/json');
-
             foreach ( $params as $key => $value ) {
                 $request->set_param($key, $value);
             }
