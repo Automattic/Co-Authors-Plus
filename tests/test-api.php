@@ -281,6 +281,31 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400);
         }
 
+        public function testGuestGet()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
+            $response = $this->get_request_response('GET', 'guest/' . $coauthor );
+            $data = $response->get_data();
+            $this->assertEquals( 200 , $response->get_status() );
+            $this->assertEquals($data[0]->display_name, $this->guest1['display_name']);
+        }
+
+        public function testGuestNotFoundGet()
+        {
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('GET', 'guest/' . 1000 );
+            $this->assertEquals( 404 , $response->get_status() );
+
+            $response = $this->get_request_response('GET', 'guest/' . 0 );
+            $this->assertEquals( 404 , $response->get_status() );
+
+            $response = $this->get_request_response('GET', 'guest/' . $this->guest1['user_login'] );
+            $this->assertEquals( 404 , $response->get_status() );
+        }
+
         /**
          * @param String $code
          * @param WP_REST_Response $response
