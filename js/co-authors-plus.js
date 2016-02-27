@@ -199,7 +199,7 @@ jQuery( document ).ready(function () {
 		author.login = jQuery.trim( vals[1] );
 		author.name = jQuery.trim( vals[2] );
 		author.email = jQuery.trim( vals[3] );
-		author.nicename = jQuery.trim( vals[4] );
+		author.nicename = decodeURIComponent( jQuery.trim( vals[4] ) );
 
 		if ( author.id=='New' ) {
 			coauthors_new_author_display( name );
@@ -287,7 +287,7 @@ jQuery( document ).ready(function () {
 							'type': 'hidden',
 							'id': 'coauthors_hidden_input',
 							'name': 'coauthors[]',
-							'value': unescape( author.nicename )
+							'value': decodeURIComponent( author.nicename )
 							})
 						;
 
@@ -369,7 +369,7 @@ jQuery( document ).ready(function () {
 		if ( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 ) {
 			// Including existing authors on the AJAX suggest link
 			// allows us to filter them out of the search request
-			var existing_authors = jQuery( 'input[name="coauthors[]"]' ).map(function(){return jQuery( this ).val();}).get();
+			var existing_authors = jQuery( 'input[name="coauthors[]"]' ).map(function(){ return jQuery( this ).val(); }).get();
 			settings.url = settings.url.split( '&existing_authors' )[0];
 			settings.url += '&existing_authors=' + existing_authors.join( ',' );
 			show_loading();

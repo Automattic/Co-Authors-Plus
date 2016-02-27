@@ -772,7 +772,7 @@ class coauthors_plus {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
 
 				$coauthors = (array) $_POST['coauthors'];
-				$coauthors = array_map( 'sanitize_text_field', $coauthors );
+				$coauthors = array_map( 'sanitize_title', $coauthors );
 				$this->add_coauthors( $post_id, $coauthors );
 			}
 		} else {
