@@ -60,6 +60,11 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
             unset($args['user_login']['required']);
             $args['display_name']['required'] = false;
             $args['user_email']['required'] = false;
+            $args['id']                       = array(
+                'required'          => true,
+                'sanitize_callback' => 'sanitize_key',
+                'validate_callback' => array( $this, 'validate_guest_id' )
+            );
         } elseif ( 'delete' === $method ) {
             return array(
                 'id'                => array(
