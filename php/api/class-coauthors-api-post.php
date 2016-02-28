@@ -129,7 +129,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
 		if ( ! $this->is_post_accessible( $request['id'] ) ) {
 			return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.',
 				'co-authors-plus' ),
-				array( 'status' => 404 ) );
+				array( 'status' => self::NOT_FOUND ) );
 		}
 
 		return $coauthors_plus->current_user_can_set_authors( null, true );
@@ -162,7 +162,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
 
 		if ( ! $coauthors_plus->add_coauthors( $post_id, $coauthors, $append ) ) {
 			return new WP_Error( __( 'No WP_Users assigned to the post', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
+				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		return true;

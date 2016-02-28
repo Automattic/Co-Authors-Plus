@@ -130,7 +130,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 
 		if ( ! $guest_author ) {
 			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
-				array( 'status' => 404 ) );
+				array( 'status' => self::NOT_FOUND ) );
 		}
 
 		return $this->send_response( array( $guest_author ) );
@@ -144,7 +144,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 
 		if ( $this->does_coauthor_exists( $request['user_email'], $request['user_login'] ) ) {
 			return new WP_Error( 'rest_guest_invalid_username', __( 'Invalid username or already exists.', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
+				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		$params = $this->prepare_params_for_database( $request->get_params(), false );
@@ -157,7 +157,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 
 		update_post_meta( $guest_author_id, '_original_author_login', $request['user_login'] );
 
-		return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $guest_author_id ) ) );
+		return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $guest_author_id ) ), self::CREATED);
 	}
 
 	/**
@@ -172,7 +172,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 
 		if ( $this->does_coauthor_exists( $request['user_email'], $request['user_login'] ) ) {
 			return new WP_Error( 'rest_guest_invalid_username', __( 'Invalid username or already exists.', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
+				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		if ( $coauthors_plus->guest_authors->post_type === $coauthor->type ) {
@@ -208,7 +208,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 				$reassign_to   = $coauthors_plus->get_coauthor_by( 'user_nicename', $user_nicename );
 				if ( ! $reassign_to ) {
 					return new WP_Error( 'rest_reassigned_user_not_found', __( 'Reassigned user does not exists.', 'co-authors-plus' ),
-						array( 'status' => 400 ) );
+						array( 'status' => self::BAD_REQUEST ) );
 				}
 				$reassign_to = $reassign_to->user_login;
 				break;
@@ -222,7 +222,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 
 		if ( ! $retval ) {
 			return new WP_Error( 'rest_guest_delete_error', __( 'Oh oh, something happened. Guest was not deleted.', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
+				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		return $this->send_response( array( __( 'Guest author was deleted.', 'co-authors-plus' ) ) );
@@ -243,7 +243,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
 		if ( ! $coauthor ) {
 			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
+				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		return true;
@@ -263,12 +263,12 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 
 		if ( 'leave-assigned' !== $reassign && 'reassign-another' !== $reassign && 'remove-byline' !== $reassign ) {
 			return new WP_Error( 'rest_guest_reassign_invalid_option', __( 'Invalid reassigned option', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
+				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		if ( 'reassign-another' === $reassign && ! $leave_assigned_to ) {
 			return new WP_Error( 'rest_guest_reassign_invalid_option', __( 'reassign-another requires  "leave-assigned-to" parameter. ', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
+				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		return true;

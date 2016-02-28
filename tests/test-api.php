@@ -122,7 +122,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 201, $response->get_status() );
 		$data = $response->get_data();
 		$this->assertEquals( 'Post authors updated.', $data[0] );
 
@@ -141,14 +141,14 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'author1' ) ) );
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 201, $response->get_status() );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
 
 		wp_set_current_user( 1 );
 		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'editor2' ), 'append' => true ) );
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 201, $response->get_status() );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 	}
@@ -157,7 +157,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( $this->editor1 );
 		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 201, $response->get_status() );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 	}
@@ -224,7 +224,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$response = $this->get_request_response( 'POST', 'guest', $this->guest1 );
 		$data     = $response->get_data();
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 201, $response->get_status() );
 		$this->assertEquals( $data[0]->display_name, $this->guest1['display_name'] );
 		$this->assertEquals( $data[0]->user_login, $this->guest1['user_login'] );
 		$this->assertEquals( $data[0]->first_name, $this->guest1['first_name'] );

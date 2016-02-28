@@ -8,6 +8,14 @@
 class CoAuthors_API_Controller {
 
 	/**
+	 * HTTP return codes
+	 */
+	const OK = 200;
+	const CREATED = 201;
+	const BAD_REQUEST = 400;
+	const NOT_FOUND = 404;
+
+	/**
 	 * @var string
 	 */
 	protected $route = null;
@@ -138,13 +146,14 @@ class CoAuthors_API_Controller {
 	 * Currently very limited, it should allow header and code to be setted.
 	 *
 	 * @param array $data
+	 * @param integer $status_code
 	 *
 	 * @throws Exception
 	 * @return WP_REST_Response
 	 */
-	protected function send_response( array $data ) {
+	protected function send_response( array $data, $status_code = 200 ) {
 		$response = new WP_REST_Response( $data );
-
+		$response->set_status($status_code);
 		return $response;
 	}
 
