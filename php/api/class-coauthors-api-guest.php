@@ -155,9 +155,6 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 			return $guest_author_id;
 		}
 
-		if ( isset( $request['author_id'] ) ) {
-			update_post_meta( $guest_author_id, '_original_author_id', $request['ID'] );
-		}
 		update_post_meta( $guest_author_id, '_original_author_login', $request['user_login'] );
 
 		return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $guest_author_id ) ) );
