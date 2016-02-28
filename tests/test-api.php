@@ -15,6 +15,8 @@ class Test_API extends CoAuthorsPlus_TestCase {
 			$this->markTestSkipped( 'Current version of WP does not support REST API classes.' );
 		}
 
+		include_once('wp-test-spy-rest-server.php');
+
 		parent::setUp();
 
 		$this->logout();
@@ -432,45 +434,5 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	 */
 	protected function logout() {
 		wp_set_current_user( - 1 );
-	}
-}
-
-
-/**
- * "Stolen" From https://github.com/WP-API/WP-API/blob/develop/tests/class-wp-test-spy-rest-server.php
- */
-class WP_Test_Spy_REST_Server extends WP_REST_Server {
-	/**
-	 * Get the raw $endpoints data from the server
-	 *
-	 * @return array
-	 */
-	public function get_raw_endpoint_data() {
-		return $this->endpoints;
-	}
-
-	/**
-	 * Allow calling protected methods from tests
-	 *
-	 * @param string $method Method to call
-	 * @param array $args Arguments to pass to the method
-	 *
-	 * @return mixed
-	 */
-	public function __call( $method, $args ) {
-		return call_user_func_array( array( $this, $method ), $args );
-	}
-
-	/**
-	 * Call dispatch() with the rest_post_dispatch filter
-	 */
-	public function dispatch( $request ) {
-		$result = parent::dispatch( $request );
-		$result = rest_ensure_response( $result );
-		if ( is_wp_error( $result ) ) {
-			$result = $this->error_to_response( $result );
-		}
-
-		return apply_filters( 'rest_post_dispatch', rest_ensure_response( $result ), $this, $request );
 	}
 }
