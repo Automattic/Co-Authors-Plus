@@ -169,10 +169,6 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 		$coauthor_id = (int) sanitize_text_field( $request['id'] );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
-		if ( ! $coauthor ) {
-			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
-				array( 'status' => 400 ) );
-		}
 
 		if ( $this->does_coauthor_exists( $request['user_email'], $request['user_login'] ) ) {
 			return new WP_Error( 'rest_guest_invalid_username', __( 'Invalid username or already exists.', 'co-authors-plus' ),
@@ -192,8 +188,6 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
 			return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id ) ) );
 		}
 
-		return new WP_Error( 'rest_guest_not_valid', __( 'You are trying to updante an non-valid guest.', 'co-authors-plus' ),
-			array( 'status' => 400 ) );
 	}
 
 	public function delete( WP_REST_Request $request ) {
