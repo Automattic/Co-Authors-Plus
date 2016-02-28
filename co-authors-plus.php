@@ -127,8 +127,6 @@ class coauthors_plus {
 	 * and the custom post type to store our author data
 	 */
 	public function action_init() {
-        global $wp_version;
-
 		// Allow Co-Authors Plus to be easily translated
 		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
