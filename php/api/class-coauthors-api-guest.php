@@ -60,6 +60,22 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
             unset($args['user_login']['required']);
             $args['display_name']['required'] = false;
             $args['user_email']['required'] = false;
+        } elseif ( 'delete' === $method ) {
+            return array(
+                'id'                => array(
+                    'required'          => true,
+                    'sanitize_callback' => 'sanitize_key',
+                    'validate_callback' => array( $this, 'validate_guest_id' )
+                ),
+                'reassign'          => array(
+                    'required'          => true,
+                    'sanitize_callback' => 'sanitize_text_field',
+                    'validate_callback' => array( $this, 'validate_reassign' )
+                ),
+                'leave-assigned-to' => array(
+                    'sanitize_callback' => 'sanitize_text_field',
+                )
+            );
         }
 
         return $args;
@@ -87,6 +103,13 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
             'callback'            => array( $this, 'put' ),
             'permission_callback' => array( $this, 'authorization' ),
             'args'                => $this->get_args( 'put' )
+        ) );
+
+        register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
+            'methods'             => WP_REST_Server::DELETABLE,
+            'callback'            => array( $this, 'delete' ),
+            'permission_callback' => array( $this, 'authorization' ),
+            'args'                => $this->get_args( 'delete' )
         ) );
     }
 
@@ -171,6 +194,90 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
             array( 'status' => 400 ) );
     }
 
+    public function delete( WP_REST_Request $request ) {
+        global $coauthors_plus;
+
+        $coauthor_id = (int) sanitize_text_field( $request['id'] );
+
+        $guest_author = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
+
+        switch ( $request['reassign'] ) {
+            // Leave assigned to the current linked account
+            case 'leave-assigned':
+                $reassign_to = $guest_author->linked_account;
+                break;
+            // Reassign to a different user
+            case 'reassign-another':
+                $user_nicename = sanitize_title( $request['leave-assigned-to'] );
+                $reassign_to   = $coauthors_plus->get_coauthor_by( 'user_nicename', $user_nicename );
+                if ( ! $reassign_to ) {
+                    return new WP_Error( 'rest_reassigned_user_not_found', __( 'Reassigned user does not exists.', 'co-authors-plus' ),
+                        array( 'status' => 400 ) );
+                }
+                $reassign_to = $reassign_to->user_login;
+                break;
+            // Remove the byline, but don't delete the post
+            case 'remove-byline':
+                $reassign_to = false;
+                break;
+        }
+
+        $retval = $coauthors_plus->guest_authors->delete( $guest_author->ID, $reassign_to );
+
+        if ( ! $retval ) {
+            return new WP_Error( 'rest_guest_delete_error', __( 'Oh oh, something happened. Guest was not deleted.', 'co-authors-plus' ),
+                array( 'status' => 400 ) );
+        }
+
+        return $this->send_response( array( __( 'Guest author was deleted.', 'co-authors-plus' ) ) );
+    }
+
+    /**
+     * @param $param
+     * @param WP_REST_Request $request
+     * @param $key
+     *
+     * @return bool|WP_Error
+     */
+    public function validate_guest_id( $param, WP_REST_Request $request, $key ) {
+        global $coauthors_plus;
+
+        $coauthor_id = (int) sanitize_text_field( $param );
+
+        $coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
+        if ( ! $coauthor ) {
+            return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
+                array( 'status' => 400 ) );
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $param
+     * @param WP_REST_Request $request
+     * @param $key
+     *
+     * @return WP_Error
+     */
+    public function validate_reassign( $param, WP_REST_Request $request, $key ) {
+
+        $reassign         = sanitize_title( $param );
+        $leave_assigned_to = sanitize_title( $request['leave-assigned-to'] );
+
+        if ( 'leave-assigned' !== $reassign && 'reassign-another' !== $reassign && 'remove-byline' !== $reassign ) {
+            return new WP_Error( 'rest_guest_reassign_invalid_option', __( 'Invalid reassigned option', 'co-authors-plus' ),
+                array( 'status' => 400 ) );
+        }
+
+        if ( 'reassign-another' === $reassign &&  ! $leave_assigned_to ) {
+            return new WP_Error( 'rest_guest_reassign_invalid_option', __( 'reassign-another requires  "leave-assigned-to" parameter. ', 'co-authors-plus' ),
+                array( 'status' => 400 ) );
+        }
+
+        return true;
+    }
+
     /**
      * Checks if a coauthor was already added with the same user_email or login.
      *
@@ -213,6 +320,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
      *
      * @param $params
      * @param $ignore_user_login
+     *
      * @return array
      */
     private function prepare_params_for_database( $params, $ignore_user_login = true) {
@@ -237,6 +345,7 @@ class CoAuthors_API_Guest extends CoAuthors_API_Controller {
      */
     public function authorization( WP_REST_Request $request ) {
         global $coauthors_plus;
+
         return current_user_can( $coauthors_plus->guest_authors->list_guest_authors_cap );
     }
 }

@@ -306,6 +306,100 @@ if (version_compare($wp_version, '4.4', '>=')) {
             $this->assertEquals( 404 , $response->get_status() );
         }
 
+        public function testGuestDeleteEmptyParams()
+        {
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . 9000 );
+            $this->assertEquals( 400 , $response->get_status() );
+            $this->assertErrorResponse( 'rest_missing_callback_param', $response, 400);
+        }
+
+        public function testGuestDeleteNonExistingUser()
+        {
+            wp_set_current_user( 1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . 9000,
+                array( 'reassign' => 'leave-assigned') );
+            $this->assertEquals( 400 , $response->get_status() );
+            $this->assertErrorResponse( 'rest_invalid_param', $response, 400);
+        }
+
+        public function testGuestDeleteExistingUser()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . $coauthor,
+                array( 'reassign' => 'leave-assigned') );
+            $this->assertEquals( 200 , $response->get_status() );
+        }
+
+        public function testGuestDeleteExistingUserReassignAnother()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->guest_authors->create( $this->guest2 );
+            $coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . $coauthor,
+                array( 'reassign' => 'reassign-another', 'leave-assigned-to' => $this->guest2['user_login']) );
+
+            $this->assertEquals( 200 , $response->get_status() );
+        }
+
+        public function testGuestDeleteNonExistingUserReassignAnother()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->guest_authors->create( $this->guest2 );
+            $coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . $coauthor,
+                array( 'reassign' => 'reassign-another', 'leave-assigned-to' => 9000) );
+
+            $this->assertEquals( 400 , $response->get_status() );
+            $this->assertErrorResponse( 'rest_reassigned_user_not_found', $response, 400);
+        }
+
+        public function testGuestDeleteInvalidReassignAnotherOption(){
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->guest_authors->create( $this->guest2 );
+            $coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . $coauthor,
+                array( 'reassign' => 'reassign-another', 'Something' => 9000) );
+
+            $this->assertEquals( 400 , $response->get_status() );
+            $this->assertErrorResponse( 'rest_invalid_param', $response, 400);
+        }
+
+        public function testGuestDeleteRemoveByLine()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->guest_authors->create( $this->guest2 );
+            $coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . $coauthor,
+                array( 'reassign' => 'remove-byline') );
+            $this->assertEquals( 200 , $response->get_status() );
+        }
+
+        public function testGuestDeleteInvalidOption()
+        {
+            global $coauthors_plus;
+
+            wp_set_current_user( 1 );
+            $coauthors_plus->guest_authors->create( $this->guest2 );
+            $coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
+            $response = $this->get_request_response('DELETE', 'guest/' . $coauthor,
+                array( 'reassign' => 'something') );
+
+            $this->assertEquals( 400 , $response->get_status() );
+            $this->assertErrorResponse( 'rest_invalid_param', $response, 400);
+        }
+
         /**
          * @param String $code
          * @param WP_REST_Response $response
@@ -335,6 +429,7 @@ if (version_compare($wp_version, '4.4', '>=')) {
         {
             $request = new WP_REST_Request( $method, '/coauthors/v1/' . $path );
             $request->set_header('Content-Type', 'application/json');
+
             foreach ( $params as $key => $value ) {
                 $request->set_param($key, $value);
             }
