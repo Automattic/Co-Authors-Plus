@@ -51,8 +51,8 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
-			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => array( $this, 'post' ),
+			'methods'             => WP_REST_Server::EDITABLE,
+			'callback'            => array( $this, 'put' ),
 			'permission_callback' => array( $this, 'authorization' ),
 			'args'                => $args
 		) );
@@ -79,7 +79,7 @@ class CoAuthors_API_Post extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	public function post( WP_REST_Request $request ) {
+	public function put( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
 		$post = get_post( (int) $request['id'] );

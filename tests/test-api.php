@@ -120,9 +120,9 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	 */
 	public function testPostAuthorsAdmin() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data();
 		$this->assertEquals( 'Post authors updated.', $data[0] );
 
@@ -132,32 +132,32 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 	public function testPostAuthorsAuthor() {
 		wp_set_current_user( $this->author1 );
-		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	public function testPostAuthorsAppend() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'author1' ) ) );
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
 
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'editor2' ), 'append' => true ) );
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 	}
 
 	public function testPostAuthorsUnauthorized() {
 		wp_set_current_user( $this->editor1 );
-		$response = $this->get_request_response( 'POST', 'post/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'post/' . $this->author1_post1,
 			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 	}
