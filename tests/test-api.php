@@ -190,7 +190,6 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	public function testPostGet() {
 		global $coauthors_plus;
 
-		wp_set_current_user( 1 );
 		$coauthors_plus->add_coauthors( $this->author1_post1, array( 'author1', 'subscriber1' ) );
 		$response = $this->get_request_response( 'GET', 'posts/' . $this->author1_post1 );
 		$data     = $response->get_data();

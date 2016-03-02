@@ -46,7 +46,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( $this, 'get_item' ),
-			'permission_callback' => array( $this, 'authorization' ),
+			'permission_callback' => array( $this, 'post_authorization'),
 			'args'                => array( 'id' => $args['id'] )
 		) );
 
@@ -123,15 +123,30 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	}
 
 	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function post_authorization(  WP_REST_Request $request )
+	{
+		if ( ! $this->is_post_accessible( (int) $request['id']) ) {
+			return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.',
+				'co-authors-plus' ),
+				array( 'status' => self::NOT_FOUND ) );
+		}
+
+		return true;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function authorization( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
-		if ( ! $this->is_post_accessible( $request['id'] ) ) {
-			return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.',
-				'co-authors-plus' ),
-				array( 'status' => self::NOT_FOUND ) );
+		$post_authorization = $this->post_authorization( $request );
+		if ( ! $post_authorization ) {
+			return $this->post_authorization;
 		}
 
 		return $coauthors_plus->current_user_can_set_authors( null, true );
