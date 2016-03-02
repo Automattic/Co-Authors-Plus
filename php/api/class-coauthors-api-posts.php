@@ -45,21 +45,21 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get' ),
+			'callback'            => array( $this, 'get_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
 			'args'                => array( 'id' => $args['id'] )
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::EDITABLE,
-			'callback'            => array( $this, 'put' ),
+			'callback'            => array( $this, 'put_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
 			'args'                => $args
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::DELETABLE,
-			'callback'            => array( $this, 'delete' ),
+			'callback'            => array( $this, 'delete_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
 			'args'                => $args
 		) );
@@ -68,7 +68,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	public function get( WP_REST_Request $request ) {
+	public function get_item( WP_REST_Request $request ) {
 		$post_id = (int) $request['id'];
 
 		$coauthors = $this->filter_authors_array( get_coauthors( $post_id ) );
@@ -79,7 +79,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	public function put( WP_REST_Request $request ) {
+	public function put_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
 		$post = get_post( (int) $request['id'] );
@@ -101,7 +101,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	public function delete( WP_REST_Request $request ) {
+	public function delete_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
 		$post = get_post( (int) $request['id'] );

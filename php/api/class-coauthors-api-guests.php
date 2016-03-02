@@ -92,7 +92,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	public function create_routes() {
 		register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
 			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get' ),
+			'callback'            => array( $this, 'get_item' ),
 			'permission_callback' => array( $this, 'authorization' )
 		) );
 
@@ -105,35 +105,17 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 		register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
 			'methods'             => WP_REST_Server::EDITABLE,
-			'callback'            => array( $this, 'put' ),
+			'callback'            => array( $this, 'put_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
 			'args'                => $this->get_args( 'put' )
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
 			'methods'             => WP_REST_Server::DELETABLE,
-			'callback'            => array( $this, 'delete' ),
+			'callback'            => array( $this, 'delete_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
 			'args'                => $this->get_args( 'delete' )
 		) );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get( WP_REST_Request $request ) {
-		global $coauthors_plus;
-
-		$coauthor_id = (int) sanitize_text_field( $request['id'] );
-
-		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $coauthor_id );
-
-		if ( ! $guest_author ) {
-			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
-				array( 'status' => self::NOT_FOUND ) );
-		}
-
-		return $this->send_response( array( $guest_author ) );
 	}
 
 	/**
@@ -163,7 +145,25 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	public function put( WP_REST_Request $request ) {
+	public function get_item( WP_REST_Request $request ) {
+		global $coauthors_plus;
+
+		$coauthor_id = (int) sanitize_text_field( $request['id'] );
+
+		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $coauthor_id );
+
+		if ( ! $guest_author ) {
+			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
+				array( 'status' => self::NOT_FOUND ) );
+		}
+
+		return $this->send_response( array( $guest_author ) );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function put_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
 		$coauthor_id = (int) sanitize_text_field( $request['id'] );
@@ -190,7 +190,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 	}
 
-	public function delete( WP_REST_Request $request ) {
+	public function delete_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
 		$coauthor_id = (int) sanitize_text_field( $request['id'] );
