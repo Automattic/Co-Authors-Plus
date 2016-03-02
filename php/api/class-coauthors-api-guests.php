@@ -139,7 +139,10 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 		update_post_meta( $guest_author_id, '_original_author_login', $request['user_login'] );
 
-		return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $guest_author_id ) ), self::CREATED);
+		$guest = $coauthors_plus->get_coauthor_by( 'ID', $guest_author_id );
+		$data = $this->prepare_data( array( $guest ) );
+
+		return $this->send_response( $data, self::CREATED);
 	}
 
 	/**
@@ -185,7 +188,10 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 			$coauthors_plus->guest_authors->delete_guest_author_cache( $coauthor->ID );
 
-			return $this->send_response( array( $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id ) ) );
+			$guest = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
+			$data = $this->prepare_data( array( $guest ) );
+
+			return $this->send_response( $data );
 		}
 
 	}
@@ -343,5 +349,34 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		global $coauthors_plus;
 
 		return current_user_can( $coauthors_plus->guest_authors->list_guest_authors_cap );
+	}
+
+	/**
+	 * @param array $guests
+	 *
+	 * @return array
+	 */
+	protected function prepare_data( $guests ) {
+
+		$data = array();
+
+		foreach  ($guests as $guest ) {
+			$data[] = array(
+				'id' => (int) $guest->ID,
+				'display_name' => $guest->display_name,
+				'first_name' => $guest->first_name,
+				'last_name' => $guest->last_name,
+				'user_email' => $guest->user_email,
+				'linked_account' => $guest->linked_account,
+				'website' => $guest->website,
+				'aim' => $guest->aim,
+				'yahooim' => $guest->yahooim,
+				'jabber' => $guest->jabber,
+				'description' => $guest->description,
+				'user_nicename' => $guest->user_nicename,
+			);
+		}
+
+		return $data;
 	}
 }

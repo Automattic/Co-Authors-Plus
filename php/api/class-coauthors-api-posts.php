@@ -73,7 +73,9 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 
 		$coauthors = $this->filter_authors_array( get_coauthors( $post_id ) );
 
-		return $this->send_response( array( 'coauthors' => $coauthors ) );
+		$data = $this->prepare_data( $coauthors );
+
+		return $this->send_response( array( 'coauthors' => $data ) );
 	}
 
 	/**
@@ -181,5 +183,26 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 		$post = get_post( $post_id );
 
 		return ( ! $post || ! $coauthors_plus->is_post_type_enabled( $post->post_type ) ) ? false : true;
+	}
+
+	/**
+	 * @param array $coauthors
+	 *
+	 * @return array
+	 */
+	protected function prepare_data( array $coauthors ) {
+
+		$data = array();
+
+		foreach  ($coauthors as $coauthor ) {
+			$data[] = array(
+				'id' => (int) $coauthor['id'],
+				'display_name' => $coauthor['display_name'],
+				'user_email' => $coauthor['user_email'],
+				'user_nicename' => $coauthor['user_nicename']
+			);
+		}
+
+		return $data;
 	}
 }

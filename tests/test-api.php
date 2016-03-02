@@ -221,18 +221,19 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$response = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$data     = $response->get_data();
+
 		$this->assertEquals( 201, $response->get_status() );
-		$this->assertEquals( $data[0]->display_name, $this->guest1['display_name'] );
-		$this->assertEquals( $data[0]->user_login, $this->guest1['user_login'] );
-		$this->assertEquals( $data[0]->first_name, $this->guest1['first_name'] );
-		$this->assertEquals( $data[0]->last_name, $this->guest1['last_name'] );
-		$this->assertEquals( $data[0]->user_email, $this->guest1['user_email'] );
-		$this->assertEquals( $data[0]->linked_account, $this->guest1['linked_account'] );
-		$this->assertEquals( $data[0]->website, $this->guest1['website'] );
-		$this->assertEquals( $data[0]->aim, $this->guest1['aim'] );
-		$this->assertEquals( $data[0]->yahooim, $this->guest1['yahooim'] );
-		$this->assertEquals( $data[0]->jabber, $this->guest1['jabber'] );
-		$this->assertEquals( $data[0]->description, $this->guest1['description'] );
+
+		$this->assertEquals( $data[0]['display_name'], $this->guest1['display_name'] );
+		$this->assertEquals( $data[0]['first_name'], $this->guest1['first_name'] );
+		$this->assertEquals( $data[0]['last_name'], $this->guest1['last_name'] );
+		$this->assertEquals( $data[0]['user_email'], $this->guest1['user_email'] );
+		$this->assertEquals( $data[0]['linked_account'], $this->guest1['linked_account'] );
+		$this->assertEquals( $data[0]['website'], $this->guest1['website'] );
+		$this->assertEquals( $data[0]['aim'], $this->guest1['aim'] );
+		$this->assertEquals( $data[0]['yahooim'], $this->guest1['yahooim'] );
+		$this->assertEquals( $data[0]['jabber'], $this->guest1['jabber'] );
+		$this->assertEquals( $data[0]['description'], $this->guest1['description'] );
 	}
 
 	public function testGuestAddInvalid() {
@@ -254,10 +255,10 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 		unset( $this->guest1['user_login'] );
 		$this->guest1['display_name'] = 'New display name';
-		$response                     = $this->get_request_response( 'PUT', 'guests/' . $guest[0]->ID, $this->guest1 );
+		$response                     = $this->get_request_response( 'PUT', 'guests/' . $guest[0]['id'], $this->guest1 );
 		$data                         = $response->get_data();
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( $data[0]->display_name, 'New display name' );
+		$this->assertEquals( $data[0]['display_name'], 'New display name' );
 	}
 
 	public function testGuestUpdateSameUserName() {
@@ -268,14 +269,14 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 		// Tests user login
 		$this->guest2['user_login'] = $this->guest1['user_login'];
-		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]->ID, $this->guest2 );
+		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]['id'], $this->guest2 );
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400 );
 
 		// Tests existing email
 		$this->guest2['user_login'] = 'foobar';
 		$this->guest2['user_email'] = $this->guest1['user_email'];
-		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]->ID, $this->guest2 );
+		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]['id'], $this->guest2 );
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400 );
 	}
