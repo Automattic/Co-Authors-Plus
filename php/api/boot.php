@@ -12,7 +12,7 @@ if ( version_compare( $wp_version, '4.4', '<' ) ) {
 
 require_once( dirname( __FILE__ ) . '/class-coauthors-api.php' );
 require_once( dirname( __FILE__ ) . '/class-coauthors-api-controller.php' );
-require_once( dirname( __FILE__ ) . '/class-coauthors-api-search.php' );
+require_once( dirname( __FILE__ ) . '/class-coauthors-api-authors.php' );
 require_once( dirname( __FILE__ ) . '/class-coauthors-api-post.php' );
 require_once( dirname( __FILE__ ) . '/class-coauthors-api-guest.php' );
 
@@ -20,7 +20,7 @@ define( 'COAUTHORS_PLUS_API_NAMESPACE', 'coauthors/' );
 define( 'COAUTHORS_PLUS_API_VERSION', 'v1' );
 
 $coauthors_api = new CoAuthors_API();
-$coauthors_api->register_controller( new CoAuthors_API_Search() );
+$coauthors_api->register_controller( new CoAuthors_API_Authors() );
 $coauthors_api->register_controller( new CoAuthors_API_Post() );
 $coauthors_api->register_controller( new CoAuthors_API_Guest() );
 

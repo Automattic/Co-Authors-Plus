@@ -64,30 +64,30 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Search and Authentication
+	 * Authors and Authentication
 	 */
 	public function testSearchWithoutAuthentication() {
-		$response = $this->get_request_response( 'GET', 'search', array( 'q' => 'foo' ) );
+		$response = $this->get_request_response( 'GET', 'authors', array( 'q' => 'foo' ) );
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertErrorResponse( 'rest_forbidden', $response );
 	}
 
 	public function testSearchAuthenticatedWithoutPermission() {
 		wp_set_current_user( $this->subscriber );
-		$response = $this->get_request_response( 'GET', 'search', array( 'q' => 'foo' ) );
+		$response = $this->get_request_response( 'GET', 'authors', array( 'q' => 'foo' ) );
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertErrorResponse( 'rest_forbidden', $response );
 	}
 
 	public function testSearchAuthenticatedWithPermission() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'GET', 'search', array( 'q' => 'foo' ) );
+		$response = $this->get_request_response( 'GET', 'authors', array( 'q' => 'foo' ) );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
 	public function testSearchResults() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'GET', 'search', array( 'q' => 'tor' ) );
+		$response = $this->get_request_response( 'GET', 'authors', array( 'q' => 'tor' ) );
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data();
 		$this->assertEquals( 2, count( $data['coauthors'] ) );
@@ -95,7 +95,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 	public function testExistingAuthorsValid() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'GET', 'search', array(
+		$response = $this->get_request_response( 'GET', 'authors', array(
 			'q'                => 'tor',
 			'exclude_authors' => 'contributor1'
 		) );
@@ -103,7 +103,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		$data = $response->get_data();
 		$this->assertEquals( 1, count( $data['coauthors'] ) );
 
-		$response = $this->get_request_response( 'GET', 'search', array(
+		$response = $this->get_request_response( 'GET', 'authors', array(
 			'q'                => 'tor',
 			'exclude_authors' =>'contributor1,editor2'
 		) );

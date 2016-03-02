@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Class CoAuthors_API_Search
+ * Class CoAuthors_API_Authors
  */
-class CoAuthors_API_Search extends CoAuthors_API_Controller {
+class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 
 	/**
 	 * @var string
 	 */
-	protected $route = 'search/';
+	protected $route = 'authors/';
 
 	/**
 	 * @inheritdoc
