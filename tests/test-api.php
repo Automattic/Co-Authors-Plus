@@ -209,17 +209,17 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Guest route
+	 * Guests route
 	 */
 
 	public function testGuestAddNoSession() {
-		$response = $this->get_request_response( 'POST', 'guest', $this->guest1 );
+		$response = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	public function testGuestAdd() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'POST', 'guest', $this->guest1 );
+		$response = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$data     = $response->get_data();
 		$this->assertEquals( 201, $response->get_status() );
 		$this->assertEquals( $data[0]->display_name, $this->guest1['display_name'] );
@@ -238,23 +238,23 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	public function testGuestAddInvalid() {
 		wp_set_current_user( 1 );
 		$this->guest1['user_login'] = 'admin';
-		$response                   = $this->get_request_response( 'POST', 'guest', $this->guest1 );
+		$response                   = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400 );
 
 		$this->guest1['user_login'] = '%?!&';
-		$response                   = $this->get_request_response( 'POST', 'guest', $this->guest1 );
+		$response                   = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$data                       = $response->get_data();
 		$this->assertEquals( 'field-required', $data['code'] );
 	}
 
 	public function testGuestUpdate() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'POST', 'guest', $this->guest1 );
+		$response = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$guest    = $response->get_data();
 
 		unset( $this->guest1['user_login'] );
 		$this->guest1['display_name'] = 'New display name';
-		$response                     = $this->get_request_response( 'PUT', 'guest/' . $guest[0]->ID, $this->guest1 );
+		$response                     = $this->get_request_response( 'PUT', 'guests/' . $guest[0]->ID, $this->guest1 );
 		$data                         = $response->get_data();
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( $data[0]->display_name, 'New display name' );
@@ -262,20 +262,20 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 	public function testGuestUpdateSameUserName() {
 		wp_set_current_user( 1 );
-		$this->get_request_response( 'POST', 'guest', $this->guest1 );
-		$response = $this->get_request_response( 'POST', 'guest', $this->guest2 );
+		$this->get_request_response( 'POST', 'guests', $this->guest1 );
+		$response = $this->get_request_response( 'POST', 'guests', $this->guest2 );
 		$guest2   = $response->get_data();
 
 		// Tests user login
 		$this->guest2['user_login'] = $this->guest1['user_login'];
-		$response                   = $this->get_request_response( 'PUT', 'guest/' . $guest2[0]->ID, $this->guest2 );
+		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]->ID, $this->guest2 );
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400 );
 
 		// Tests existing email
 		$this->guest2['user_login'] = 'foobar';
 		$this->guest2['user_email'] = $this->guest1['user_email'];
-		$response                   = $this->get_request_response( 'PUT', 'guest/' . $guest2[0]->ID, $this->guest2 );
+		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]->ID, $this->guest2 );
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400 );
 	}
@@ -285,7 +285,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 		wp_set_current_user( 1 );
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
-		$response = $this->get_request_response( 'GET', 'guest/' . $coauthor );
+		$response = $this->get_request_response( 'GET', 'guests/' . $coauthor );
 		$data     = $response->get_data();
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( $data[0]->display_name, $this->guest1['display_name'] );
@@ -293,26 +293,26 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 	public function testGuestNotFoundGet() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'GET', 'guest/' . 1000 );
+		$response = $this->get_request_response( 'GET', 'guests/' . 1000 );
 		$this->assertEquals( 404, $response->get_status() );
 
-		$response = $this->get_request_response( 'GET', 'guest/' . 0 );
+		$response = $this->get_request_response( 'GET', 'guests/' . 0 );
 		$this->assertEquals( 404, $response->get_status() );
 
-		$response = $this->get_request_response( 'GET', 'guest/' . $this->guest1['user_login'] );
+		$response = $this->get_request_response( 'GET', 'guests/' . $this->guest1['user_login'] );
 		$this->assertEquals( 404, $response->get_status() );
 	}
 
 	public function testGuestDeleteEmptyParams() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . 9000 );
+		$response = $this->get_request_response( 'DELETE', 'guests/' . 9000 );
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertErrorResponse( 'rest_missing_callback_param', $response, 400 );
 	}
 
 	public function testGuestDeleteNonExistingUser() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . 9000,
+		$response = $this->get_request_response( 'DELETE', 'guests/' . 9000,
 			array( 'reassign' => 'leave-assigned' ) );
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
@@ -323,7 +323,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 		wp_set_current_user( 1 );
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . $coauthor,
+		$response = $this->get_request_response( 'DELETE', 'guests/' . $coauthor,
 			array( 'reassign' => 'leave-assigned' ) );
 		$this->assertEquals( 200, $response->get_status() );
 	}
@@ -334,7 +334,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$coauthors_plus->guest_authors->create( $this->guest2 );
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . $coauthor,
+		$response = $this->get_request_response( 'DELETE', 'guests/' . $coauthor,
 			array( 'reassign' => 'reassign-another', 'leave-assigned-to' => $this->guest2['user_login'] ) );
 
 		$this->assertEquals( 200, $response->get_status() );
@@ -346,7 +346,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$coauthors_plus->guest_authors->create( $this->guest2 );
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . $coauthor,
+		$response = $this->get_request_response( 'DELETE', 'guests/' . $coauthor,
 			array( 'reassign' => 'reassign-another', 'leave-assigned-to' => 9000 ) );
 
 		$this->assertEquals( 400, $response->get_status() );
@@ -359,7 +359,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$coauthors_plus->guest_authors->create( $this->guest2 );
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . $coauthor,
+		$response = $this->get_request_response( 'DELETE', 'guests/' . $coauthor,
 			array( 'reassign' => 'reassign-another', 'Something' => 9000 ) );
 
 		$this->assertEquals( 400, $response->get_status() );
@@ -372,7 +372,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$coauthors_plus->guest_authors->create( $this->guest2 );
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . $coauthor,
+		$response = $this->get_request_response( 'DELETE', 'guests/' . $coauthor,
 			array( 'reassign' => 'remove-byline' ) );
 		$this->assertEquals( 200, $response->get_status() );
 	}
@@ -383,7 +383,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$coauthors_plus->guest_authors->create( $this->guest2 );
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
-		$response = $this->get_request_response( 'DELETE', 'guest/' . $coauthor,
+		$response = $this->get_request_response( 'DELETE', 'guests/' . $coauthor,
 			array( 'reassign' => 'something' ) );
 
 		$this->assertEquals( 400, $response->get_status() );

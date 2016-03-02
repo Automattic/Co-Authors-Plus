@@ -14,7 +14,7 @@ require_once( dirname( __FILE__ ) . '/class-coauthors-api.php' );
 require_once( dirname( __FILE__ ) . '/class-coauthors-api-controller.php' );
 require_once( dirname( __FILE__ ) . '/class-coauthors-api-authors.php' );
 require_once( dirname( __FILE__ ) . '/class-coauthors-api-post.php' );
-require_once( dirname( __FILE__ ) . '/class-coauthors-api-guest.php' );
+require_once( dirname( __FILE__ ) . '/class-coauthors-api-guests.php' );
 
 define( 'COAUTHORS_PLUS_API_NAMESPACE', 'coauthors/' );
 define( 'COAUTHORS_PLUS_API_VERSION', 'v1' );
@@ -22,6 +22,6 @@ define( 'COAUTHORS_PLUS_API_VERSION', 'v1' );
 $coauthors_api = new CoAuthors_API();
 $coauthors_api->register_controller( new CoAuthors_API_Authors() );
 $coauthors_api->register_controller( new CoAuthors_API_Post() );
-$coauthors_api->register_controller( new CoAuthors_API_Guest() );
+$coauthors_api->register_controller( new CoAuthors_API_Guests() );
 
 add_action( 'rest_api_init', array( $coauthors_api, 'boot' ) );
