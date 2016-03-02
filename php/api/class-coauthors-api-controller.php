@@ -42,7 +42,7 @@ class CoAuthors_API_Controller {
 	}
 
 	/**
-	 * DELETE HTTP method
+	 * GET HTTP method
 	 *
 	 * @param WP_REST_Request $request
 	 *
@@ -54,7 +54,7 @@ class CoAuthors_API_Controller {
 	}
 
 	/**
-	 * DELETE HTTP method
+	 * POST HTTP method
 	 *
 	 * @param WP_REST_Request $request
 	 *
@@ -66,7 +66,7 @@ class CoAuthors_API_Controller {
 	}
 
 	/**
-	 * DELETE HTTP method
+	 * PUT HTTP method
 	 *
 	 * @param WP_REST_Request $request
 	 *
@@ -88,6 +88,55 @@ class CoAuthors_API_Controller {
 	public function delete( WP_REST_Request $request ) {
 		throw new Exception( 'Not implemented.' );
 	}
+
+	/**
+	 * GET item HTTP method
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @throws Exception
+	 * @return WP_REST_Response
+	 */
+	public function get_item( WP_REST_Request $request ) {
+		throw new Exception( 'Not implemented.' );
+	}
+
+	/**
+	 * POST item HTTP method
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @throws Exception
+	 * @return WP_REST_Response
+	 */
+	public function post_item( WP_REST_Request $request ) {
+		throw new Exception( 'Not implemented.' );
+	}
+
+	/**
+	 * PUT item HTTP method
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @throws Exception
+	 * @return WP_REST_Response
+	 */
+	public function put_item( WP_REST_Request $request ) {
+		throw new Exception( 'Not implemented.' );
+	}
+
+	/**
+	 * DELETE item HTTP method
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @throws Exception
+	 * @return WP_REST_Response
+	 */
+	public function delete_item( WP_REST_Request $request ) {
+		throw new Exception( 'Not implemented.' );
+	}
+
 
 	/**
 	 * Returns a clean array
