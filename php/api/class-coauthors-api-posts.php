@@ -49,10 +49,6 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 					'required'          => true,
 					'sanitize_callback' => array( $this, 'sanitize_array' ),
 					'validate_callback' => array( $this, 'validate_is_array_and_has_content' )
-				),
-				'append'    => array(
-					'sanitize_callback' => 'sanitize_key',
-					'validate_callback' => array( $this, 'validate_array_is_empty' ),
 				)
 			)
 		);
