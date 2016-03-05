@@ -13,27 +13,51 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	protected function get_args( $method = null ) {
-		return array(
-			'id'        => array(
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_key',
-				'validate_callback' => array( $this, 'post_validate_id' )
+	protected function get_args( $context = null ) {
+
+		$contexts = array(
+			'get_item' => array(
+				'id'        => array(
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_key',
+					'validate_callback' => array( $this, 'post_validate_id' )
+				)
 			),
-			'coauthors' => array(
-				'required'          => true,
-				'sanitize_callback' => array( $this, 'sanitize_array' ),
-				'validate_callback' => function ( $param, $request, $key ) {
-					return ! empty( $param ) && is_array( $param ) && count( $param ) > 0;
-				}
+			'put_item' => array (
+				'id'        => array(
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_key',
+					'validate_callback' => array( $this, 'post_validate_id' )
+				),
+				'coauthors' => array(
+					'required'          => true,
+					'sanitize_callback' => array( $this, 'sanitize_array' ),
+					'validate_callback' => array( $this, 'validate_is_array_and_has_content' ),
+				),
+				'append'    => array(
+					'sanitize_callback' => 'sanitize_key',
+					'validate_callback' => array( $this, 'validate_array_is_empty' ),
+				)
 			),
-			'append'    => array(
-				'sanitize_callback' => 'sanitize_key',
-				'validate_callback' => function ( $param, $request, $key ) {
-					return ! empty( $param );
-				}
+			'delete_item' => array (
+				'id'        => array(
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_key',
+					'validate_callback' => array( $this, 'post_validate_id' )
+				),
+				'coauthors' => array(
+					'required'          => true,
+					'sanitize_callback' => array( $this, 'sanitize_array' ),
+					'validate_callback' => array( $this, 'validate_is_array_and_has_content' )
+				),
+				'append'    => array(
+					'sanitize_callback' => 'sanitize_key',
+					'validate_callback' => array( $this, 'validate_array_is_empty' ),
+				)
 			)
 		);
+
+		return $contexts[ $context ];
 	}
 
 	/**
@@ -41,27 +65,25 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	 */
 	public function create_routes() {
 
-		$args = $this->get_args();
-
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( $this, 'get_item' ),
 			'permission_callback' => array( $this, 'post_authorization'),
-			'args'                => array( 'id' => $args['id'] )
+			'args'                => $this->get_args('get_item')
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::EDITABLE,
 			'callback'            => array( $this, 'put_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
-			'args'                => $args
+			'args'                => $this->get_args('put_item')
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::DELETABLE,
 			'callback'            => array( $this, 'delete_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
-			'args'                => $args
+			'args'                => $this->get_args('delete_item')
 		) );
 	}
 
@@ -161,6 +183,29 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	 */
 	public function post_validate_id( $param, WP_REST_Request $request, $key ) {
 		return is_numeric( sanitize_text_field( $request['id'] ) );
+	}
+
+	/**
+	 * @param $param
+	 * @param $request
+	 * @param $key
+	 *
+	 * @return bool
+	 */
+	public function validate_is_array_and_has_content( $param, $request, $key ) {
+		return ! empty( $param ) && is_array( $param ) && count( $param ) > 0;
+	}
+
+	/**
+	 * @param $param
+	 * @param $request
+	 * @param $key
+	 *
+	 * @return bool
+	 */
+	public function validate_array_is_empty( $param, $request, $key )
+	{
+		return ! empty( $param );
 	}
 
 	/**

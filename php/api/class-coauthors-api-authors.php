@@ -13,19 +13,16 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	protected function get_args( $method = null ) {
-		return array(
-			'q'                => array(
-				'required'          => true,
-				'validate_callback' => function ( $param, $request, $key ) {
-					return ! empty( $param );
-				},
-				'sanitize_callback' => 'sanitize_key'
-			),
-			'exclude_authors' => array(
-				'sanitize_callback' => 'sanitize_text_field'
+	protected function get_args( $context = null ) {
+
+		$contexts = array(
+			'get' => array(
+				'q'               => array( 'required' => true, 'sanitize_callback' => 'sanitize_key'),
+				'exclude_authors' => array( 'sanitize_callback' => 'sanitize_text_field' )
 			)
 		);
+
+		return $contexts[ $context ];
 	}
 
 	/**
@@ -36,7 +33,7 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( $this, 'get' ),
 			'permission_callback' => array( $this, 'authorization' ),
-			'args'                => $this->get_args()
+			'args'                => $this->get_args( 'get' )
 		) );
 	}
 

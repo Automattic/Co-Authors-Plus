@@ -13,88 +13,58 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	/**
 	 * @inheritdoc
 	 */
-	protected function get_args( $method = null ) {
-		$args = array(
-			'display_name'   => array(
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			),
-			'user_login'     => array(
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_user',
-			),
-			'user_email'     => array(
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_email'
-			),
-			'first_name'     => array(
-				'sanitize_callback' => 'sanitize_text_field'
-			),
-			'last_name'      => array(
-				'sanitize_callback' => 'sanitize_text_field'
-			),
-			'linked_account' => array(
-				'sanitize_callback' => 'sanitize_key'
-			),
-			'website'        => array(
-				'sanitize_callback' => 'esc_url_raw'
-			),
-			'aim'            => array(
-				'sanitize_callback' => 'sanitize_key'
-			),
-			'yahooim'        => array(
-				'sanitize_callback' => 'sanitize_key'
-			),
-			'jabber'         => array(
-				'sanitize_callback' => 'sanitize_key'
-			),
-			'description'    => array(
-				'sanitize_callback' => 'wp_filter_post_kses'
-			),
-		);
+	protected function get_args( $context = null ) {
 
-		// We don't need to make these required on PUT, since
-		// we already have the ID.
-		if ( 'put' === $method ) {
-			// we don't to update user_login
-			unset( $args['user_login']['required'] );
-			$args['display_name']['required'] = false;
-			$args['user_email']['required']   = false;
-			$args['id']                       = array(
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_key',
-				'validate_callback' => array( $this, 'validate_guest_id' )
-			);
-		} elseif ( 'delete' === $method ) {
-			return array(
-				'id'                => array(
-					'required'          => true,
-					'sanitize_callback' => 'sanitize_key',
-					'validate_callback' => array( $this, 'validate_guest_id' )
-				),
-				'reassign'          => array(
-					'required'          => true,
+		$contexts = array(
+			'post' => array(
+				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field', 'required' => true ),
+				'user_login'     => array( 'sanitize_callback' => 'sanitize_user', 'required' => true ),
+				'user_email'     => array( 'sanitize_callback' => 'sanitize_email', 'required' => true ),
+				'first_name'     => array( 'sanitize_callback' => 'sanitize_text_field' ),
+				'last_name'      => array( 'sanitize_callback' => 'sanitize_text_field' ),
+				'linked_account' => array( 'sanitize_callback' => 'sanitize_key' ),
+				'website'        => array( 'sanitize_callback' => 'esc_url_raw' ),
+				'aim'            => array( 'sanitize_callback' => 'sanitize_key' ),
+				'yahooim'        => array( 'sanitize_callback' => 'sanitize_key' ),
+				'jabber'         => array( 'sanitize_callback' => 'sanitize_key' ),
+				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses'),
+			),
+			'get_item' => array(
+				'id'             => array( 'sanitize_callback' => 'sanitize_key' ),
+			),
+			'put_item' => array(
+				'id'             => array( 'sanitize_callback' => 'sanitize_key' ),
+				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field'),
+				'user_email'     => array( 'sanitize_callback' => 'sanitize_email' ),
+				'first_name'     => array( 'sanitize_callback' => 'sanitize_text_field' ),
+				'last_name'      => array( 'sanitize_callback' => 'sanitize_text_field' ),
+				'linked_account' => array( 'sanitize_callback' => 'sanitize_key' ),
+				'website'        => array( 'sanitize_callback' => 'esc_url_raw' ),
+				'aim'            => array( 'sanitize_callback' => 'sanitize_key' ),
+				'yahooim'        => array( 'sanitize_callback' => 'sanitize_key' ),
+				'jabber'         => array( 'sanitize_callback' => 'sanitize_key' ),
+				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses'),
+			),
+			'delete_item' => array(
+				'id'             => array( 'sanitize_callback' => 'sanitize_key'),
+				'reassign' => array(
+					'required' => true,
 					'sanitize_callback' => 'sanitize_text_field',
 					'validate_callback' => array( $this, 'validate_reassign' )
 				),
 				'leave-assigned-to' => array(
 					'sanitize_callback' => 'sanitize_text_field',
 				)
-			);
-		}
+			),
+		);
 
-		return $args;
+		return $contexts[ $context ];
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function create_routes() {
-		register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get_item' ),
-			'permission_callback' => array( $this, 'authorization' )
-		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::CREATABLE,
@@ -104,17 +74,24 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => array( $this, 'get_item' ),
+			'permission_callback' => array( $this, 'authorization' ),
+			'args'                => $this->get_args( 'get_item' )
+		) );
+
+		register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
 			'methods'             => WP_REST_Server::EDITABLE,
 			'callback'            => array( $this, 'put_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
-			'args'                => $this->get_args( 'put' )
+			'args'                => $this->get_args( 'put_item' )
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route() . '(?P<id>\d+)', array(
 			'methods'             => WP_REST_Server::DELETABLE,
 			'callback'            => array( $this, 'delete_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
-			'args'                => $this->get_args( 'delete' )
+			'args'                => $this->get_args( 'delete_item' )
 		) );
 	}
 
@@ -129,7 +106,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				array( 'status' => self::BAD_REQUEST ) );
 		}
 
-		$params = $this->prepare_params_for_database( $request->get_params(), false );
+		$params = $this->prepare_params_for_database( $request->get_params( 'post' ), 'post', false );
 
 		$guest_author_id = $coauthors_plus->guest_authors->create( $params );
 
@@ -173,6 +150,11 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
 
+		if ( ! $coauthor ) {
+			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
+				array( 'status' => self::NOT_FOUND ) );
+		}
+
 		if ( $this->does_coauthor_exists( $request['user_email'], $request['user_login'] ) ) {
 			return new WP_Error( 'rest_guest_invalid_username', __( 'Invalid username or already exists.', 'co-authors-plus' ),
 				array( 'status' => self::BAD_REQUEST ) );
@@ -181,7 +163,8 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		if ( $coauthors_plus->guest_authors->post_type === $coauthor->type ) {
 			clean_post_cache( $coauthor->ID );
 
-			$params = $this->prepare_params_for_database( $request->get_params() );
+			$params = $this->prepare_params_for_database( $request->get_params(), 'put_item' );
+
 			foreach ( $params as $param => $value ) {
 				update_post_meta( $coauthor->ID, 'cap-' . $param, $value );
 			}
@@ -202,6 +185,11 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		$coauthor_id = (int) sanitize_text_field( $request['id'] );
 
 		$guest_author = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
+
+		if ( ! $guest_author ) {
+			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
+				array( 'status' => self::NOT_FOUND ) );
+		}
 
 		switch ( $request['reassign'] ) {
 			// Leave assigned to the current linked account
@@ -232,27 +220,6 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		}
 
 		return $this->send_response( array( __( 'Guest author was deleted.', 'co-authors-plus' ) ) );
-	}
-
-	/**
-	 * @param $param
-	 * @param WP_REST_Request $request
-	 * @param $key
-	 *
-	 * @return bool|WP_Error
-	 */
-	public function validate_guest_id( $param, WP_REST_Request $request, $key ) {
-		global $coauthors_plus;
-
-		$coauthor_id = (int) sanitize_text_field( $param );
-
-		$coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
-		if ( ! $coauthor ) {
-			return new WP_Error( 'rest_guest_not_found', __( 'Guest not found.', 'co-authors-plus' ),
-				array( 'status' => self::BAD_REQUEST ) );
-		}
-
-		return true;
 	}
 
 	/**
@@ -322,12 +289,13 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 *
 	 * @param $params
 	 * @param $ignore_user_login
+	 * @param $context
 	 *
 	 * @return array
 	 */
-	private function prepare_params_for_database( $params, $ignore_user_login = true ) {
+	private function prepare_params_for_database( $params, $context, $ignore_user_login = true ) {
 
-		$args = $this->get_args();
+		$args = $this->get_args( $context );
 		$data = array();
 
 		foreach ( $params as $param => $value ) {

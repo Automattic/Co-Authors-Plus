@@ -314,8 +314,7 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$response = $this->get_request_response( 'DELETE', 'guests/' . 9000,
 			array( 'reassign' => 'leave-assigned' ) );
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
+		$this->assertErrorResponse( 'rest_guest_not_found', $response, 404 );
 	}
 
 	public function testGuestDeleteExistingUser() {
