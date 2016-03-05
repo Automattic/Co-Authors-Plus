@@ -802,7 +802,6 @@ class coauthors_plus {
 		global $current_user, $wpdb;
 
 		$post_id = (int) $post_id;
-		$insert = false;
 
 		// Best way to persist order
 		if ( $append ) {
@@ -822,6 +821,9 @@ class coauthors_plus {
 		foreach ( $coauthors as &$author_name ) {
 
 			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
+			if ( !$author ) {
+				continue;
+			}
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
 			$author_name = $term->slug;
