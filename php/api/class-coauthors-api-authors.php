@@ -45,13 +45,7 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 
 		$query = strtolower( $request['q'] );
 
-		$exclude_authors = array();
-		if ( isset( $request['exclude_authors'] ) ) {
-			$exclude_authors = array_map( 'sanitize_text_field', explode( ',', $request['exclude_authors'] ) );
-		}
-
-		$coauthors = $this->filter_authors_array( $coauthors_plus->search_authors( $query, $exclude_authors ) );
-		$data = $this->prepare_data( $coauthors );
+		$data = $this->prepare_data( $coauthors_plus->search_authors( $query ) );
 
 		return $this->send_response( array( 'coauthors' => $data ) );
 	}
@@ -76,10 +70,10 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 
 		foreach  ($coauthors as $coauthor ) {
 			$data[] = array(
-				'id' => (int) $coauthor['id'],
-				'display_name' => $coauthor['display_name'],
-				'user_email' => $coauthor['user_email'],
-				'user_nicename' => $coauthor['user_nicename']
+				'id' => (int) $coauthor->ID,
+				'display_name' => $coauthor->display_name,
+				'user_email' => $coauthor->user_email,
+				'user_nicename' => $coauthor->user_nicename
 			);
 		}
 

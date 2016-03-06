@@ -95,18 +95,12 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 	public function testExistingAuthorsValid() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'GET', 'authors', array(
-			'q'                => 'tor',
-			'exclude_authors' => 'contributor1'
-		) );
+		$response = $this->get_request_response( 'GET', 'authors', array( 'q' => 'tor') );
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data();
-		$this->assertEquals( 1, count( $data['coauthors'] ) );
+		$this->assertEquals( 2, count( $data['coauthors'] ) );
 
-		$response = $this->get_request_response( 'GET', 'authors', array(
-			'q'                => 'tor',
-			'exclude_authors' =>'contributor1,editor2'
-		) );
+		$response = $this->get_request_response( 'GET', 'authors', array( 'q' => 'dummysomething' ) );
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data();
 		$this->assertEquals( 0, count( $data['coauthors'] ) );
@@ -117,33 +111,22 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	 */
 	public function testPostAuthorsAdmin() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1 . '/authors',
 			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
 		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertEquals( 'Post authors updated.', $data[0] );
-
-		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
-	}
-
-	public function testPostAuthorsAuthor() {
-		wp_set_current_user( $this->author1 );
-		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1,
-			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
-		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	public function testPostAuthorsAppend() {
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1 . '/authors',
 			array( 'coauthors' => array( 'author1' ) ) );
 		$this->assertEquals( 200, $response->get_status() );
+
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
 
 		wp_set_current_user( 1 );
-		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1,
+		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1 . '/authors',
 			array( 'coauthors' => array( 'editor2' ), 'append' => true ) );
 		$this->assertEquals( 200, $response->get_status() );
 		$coauthors = get_coauthors( $this->author1_post1 );
@@ -152,11 +135,8 @@ class Test_API extends CoAuthorsPlus_TestCase {
 
 	public function testPostAuthorsUnauthorized() {
 		wp_set_current_user( $this->editor1 );
-		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1,
-			array( 'coauthors' => array( 'author1', 'editor2' ) ) );
-		$this->assertEquals( 200, $response->get_status() );
-		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$response = $this->get_request_response( 'PUT', 'posts/' . $this->author1_post1 . '/authors');
+		$this->assertEquals( 400, $response->get_status() );
 	}
 
 	public function testPostAuthorsDelete() {
@@ -165,38 +145,23 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( 1 );
 		$coauthors_plus->add_coauthors( $this->author1_post1, array( 'author1', 'subscriber1' ) );
 
-		$response = $this->get_request_response( 'DELETE', 'posts/' . $this->author1_post1,
-			array( 'coauthors' => array( 'subscriber1' ) ) );
-
+		$response = $this->get_request_response( 'DELETE', 'posts/' . $this->author1_post1 .  '/authors/' . $this->author1);
 		$this->assertEquals( 200, $response->get_status() );
+
 		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( array( $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
-	}
-
-	public function testPostAuthorsEmptyDeleteAll() {
-		global $coauthors_plus;
-
-		wp_set_current_user( 1 );
-		$coauthors_plus->add_coauthors( $this->author1_post1, array( 'author1', 'subscriber1' ) );
-
-		$response = $this->get_request_response( 'DELETE', 'posts/' . $this->author1_post1,
-			array( 'coauthors' => array( 'subscriber1', 'author1' ) ) );
-
-		$this->assertEquals( 200, $response->get_status() );
-		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( array( 1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $this->subscriber ), wp_list_pluck( $coauthors, 'ID' ) );
 	}
 
 	public function testPostGet() {
 		global $coauthors_plus;
 
 		$coauthors_plus->add_coauthors( $this->author1_post1, array( 'author1', 'subscriber1' ) );
-		$response = $this->get_request_response( 'GET', 'posts/' . $this->author1_post1 );
+		$response = $this->get_request_response( 'GET', 'posts/' . $this->author1_post1 . '/authors' );
 		$data     = $response->get_data();
 		$this->assertEquals( 2, count( $data['coauthors'] ) );
 
 		$coauthors_plus->add_coauthors( $this->author1_post1, array( 'author1', 'subscriber1', 'contributor1' ) );
-		$response = $this->get_request_response( 'GET', 'posts/' . $this->author1_post1 );
+		$response = $this->get_request_response( 'GET', 'posts/' . $this->author1_post1  . '/authors' );
 		$data     = $response->get_data();
 		$this->assertEquals( 3, count( $data['coauthors'] ) );
 	}
