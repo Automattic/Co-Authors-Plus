@@ -300,7 +300,9 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		$coauthor = $coauthors_plus->guest_authors->create( $this->guest1 );
 		$response = $this->get_request_response( 'DELETE', 'guests/' . $coauthor,
 			array( 'reassign' => 'reassign-another', 'leave-assigned-to' => $this->guest2['user_login'] ) );
+		$data = $response->get_data();
 
+		$this->assertEquals( $data[0]['display_name'], $this->guest1['display_name']);
 		$this->assertEquals( 200, $response->get_status() );
 	}
 

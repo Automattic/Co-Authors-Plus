@@ -219,7 +219,9 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				array( 'status' => self::BAD_REQUEST ) );
 		}
 
-		return $this->send_response( array( __( 'Guest author was deleted.', 'co-authors-plus' ) ) );
+		$data = $this->prepare_data( array( $guest_author ) );
+
+		return $this->send_response( $data );
 	}
 
 	/**
