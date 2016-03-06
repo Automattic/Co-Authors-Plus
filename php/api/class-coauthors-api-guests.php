@@ -16,6 +16,9 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	protected function get_args( $context = null ) {
 
 		$contexts = array(
+			'get' => array(
+				'q' => array( 'sanitize_callback' => 'sanitize_key')
+			),
 			'post' => array(
 				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field', 'required' => true ),
 				'user_login'     => array( 'sanitize_callback' => 'sanitize_user', 'required' => true ),
@@ -67,6 +70,13 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	public function create_routes() {
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => array( $this, 'get' ),
+			'permission_callback' => array( $this, 'authorization' ),
+			'args'                => $this->get_args( 'get' )
+		) );
+
+		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'post' ),
 			'permission_callback' => array( $this, 'authorization' ),
@@ -93,6 +103,19 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 			'permission_callback' => array( $this, 'authorization' ),
 			'args'                => $this->get_args( 'delete_item' )
 		) );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get( WP_REST_Request $request ) {
+		$query = sanitize_text_field( $request->get_param('q') );
+
+		$guests = $this->search_guests( $query );
+
+		$data = $this->prepare_data( $guests );
+
+		return $this->send_response( $data );
 	}
 
 	/**
@@ -348,5 +371,30 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * @param $query
+	 *
+	 * @return array
+	 */
+	protected function search_guests( $query ) {
+		global $wpdb;
+
+		if ( $query ) {
+			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name like '%%%s%%' AND post_type = 'guest-author'", $query );
+		} else {
+			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = %s", 'guest-author' );
+		}
+		$posts = $wpdb->get_results( $query );
+
+		if ( count( $posts ) > 0 ) {
+			foreach ( $posts as $post ) {
+				$guest    = get_coauthors( $post->ID );
+				$guests[] = $guest[0];
+			}
+	}
+
+		return $guests;
 	}
 }

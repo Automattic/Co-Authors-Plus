@@ -176,6 +176,30 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	 * Guests route
 	 */
 
+	public function testGuestGetSearchZeroReturned() {
+		wp_set_current_user( 1 );
+
+		$response = $this->get_request_response( 'GET', 'guests', array( 'q' => 'foo' ) );
+		$data     = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 0, count($data) );
+	}
+
+	/**
+	 * @group henrique
+	 */
+	public function testGuestGetSearch() {
+		wp_set_current_user( 1 );
+
+		$this->get_request_response( 'POST', 'guests', $this->guest2 );
+
+		$response = $this->get_request_response( 'GET', 'guests', array( 'q' => 'foobar' ) );
+		$data = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 1, count($data) );
+	}
+
 	public function testGuestAddNoSession() {
 		$response = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$this->assertEquals( 403, $response->get_status() );
