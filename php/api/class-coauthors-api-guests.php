@@ -388,12 +388,14 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		}
 		$posts = $wpdb->get_results( $query );
 
+		$guests = array();
+
 		if ( count( $posts ) > 0 ) {
 			foreach ( $posts as $post ) {
 				$guest    = get_coauthors( $post->ID );
 				$guests[] = $guest[0];
 			}
-	}
+		}
 
 		return $guests;
 	}
