@@ -16,10 +16,10 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	protected function get_args( $context = null ) {
 
 		$contexts = array(
-			'get' => array(
-				'q' => array( 'sanitize_callback' => 'sanitize_key')
+			'get'         => array(
+				'q' => array( 'sanitize_callback' => 'sanitize_key' )
 			),
-			'post' => array(
+			'post'        => array(
 				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field', 'required' => true ),
 				'user_login'     => array( 'sanitize_callback' => 'sanitize_user', 'required' => true ),
 				'user_email'     => array( 'sanitize_callback' => 'sanitize_email', 'required' => true ),
@@ -30,14 +30,14 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				'aim'            => array( 'sanitize_callback' => 'sanitize_key' ),
 				'yahooim'        => array( 'sanitize_callback' => 'sanitize_key' ),
 				'jabber'         => array( 'sanitize_callback' => 'sanitize_key' ),
-				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses'),
+				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses' ),
 			),
-			'get_item' => array(
-				'id'             => array( 'sanitize_callback' => 'sanitize_key' ),
+			'get_item'    => array(
+				'id' => array( 'sanitize_callback' => 'sanitize_key' ),
 			),
-			'put_item' => array(
+			'put_item'    => array(
 				'id'             => array( 'sanitize_callback' => 'sanitize_key' ),
-				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field'),
+				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field' ),
 				'user_email'     => array( 'sanitize_callback' => 'sanitize_email' ),
 				'first_name'     => array( 'sanitize_callback' => 'sanitize_text_field' ),
 				'last_name'      => array( 'sanitize_callback' => 'sanitize_text_field' ),
@@ -46,12 +46,12 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				'aim'            => array( 'sanitize_callback' => 'sanitize_key' ),
 				'yahooim'        => array( 'sanitize_callback' => 'sanitize_key' ),
 				'jabber'         => array( 'sanitize_callback' => 'sanitize_key' ),
-				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses'),
+				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses' ),
 			),
 			'delete_item' => array(
-				'id'             => array( 'sanitize_callback' => 'sanitize_key'),
-				'reassign' => array(
-					'required' => true,
+				'id'                => array( 'sanitize_callback' => 'sanitize_key' ),
+				'reassign'          => array(
+					'required'          => true,
 					'sanitize_callback' => 'sanitize_text_field',
 					'validate_callback' => array( $this, 'validate_reassign' )
 				),
@@ -109,7 +109,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 * @inheritdoc
 	 */
 	public function get( WP_REST_Request $request ) {
-		$query = sanitize_text_field( $request->get_param('q') );
+		$query = sanitize_text_field( $request->get_param( 'q' ) );
 
 		$guests = $this->search_guests( $query );
 
@@ -140,9 +140,9 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		update_post_meta( $guest_author_id, '_original_author_login', $request['user_login'] );
 
 		$guest = $coauthors_plus->get_coauthor_by( 'ID', $guest_author_id );
-		$data = $this->prepare_data( array( $guest ) );
+		$data  = $this->prepare_data( array( $guest ) );
 
-		return $this->send_response( $data, self::CREATED);
+		return $this->send_response( $data, self::CREATED );
 	}
 
 	/**
@@ -195,7 +195,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 			$coauthors_plus->guest_authors->delete_guest_author_cache( $coauthor->ID );
 
 			$guest = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
-			$data = $this->prepare_data( array( $guest ) );
+			$data  = $this->prepare_data( array( $guest ) );
 
 			return $this->send_response( $data );
 		}
@@ -353,20 +353,20 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 		$data = array();
 
-		foreach  ($guests as $guest ) {
+		foreach ( $guests as $guest ) {
 			$data[] = array(
-				'id' => (int) $guest->ID,
-				'display_name' => $guest->display_name,
-				'first_name' => $guest->first_name,
-				'last_name' => $guest->last_name,
-				'user_email' => $guest->user_email,
+				'id'             => (int) $guest->ID,
+				'display_name'   => $guest->display_name,
+				'first_name'     => $guest->first_name,
+				'last_name'      => $guest->last_name,
+				'user_email'     => $guest->user_email,
 				'linked_account' => $guest->linked_account,
-				'website' => $guest->website,
-				'aim' => $guest->aim,
-				'yahooim' => $guest->yahooim,
-				'jabber' => $guest->jabber,
-				'description' => $guest->description,
-				'user_nicename' => $guest->user_nicename,
+				'website'        => $guest->website,
+				'aim'            => $guest->aim,
+				'yahooim'        => $guest->yahooim,
+				'jabber'         => $guest->jabber,
+				'description'    => $guest->description,
+				'user_nicename'  => $guest->user_nicename,
 			);
 		}
 

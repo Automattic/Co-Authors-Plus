@@ -16,15 +16,15 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	protected function get_args( $context = null ) {
 
 		$contexts = array(
-			'get' => array(
-				'post_id'        => array(
+			'get'         => array(
+				'post_id' => array(
 					'required'          => true,
 					'sanitize_callback' => 'sanitize_key',
 					'validate_callback' => array( $this, 'post_validate_id' )
 				)
 			),
-			'put' => array (
-				'post_id'        => array(
+			'put'         => array(
+				'post_id'   => array(
 					'required'          => true,
 					'sanitize_callback' => 'sanitize_key',
 					'validate_callback' => array( $this, 'post_validate_id' )
@@ -35,13 +35,13 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 					'validate_callback' => array( $this, 'validate_is_array_and_has_content' ),
 				),
 			),
-			'delete_item' => array (
-				'post_id'        => array(
+			'delete_item' => array(
+				'post_id'     => array(
 					'required'          => true,
 					'sanitize_callback' => 'sanitize_key',
 					'validate_callback' => array( $this, 'post_validate_id' )
 				),
-				'coauthor_id'        => array(
+				'coauthor_id' => array(
 					'required'          => true,
 					'sanitize_callback' => 'sanitize_key'
 				)
@@ -57,23 +57,23 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	public function create_routes() {
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get' ),
-			'args'                => $this->get_args('get')
+			'methods'  => WP_REST_Server::READABLE,
+			'callback' => array( $this, 'get' ),
+			'args'     => $this->get_args( 'get' )
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route(), array(
 			'methods'             => WP_REST_Server::EDITABLE,
 			'callback'            => array( $this, 'put' ),
-			'permission_callback' => array( $this, 'authorization'),
-			'args'                => $this->get_args('put')
+			'permission_callback' => array( $this, 'authorization' ),
+			'args'                => $this->get_args( 'put' )
 		) );
 
 		register_rest_route( $this->get_namespace(), $this->get_route() . '/(?P<coauthor_id>\d+)', array(
 			'methods'             => WP_REST_Server::DELETABLE,
 			'callback'            => array( $this, 'delete_item' ),
 			'permission_callback' => array( $this, 'authorization' ),
-			'args'                => $this->get_args('delete_item')
+			'args'                => $this->get_args( 'delete_item' )
 		) );
 	}
 
@@ -83,7 +83,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	public function get( WP_REST_Request $request ) {
 		$post_id = (int) $request['post_id'];
 
-		$data = $this->prepare_data( get_coauthors( $post_id )  );
+		$data = $this->prepare_data( get_coauthors( $post_id ) );
 
 		return $this->send_response( array( 'coauthors' => $data ) );
 	}
@@ -95,7 +95,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 		global $coauthors_plus;
 
 		$post_id = (int) $request['post_id'];
-		$post = get_post( $post_id );
+		$post    = get_post( $post_id );
 
 		if ( $coauthors_plus->current_user_can_set_authors( $post ) ) {
 			$coauthors = (array) $request['coauthors'];
@@ -107,7 +107,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 		}
 
 		$coauthors = get_coauthors( $post_id );
-		$data = $this->prepare_data( $coauthors );
+		$data      = $this->prepare_data( $coauthors );
 
 		return $this->send_response( array( 'coauthors' => $data ) );
 	}
@@ -118,8 +118,8 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	public function delete_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
-		$post = get_post( (int) $request['post_id'] );
-		$coauthor = $coauthors_plus->get_coauthor_by('id', (int) $request['coauthor_id'] );
+		$post     = get_post( (int) $request['post_id'] );
+		$coauthor = $coauthors_plus->get_coauthor_by( 'id', (int) $request['coauthor_id'] );
 
 		if ( ! $coauthor ) {
 			return new WP_Error( 'rest_author_not_found', __( 'Author not found.',
@@ -128,9 +128,9 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 		}
 
 		if ( $coauthors_plus->current_user_can_set_authors( $post, true ) ) {
-			$current_coauthors   = wp_list_pluck( get_coauthors( $post->ID ), 'user_nicename' );
-			$coauthors           = array_values( array_diff( $current_coauthors, array( $coauthor->user_nicename ) ) );
-			$result = $this->add_coauthors( $post->ID, $coauthors );
+			$current_coauthors = wp_list_pluck( get_coauthors( $post->ID ), 'user_nicename' );
+			$coauthors         = array_values( array_diff( $current_coauthors, array( $coauthor->user_nicename ) ) );
+			$result            = $this->add_coauthors( $post->ID, $coauthors );
 			if ( is_wp_error( $result ) ) {
 				return $result;
 			}
@@ -146,9 +146,8 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	 *
 	 * @return bool|WP_Error
 	 */
-	public function post_authorization(  WP_REST_Request $request )
-	{
-		if ( ! $this->is_post_accessible( (int) $request['post_id']) ) {
+	public function post_authorization( WP_REST_Request $request ) {
+		if ( ! $this->is_post_accessible( (int) $request['post_id'] ) ) {
 			return new WP_Error( 'rest_post_not_accessible', __( 'Post does not exist or not accessible.',
 				'co-authors-plus' ),
 				array( 'status' => self::NOT_FOUND ) );
@@ -243,10 +242,10 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 
 		$data = array();
 
-		foreach  ($coauthors as $coauthor ) {
+		foreach ( $coauthors as $coauthor ) {
 			$data[] = array(
-				'id' => (int) $coauthor->ID,
-				'display_name' => $coauthor->display_name,
+				'id'            => (int) $coauthor->ID,
+				'display_name'  => $coauthor->display_name,
 				'user_nicename' => $coauthor->user_nicename
 			);
 		}

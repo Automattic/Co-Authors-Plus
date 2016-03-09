@@ -136,7 +136,7 @@ class CoAuthors_API_Controller {
 	public function delete_item( WP_REST_Request $request ) {
 		throw new Exception( 'Not implemented.' );
 	}
-	
+
 	/**
 	 * Returns a clean array
 	 *
@@ -173,7 +173,8 @@ class CoAuthors_API_Controller {
 	 */
 	protected function send_response( array $data, $status_code = 200 ) {
 		$response = new WP_REST_Response( $data );
-		$response->set_status($status_code);
+		$response->set_status( $status_code );
+
 		return $response;
 	}
 

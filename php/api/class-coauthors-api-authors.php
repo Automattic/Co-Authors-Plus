@@ -17,7 +17,7 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 
 		$contexts = array(
 			'get' => array(
-				'q'               => array( 'required' => true, 'sanitize_callback' => 'sanitize_key')
+				'q' => array( 'required' => true, 'sanitize_callback' => 'sanitize_key' )
 			)
 		);
 
@@ -67,11 +67,11 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 
 		$data = array();
 
-		foreach  ($coauthors as $coauthor ) {
+		foreach ( $coauthors as $coauthor ) {
 			$data[] = array(
-				'id' => (int) $coauthor->ID,
-				'display_name' => $coauthor->display_name,
-				'user_email' => $coauthor->user_email,
+				'id'            => (int) $coauthor->ID,
+				'display_name'  => $coauthor->display_name,
+				'user_email'    => $coauthor->user_email,
 				'user_nicename' => $coauthor->user_nicename
 			);
 		}
