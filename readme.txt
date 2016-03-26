@@ -1,7 +1,7 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 4.1
+Tested up to: 4.5
 Requires at least: 3.7
 Stable tag: 3.1.1
 
