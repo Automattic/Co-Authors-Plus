@@ -118,10 +118,6 @@ class CoAuthors_Plus {
 
 	}
 
-	function CoAuthors_Plus() {
-		$this->__construct();
-	}
-
 	/**
 	 * Register the taxonomy used to managing relationships,
 	 * and the custom post type to store our author data
