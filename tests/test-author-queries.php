@@ -30,7 +30,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			'post_content'    => rand_str(),
 			'post_title'      => rand_str(),
 			'post_author'     => $author1,
-			) );
+		) );
 
 		/**
 		 * Author 1 is an author on the blog
