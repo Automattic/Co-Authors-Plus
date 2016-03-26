@@ -36,7 +36,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once( dirname( __FILE__ ) . '/php/class-wp-cli.php' );
 }
 
-class coauthors_plus {
+class CoAuthors_Plus {
 
 	// Name for the taxonomy we're using to store relationships
 	// and the post type we're using to store co-authors
@@ -118,7 +118,7 @@ class coauthors_plus {
 
 	}
 
-	function coauthors_plus() {
+	function CoAuthors_Plus() {
 		$this->__construct();
 	}
 
@@ -1467,7 +1467,7 @@ class coauthors_plus {
 }
 
 global $coauthors_plus;
-$coauthors_plus = new coauthors_plus();
+$coauthors_plus = new CoAuthors_Plus();
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**
