@@ -397,7 +397,7 @@ function coauthors_links_single( $author ) {
  * @param string $after What should appear after the presentation of co-authors
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
-function coauthors_IDs( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
+function coauthors_ids( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 	return coauthors__echo( 'ID', 'field', array(
 		'between' => $between,
 		'betweenLast' => $betweenLast,
