@@ -166,7 +166,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$alternate_class = ( '' === $alternate_class ? ' alternate' : '' );
 		$row_class = 'guest-author-static' . $alternate_class . '"';
 
-		echo '<tr id="' esc_attr( 'guest-author-' . $item->ID ) . '" class="' . esc_attr( $row_class ) . '">';
+		echo '<tr id="' . esc_attr( 'guest-author-' . $item->ID ) . '" class="' . esc_attr( $row_class ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
