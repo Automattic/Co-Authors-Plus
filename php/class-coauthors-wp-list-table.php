@@ -17,9 +17,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		}
 
 		parent::__construct( array(
-				'plural' => __( 'Co-Authors', 'co-authors-plus' ),
-				'singular' => __( 'Co-Author', 'co-authors-plus' ),
-			) );
+			'plural' => __( 'Co-Authors', 'co-authors-plus' ),
+			'singular' => __( 'Co-Author', 'co-authors-plus' ),
+		) );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$this->set_pagination_args( array(
 			'total_items' => $author_posts->found_posts,
 			'per_page' => $per_page,
-			) );
+		) );
 	}
 
 	function filter_query_for_search( $where ) {
