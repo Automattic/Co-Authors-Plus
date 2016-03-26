@@ -1249,8 +1249,8 @@ class coauthors_plus {
 				// AJAX link used for the autosuggest
 				var coAuthorsPlus_ajax_suggest_link = <?php
 				echo json_encode( add_query_arg( array(
-						'action' => 'coauthors_ajax_suggest',
-						'post_type' => rawurlencode( get_post_type() ),
+					'action' => 'coauthors_ajax_suggest',
+					'post_type' => rawurlencode( get_post_type() ),
 					),
 					wp_nonce_url( 'admin-ajax.php', 'coauthors-search' )
 				) ); ?>;
