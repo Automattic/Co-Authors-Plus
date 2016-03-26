@@ -1,6 +1,6 @@
 <?php
 
-class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
+class Test_Manage_CoAuthors extends CoAuthors_Plus_TestCase {
 
 	/**
 	 * Test assigning a Co-Author to a post

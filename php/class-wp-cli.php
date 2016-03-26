@@ -6,9 +6,9 @@
  * @since 3.0
  * @see https://github.com/wp-cli/wp-cli
  */
-WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
+WP_CLI::add_command( 'co-authors-plus', 'CoAuthors_Plus_Command' );
 
-class CoAuthorsPlus_Command extends WP_CLI_Command {
+class CoAuthors_Plus_Command extends WP_CLI_Command {
 
 	/**
 	 * Subcommand to create guest authors based on users

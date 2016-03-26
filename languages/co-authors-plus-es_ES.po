@@ -562,10 +562,10 @@ msgstr "¡Todo listo! %d poseeos fueron afectados."
 
 #: template-tags.php:82
 msgid ""
-"No post ID provided for CoAuthorsIterator constructor. Are you not in a loop "
+"No post ID provided for CoAuthors_Iterator constructor. Are you not in a loop "
 "or is $post not set?"
 msgstr ""
-"El constructor CoAuthorsIterator no recibió un ID de entrada como parámetro. "
+"El constructor CoAuthors_Iterator no recibió un ID de entrada como parámetro. "
 "Verifica que estás dentro del loop/bucle y que $post esté definida."
 
 #: template-tags.php:136

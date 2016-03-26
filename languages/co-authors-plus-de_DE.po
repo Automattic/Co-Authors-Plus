@@ -516,8 +516,8 @@ msgid "Search for an author"
 msgstr "Suche nach einem Autor"
 
 #: template-tags.php:82
-msgid "No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?"
-msgstr "Keine Artikel ID für den CoAuthorsIterator Konstruktor verf&uuml;gbar. Bist du nicht im Loop oder wurde $post nicht gesetzt?"
+msgid "No post ID provided for CoAuthors_Iterator constructor. Are you not in a loop or is $post not set?"
+msgstr "Keine Artikel ID für den CoAuthors_Iterator Konstruktor verf&uuml;gbar. Bist du nicht im Loop oder wurde $post nicht gesetzt?"
 
 #: template-tags.php:208 template-tags.php:365
 msgid "Posts by %s"
