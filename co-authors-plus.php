@@ -367,7 +367,7 @@ class coauthors_plus {
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->user_email, $this->gravatar_size ); ?>
-						<span id="coauthor-readonly-<?php echo $count; ?>" class="coauthor-tag">
+						<span id="<?php echo esc_attr( 'coauthor-readonly-' . $count); ?>" class="coauthor-tag">
 							<input type="text" name="coauthorsinput[]" readonly="readonly" value="<?php echo esc_attr( $coauthor->display_name ); ?>" />
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
 							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
@@ -1070,7 +1070,7 @@ class coauthors_plus {
 		$authors = $this->search_authors( $search, $ignore );
 
 		foreach ( $authors as $author ) {
-			echo $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename . "\n";
+			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename . "\n" );
 		}
 
 		die();

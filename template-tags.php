@@ -92,7 +92,7 @@ class CoAuthorsIterator {
 		}
 
 		if ( ! $postID ) {
-			trigger_error( __( 'No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus' ) ); // return null;
+			trigger_error( esc_html_e( 'No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus' ) ); // return null;
 		}
 
 		$this->original_authordata = $this->current_author = $authordata;
@@ -553,7 +553,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 	if ( ! $args['echo'] ) {
 		return $return;
 	}
-	echo $return;
+	echo wp_kses_post( $return );
 }
 
 /**
