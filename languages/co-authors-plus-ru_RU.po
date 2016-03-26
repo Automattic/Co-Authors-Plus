@@ -544,7 +544,7 @@ msgstr ""
 
 #: template-tags.php:79
 msgid ""
-"No post ID provided for CoAuthorsIterator constructor. Are you not in a loop "
+"No post ID provided for CoAuthors_Iterator constructor. Are you not in a loop "
 "or is $post not set?"
 msgstr ""
 

@@ -3,7 +3,7 @@
  * Test Co-Authors Plus' modifications of author queries
  */
 
-class Test_Author_Queries extends CoAuthorsPlus_TestCase {
+class Test_Author_Queries extends CoAuthors_Plus_TestCase {
 
 	/**
 	 * On author pages, the queried object should only be set

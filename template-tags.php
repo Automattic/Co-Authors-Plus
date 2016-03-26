@@ -77,7 +77,7 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 	return false;
 }
 
-class CoAuthorsIterator {
+class CoAuthors_Iterator {
 	var $position = -1;
 	var $original_authordata;
 	var $current_author;
@@ -92,7 +92,7 @@ class CoAuthorsIterator {
 		}
 
 		if ( ! $postID ) {
-			trigger_error( __( 'No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus' ) ); // return null;
+			trigger_error( __( 'No post ID provided for CoAuthors_Iterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus' ) ); // return null;
 		}
 
 		$this->original_authordata = $this->current_author = $authordata;
@@ -167,7 +167,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 
 	$output = '';
 
-	$i = new CoAuthorsIterator();
+	$i = new CoAuthors_Iterator();
 	$output .= $separators['before'];
 	$i->iterate();
 	do {

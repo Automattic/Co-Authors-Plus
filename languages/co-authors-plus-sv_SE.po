@@ -563,10 +563,10 @@ msgstr "Allt klart! %d inlägg berördes."
 
 #: template-tags.php:82
 msgid ""
-"No post ID provided for CoAuthorsIterator constructor. Are you not in a loop "
+"No post ID provided for CoAuthors_Iterator constructor. Are you not in a loop "
 "or is $post not set?"
 msgstr ""
-"Inga inläggs-id skickades med till \"CoAuthorsIterator\"'s constructor. Är "
+"Inga inläggs-id skickades med till \"CoAuthors_Iterator\"'s constructor. Är "
 "du inte i en llop eller är inte $post satt?"
 
 #: template-tags.php:136

@@ -565,10 +565,10 @@ msgstr "Terminé ! %d articles ont été concernés."
 
 #: template-tags.php:82
 msgid ""
-"No post ID provided for CoAuthorsIterator constructor. Are you not in a loop "
+"No post ID provided for CoAuthors_Iterator constructor. Are you not in a loop "
 "or is $post not set?"
 msgstr ""
-"Aucune ID d'article n'a été fournie au constructeur CoAuthorsIterator. Ne "
+"Aucune ID d'article n'a été fournie au constructeur CoAuthors_Iterator. Ne "
 "seriez-vous pas à l'extérieur d'une boucle ou $post n'est-il pas défini ?"
 
 #: template-tags.php:136
