@@ -1070,7 +1070,7 @@ class coauthors_plus {
 		$authors = $this->search_authors( $search, $ignore );
 
 		foreach ( $authors as $author ) {
-			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename . "\n" );
+			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename ) . "\n";
 		}
 
 		die();
