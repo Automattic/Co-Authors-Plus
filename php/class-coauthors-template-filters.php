@@ -43,7 +43,7 @@ class CoAuthors_Template_Filters {
 		array_shift( $coauthors );
 
 		foreach ( $coauthors as $coauthor ) {
-			echo '      <dc:creator><![CDATA[' . $coauthor->display_name . "]]></dc:creator>\n";
+			echo '      <dc:creator><![CDATA[' . esc_html( $coauthor->display_name ) . "]]></dc:creator>\n";
 		}
 	}
 }

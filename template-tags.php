@@ -92,7 +92,7 @@ class CoAuthorsIterator {
 		}
 
 		if ( ! $postID ) {
-			trigger_error( __( 'No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus' ) ); // return null;
+			trigger_error( esc_html__( 'No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?', 'co-authors-plus' ) ); // return null;
 		}
 
 		$this->original_authordata = $this->current_author = $authordata;
