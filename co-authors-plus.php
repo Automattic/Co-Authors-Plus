@@ -371,11 +371,7 @@ class CoAuthors_Plus {
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
 							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
 							<input type="text" name="coauthorsnicenames[]" value="<?php echo esc_attr( $coauthor->user_nicename ); ?>" />
-<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 							<input type="text" name="coauthorsavatars[]" value="<?php echo esc_url( $this->get_avatar_url( $coauthor->ID, $coauthor->user_email, $coauthor->type ) ); ?>" />
-=======
-							<input type="text" name="coauthorsavatars[]" value="<?php echo esc_url( get_avatar_url( $coauthor->ID, array( 'size' => $this->gravatar_size ) ) ); ?>" />
->>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 						</span>
 					</li>
 					<?php
@@ -1050,10 +1046,7 @@ class CoAuthors_Plus {
 	 * Main function that handles search-as-you-type for adding authors
 	 */
 	public function ajax_suggest() {
-<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 		// Verify nonce value
-=======
->>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 		if ( ! isset( $_REQUEST['nonce'] ) || ! check_ajax_referer( 'coauthors', 'nonce' ) ) {
 			wp_send_json_error( 'Nonce verification failed.' );
 		}
@@ -1063,7 +1056,6 @@ class CoAuthors_Plus {
 			wp_send_json_error( 'Query string empty.' );
 		}
 
-<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 		// Holder array for response data
 		$response = array();
 
@@ -1072,27 +1064,17 @@ class CoAuthors_Plus {
 		$ignore = array_map( 'sanitize_text_field', $_REQUEST['exclude'] );
 
 		// Perform the author search based on search and ignore params
-=======
-		$response = array();
-
-		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
-		$ignore = array_map( 'sanitize_text_field', explode( ',', $_REQUEST['existing_authors'] ) );
->>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 		$authors = $this->search_authors( $search, $ignore );
 
 		// Loop through authors and store the necessary data in the response array
 		foreach ( $authors as $author ) {
-<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 			// Add the author to the response
-=======
->>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 			$response[] = array( 
 				'id' => $author->ID,
 				'login' => $author->user_login, 
 				'email' => $author->user_email, 
 				'displayname' => $author->display_name, 
 				'nicename' => $author->user_nicename, 
-<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 				'avatar' => $this->get_avatar_url( $author->ID, $author->user_email, $author->type ), 
 			);
 		}
@@ -1216,13 +1198,6 @@ class CoAuthors_Plus {
 
 		// Allow plugins and themes to filter the avatar URL if they wish
 		return apply_filters( 'coauthors_avatar_url', $avatar, $user_id, $user_email, $type );
-=======
-				'avatar' => get_avatar_url( $author->ID, array( 'size' => 20 ) ),
-			);
-		}
-
-		wp_send_json_success( $response );
->>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 	}
 
 	/**
@@ -1337,7 +1312,6 @@ class CoAuthors_Plus {
 			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
 			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
 			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
-<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 			'label_newguest' => __( 'New Guest Author', 'co-authors-plus' ), 
 			'label_displayname' => __( 'Display Name', 'co-authors-plus' ), 
 			'label_email' => __( 'Email Address', 'co-authors-plus' ), 
@@ -1356,9 +1330,6 @@ class CoAuthors_Plus {
 			'avatar_size' => absint( $this->gravatar_size ), 
 			'allow_add_guest_authors' => current_user_can( 'edit_users' ),
 			'loading_image_url' => admin_url( '/images/loading.gif' ), 
-=======
-			'nonce' => wp_create_nonce( 'coauthors' ),
->>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 		);
 		
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
