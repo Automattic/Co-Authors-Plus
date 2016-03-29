@@ -368,6 +368,7 @@ class CoAuthors_Plus {
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
 							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
 							<input type="text" name="coauthorsnicenames[]" value="<?php echo esc_attr( $coauthor->user_nicename ); ?>" />
+							<input type="text" name="coauthorsavatars[]" value="<?php echo esc_url( get_avatar_url( $coauthor->ID, array( 'size' => $this->gravatar_size ) ) ); ?>" />
 						</span>
 					</li>
 					<?php
@@ -1051,26 +1052,32 @@ class CoAuthors_Plus {
 	 * Main function that handles search-as-you-type for adding authors
 	 */
 	public function ajax_suggest() {
-
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'coauthors-search' ) ) {
-			die();
+		if ( ! isset( $_REQUEST['nonce'] ) || ! check_ajax_referer( 'coauthors', 'nonce' ) ) {
+			wp_send_json_error( 'Nonce verification failed.' );
 		}
 
 		if ( empty( $_REQUEST['q'] ) ) {
-			die();
+			wp_send_json_error( 'Query string empty.' );
 		}
+
+		$response = array();
 
 		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
 		$ignore = array_map( 'sanitize_text_field', explode( ',', $_REQUEST['existing_authors'] ) );
-
 		$authors = $this->search_authors( $search, $ignore );
 
 		foreach ( $authors as $author ) {
-			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename ) . "\n";
+			$response[] = array( 
+				'id' => $author->ID,
+				'login' => $author->user_login, 
+				'email' => $author->user_email, 
+				'displayname' => $author->display_name, 
+				'nicename' => $author->user_nicename, 
+				'avatar' => get_avatar_url( $author->ID, array( 'size' => 20 ) ),
+			);
 		}
 
-		die();
-
+		wp_send_json_success( $response );
 	}
 
 	/**
@@ -1174,6 +1181,7 @@ class CoAuthors_Plus {
 
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
+		wp_enqueue_script( 'jquery-ui-autocomplete' );
 		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
 		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array( 'jquery', 'suggest' ), COAUTHORS_PLUS_VERSION, true );
 
@@ -1184,9 +1192,10 @@ class CoAuthors_Plus {
 			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
 			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
 			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
-			);
+			'nonce' => wp_create_nonce( 'coauthors' ),
+		);
+		
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
-
 	}
 
 	/**
