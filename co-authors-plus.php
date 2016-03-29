@@ -1042,20 +1042,27 @@ class CoAuthors_Plus {
 	 * Main function that handles search-as-you-type for adding authors
 	 */
 	public function ajax_suggest() {
+		// Verify nonce value
 		if ( ! isset( $_REQUEST['nonce'] ) || ! check_ajax_referer( 'coauthors', 'nonce' ) ) {
 			wp_send_json_error( 'Nonce verification failed.' );
 		}
 
+		// Send an error if no query is provided
 		if ( empty( $_REQUEST['q'] ) ) {
 			wp_send_json_error( 'Query string empty.' );
 		}
 
+		// Holder array for response data
 		$response = array();
 
+		// Sanitize the search and ignore parameters
 		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
 		$ignore = array_map( 'sanitize_text_field', explode( ',', $_REQUEST['existing_authors'] ) );
+
+		// Perform the author search based on search and ignore params
 		$authors = $this->search_authors( $search, $ignore );
 
+		// Loop through authors and store the necessary data in the response array
 		foreach ( $authors as $author ) {
 			$response[] = array( 
 				'id' => $author->ID,
@@ -1067,6 +1074,7 @@ class CoAuthors_Plus {
 			);
 		}
 
+		// Send the response
 		wp_send_json_success( $response );
 	}
 
