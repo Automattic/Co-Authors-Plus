@@ -179,6 +179,12 @@ jQuery( document ).ready(function () {
 
 		var $co = jQuery( '<input/>' );
 
+		// Make an array of existing author usernames
+		var existing_authors = jQuery( 'input[name="coauthors[]"]' )
+			.map( function() { 
+				return jQuery( this ).val();
+			}).get();
+
 		// Create the autocomplete field
 		$co.attr( 'class', 'coauthor-suggest' )
 			.attr( 'name', inputName )
@@ -218,7 +224,7 @@ jQuery( document ).ready(function () {
 					jQuery( this ).removeClass( 'ui-corner-top' )
 						.addClass( 'ui-corner-all' );
 				}
-
+				
 			// Extend autocomplete render to display data in our own format
 			}).data( 'uiAutocomplete' )._renderItem = function( ul, item ) {
 				var displayname = jQuery( '<div/>' )
