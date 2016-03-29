@@ -167,17 +167,23 @@ jQuery( document ).ready(function () {
 
 		var $co = jQuery( '<input/>' );
 
+		// Make an array of existing author usernames
 		var existing_authors = jQuery( 'input[name="coauthors[]"]' )
 			.map( function() { 
 				return jQuery( this ).val();
 			}).get();
 
+		// Create the autocomplete field
 		$co.attr( 'class', 'coauthor-suggest' )
 			.attr( 'name', inputName )
 			.appendTo( $coauthors_div )
+
+			// Do not submit on enter key
 			.keydown( coauthors_autosuggest_keydown )
 			.autocomplete({
 				minLength: 1,
+
+				// Source data from AJAX hook
 				source: function( request, response ) {
 					jQuery.post( ajaxurl, {
 						action: 'coauthors_ajax_suggest',
@@ -185,12 +191,10 @@ jQuery( document ).ready(function () {
 						exclude: existing_authors,
 						nonce: coAuthorsPlusStrings.nonce
 					}, function( data ) {
-						console.log(data);
 						response( data.data );
 					});
 				},
 				select: function( event, ui ) {
-					console.log( $co );
 					coauthors_autosuggest_select( ui, $co );
 					return false;
 				},
@@ -202,6 +206,7 @@ jQuery( document ).ready(function () {
 					jQuery( this ).removeClass( 'ui-corner-top' )
 						.addClass( 'ui-corner-all' );
 				}
+			// Extend autocomplete render to display data in our own format
 			}).data( 'uiAutocomplete' )._renderItem = function( ul, item ) {
 				return jQuery( '<li/>' )
 					.data( 'item.autocomplete', item )
