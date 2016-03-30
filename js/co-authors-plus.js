@@ -208,10 +208,32 @@ jQuery( document ).ready(function () {
 				}
 			// Extend autocomplete render to display data in our own format
 			}).data( 'uiAutocomplete' )._renderItem = function( ul, item ) {
-				return jQuery( '<li/>' )
+				var displayname = jQuery( '<div/>' )
+					.css( 'margin-bottom', '-3px' )
+					.append( item.displayname );
+
+				var email = jQuery( '<div/>' )
+					.css( 'font-size', '.75em' )
+					.append( ' ' + item.email );
+
+				var left = jQuery( '<img/>' )
+					.css( 'display', 'inline-block' )
+					.css( 'margin-right', '8px' )
+					.attr( 'src', item.avatar );
+
+				var right = jQuery( '<div/>' )
+					.css( 'display', 'inline-block' )
+					.append( displayname )
+					.append( email );
+
+				var li = jQuery( '<li/>' )
 					.data( 'item.autocomplete', item )
-					.append( item.id + ' | ' + item.login + ' | ' + item.displayname + ' | ' + item.email + ' | ' + item.nicename )
-					.appendTo( ul );
+					.append( left )
+					.append( right );
+
+				li.appendTo( ul );
+
+				return li;
 			};
 
 		if ( authorName )
