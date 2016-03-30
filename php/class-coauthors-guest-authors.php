@@ -309,7 +309,7 @@ class CoAuthors_Guest_Authors
 					'id'                 => $coauthor->user_nicename,
 				);
 		}
-		echo json_encode( $retval );
+		echo wp_json_encode( $retval );
 		die();
 	}
 
