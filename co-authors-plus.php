@@ -1057,7 +1057,7 @@ class CoAuthors_Plus {
 
 		// Sanitize the search and ignore parameters
 		$search = sanitize_text_field( strtolower( $_REQUEST['q'] ) );
-		$ignore = array_map( 'sanitize_text_field', explode( ',', $_REQUEST['existing_authors'] ) );
+		$ignore = array_map( 'sanitize_text_field', $_REQUEST['exclude'] );
 
 		// Perform the author search based on search and ignore params
 		$authors = $this->search_authors( $search, $ignore );
