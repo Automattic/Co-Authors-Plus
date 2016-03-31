@@ -219,6 +219,7 @@ jQuery( document ).ready(function () {
 				var left = jQuery( '<img/>' )
 					.css( 'display', 'inline-block' )
 					.css( 'margin-right', '8px' )
+					.css( 'width', coAuthorsPlusStrings.avatar_size + 'px' )
 					.attr( 'src', item.avatar );
 
 				var right = jQuery( '<div/>' )
