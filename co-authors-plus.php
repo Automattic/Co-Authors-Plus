@@ -1068,10 +1068,15 @@ class CoAuthors_Plus {
 
 		// Loop through authors and store the necessary data in the response array
 		foreach ( $authors as $author ) {
-<<<<<<< 95ecb6997f37dbfe4bf64a525ce883e94ccc55e1
-=======
+			// Fetch buddypress avatar if present
+			if ( function_exists( 'bp_core_fetch_avatar' ) ) {
+				$avatar = bp_core_fetch_avatar( array( 
+					'item_id' => $author->ID, 
+					'html' => false, 
+				));
+
 			// Get Gravatar URL if this is a guest author
-			if ( 'guest-author' == $author->type ) {
+			} elseif ( 'guest-author' == $author->type ) {
 				$hash = md5( $author->user_email );
 				$avatar = sprintf( 'https://www.gravatar.com/avatar/%s?s=%s', $hash, $this->gravatar_size );
 			// Normal users - get the local avatar URL
@@ -1079,7 +1084,6 @@ class CoAuthors_Plus {
 				$avatar = get_avatar_url( $author->ID, array( 'size' => $this->gravatar_size ) );
 			}
 
->>>>>>> Clean up autocomplete UI
 			// Add the author to the response
 			$response[] = array( 
 				'id' => $author->ID,
@@ -1087,11 +1091,7 @@ class CoAuthors_Plus {
 				'email' => $author->user_email, 
 				'displayname' => $author->display_name, 
 				'nicename' => $author->user_nicename, 
-<<<<<<< 95ecb6997f37dbfe4bf64a525ce883e94ccc55e1
-				'avatar' => $this->get_avatar_url( $author->ID, $author->user_email, $author->type ), 
-=======
-				'avatar' => $avatar,
->>>>>>> Clean up autocomplete UI
+				'avatar' => apply_filters( 'coauthors_avatar_url', $avatar, $author->ID ), 
 			);
 		}
 
