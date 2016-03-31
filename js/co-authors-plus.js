@@ -460,7 +460,8 @@ jQuery( document ).ready(function () {
 						login: jQuery( el ).data( 'user_login' ),
 						name: jQuery( el ).data( 'display_name' ),
 						email: jQuery( el ).data( 'user_email' ),
-						nicename: jQuery( el ).data( 'user_nicename' )
+						nicename: jQuery( el ).data( 'user_nicename' ),
+						avatar: jQuery( el ).data( 'avatar' )
 					}
 				})
 				coauthors_initialize( post_coauthors );
