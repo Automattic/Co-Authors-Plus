@@ -368,7 +368,7 @@ class CoAuthors_Plus {
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
 							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
 							<input type="text" name="coauthorsnicenames[]" value="<?php echo esc_attr( $coauthor->user_nicename ); ?>" />
-							<input type="text" name="coauthorsavatars[]" value="<?php echo esc_url( get_avatar_url( $coauthor->ID, array( 'size' => $this->gravatar_size ) ) ); ?>" />
+							<input type="text" name="coauthorsavatars[]" value="<?php echo esc_url( $this->get_avatar_url( $coauthor->ID, $coauthor->user_email, $coauthor->type ) ); ?>" />
 						</span>
 					</li>
 					<?php
@@ -452,6 +452,7 @@ class CoAuthors_Plus {
 				data-user_email="<?php echo esc_attr( $author->user_email ) ?>"
 				data-display_name="<?php echo esc_attr( $author->display_name ) ?>"
 				data-user_login="<?php echo esc_attr( $author->user_login ) ?>"
+				data-avatar="<?php echo esc_attr( $this->get_avatar_url( $author->ID, $author->user_email, $author->type ) ) ?>"
 				><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
@@ -1074,21 +1075,6 @@ class CoAuthors_Plus {
 
 		// Loop through authors and store the necessary data in the response array
 		foreach ( $authors as $author ) {
-			// Fetch buddypress avatar if present
-			if ( function_exists( 'bp_core_fetch_avatar' ) ) {
-				$avatar = bp_core_fetch_avatar( array( 
-					'item_id' => $author->ID, 
-					'html' => false, 
-				));
-			// Get Gravatar URL if this is a guest author
-			} elseif ( 'guest-author' == $author->type ) {
-				$hash = md5( $author->user_email );
-				$avatar = sprintf( 'https://www.gravatar.com/avatar/%s?s=%s', $hash, $this->gravatar_size );
-			// Normal users - get the local avatar URL
-			} else {
-				$avatar = get_avatar_url( $author->ID, array( 'size' => $this->gravatar_size ) );
-			}
-
 			// Add the author to the response
 			$response[] = array( 
 				'id' => $author->ID,
@@ -1096,12 +1082,41 @@ class CoAuthors_Plus {
 				'email' => $author->user_email, 
 				'displayname' => $author->display_name, 
 				'nicename' => $author->user_nicename, 
-				'avatar' => apply_filters( 'coauthors_avatar_url', $avatar, $author->ID ), 
+				'avatar' => $this->get_avatar_url( $author->ID, $author->user_email, $author->type ), 
 			);
 		}
 
 		// Send the response
 		wp_send_json_success( $response );
+	}
+
+	/**
+	 * Return the proper avatar url in the context of Co-Authors-Plus
+	 * @param  int $user_id       The user ID
+	 * @param  string $user_email The user's email address, needed for Gravatar cases
+	 * @param  string $type       Should be set to "guest-author" if this is a guest author
+	 * @return string             Avatar URL
+	 */
+	public function get_avatar_url( $user_id, $user_email, $type ) {
+		$user_id = absint( $user_id );
+
+		// Get BuddyPress avatar
+		if ( function_exists( 'bp_core_fetch_avatar' ) ) {
+			$avatar = bp_core_fetch_avatar( array( 
+				'item_id' => $user_id, 
+				'html' => false, 
+			));
+		// Get Gravatar URL if this is a guest author
+		} elseif ( 'guest-author' == $type ) {
+			$hash = md5( $user_email );
+			$avatar = sprintf( 'https://www.gravatar.com/avatar/%s?s=%s', $hash, $this->gravatar_size );
+		// Normal users - get the local avatar URL
+		} else {
+			$avatar = get_avatar_url( $user_id, array( 'size' => $this->gravatar_size ) );
+		}
+
+		// Allow plugins and themes to filter the avatar URL if they wish
+		return apply_filters( 'coauthors_avatar_url', $avatar, $user_id, $user_email, $type );
 	}
 
 	/**
