@@ -167,12 +167,6 @@ jQuery( document ).ready(function () {
 
 		var $co = jQuery( '<input/>' );
 
-		// Make an array of existing author usernames
-		var existing_authors = jQuery( 'input[name="coauthors[]"]' )
-			.map( function() { 
-				return jQuery( this ).val();
-			}).get();
-
 		// Create the autocomplete field
 		$co.attr( 'class', 'coauthor-suggest' )
 			.attr( 'name', inputName )
@@ -185,6 +179,12 @@ jQuery( document ).ready(function () {
 
 				// Source data from AJAX hook
 				source: function( request, response ) {
+					// Make an array of existing author usernames
+					var existing_authors = jQuery( 'input[name="coauthors[]"]' )
+						.map( function() { 
+							return jQuery( this ).val();
+						}).get();
+
 					jQuery.post( ajaxurl, {
 						action: 'coauthors_ajax_suggest',
 						q: $co.val(),
