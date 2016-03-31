@@ -1091,7 +1091,7 @@ class CoAuthors_Plus {
 				'email' => $author->user_email, 
 				'displayname' => $author->display_name, 
 				'nicename' => $author->user_nicename, 
-				'avatar' => apply_filters( 'coauthors_avatar_url', $avatar, $author->ID ), 
+				'avatar' => $this->get_avatar_url( $author->ID, $author->user_email, $author->type ), 
 			);
 		}
 
