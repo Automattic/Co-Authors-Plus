@@ -1064,8 +1064,14 @@ class CoAuthors_Plus {
 
 		// Loop through authors and store the necessary data in the response array
 		foreach ( $authors as $author ) {
+			// Fetch buddypress avatar if present
+			if ( function_exists( 'bp_core_fetch_avatar' ) ) {
+				$avatar = bp_core_fetch_avatar( array( 
+					'item_id' => $author->ID, 
+					'html' => false, 
+				));
 			// Get Gravatar URL if this is a guest author
-			if ( 'guest-author' == $author->type ) {
+			} elseif ( 'guest-author' == $author->type ) {
 				$hash = md5( $author->user_email );
 				$avatar = sprintf( 'https://www.gravatar.com/avatar/%s?s=%s', $hash, $this->gravatar_size );
 			// Normal users - get the local avatar URL
@@ -1080,7 +1086,7 @@ class CoAuthors_Plus {
 				'email' => $author->user_email, 
 				'displayname' => $author->display_name, 
 				'nicename' => $author->user_nicename, 
-				'avatar' => $avatar,
+				'avatar' => apply_filters( 'coauthors_avatar_url', $avatar, $author->ID ), 
 			);
 		}
 
@@ -1201,6 +1207,7 @@ class CoAuthors_Plus {
 			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
 			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
 			'nonce' => wp_create_nonce( 'coauthors' ),
+			'avatar_size' => absint( $this->gravatar_size ), 
 		);
 		
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
