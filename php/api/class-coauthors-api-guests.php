@@ -183,22 +183,20 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				array( 'status' => self::BAD_REQUEST ) );
 		}
 
-		if ( $coauthors_plus->guest_authors->post_type === $coauthor->type ) {
-			clean_post_cache( $coauthor->ID );
+		clean_post_cache( $coauthor->ID );
 
-			$params = $this->prepare_params_for_database( $request->get_params(), 'put_item' );
+		$params = $this->prepare_params_for_database( $request->get_params(), 'put_item' );
 
-			foreach ( $params as $param => $value ) {
-				update_post_meta( $coauthor->ID, 'cap-' . $param, $value );
-			}
-
-			$coauthors_plus->guest_authors->delete_guest_author_cache( $coauthor->ID );
-
-			$guest = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
-			$data  = $this->prepare_data( array( $guest ) );
-
-			return $this->send_response( $data );
+		foreach ( $params as $param => $value ) {
+			update_post_meta( $coauthor->ID, 'cap-' . $param, $value );
 		}
+
+		$coauthors_plus->guest_authors->delete_guest_author_cache( $coauthor->ID );
+
+		$guest = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
+		$data  = $this->prepare_data( array( $guest ) );
+
+		return $this->send_response( $data );
 
 	}
 
