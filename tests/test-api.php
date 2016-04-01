@@ -185,9 +185,6 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( 0, count($data) );
 	}
 
-	/**
-	 * @group henrique
-	 */
 	public function testGuestGetSearch() {
 		wp_set_current_user( 1 );
 
@@ -241,32 +238,25 @@ class Test_API extends CoAuthorsPlus_TestCase {
 		$response = $this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$guest    = $response->get_data();
 
-		unset( $this->guest1['user_login'] );
 		$this->guest1['display_name'] = 'New display name';
 		$response                     = $this->get_request_response( 'PUT', 'guests/' . $guest[0]['id'], $this->guest1 );
 		$data                         = $response->get_data();
+
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( $data[0]['display_name'], 'New display name' );
 	}
 
-	public function testGuestUpdateSameUserName() {
+	public function testGuestUpdateSameUserEmail() {
 		wp_set_current_user( 1 );
 		$this->get_request_response( 'POST', 'guests', $this->guest1 );
 		$response = $this->get_request_response( 'POST', 'guests', $this->guest2 );
 		$guest2   = $response->get_data();
 
-		// Tests user login
-		$this->guest2['user_login'] = $this->guest1['user_login'];
-		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]['id'], $this->guest2 );
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400 );
-
 		// Tests existing email
-		$this->guest2['user_login'] = 'foobar';
 		$this->guest2['user_email'] = $this->guest1['user_email'];
 		$response                   = $this->get_request_response( 'PUT', 'guests/' . $guest2[0]['id'], $this->guest2 );
 		$this->assertEquals( 400, $response->get_status() );
-		$this->assertErrorResponse( 'rest_guest_invalid_username', $response, 400 );
+		$this->assertErrorResponse( 'rest_guest_invalid_email', $response, 400 );
 	}
 
 	public function testGuestGet() {

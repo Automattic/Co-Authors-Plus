@@ -129,7 +129,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				array( 'status' => self::BAD_REQUEST ) );
 		}
 
-		$params = $this->prepare_params_for_database( $request->get_params( 'post' ), 'post', false );
+		$params = $this->prepare_params_for_database( $request->get_params( 'post' ), 'post' );
 
 		$guest_author_id = $coauthors_plus->guest_authors->create( $params );
 
@@ -168,7 +168,6 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 */
 	public function put_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
-
 		$coauthor_id = (int) sanitize_text_field( $request['id'] );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
@@ -178,13 +177,12 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				array( 'status' => self::NOT_FOUND ) );
 		}
 
-		if ( $this->does_coauthor_exists( $request['user_email'], $request['user_login'] ) ) {
-			return new WP_Error( 'rest_guest_invalid_username', __( 'Invalid username or already exists.', 'co-authors-plus' ),
+		if ( $this->does_coauthor_email_exists( $request['user_email'], $coauthor ) ) {
+			return new WP_Error( 'rest_guest_invalid_email', __( 'Invalid email. or already exists.', 'co-authors-plus' ),
 				array( 'status' => self::BAD_REQUEST ) );
 		}
 
 		clean_post_cache( $coauthor->ID );
-
 		$params = $this->prepare_params_for_database( $request->get_params(), 'put_item' );
 
 		foreach ( $params as $param => $value ) {
@@ -286,16 +284,13 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 			return false;
 		}
 
-		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email',
-			sanitize_email( $email ), true );
-
-		if ( true == $guest_author ) {
-			return true;
-		}
-
 		// Guest authors can't be created with the same user_login as a user
 		$user = get_user_by( 'slug', $user_login );
 		if ( $user && is_user_member_of_blog( $user->ID, get_current_blog_id() ) ) {
+			return true;
+		}
+
+		if ( true == $this->does_coauthor_email_exists( $email ) ) {
 			return true;
 		}
 
@@ -306,30 +301,47 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		return false;
 	}
 
+
+	/**
+	 * @param $email
+	 * @param $coauthor
+	 *
+	 * @return bool
+	 */
+	private function does_coauthor_email_exists( $email, $coauthor = null )
+	{
+		global $coauthors_plus;
+
+		$coauthor_found = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email',
+			sanitize_email( $email ), true );
+
+		// If it's the same user's email, it shall pass.
+		if ( $coauthor !== null && $coauthor_found->ID == $coauthor->ID ) {
+			return false;
+		}
+
+		return $coauthor_found;
+	}
+
 	/**
 	 * Returns an array only with the supported fields from the class args are added to the
 	 * create or update data.
 	 *
 	 * @param $params
-	 * @param $ignore_user_login
 	 * @param $context
 	 *
 	 * @return array
 	 */
-	private function prepare_params_for_database( $params, $context, $ignore_user_login = true ) {
+	private function prepare_params_for_database( $params, $context) {
 
 		$args = $this->get_args( $context );
 		$data = array();
 
 		foreach ( $params as $param => $value ) {
 			if ( isset( $args[ $param ] ) ) {
-				if ( ! $ignore_user_login && 'user_login' === $args[ $param ] ) {
-					continue;
-				}
 				$data[ $param ] = $value;
 			}
 		}
-
 		return $data;
 	}
 
