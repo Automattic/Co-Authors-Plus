@@ -392,7 +392,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		global $wpdb;
 
 		if ( $query ) {
-			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name like '%%%s%%' AND post_type = 'guest-author'", $query );
+			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name like '%%%s%%' AND post_type = 'guest-author'", $wpdb->esc_like( $query ) );
 		} else {
 			$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = %s", 'guest-author' );
 		}
