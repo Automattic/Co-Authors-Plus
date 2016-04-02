@@ -174,14 +174,15 @@ class CoAuthors_API_Controller {
 
 		$items = array();
 
-		foreach( $args as $key => $value) {
+		foreach ( $args as $key => $value ) {
 			if ( in_array( $context, $value['contexts'] ) ) {
-				$items[$key] = $value['common'];
-				if ( isset( $value[$context] ) ) {
-					$items[$key] = array_merge($items[$key], $value[$context]);
+				$items[ $key ] = $value['common'];
+				if ( isset( $value[ $context ] ) ) {
+					$items[ $key ] = array_merge( $items[ $key ], $value[ $context ] );
 				}
 			}
 		}
+
 		return $items;
 	}
 

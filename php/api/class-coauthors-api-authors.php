@@ -17,8 +17,8 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 
 		$args = array(
 			'q' => array(
-				'contexts' => array ('get' ),
-				'common' => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' )
+				'contexts' => array( 'get' ),
+				'common'   => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' )
 			)
 		);
 

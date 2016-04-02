@@ -16,16 +16,17 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	protected function get_args( $context = null ) {
 
 		$args = array(
-			'post_id' => array(
+			'post_id'     => array(
 				'contexts' => array( 'get', 'put', 'delete_item' ),
-				'common' => array( 'required' => true,
-				                   'sanitize_callback' => 'sanitize_key',
-				                   'validate_callback' => array( $this, 'post_validate_id' )
+				'common'   => array(
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_key',
+					'validate_callback' => array( $this, 'post_validate_id' )
 				)
 			),
-			'coauthors' => array(
+			'coauthors'   => array(
 				'contexts' => array( 'put' ),
-				'common' => array(
+				'common'   => array(
 					'required'          => true,
 					'sanitize_callback' => array( $this, 'sanitize_array' ),
 					'validate_callback' => array( $this, 'validate_is_array_and_has_content' ),
@@ -33,7 +34,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 			),
 			'coauthor_id' => array(
 				'contexts' => array( 'delete_item' ),
-				'common' => array( 'required' => true, 'sanitize_callback' => 'sanitize_key' )
+				'common'   => array( 'required' => true, 'sanitize_callback' => 'sanitize_key' )
 			)
 		);
 

@@ -18,75 +18,75 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		$args = array(
 			'q' => array(
 				'contexts' => array( 'get' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_key' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_key' )
 			),
 
 			'display_name' => array(
-				'contexts' => array( 'post', 'put_item'),
-				'common' => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'post' => array( 'required' => true )
+				'contexts' => array( 'post', 'put_item' ),
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' ),
+				'post'     => array( 'required' => true )
 			),
 
 			'user_login' => array(
 				'contexts' => array( 'post' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_user', 'required' => true )
+				'common'   => array( 'sanitize_callback' => 'sanitize_user', 'required' => true )
 			),
 
 			'user_email' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_email'),
-				'post' => array( 'required' => true )
+				'common'   => array( 'sanitize_callback' => 'sanitize_email' ),
+				'post'     => array( 'required' => true )
 			),
 
 			'first_name' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' )
 			),
 
 			'last_name' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' )
 			),
 
 			'linked_account' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_user' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_user' )
 			),
 
 			'website' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'esc_url_raw' )
+				'common'   => array( 'sanitize_callback' => 'esc_url_raw' )
 			),
 
 			'aim' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' )
 			),
 
 			'yahooim' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' )
 			),
 
 			'jabber' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' )
 			),
 
 			'description' => array(
 				'contexts' => array( 'post', 'put_item' ),
-				'common' => array( 'sanitize_callback' => 'wp_filter_post_kses' )
+				'common'   => array( 'sanitize_callback' => 'wp_filter_post_kses' )
 			),
 
 			'id' => array(
-				'contexts' => array( 'get_item', 'put_item', 'delete_item'),
-				'common' => array( 'sanitize_callback' => 'sanitize_key' )
+				'contexts' => array( 'get_item', 'put_item', 'delete_item' ),
+				'common'   => array( 'sanitize_callback' => 'sanitize_key' )
 			),
 
 			'reassign' => array(
 				'contexts' => array( 'delete_item' ),
-				'common' => array(
-					'required' => true,
+				'common'   => array(
+					'required'          => true,
 					'sanitize_callback' => 'sanitize_text_field',
 					'validate_callback' => array( $this, 'validate_reassign' )
 				)
@@ -94,7 +94,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 			'leave-assigned-to' => array(
 				'contexts' => array( 'delete_item' ),
-				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' )
 			)
 		);
 
@@ -345,8 +345,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 *
 	 * @return bool
 	 */
-	private function does_coauthor_email_exists( $email, $coauthor = null )
-	{
+	private function does_coauthor_email_exists( $email, $coauthor = null ) {
 		global $coauthors_plus;
 
 		$coauthor_found = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email',
@@ -369,7 +368,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 *
 	 * @return array
 	 */
-	private function prepare_params_for_database( $params, $context) {
+	private function prepare_params_for_database( $params, $context ) {
 
 		$args = $this->get_args( $context );
 		$data = array();
@@ -379,6 +378,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				$data[ $param ] = $value;
 			}
 		}
+
 		return $data;
 	}
 
