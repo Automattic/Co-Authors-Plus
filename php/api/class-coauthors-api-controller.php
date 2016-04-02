@@ -162,6 +162,30 @@ class CoAuthors_API_Controller {
 	}
 
 	/**
+	 * Receives an array of field args from get_args() and
+	 * return an array to be usuable with register_rest_route args definition.
+	 *
+	 * @param $context
+	 * @param $args
+	 *
+	 * @return array
+	 */
+	protected function filter_args( $context, $args ) {
+
+		$items = array();
+
+		foreach( $args as $key => $value) {
+			if ( in_array( $context, $value['contexts'] ) ) {
+				$items[$key] = $value['common'];
+				if ( isset( $value[$context] ) ) {
+					$items[$key] = array_merge($items[$key], $value[$context]);
+				}
+			}
+		}
+		return $items;
+	}
+
+	/**
 	 * Wraps an array into the WP_REST_Response.
 	 * Currently very limited, it should allow header and code to be setted.
 	 *

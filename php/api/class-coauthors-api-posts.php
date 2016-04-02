@@ -15,40 +15,29 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 	 */
 	protected function get_args( $context = null ) {
 
-		$contexts = array(
-			'get'         => array(
-				'post_id' => array(
-					'required'          => true,
-					'sanitize_callback' => 'sanitize_key',
-					'validate_callback' => array( $this, 'post_validate_id' )
+		$args = array(
+			'post_id' => array(
+				'contexts' => array( 'get', 'put', 'delete_item' ),
+				'common' => array( 'required' => true,
+				                   'sanitize_callback' => 'sanitize_key',
+				                   'validate_callback' => array( $this, 'post_validate_id' )
 				)
 			),
-			'put'         => array(
-				'post_id'   => array(
-					'required'          => true,
-					'sanitize_callback' => 'sanitize_key',
-					'validate_callback' => array( $this, 'post_validate_id' )
-				),
-				'coauthors' => array(
+			'coauthors' => array(
+				'contexts' => array( 'put' ),
+				'common' => array(
 					'required'          => true,
 					'sanitize_callback' => array( $this, 'sanitize_array' ),
 					'validate_callback' => array( $this, 'validate_is_array_and_has_content' ),
-				),
-			),
-			'delete_item' => array(
-				'post_id'     => array(
-					'required'          => true,
-					'sanitize_callback' => 'sanitize_key',
-					'validate_callback' => array( $this, 'post_validate_id' )
-				),
-				'coauthor_id' => array(
-					'required'          => true,
-					'sanitize_callback' => 'sanitize_key'
 				)
+			),
+			'coauthor_id' => array(
+				'contexts' => array( 'delete_item' ),
+				'common' => array( 'required' => true, 'sanitize_callback' => 'sanitize_key' )
 			)
 		);
 
-		return $contexts[ $context ];
+		return $this->filter_args( $context, $args );
 	}
 
 	/**

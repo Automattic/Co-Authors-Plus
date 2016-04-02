@@ -15,13 +15,14 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 	 */
 	protected function get_args( $context = null ) {
 
-		$contexts = array(
-			'get' => array(
-				'q' => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' )
+		$args = array(
+			'q' => array(
+				'contexts' => array ('get' ),
+				'common' => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' )
 			)
 		);
 
-		return $contexts[ $context ];
+		return $this->filter_args( $context, $args );
 	}
 
 	/**

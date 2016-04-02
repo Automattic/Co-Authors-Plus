@@ -15,53 +15,90 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 */
 	protected function get_args( $context = null ) {
 
-		$contexts = array(
-			'get'         => array(
-				'q' => array( 'sanitize_callback' => 'sanitize_key' )
+		$args = array(
+			'q' => array(
+				'contexts' => array( 'get' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_key' )
 			),
-			'post'        => array(
-				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field', 'required' => true ),
-				'user_login'     => array( 'sanitize_callback' => 'sanitize_user', 'required' => true ),
-				'user_email'     => array( 'sanitize_callback' => 'sanitize_email', 'required' => true ),
-				'first_name'     => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'last_name'      => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'linked_account' => array( 'sanitize_callback' => 'sanitize_user' ),
-				'website'        => array( 'sanitize_callback' => 'esc_url_raw' ),
-				'aim'            => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'yahooim'        => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'jabber'         => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses' ),
+
+			'display_name' => array(
+				'contexts' => array( 'post', 'put_item'),
+				'common' => array( 'sanitize_callback' => 'sanitize_text_field' ),
+				'post' => array( 'required' => true )
 			),
-			'get_item'    => array(
-				'id' => array( 'sanitize_callback' => 'sanitize_key' ),
+
+			'user_login' => array(
+				'contexts' => array( 'post' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_user', 'required' => true )
 			),
-			'put_item'    => array(
-				'id'             => array( 'sanitize_callback' => 'sanitize_key' ),
-				'display_name'   => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'user_email'     => array( 'sanitize_callback' => 'sanitize_email' ),
-				'first_name'     => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'last_name'      => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'linked_account' => array( 'sanitize_callback' => 'sanitize_user' ),
-				'website'        => array( 'sanitize_callback' => 'esc_url_raw' ),
-				'aim'            => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'yahooim'        => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'jabber'         => array( 'sanitize_callback' => 'sanitize_text_field' ),
-				'description'    => array( 'sanitize_callback' => 'wp_filter_post_kses' ),
+
+			'user_email' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_email'),
+				'post' => array( 'required' => true )
 			),
-			'delete_item' => array(
-				'id'                => array( 'sanitize_callback' => 'sanitize_key' ),
-				'reassign'          => array(
-					'required'          => true,
+
+			'first_name' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+			),
+
+			'last_name' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+			),
+
+			'linked_account' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_user' )
+			),
+
+			'website' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'esc_url_raw' )
+			),
+
+			'aim' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+			),
+
+			'yahooim' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+			),
+
+			'jabber' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+			),
+
+			'description' => array(
+				'contexts' => array( 'post', 'put_item' ),
+				'common' => array( 'sanitize_callback' => 'wp_filter_post_kses' )
+			),
+
+			'id' => array(
+				'contexts' => array( 'get_item', 'put_item', 'delete_item'),
+				'common' => array( 'sanitize_callback' => 'sanitize_key' )
+			),
+
+			'reassign' => array(
+				'contexts' => array( 'delete_item' ),
+				'common' => array(
+					'required' => true,
 					'sanitize_callback' => 'sanitize_text_field',
 					'validate_callback' => array( $this, 'validate_reassign' )
-				),
-				'leave-assigned-to' => array(
-					'sanitize_callback' => 'sanitize_text_field',
 				)
 			),
+
+			'leave-assigned-to' => array(
+				'contexts' => array( 'delete_item' ),
+				'common' => array( 'sanitize_callback' => 'sanitize_text_field' )
+			)
 		);
 
-		return $contexts[ $context ];
+		return $this->filter_args( $context, $args );
 	}
 
 	/**
