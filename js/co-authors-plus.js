@@ -46,9 +46,20 @@ jQuery( document ).ready(function () {
 	 */
 	function coauthors_save_coauthor( author, co ) {
 
+		var avatar = jQuery( '<img/>' )
+			.attr( 'src', author.avatar )
+			.addClass( 'avatar' )
+			.attr( 'width', coAuthorsPlusStrings.avatar_size + 'px' )
+			.attr( 'height', coAuthorsPlusStrings.avatar_size + 'px' )
+			.css( 'float', 'left' )
+			.css( 'cursor', 'move' )
+			.css( 'margin', '-5px 8px 0 0' );
+
 		// get sibling <span> and update
 		co.siblings( '.coauthor-tag' )
-			.html( author.name )
+			.html('')
+			.append( author.name )
+			.append( avatar )
 			.show();
 
 		// Update the value of the hidden input
@@ -83,10 +94,12 @@ jQuery( document ).ready(function () {
 
 			var avatar = jQuery( '<img/>' )
 				.attr( 'src', author.avatar )
-				.addClass('avatar')
-				.attr( 'width', '25' )
-				.attr( 'height', '25' )
-				.css( 'float', 'right' )
+				.addClass( 'avatar' )
+				.attr( 'width', coAuthorsPlusStrings.avatar_size + 'px' )
+				.attr( 'height', coAuthorsPlusStrings.avatar_size + 'px' )
+				.css( 'float', 'left' )
+				.css( 'cursor', 'move' )
+				.css( 'margin', '-5px 8px 0 0' )
 				.appendTo( tag );
 
 			coauthors_add_to_table( co, tag, input, options );
