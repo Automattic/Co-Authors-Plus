@@ -1244,7 +1244,7 @@ class CoAuthors_Plus {
 			<script type="text/javascript">
 				// AJAX link used for the autosuggest
 				var coAuthorsPlus_ajax_suggest_link = <?php
-				echo json_encode(
+				echo wp_json_encode(
 					add_query_arg(
 						array(
 							'action' => 'coauthors_ajax_suggest',
