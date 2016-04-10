@@ -161,7 +161,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	public function post( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
-		if ( $this->does_coauthor_exists( $request['user_email'], $request['user_login'] ) ) {
+		if ( $this->does_coauthor_exist( $request['user_email'], $request['user_login'] ) ) {
 			return new WP_Error( 'rest_guest_invalid_username', __( 'Invalid username or already exists.', 'co-authors-plus' ),
 				array( 'status' => self::BAD_REQUEST ) );
 		}
@@ -205,6 +205,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 */
 	public function put_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
+
 		$coauthor_id = (int) sanitize_text_field( $request['id'] );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
@@ -214,9 +215,12 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 				array( 'status' => self::NOT_FOUND ) );
 		}
 
-		if ( $this->does_coauthor_email_exists( $request['user_email'], $coauthor ) ) {
-			return new WP_Error( 'rest_guest_invalid_email', __( 'Invalid email. or already exists.', 'co-authors-plus' ),
-				array( 'status' => self::BAD_REQUEST ) );
+		if ( $this->does_coauthor_email_exist( $request['user_email'] ) ) {
+			// If it's not the author's old email we have a problem with this.
+			if ($coauthor->user_email != $request['user_email']) {
+				return new WP_Error( 'rest_guest_invalid_email', __( 'Invalid email. or already exists.', 'co-authors-plus' ),
+					array( 'status' => self::BAD_REQUEST ) );
+			}
 		}
 
 		clean_post_cache( $coauthor->ID );
@@ -313,7 +317,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 *
 	 * @return bool
 	 */
-	private function does_coauthor_exists( $email, $user_login ) {
+	private function does_coauthor_exist( $email, $user_login ) {
 		global $coauthors_plus;
 
 		// Don't allow empty usernames
@@ -327,7 +331,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 			return true;
 		}
 
-		if ( true == $this->does_coauthor_email_exists( $email ) ) {
+		if ( true == $this->does_coauthor_email_exist( $email ) ) {
 			return true;
 		}
 
@@ -341,20 +345,14 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 
 	/**
 	 * @param $email
-	 * @param $coauthor
 	 *
 	 * @return bool
 	 */
-	private function does_coauthor_email_exists( $email, $coauthor = null ) {
+	public function does_coauthor_email_exist( $email ) {
 		global $coauthors_plus;
 
 		$coauthor_found = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email',
 			sanitize_email( $email ), true );
-
-		// If it's the same user's email, it shall pass.
-		if ( $coauthor !== null && $coauthor_found->ID == $coauthor->ID ) {
-			return false;
-		}
 
 		return $coauthor_found;
 	}
