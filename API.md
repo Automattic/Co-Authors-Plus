@@ -61,7 +61,7 @@ Add, appends or remove a group of authors to an existing post.
 
 Name | Type | Required | Description
 ------------ | ------------- | ------------- | -------------
-`post_id` | Int | :white_check_mark:  | The post unique id.
+`post_id` | Int |  | The post unique id.
 
 #### Response
 ```
@@ -70,13 +70,11 @@ Name | Type | Required | Description
     {
       "id": 3,
       "display_name": "Dummy",
-      "user_email": "dummy@gmail.com",
       "user_nicename": "dummy1"
     },
     {
       "id": 4,
       "display_name": "dummy2",
-      "user_email": "dummy2@gmail.com",
       "user_nicename": "dummy2"
     }
   ]
@@ -101,7 +99,6 @@ Name | Type | Required | Description
     {
       "id": 3,
       "display_name": "Dummy",
-      "user_email": "dummy@gmail.com",
       "user_nicename": "dummy1"
     }
 ]
@@ -126,7 +123,6 @@ Name | Type | Required | Description
     {
       "id": 3,
       "display_name": "Dummy",
-      "user_email": "dummy@gmail.com",
       "user_nicename": "dummy1"
     }
 ]
