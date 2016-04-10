@@ -410,6 +410,6 @@ class Test_API extends CoAuthorsPlus_TestCase {
 	 * Clears any persisted authentication
 	 */
 	protected function logout() {
-		wp_set_current_user( - 1 );
+		wp_set_current_user( 0 );
 	}
 }
