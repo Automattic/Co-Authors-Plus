@@ -140,7 +140,7 @@ Creates, updates or removes a guest author.
 
 Name | Type | Required | Description
 ------------ | ------------- | ------------- | -------------
-`q` | String |  | If filled, narrows the search by the `user_nicename`
+`q` | String |  :white_check_mark: | If filled, narrows the search by the `user_nicename`
 
 ### `POST`
 
