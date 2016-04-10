@@ -18,7 +18,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 		$args = array(
 			'q' => array(
 				'contexts' => array( 'get' ),
-				'common'   => array( 'sanitize_callback' => 'sanitize_key' )
+				'common'   => array( 'sanitize_callback' => 'sanitize_text_field' )
 			),
 
 			'display_name' => array(
@@ -146,7 +146,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	 * @inheritdoc
 	 */
 	public function get( WP_REST_Request $request ) {
-		$query = sanitize_text_field( $request->get_param( 'q' ) );
+		$query = $request->get_param( 'q' );
 
 		$guests = $this->search_guests( $query );
 
