@@ -1099,6 +1099,63 @@ class CoAuthors_Plus {
 		wp_send_json_success( $response );
 	}
 
+	public function ajax_add_guest_author() {
+		// Verify nonce value
+		if ( ! isset( $_REQUEST['nonce'] ) || ! check_ajax_referer( 'coauthors', 'nonce' ) ) {
+			wp_send_json_error( 'Nonce verification failed.' );
+		}
+
+		// Verify current user is allowed to add authors
+		if ( ! current_user_can( 'edit_users' ) ) {
+			wp_send_json_error( 'Current user is not allowed to create guest authors.' );
+		}
+
+		// Send an error if no Display Name provided
+		if ( empty( $_REQUEST['guest_dname'] ) ) {
+			wp_send_json_error( 'Display name field empty.' );
+		}
+
+		// Send an error if no Email provided
+		if ( empty( $_REQUEST['guest_email'] ) ) {
+			wp_send_json_error( 'Email field empty.' );
+		}
+
+		$display_name = sanitize_text_field( $_POST['guest_dname'] );
+		$email = sanitize_email( $_POST['guest_email'] );
+		$login = sanitize_title( $display_name );
+		$display_name_key = $this->guest_authors->get_post_meta_key( 'display_name' );
+		$email_key = $this->guest_authors->get_post_meta_key( 'user_email' );
+		$login_key = $this->guest_authors->get_post_meta_key( 'user_login' );
+
+		$post = array( 
+			'post_type' => 'guest-author', 
+			'post_title' => $display_name, 
+			'post_name' => $this->guest_authors->get_post_meta_key( $login ), 
+			'post_status' => 'publish', 
+		);
+
+		if ( $post_id = wp_insert_post( $post ) ) {
+			update_post_meta( $post_id, $display_name_key, $display_name );
+			update_post_meta( $post_id, $login_key, $login );
+			update_post_meta( $post_id, $email_key, $email );
+
+			$coauthor = $this->get_coauthor_by( 'user_email', $email );
+
+			$response = array( 
+				'id' => absint( $coauthor->ID ), 
+				'login' => $coauthor->user_login, 
+				'email' => $coauthor->user_email, 
+				'displayname' => $coauthor->display_name, 
+				'nicename' => $coauthor->user_nicename, 
+				'avatar' => $this->get_avatar_url( $coauthor->ID, $coauthor->user_email, 'guest-author' ), 
+			);
+
+			wp_send_json_success( $response );
+		} else {
+			wp_send_json_error( 'Error creating guest author.' );
+		}
+	}
+
 	/**
 	 * AJAX hook to add a guest author
 	 */
@@ -1345,7 +1402,10 @@ class CoAuthors_Plus {
 			'nonce' => wp_create_nonce( 'coauthors' ),
 			'avatar_size' => absint( $this->gravatar_size ), 
 			'allow_add_guest_authors' => current_user_can( 'edit_users' ),
+<<<<<<< bb16d072d071d02cdea1ef039a6c180c07bc056a
 			'loading_image_url' => admin_url( '/images/loading.gif' ), 
+=======
+>>>>>>> Add new feature which allows Administrators to add guest authors directly from post.php.
 		);
 		
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
