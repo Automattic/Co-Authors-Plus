@@ -151,7 +151,6 @@ jQuery( document ).ready(function () {
 	 * @param object The row to which the new author should be added
 	 */
 	function coauthors_insert_author_edit_cells( $div, options ){
-
 		var $options = jQuery( '<div/>' )
 			.addClass( 'coauthors-author-options' )
 			;
@@ -334,6 +333,137 @@ jQuery( document ).ready(function () {
 		return input;
 	}
 
+	/**
+	 * Create the "New Guest Author" button so that guest authors can be created from 
+	 * post.php when a post is being edited or created
+	 * 
+	 * @return bool True if link added, false if user lacks permissions
+	 */
+	function coauthors_add_create_guest_author_button() {
+		// Bail if the current user does not have the required capabilities
+		if ( ! coAuthorsPlusStrings.allow_add_guest_authors )
+			return false;
+
+		var codiv = jQuery( '#coauthors-edit' );
+
+		// Add the button - text link for now
+		var btn = jQuery( '<a/>' )
+			.attr( 'href', '#' )
+			.attr( 'id', 'cap_add_field' )
+			.append( 'New Guest Author' )
+			.css( 'margin-left', '5px' )
+			.css( 'display', 'inline-block' )
+			.css( 'margin-top', '5px' )
+			.on( 'click', function( e ) {
+				e.preventDefault();
+
+				// Hide the link on click
+				jQuery( this ).hide();
+
+				// Display name field
+				var dname_field = jQuery( '<input/>' )
+					.attr( 'type', 'text' )
+					.attr( 'id', 'cap_dname_field' )
+					.attr( 'placeholder', 'Display Name' );
+
+				// Email field
+				var email_field = jQuery( '<input/>' )
+					.attr( 'type', 'email' )
+					.attr( 'id', 'cap_email_field' )
+					.attr( 'placeholder', 'Email Address' );
+
+				// Cancel button
+				var cancel_field = jQuery( '<a/>' )
+					.attr( 'href', '#' )
+					.attr( 'id', 'cap_cancel_field' )
+					.append( 'Cancel' )
+					.on( 'click', function( e ) {
+						e.preventDefault();
+						jQuery( '#cap_add_field' ).show();
+						jQuery( '#cap_dname_field' ).remove();
+						jQuery( '#cap_email_field' ).remove();
+						jQuery( '#cap_submit_field' ).remove();
+						jQuery( '#cap_cancel_field' ).remove();
+					});
+
+				// Submit button
+				var submit_field = jQuery( '<input/>' )
+					.attr( 'type', 'button' )
+					.attr( 'value', 'Create' )
+					.attr( 'id', 'cap_submit_field' )
+					.on( 'click', function( e ) {
+						// Send AJAX request to add guest author
+						jQuery.post( ajaxurl, {
+							nonce: coAuthorsPlusStrings.nonce,
+							action: 'coauthors_add_guest_author',
+							guest_dname: jQuery( '#cap_dname_field' ).val(), 
+							guest_email: jQuery( '#cap_email_field' ).val()
+						}, function( response ) {
+							if ( response.success ) {
+								// Guest author has been successfully added				
+								jQuery( '#cap_add_field' ).show();
+								jQuery( '#cap_dname_field' ).remove();
+								jQuery( '#cap_email_field' ).remove();
+								jQuery( '#cap_submit_field' ).remove();
+								jQuery( '#cap_cancel_field' ).remove();
+
+								// Create author object to pass to coauthors_add_coauthor
+								var author = {};
+								author.id = response.data.id;
+								author.login = response.data.login;
+								author.name = response.data.displayname;
+								author.email = response.data.email;
+								author.nicename = response.data.nicename;
+								author.avatar = response.data.avatar;
+
+								// Remove the blank autocomplete field, will readd it after
+								// the new coauthor has been added to the list.
+								jQuery( '.coauthor-row' ).last().remove();
+
+								// Add the coauthor to the grid
+								coauthors_add_coauthor( author, undefined, false );
+
+								/**
+								 * Manually add the delete button to the first row if there is
+								 * only two authors assigned now
+								 *
+								 * @todo This is a bit of a hack
+								 */
+								if ( 3 == jQuery( '.coauthor-row' ).length ) {
+									var span = jQuery( '<span/>' )
+										.addClass( 'delete-coauthor' )
+										.append( 'Remove' )
+										.bind( 'click', coauthors_delete_onclick );
+
+									var div = jQuery( '<div/>' )
+										.addClass( 'coauthors-author-options' )
+										.append( span )
+										.appendTo( jQuery( '.coauthor-row' ).first() );
+								}
+							} else {
+								// There was a problem adding the guest author. Tell the 
+								// user what the error was.
+								console.log( response );
+							}
+						});
+					});
+
+				// Append the fields to the bottom of #coauthors-edit
+				codiv.append( dname_field );
+				codiv.append( email_field );
+				codiv.append( submit_field );
+				codiv.append( cancel_field );
+
+				jQuery( '#cap_dname_field' ).focus();
+			});
+	
+		// Append the button to the bottom of #coauthors-edit
+		codiv.append( btn );
+
+		// Button has been added, return true
+		return true;
+	}
+
 	var $coauthors_div = null;
 
 	/**
@@ -443,6 +573,7 @@ jQuery( document ).ready(function () {
 		// Remove the read-only coauthors so we don't get craziness
 		jQuery( '#coauthors-readonly' ).remove();
 		coauthors_initialize( post_coauthors );
+		coauthors_add_create_guest_author_button();
 	}
 	else if ( 'edit-php' == adminpage ) {
 
