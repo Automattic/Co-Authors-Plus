@@ -566,11 +566,10 @@ jQuery( document ).ready(function () {
 				// Append the fields to the bottom of #coauthors-edit
 				jQuery( '<div/>' )
 					.attr( 'id', 'coauthors-addguest' )
-					.append( label )
 					.append( dname_field )
 					.append( email_field )
-					.append( cancel_field )
 					.append( submit_field )
+					.append( cancel_field )
 					.appendTo( codiv );
 
 				jQuery( '#cap_dname_field' ).focus();
