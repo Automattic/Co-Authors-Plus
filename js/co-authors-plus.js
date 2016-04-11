@@ -351,9 +351,8 @@ jQuery( document ).ready(function () {
 			.attr( 'href', '#' )
 			.attr( 'id', 'cap_add_field' )
 			.append( 'New Guest Author' )
-			.css( 'margin-left', '5px' )
 			.css( 'display', 'inline-block' )
-			.css( 'margin-top', '5px' )
+			.css( 'margin', '5px 0 0 5px' )
 			.on( 'click', function( e ) {
 				e.preventDefault();
 
@@ -380,10 +379,7 @@ jQuery( document ).ready(function () {
 					.on( 'click', function( e ) {
 						e.preventDefault();
 						jQuery( '#cap_add_field' ).show();
-						jQuery( '#cap_dname_field' ).remove();
-						jQuery( '#cap_email_field' ).remove();
-						jQuery( '#cap_submit_field' ).remove();
-						jQuery( '#cap_cancel_field' ).remove();
+						jQuery( '#coauthors-addguest' ).remove();
 					});
 
 				// Submit button
@@ -402,10 +398,7 @@ jQuery( document ).ready(function () {
 							if ( response.success ) {
 								// Guest author has been successfully added				
 								jQuery( '#cap_add_field' ).show();
-								jQuery( '#cap_dname_field' ).remove();
-								jQuery( '#cap_email_field' ).remove();
-								jQuery( '#cap_submit_field' ).remove();
-								jQuery( '#cap_cancel_field' ).remove();
+								jQuery( '#coauthors-addguest' ).remove();
 
 								// Create author object to pass to coauthors_add_coauthor
 								var author = {};
@@ -424,8 +417,8 @@ jQuery( document ).ready(function () {
 								coauthors_add_coauthor( author, undefined, false );
 
 								/**
-								 * Manually add the delete button to the first row if there is
-								 * only two authors assigned now
+								 * Manually add the delete button to the first row if there are
+								 * only two authors assigned
 								 *
 								 * @todo This is a bit of a hack
 								 */
@@ -444,15 +437,19 @@ jQuery( document ).ready(function () {
 								// There was a problem adding the guest author. Tell the 
 								// user what the error was.
 								console.log( response );
+								alert( response.data );
 							}
 						});
 					});
 
 				// Append the fields to the bottom of #coauthors-edit
-				codiv.append( dname_field );
-				codiv.append( email_field );
-				codiv.append( submit_field );
-				codiv.append( cancel_field );
+				jQuery( '<div/>' )
+					.attr( 'id', 'coauthors-addguest' )
+					.append( dname_field )
+					.append( email_field )
+					.append( submit_field )
+					.append( cancel_field )
+					.appendTo( codiv );
 
 				jQuery( '#cap_dname_field' ).focus();
 			});
