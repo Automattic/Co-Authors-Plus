@@ -1083,6 +1083,9 @@ class CoAuthors_Plus {
 		wp_send_json_success( $response );
 	}
 
+	/**
+	 * AJAX hook to add a guest author
+	 */
 	public function ajax_add_guest_author() {
 		// Verify nonce value
 		if ( ! isset( $_REQUEST['nonce'] ) || ! check_ajax_referer( 'coauthors', 'nonce' ) ) {
@@ -1101,7 +1104,7 @@ class CoAuthors_Plus {
 
 		// Send an error if no Email provided
 		if ( empty( $_REQUEST['guest_email'] ) ) {
-			wp_send_json_error( 'Email field empty.' );
+			wp_send_json_error( 'Email address cannot be empty.' );
 		}
 
 		$display_name = sanitize_text_field( $_POST['guest_dname'] );
@@ -1111,6 +1114,27 @@ class CoAuthors_Plus {
 		$email_key = $this->guest_authors->get_post_meta_key( 'user_email' );
 		$login_key = $this->guest_authors->get_post_meta_key( 'user_login' );
 
+		// Bail if we have an invalid display name
+		if ( ! $display_name ) {
+			wp_send_json_error( 'Display name cannot be empty.' );
+		}
+
+		// Bail if we have an invalid email address
+		if ( ! $email ) {
+			wp_send_json_error( 'Email address is invalid.' );
+		}
+
+		// Check to see if there is a user account with this email address
+		if ( email_exists( $email ) ) {
+			wp_send_json_error( $email . ' is already associated with a user account. Please try searching instead of adding a guest author.' );
+		}
+
+		// Check to see if there is a guest author with this email address
+		if ( $this->guest_authors->get_guest_author_by( 'user_email', $email ) ) {
+			wp_send_json_error( $email . ' is already associated with a guest author. Please try searching instead of adding a guest author.' );
+		}
+
+		// Set up the guest author "post"
 		$post = array( 
 			'post_type' => 'guest-author', 
 			'post_title' => $display_name, 
@@ -1118,13 +1142,16 @@ class CoAuthors_Plus {
 			'post_status' => 'publish', 
 		);
 
+		// Try to insert the guest author post
 		if ( $post_id = wp_insert_post( $post ) ) {
 			update_post_meta( $post_id, $display_name_key, $display_name );
 			update_post_meta( $post_id, $login_key, $login );
 			update_post_meta( $post_id, $email_key, $email );
 
+			// Get the coauthor object
 			$coauthor = $this->get_coauthor_by( 'user_email', $email );
 
+			// Build the AJAX response
 			$response = array( 
 				'id' => absint( $coauthor->ID ), 
 				'login' => $coauthor->user_login, 
@@ -1134,8 +1161,10 @@ class CoAuthors_Plus {
 				'avatar' => $this->get_avatar_url( $coauthor->ID, $coauthor->user_email, 'guest-author' ), 
 			);
 
+			// Success - send the response
 			wp_send_json_success( $response );
 		} else {
+			// Inserting post failed. Send a generic error.
 			wp_send_json_error( 'Error creating guest author.' );
 		}
 	}
