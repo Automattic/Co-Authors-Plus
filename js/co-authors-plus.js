@@ -350,7 +350,7 @@ jQuery( document ).ready(function () {
 		var btn = jQuery( '<a/>' )
 			.attr( 'href', '#' )
 			.attr( 'id', 'cap_add_field' )
-			.append( 'New Guest Author' )
+			.append( coAuthorsPlusStrings.label_newguest )
 			.css( 'display', 'inline-block' )
 			.css( 'margin', '5px 0 0 5px' )
 			.on( 'click', function( e ) {
@@ -363,19 +363,19 @@ jQuery( document ).ready(function () {
 				var dname_field = jQuery( '<input/>' )
 					.attr( 'type', 'text' )
 					.attr( 'id', 'cap_dname_field' )
-					.attr( 'placeholder', 'Display Name' );
+					.attr( 'placeholder', coAuthorsPlusStrings.label_displayname );
 
 				// Email field
 				var email_field = jQuery( '<input/>' )
 					.attr( 'type', 'email' )
 					.attr( 'id', 'cap_email_field' )
-					.attr( 'placeholder', 'Email Address' );
+					.attr( 'placeholder', coAuthorsPlusStrings.label_email );
 
 				// Cancel button
 				var cancel_field = jQuery( '<a/>' )
 					.attr( 'href', '#' )
 					.attr( 'id', 'cap_cancel_field' )
-					.append( 'Cancel' )
+					.append( coAuthorsPlusStrings.label_cancel )
 					.on( 'click', function( e ) {
 						e.preventDefault();
 						jQuery( '#cap_add_field' ).show();
@@ -385,7 +385,7 @@ jQuery( document ).ready(function () {
 				// Submit button
 				var submit_field = jQuery( '<input/>' )
 					.attr( 'type', 'button' )
-					.attr( 'value', 'Create' )
+					.attr( 'value', coAuthorsPlusStrings.label_create )
 					.attr( 'id', 'cap_submit_field' )
 					.on( 'click', function( e ) {
 						// Send AJAX request to add guest author
@@ -436,8 +436,46 @@ jQuery( document ).ready(function () {
 							} else {
 								// There was a problem adding the guest author. Tell the 
 								// user what the error was.
-								console.log( response );
-								alert( response.data );
+								switch ( response.data ) {
+									case 'nonce': 
+										alert( coAuthorsPlusStrings.ajax_error_nonce );
+										break;
+
+									case 'notallowed':
+										alert( coAuthorsPlusStrings.ajax_error_notallowed );
+										break;
+
+									case 'nameempty':
+										alert( coAuthorsPlusStrings.ajax_error_nameempty );
+										break;
+
+									case 'emailempty':
+										alert( coAuthorsPlusStrings.ajax_error_emailempty );
+										break;
+
+									case 'nameinvalid':
+										alert( coAuthorsPlusStrings.ajax_error_nameinvalid );
+										break;
+
+									case 'emailinvalid':
+										alert( coAuthorsPlusStrings.ajax_error_emailinvalid );
+										break;
+
+									case 'emailregistered':
+										alert( coAuthorsPlusStrings.ajax_error_emailregistered );
+										break;
+
+									case 'emailisguest':
+										alert( coAuthorsPlusStrings.ajax_error_emailisguest );
+										break;
+
+									case 'guestnotcreated':
+										alert( coAuthorsPlusStrings.ajax_error_guestnotcreated );
+										break;
+
+									default:
+										alert( coAuthorsPlusStrings.ajax_error_guestnotcreated );
+								}
 							}
 						});
 					});

@@ -1089,22 +1089,22 @@ class CoAuthors_Plus {
 	public function ajax_add_guest_author() {
 		// Verify nonce value
 		if ( ! isset( $_REQUEST['nonce'] ) || ! check_ajax_referer( 'coauthors', 'nonce' ) ) {
-			wp_send_json_error( 'Nonce verification failed.' );
+			wp_send_json_error( 'nonce' );
 		}
 
 		// Verify current user is allowed to add authors
 		if ( ! current_user_can( 'edit_users' ) ) {
-			wp_send_json_error( 'Current user is not allowed to create guest authors.' );
+			wp_send_json_error( 'notallowed' );
 		}
 
 		// Send an error if no Display Name provided
 		if ( empty( $_REQUEST['guest_dname'] ) ) {
-			wp_send_json_error( 'Display name field empty.' );
+			wp_send_json_error( 'nameempty' );
 		}
 
 		// Send an error if no Email provided
 		if ( empty( $_REQUEST['guest_email'] ) ) {
-			wp_send_json_error( 'Email address cannot be empty.' );
+			wp_send_json_error( 'emailempty' );
 		}
 
 		$display_name = sanitize_text_field( $_POST['guest_dname'] );
@@ -1116,22 +1116,22 @@ class CoAuthors_Plus {
 
 		// Bail if we have an invalid display name
 		if ( ! $display_name ) {
-			wp_send_json_error( 'Display name cannot be empty.' );
+			wp_send_json_error( 'nameinvalid' );
 		}
 
 		// Bail if we have an invalid email address
 		if ( ! $email ) {
-			wp_send_json_error( 'Email address is invalid.' );
+			wp_send_json_error( 'emailinvalid' );
 		}
 
 		// Check to see if there is a user account with this email address
 		if ( email_exists( $email ) ) {
-			wp_send_json_error( $email . ' is already associated with a user account. Please try searching instead of adding a guest author.' );
+			wp_send_json_error( 'emailregistered' );
 		}
 
 		// Check to see if there is a guest author with this email address
 		if ( $this->guest_authors->get_guest_author_by( 'user_email', $email ) ) {
-			wp_send_json_error( $email . ' is already associated with a guest author. Please try searching instead of adding a guest author.' );
+			wp_send_json_error( 'emailisguest' );
 		}
 
 		// Set up the guest author "post"
@@ -1165,7 +1165,7 @@ class CoAuthors_Plus {
 			wp_send_json_success( $response );
 		} else {
 			// Inserting post failed. Send a generic error.
-			wp_send_json_error( 'Error creating guest author.' );
+			wp_send_json_error( 'guestnotcreated' );
 		}
 	}
 
@@ -1310,6 +1310,20 @@ class CoAuthors_Plus {
 			'input_box_title' => __( 'Click to change this author, or drag to change their position', 'co-authors-plus' ),
 			'search_box_text' => __( 'Search for an author', 'co-authors-plus' ),
 			'help_text' => __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ),
+			'label_newguest' => __( 'New Guest Author', 'co-authors-plus' ), 
+			'label_displayname' => __( 'Display Name', 'co-authors-plus' ), 
+			'label_email' => __( 'Email Address', 'co-authors-plus' ), 
+			'label_create' => __( 'Create', 'co-authors-plus' ), 
+			'label_cancel' => __( 'Cancel', 'co-authors-plus' ), 
+			'ajax_error_nonce' => __( 'Nonce verification failed. Please reload the page and try again.', 'co-authors-plus' ), 
+			'ajax_error_notallowed' => __( 'Current user is not allowed to create guest authors.', 'co-authors-plus' ), 
+			'ajax_error_nameempty' => __( 'Display name cannot be empty.', 'co-authors-plus' ), 
+			'ajax_error_emailempty' => __( 'Email address cannot be empty.', 'co-authors-plus' ), 
+			'ajax_error_nameinvalid' => __( 'Display name is invalid.', 'co-authors-plus' ), 
+			'ajax_error_emailinvalid' => __( 'Email address is invalid.', 'co-authors-plus' ), 
+			'ajax_error_emailregistered' => __( 'Email address is already associated with a WordPress user account. Please try searching instead of adding a guest author.', 'co-authors-plus' ), 
+			'ajax_error_emailisguest' => __( 'Email address is already associated with a guest author. Please try searching instead of adding a guest author.', 'co-authors-plus' ), 
+			'ajax_error_guestnotcreated' => __( 'Error creating guest author.', 'co-authors-plus' ), 
 			'nonce' => wp_create_nonce( 'coauthors' ),
 			'avatar_size' => absint( $this->gravatar_size ), 
 			'allow_add_guest_authors' => current_user_can( 'edit_users' ),
