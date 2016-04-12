@@ -90,6 +90,33 @@
 		margin: 10px 0px 5px 10px;
 	}
 
+#coauthors-addguest {
+	width: 265px;
+	overflow: hidden;
+}
+	#coauthors-addguest h4 {
+		margin-bottom: .5em;
+	}
+	#coauthors-addguest input[type=text],
+	#coauthors-addguest input[type=email] {
+		margin: 5px 0;
+		color: #888;
+		width: 100%;
+	}
+	#coauthors-addguest .button {
+		float: right;
+	}
+	#coauthors-addguest #cap_cancel_field {
+		margin-top: 12px;
+		display: inline-block;
+	}
+	#coauthors-addguest span.error {
+		display: block;
+		margin-bottom: 10px;
+		color: #d00;
+		font-style: italic;
+	}
+
 #coauthors-readonly {
 }
 	#coauthors-readonly ul {

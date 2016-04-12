@@ -359,14 +359,21 @@ jQuery( document ).ready(function () {
 				// Hide the link on click
 				jQuery( this ).hide();
 
+				// Section label
+				var label = jQuery( '<h4/>' )
+					.css( 'display', 'inline-block' )
+					.append( 'Add New Guest Author' );
+
 				// Display name field
 				var dname_field = jQuery( '<input/>' )
+					.css( 'display', 'block' )
 					.attr( 'type', 'text' )
 					.attr( 'id', 'cap_dname_field' )
 					.attr( 'placeholder', coAuthorsPlusStrings.label_displayname );
 
 				// Email field
 				var email_field = jQuery( '<input/>' )
+					.css( 'display', 'block' )
 					.attr( 'type', 'email' )
 					.attr( 'id', 'cap_email_field' )
 					.attr( 'placeholder', coAuthorsPlusStrings.label_email );
@@ -375,6 +382,7 @@ jQuery( document ).ready(function () {
 				var cancel_field = jQuery( '<a/>' )
 					.attr( 'href', '#' )
 					.attr( 'id', 'cap_cancel_field' )
+
 					.append( coAuthorsPlusStrings.label_cancel )
 					.on( 'click', function( e ) {
 						e.preventDefault();
@@ -384,10 +392,26 @@ jQuery( document ).ready(function () {
 
 				// Submit button
 				var submit_field = jQuery( '<input/>' )
+					.addClass( 'button' )
 					.attr( 'type', 'button' )
 					.attr( 'value', coAuthorsPlusStrings.label_create )
 					.attr( 'id', 'cap_submit_field' )
 					.on( 'click', function( e ) {
+						// Remove any error messages
+						jQuery( '#coauthors-addguest .error' ).remove();
+						
+						// Disable the buttons
+						jQuery( '#coauthors-addguest input' ).prop( 'disabled', true );
+						jQuery( '#coauthors-addguest a' ).hide();
+
+						var spinner = jQuery( '<img/>' )
+							.addClass( 'loading-image' )
+							.attr( 'src', coAuthorsPlusStrings.loading_image_url )
+							.css( 'float', 'right' )
+							.css( 'margin', '7px 10px 0 0' );
+
+						jQuery( '#coauthors-addguest' ).append( spinner );
+
 						// Send AJAX request to add guest author
 						jQuery.post( ajaxurl, {
 							nonce: coAuthorsPlusStrings.nonce,
@@ -395,6 +419,11 @@ jQuery( document ).ready(function () {
 							guest_dname: jQuery( '#cap_dname_field' ).val(), 
 							guest_email: jQuery( '#cap_email_field' ).val()
 						}, function( response ) {
+							// Disable the buttons
+							jQuery( '#coauthors-addguest input' ).prop( 'disabled', false );
+							jQuery( '#coauthors-addguest a' ).show();
+							jQuery( '#coauthors-addguest .loading-image' ).remove();
+
 							if ( response.success ) {
 								// Guest author has been successfully added				
 								jQuery( '#cap_add_field' ).show();
@@ -446,27 +475,69 @@ jQuery( document ).ready(function () {
 										break;
 
 									case 'nameempty':
-										alert( coAuthorsPlusStrings.ajax_error_nameempty );
+										var err = jQuery( '<span/>' )
+											.addClass( 'error' )
+											.append( coAuthorsPlusStrings.ajax_error_nameempty );
+
+										jQuery( '#cap_dname_field' )
+											.after( err )
+											.on( 'keyup', coauthors_remove_ajax_message );
+										
 										break;
 
 									case 'emailempty':
-										alert( coAuthorsPlusStrings.ajax_error_emailempty );
+										var err = jQuery( '<span/>' )
+											.addClass( 'error' )
+											.append( coAuthorsPlusStrings.ajax_error_emailempty );
+
+										jQuery( '#cap_email_field' )
+											.after( err )
+											.on( 'keyup', coauthors_remove_ajax_message );
+
 										break;
 
 									case 'nameinvalid':
-										alert( coAuthorsPlusStrings.ajax_error_nameinvalid );
+										var err = jQuery( '<span/>' )
+											.addClass( 'error' )
+											.append( coAuthorsPlusStrings.ajax_error_nameinvalid );
+
+										jQuery( '#cap_dname_field' )
+											.after( err )
+											.on( 'keyup', coauthors_remove_ajax_message );
+										
 										break;
 
 									case 'emailinvalid':
-										alert( coAuthorsPlusStrings.ajax_error_emailinvalid );
+										var err = jQuery( '<span/>' )
+											.addClass( 'error' )
+											.append( coAuthorsPlusStrings.ajax_error_emailinvalid );
+
+										jQuery( '#cap_email_field' )
+											.after( err )
+											.on( 'keyup', coauthors_remove_ajax_message );
+										
 										break;
 
 									case 'emailregistered':
-										alert( coAuthorsPlusStrings.ajax_error_emailregistered );
+										var err = jQuery( '<span/>' )
+											.addClass( 'error' )
+											.append( coAuthorsPlusStrings.ajax_error_emailregistered );
+
+										jQuery( '#cap_email_field' )
+											.after( err )
+											.on( 'keyup', coauthors_remove_ajax_message );
+
 										break;
 
 									case 'emailisguest':
-										alert( coAuthorsPlusStrings.ajax_error_emailisguest );
+										var err = jQuery( '<span/>' )
+											.addClass( 'error' )
+											.append( coAuthorsPlusStrings.ajax_error_emailisguest );
+
+										jQuery( '#cap_email_field' )
+											.after( err )
+											.on( 'keyup', coauthors_remove_ajax_message );
+										
 										break;
 
 									case 'guestnotcreated':
@@ -483,10 +554,11 @@ jQuery( document ).ready(function () {
 				// Append the fields to the bottom of #coauthors-edit
 				jQuery( '<div/>' )
 					.attr( 'id', 'coauthors-addguest' )
+					.append( label )
 					.append( dname_field )
 					.append( email_field )
-					.append( submit_field )
 					.append( cancel_field )
+					.append( submit_field )
 					.appendTo( codiv );
 
 				jQuery( '#cap_dname_field' ).focus();
@@ -497,6 +569,13 @@ jQuery( document ).ready(function () {
 
 		// Button has been added, return true
 		return true;
+	}
+
+	/**
+	 * Remove a stale error message 
+	 */
+	function coauthors_remove_ajax_message() {
+		jQuery( this ).next( 'span' ).remove();
 	}
 
 	var $coauthors_div = null;
