@@ -1117,7 +1117,7 @@ class CoAuthors_Plus {
 			wp_send_json_error( 'emailempty' );
 		}
 
-		$display_name = sanitize_text_field( $_POST['guest_dname'] );
+		$display_name = sanitize_user( $_POST['guest_dname'] );
 		$email = sanitize_email( $_POST['guest_email'] );
 		$login = sanitize_title( $display_name );
 		$display_name_key = $this->guest_authors->get_post_meta_key( 'display_name' );
@@ -1158,17 +1158,14 @@ class CoAuthors_Plus {
 			update_post_meta( $post_id, $login_key, $login );
 			update_post_meta( $post_id, $email_key, $email );
 
-			// Get the coauthor object
-			$coauthor = $this->get_coauthor_by( 'user_email', $email );
-
 			// Build the AJAX response
 			$response = array( 
-				'id' => absint( $coauthor->ID ), 
-				'login' => $coauthor->user_login, 
-				'email' => $coauthor->user_email, 
-				'displayname' => $coauthor->display_name, 
-				'nicename' => $coauthor->user_nicename, 
-				'avatar' => $this->get_avatar_url( $coauthor->ID, $coauthor->user_email, 'guest-author' ), 
+				'id' => absint( $post_id ), 
+				'login' => $login, 
+				'email' => $email, 
+				'displayname' => $display_name, 
+				'nicename' => $login, 
+				'avatar' => $this->get_avatar_url( $post_id, $email, 'guest-author' ), 
 			);
 
 			// Success - send the response
@@ -1337,6 +1334,7 @@ class CoAuthors_Plus {
 			'nonce' => wp_create_nonce( 'coauthors' ),
 			'avatar_size' => absint( $this->gravatar_size ), 
 			'allow_add_guest_authors' => current_user_can( 'edit_users' ),
+			'loading_image_url' => admin_url( '/images/loading.gif' ), 
 		);
 		
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
