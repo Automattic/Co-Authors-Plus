@@ -1148,6 +1148,11 @@ class CoAuthors_Plus {
 			update_post_meta( $post_id, $login_key, $login );
 			update_post_meta( $post_id, $email_key, $email );
 
+			// Add the post terms to the guest author post
+			$author = $this->guest_authors->get_guest_author_by( 'ID', $post_id );
+			$author_term = $this->update_author_term( $author );
+			wp_set_post_terms( $post_id, array( $author_term->slug ), $this->coauthor_taxonomy, false );
+
 			// Build the AJAX response
 			$response = array( 
 				'id' => absint( $post_id ), 
