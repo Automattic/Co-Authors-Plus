@@ -404,6 +404,7 @@ jQuery( document ).ready(function () {
 						jQuery( '#coauthors-addguest input' ).prop( 'disabled', true );
 						jQuery( '#coauthors-addguest a' ).hide();
 
+						// Add loading icon
 						var spinner = jQuery( '<img/>' )
 							.addClass( 'loading-image' )
 							.attr( 'src', coAuthorsPlusStrings.loading_image_url )
@@ -466,14 +467,17 @@ jQuery( document ).ready(function () {
 								// There was a problem adding the guest author. Tell the 
 								// user what the error was.
 								switch ( response.data ) {
+									// Nonse verification failed
 									case 'nonce': 
 										alert( coAuthorsPlusStrings.ajax_error_nonce );
 										break;
 
+									// User does not have the capability to add guest authors
 									case 'notallowed':
 										alert( coAuthorsPlusStrings.ajax_error_notallowed );
 										break;
 
+									// Display name field empty
 									case 'nameempty':
 										var err = jQuery( '<span/>' )
 											.addClass( 'error' )
@@ -485,6 +489,7 @@ jQuery( document ).ready(function () {
 										
 										break;
 
+									// Email field empty
 									case 'emailempty':
 										var err = jQuery( '<span/>' )
 											.addClass( 'error' )
@@ -496,6 +501,7 @@ jQuery( document ).ready(function () {
 
 										break;
 
+									// Name did not pass sanitization
 									case 'nameinvalid':
 										var err = jQuery( '<span/>' )
 											.addClass( 'error' )
@@ -507,6 +513,7 @@ jQuery( document ).ready(function () {
 										
 										break;
 
+									// Email did not pass sanitization
 									case 'emailinvalid':
 										var err = jQuery( '<span/>' )
 											.addClass( 'error' )
@@ -518,6 +525,7 @@ jQuery( document ).ready(function () {
 										
 										break;
 
+									// Email address is associated with a WP user
 									case 'emailregistered':
 										var err = jQuery( '<span/>' )
 											.addClass( 'error' )
@@ -529,6 +537,7 @@ jQuery( document ).ready(function () {
 
 										break;
 
+									// Email address is already associated with a guest author
 									case 'emailisguest':
 										var err = jQuery( '<span/>' )
 											.addClass( 'error' )
@@ -540,10 +549,12 @@ jQuery( document ).ready(function () {
 										
 										break;
 
+									// General failure creating guest author (edge case)
 									case 'guestnotcreated':
 										alert( coAuthorsPlusStrings.ajax_error_guestnotcreated );
 										break;
 
+									// Some other failure
 									default:
 										alert( coAuthorsPlusStrings.ajax_error_guestnotcreated );
 								}
@@ -573,6 +584,7 @@ jQuery( document ).ready(function () {
 
 	/**
 	 * Remove a stale error message 
+	 * Called for "add guest author" form validation
 	 */
 	function coauthors_remove_ajax_message() {
 		jQuery( this ).next( 'span' ).remove();
