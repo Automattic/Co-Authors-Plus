@@ -188,7 +188,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	public function get_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
-		$coauthor_id = (int) sanitize_text_field( $request['id'] );
+		$coauthor_id = (int) $request['id'];
 
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $coauthor_id );
 
@@ -206,7 +206,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	public function put_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
-		$coauthor_id = (int) sanitize_text_field( $request['id'] );
+		$coauthor_id = (int) $request['id'];
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
 
@@ -242,7 +242,7 @@ class CoAuthors_API_Guests extends CoAuthors_API_Controller {
 	public function delete_item( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
-		$coauthor_id = (int) sanitize_text_field( $request['id'] );
+		$coauthor_id = (int) $request['id'];
 
 		$guest_author = $coauthors_plus->get_coauthor_by( 'ID', $coauthor_id );
 
