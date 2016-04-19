@@ -6,9 +6,9 @@ Route | Method | Description
 /**posts**/`:post_id`/**authors** | GET |  Get all authors from a post
 /**posts**/`:post_id`/**authors** | PUT |  Appends a new author to a post
 /**posts**/`:post_id`/**authors**/`:author_id` | DELETE |  Removes an author from a post
-/**guests** | GET |  Lists of filters all the currently available guests 
+/**guests** | GET |  Lists or filters currently available guests 
 /**guests** | POST |  Creates a new guest
-/**guests**/`:guest_id` | PUT |  Updates a new guest
+/**guests**/`:guest_id` | PUT |  Updates a existing guest
 /**guests**/`:guest_id` | DELETE |  Deletes a guest
 
 ## Authors 
