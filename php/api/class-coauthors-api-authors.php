@@ -56,7 +56,7 @@ class CoAuthors_API_Authors extends CoAuthors_API_Controller {
 	public function authorization( WP_REST_Request $request ) {
 		global $coauthors_plus;
 
-		return $coauthors_plus->current_user_can_set_authors( null, true );
+		return $coauthors_plus->current_user_has_permissions();
 	}
 
 	/**

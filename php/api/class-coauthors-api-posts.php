@@ -117,7 +117,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 				array( 'status' => self::NOT_FOUND ) );
 		}
 
-		if ( $coauthors_plus->current_user_can_set_authors( $post, true ) ) {
+		if ( $coauthors_plus->current_user_can_set_authors( $post ) ) {
 			$current_coauthors = wp_list_pluck( get_coauthors( $post->ID ), 'user_nicename' );
 			$coauthors         = array_values( array_diff( $current_coauthors, array( $coauthor->user_nicename ) ) );
 			$result            = $this->add_coauthors( $post->ID, $coauthors );
@@ -157,7 +157,7 @@ class CoAuthors_API_Posts extends CoAuthors_API_Controller {
 			return $post_authorization;
 		}
 
-		return $coauthors_plus->current_user_can_set_authors( null, true );
+		return $coauthors_plus->current_user_has_permissions();
 	}
 
 	/**
