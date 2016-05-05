@@ -1085,11 +1085,11 @@ class CoAuthors_Plus {
 			}
 
 			// Add the author to the response
-			$response[] = array( 
+			$response[] = array(
 				'id' => $author->ID,
-				'login' => $author->user_login, 
-				'email' => $author->user_email, 
-				'displayname' => $author->display_name, 
+				'login' => $author->user_login,
+				'email' => $author->user_email,
+				'displayname' => $author->display_name,
 				'nicename' => $author->user_nicename, 
 				'avatar' => $this->get_avatar_url( $author->ID, $author->user_email, $author->type ), 
 			);
