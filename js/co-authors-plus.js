@@ -57,9 +57,13 @@ jQuery( document ).ready(function () {
 
 		// get sibling <span> and update
 		co.siblings( '.coauthor-tag' )
+<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 			.html('')
 			.append( author.name )
 			.append( avatar )
+=======
+			.html( author.name )
+>>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 			.show();
 
 		// Update the value of the hidden input
@@ -94,12 +98,19 @@ jQuery( document ).ready(function () {
 
 			var avatar = jQuery( '<img/>' )
 				.attr( 'src', author.avatar )
+<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 				.addClass( 'avatar' )
 				.attr( 'width', coAuthorsPlusStrings.avatar_size + 'px' )
 				.attr( 'height', coAuthorsPlusStrings.avatar_size + 'px' )
 				.css( 'float', 'left' )
 				.css( 'cursor', 'move' )
 				.css( 'margin', '-5px 8px 0 0' )
+=======
+				.addClass('avatar')
+				.attr( 'width', '25' )
+				.attr( 'height', '25' )
+				.css( 'float', 'right' )
+>>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 				.appendTo( tag );
 
 			coauthors_add_to_table( co, tag, input, options );
@@ -179,6 +190,7 @@ jQuery( document ).ready(function () {
 
 		var $co = jQuery( '<input/>' );
 
+<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 		// Create the autocomplete field
 		$co.attr( 'class', 'coauthor-suggest' )
 			.attr( 'name', inputName )
@@ -197,16 +209,38 @@ jQuery( document ).ready(function () {
 							return jQuery( this ).val();
 						}).get();
 
+=======
+		var existing_authors = jQuery( 'input[name="coauthors[]"]' )
+			.map( function() { 
+				return jQuery( this ).val();
+			}).get();
+
+		$co.attr( 'class', 'coauthor-suggest' )
+			.attr( 'name', inputName )
+			.appendTo( $coauthors_div )
+			.keydown( coauthors_autosuggest_keydown )
+			.autocomplete({
+				minLength: 1,
+				source: function( request, response ) {
+>>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 					jQuery.post( ajaxurl, {
 						action: 'coauthors_ajax_suggest',
 						q: $co.val(),
 						exclude: existing_authors,
 						nonce: coAuthorsPlusStrings.nonce
 					}, function( data ) {
+<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
+=======
+						console.log(data);
+>>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 						response( data.data );
 					});
 				},
 				select: function( event, ui ) {
+<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
+=======
+					console.log( $co );
+>>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 					coauthors_autosuggest_select( ui, $co );
 					return false;
 				},
@@ -218,6 +252,7 @@ jQuery( document ).ready(function () {
 					jQuery( this ).removeClass( 'ui-corner-top' )
 						.addClass( 'ui-corner-all' );
 				}
+<<<<<<< 4db46ade79e5d7e26d9fff0cb52a3b312d58c6c7
 			// Extend autocomplete render to display data in our own format
 			}).data( 'uiAutocomplete' )._renderItem = function( ul, item ) {
 				var displayname = jQuery( '<div/>' )
@@ -247,6 +282,13 @@ jQuery( document ).ready(function () {
 				li.appendTo( ul );
 
 				return li;
+=======
+			}).data( 'uiAutocomplete' )._renderItem = function( ul, item ) {
+				return jQuery( '<li/>' )
+					.data( 'item.autocomplete', item )
+					.append( item.id + ' | ' + item.login + ' | ' + item.displayname + ' | ' + item.email + ' | ' + item.nicename )
+					.appendTo( ul );
+>>>>>>> Configure plugin to use jQuery UI Autocomplete to  expand the capabilities of the author search:
 			};
 
 		if ( authorName )
