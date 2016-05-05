@@ -1194,7 +1194,7 @@ class CoAuthors_Plus {
 	 * @param  string $type       Should be set to "guest-author" if this is a guest author
 	 * @return string             Avatar URL
 	 */
-	public function get_avatar_url( $user_id, $user_email, $type ) {
+	public function get_avatar_url( $user_id, $user_email, $type = false ) {
 		$user_id = absint( $user_id );
 
 		// Get BuddyPress avatar
@@ -1346,6 +1346,7 @@ class CoAuthors_Plus {
 			'avatar_size' => absint( $this->gravatar_size ), 
 			'allow_add_guest_authors' => current_user_can( 'edit_users' ),
 			'loading_image_url' => admin_url( '/images/loading.gif' ), 
+			'autocomplete_endpoint' => home_url( '/wp-json/coauthors/v1/autocomplete' ), 
 		);
 		
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
