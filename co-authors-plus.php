@@ -32,6 +32,8 @@ require_once( dirname( __FILE__ ) . '/deprecated.php' );
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 
+require_once( dirname( __FILE__ ) . '/php/api/boot.php' );
+
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once( dirname( __FILE__ ) . '/php/class-wp-cli.php' );
 }
@@ -115,7 +117,6 @@ class CoAuthors_Plus {
 
 		// Support infinite scroll for Guest Authors on author pages
 		add_filter( 'infinite_scroll_js_settings', array( $this, 'filter_infinite_scroll_js_settings' ), 10, 2 );
-
 	}
 
 	/**
@@ -123,7 +124,6 @@ class CoAuthors_Plus {
 	 * and the custom post type to store our author data
 	 */
 	public function action_init() {
-
 		// Allow Co-Authors Plus to be easily translated
 		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
@@ -799,7 +799,6 @@ class CoAuthors_Plus {
 		global $current_user, $wpdb;
 
 		$post_id = (int) $post_id;
-		$insert = false;
 
 		// Best way to persist order
 		if ( $append ) {
@@ -819,6 +818,9 @@ class CoAuthors_Plus {
 		foreach ( $coauthors as &$author_name ) {
 
 			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
+			if ( !$author ) {
+				continue;
+			}
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
 			$author_name = $term->slug;
@@ -945,8 +947,6 @@ class CoAuthors_Plus {
 	 * Checks to see if the current user can set authors or not
 	 */
 	function current_user_can_set_authors( $post = null ) {
-		global $typenow;
-
 		if ( ! $post ) {
 			$post = get_post();
 			if ( ! $post ) {
@@ -954,26 +954,16 @@ class CoAuthors_Plus {
 			}
 		}
 
-		$post_type = $post->post_type;
+		if ( $post ) {
+			$post_type = $post->post_type;
 
-		// TODO: need to fix this; shouldn't just say no if don't have post_type
-		if ( ! $post_type ) {
-			return false;
+			// TODO: need to fix this; shouldn't just say no if don't have post_type
+			if ( ! $post_type ) {
+				return false;
+			}
 		}
 
-		$post_type_object = get_post_type_object( $post_type );
-		$current_user = wp_get_current_user();
-		if ( ! $current_user ) {
-			return false;
-		}
-		// Super admins can do anything
-		if ( function_exists( 'is_super_admin' ) && is_super_admin() ) {
-			return true;
-		}
-
-		$can_set_authors = isset( $current_user->allcaps['edit_others_posts'] ) ? $current_user->allcaps['edit_others_posts'] : false;
-
-		return apply_filters( 'coauthors_plus_edit_authors', $can_set_authors );
+		return $this->current_user_has_permissions();
 	}
 
 	/**
@@ -1462,6 +1452,27 @@ class CoAuthors_Plus {
 
 		// Send back the updated Open Graph Tags
 		return apply_filters( 'coauthors_open_graph_tags', $og_tags );
+	}
+
+	/**
+	 * Check if current user is admin or can edit other posts.
+	 *
+	 * @return bool|mixed|void
+	 */
+	public function current_user_has_permissions() {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user ) {
+			return false;
+		}
+		// Super admins can do anything
+		if ( function_exists( 'is_super_admin' ) && is_super_admin() ) {
+			return true;
+		}
+
+		$can_set_authors = isset( $current_user->allcaps['edit_others_posts'] ) ? $current_user->allcaps['edit_others_posts'] : false;
+
+		return apply_filters( 'coauthors_plus_edit_authors', $can_set_authors );
 	}
 }
 
