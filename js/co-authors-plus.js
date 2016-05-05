@@ -218,7 +218,7 @@ jQuery( document ).ready(function () {
 					jQuery( this ).removeClass( 'ui-corner-top' )
 						.addClass( 'ui-corner-all' );
 				}
-				
+
 			// Extend autocomplete render to display data in our own format
 			}).data( 'uiAutocomplete' )._renderItem = function( ul, item ) {
 				var displayname = jQuery( '<div/>' )
