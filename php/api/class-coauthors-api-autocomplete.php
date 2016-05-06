@@ -91,7 +91,7 @@ class CoAuthors_API_Autocomplete extends CoAuthors_API_Controller {
 		foreach ( $coauthors as $coauthor ) {
 			$data[] = array(
 				'id'          => (int) $coauthor->ID,
-				'login'       => $coauthors->user_login, 
+				'login'       => $coauthor->user_login, 
 				'displayname' => $coauthor->display_name,
 				'email'       => $coauthor->user_email,
 				'nicename'    => $coauthor->user_nicename, 
