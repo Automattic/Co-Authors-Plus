@@ -676,7 +676,7 @@ class CoAuthors_Guest_Authors
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$value = get_post_meta( $post->ID, $pm_key, true );
 			echo '<tr><th>';
-			echo '<label for="' . esc_attr( $pm_key . '">' ) . esc_html( $field['label'] ) . '</label>';
+			echo '<label for="' . esc_attr( $pm_key ) . '">' . esc_html( $field['label'] ) . '</label>';
 			echo '</th><td>';
 			echo '<textarea style="width:300px;margin-bottom:6px;" name="' . esc_attr( $pm_key ) . '">' . esc_textarea( $value ) . '</textarea>';
 			echo '</td></tr>';
