@@ -1595,6 +1595,7 @@ function cap_filter_comment_moderation_email_recipients( $recipients, $comment_i
 
 	if ( isset( $post_id ) ) {
 		$coauthors = get_coauthors( $post_id );
+		$extra_recipients = array();
 		foreach ( $coauthors as $user ) {
 			if ( ! empty( $user->user_email ) ) {
 				$extra_recipients[] = $user->user_email;
