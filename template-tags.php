@@ -36,7 +36,7 @@ function get_coauthors( $post_id = 0 ) {
 			}
 		} // the empty else case is because if we force guest authors, we don't ever care what value wp_posts.post_author has.
 	}
-	return $coauthors;
+	return apply_filters( 'get_coauthors', $coauthors, $post_id );
 }
 
 /**
