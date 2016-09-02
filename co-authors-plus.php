@@ -611,12 +611,17 @@ class CoAuthors_Plus {
 			}
 
 			// Check to see that JOIN hasn't already been added. Props michaelingp and nbaxley
-			$term_relationship_join = " INNER JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
+			$term_relationship_inner_join = " INNER JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
+			$term_relationship_left_join = " LEFT JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
+
 			$term_taxonomy_join = " INNER JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
 
-			if ( false === strpos( $join, trim( $term_relationship_join ) ) ) {
-				$join .= str_replace( 'INNER JOIN', 'LEFT JOIN', $term_relationship_join );
+			// 4.6+ uses a LEFT JOIN for tax queries so we need to check for both
+			if ( false === strpos( $join, trim( $term_relationship_inner_join ) )
+				&& false === strpos( $join, trim( $term_relationship_left_join ) ) ) {
+				$join .= $term_relationship_left_join;
 			}
+
 			if ( false === strpos( $join, trim( $term_taxonomy_join ) ) ) {
 				$join .= str_replace( 'INNER JOIN', 'LEFT JOIN', $term_taxonomy_join );
 			}
