@@ -375,14 +375,14 @@ class CoAuthors_Plus {
 				?>
 				</ul>
 				<div class="clear"></div>
-				<p><?php wp_kses( __( '<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+				<p><?php echo wp_kses( __( '<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
 			</div>
 			<?php
 		endif;
 		?>
 
 		<div id="coauthors-edit" class="hide-if-no-js">
-			<p><?php wp_kses( __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+			<p><?php echo wp_kses( __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
 		</div>
 
 		<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
@@ -506,7 +506,7 @@ class CoAuthors_Plus {
 		<label class="inline-edit-group inline-edit-coauthors">
 			<span class="title"><?php esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
 			<div id="coauthors-edit" class="hide-if-no-js">
-				<p><?php wp_kses( __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+				<p><?php echo wp_kses( __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
 			</div>
 			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 		</label>
