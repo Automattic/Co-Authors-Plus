@@ -64,6 +64,8 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'order'          => 'ASC',
 			);
 
+		$args = apply_filters( 'coauthors_guest_author_query_args', $args );
+
 		if ( isset( $_REQUEST['orderby'] ) ) {
 			switch ( $_REQUEST['orderby'] ) {
 				case 'display_name':
