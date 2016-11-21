@@ -685,11 +685,14 @@ class CoAuthors_Plus {
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
 
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . get_queried_object_id() . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				$id = is_author() ? get_queried_object_id() : '\d';
+
+				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
 
 				// the block targets the private posts clause (if it exists)
 				if (
 					is_user_logged_in() &&
+					is_author() &&
 					get_queried_object_id() != get_current_user_id()
 				) {
 					$current_coauthor      = $this->get_coauthor_by( 'user_nicename', wp_get_current_user()->user_nicename );
