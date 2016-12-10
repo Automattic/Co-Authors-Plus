@@ -16,7 +16,7 @@ function get_coauthors( $post_id = 0 ) {
 	if ( $post_id ) {
 		$cache_key = 'coauthors_post_' . $post_id;
 		if ( false === ( $coauthor_terms = wp_cache_get( $cache_key, 'co-authors-plus' ) ) ) {
-			$coauthor_terms = wp_get_object_terms($post_id, $coauthors_plus->coauthor_taxonomy, array('orderby' => 'term_order', 'order' => 'ASC'));
+			$coauthor_terms = wp_get_object_terms( $post_id, $coauthors_plus->coauthor_taxonomy, array( 'orderby' => 'term_order', 'order' => 'ASC' ) );
 			wp_cache_set( $cache_key, $coauthor_terms, 'co-authors-plus' );
 		}
 		if ( is_array( $coauthor_terms ) && ! empty( $coauthor_terms ) ) {
