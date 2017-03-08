@@ -1,17 +1,66 @@
 language: php
 
 php:
-    - 5.3
-    - 5.5
+    - "nightly"
 
 env:
     - WP_VERSION=latest
-    - WP_VERSION=4.1
-    - WP_VERSION=4.0
+
+matrix:
+  include:
+# nightly+latest already included above as first build.
+#  - php: "nightly"
+#    env: WP_VERSION=latest
+   - php: "nightly"
+     env: WP_VERSION=4.6
+   - php: "nightly"
+     env: WP_VERSION=4.5
+   - php: "5.2"
+     env: WP_VERSION=latest
+   - php: "5.2"
+     env: WP_VERSION=4.6
+   - php: "5.2"
+     env: WP_VERSION=4.5
+   - php: "5.6"
+     env: WP_VERSION=latest
+   - php: "5.6"
+     env:
+         - WP_VERSION=4.6
+         - SNIFF=1
+   - php: "5.6"
+     env: WP_VERSION=4.5
+   - php: "7"
+     env: WP_VERSION=4.6
 
 before_script:
-    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION 
+    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+    # PHPCS
+    - export PHPCS_DIR=/tmp/phpcs
+    - export SNIFFS_DIR=/tmp/sniffs
+    # Install CodeSniffer for WordPress Coding Standards checks.
+    - if [[ "$SNIFF" == "1" ]]; then git clone -b master --depth 1 https://github.com/squizlabs/PHP_CodeSniffer.git $PHPCS_DIR; fi
+    # Install WordPress Coding Standards.
+    - if [[ "$SNIFF" == "1" ]]; then git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git $SNIFFS_DIR; fi
+    # Install PHP Compatibility sniffs.
+    - if [[ "$SNIFF" == "1" ]]; then git clone -b master --depth 1 https://github.com/wimg/PHPCompatibility.git $SNIFFS_DIR/PHPCompatibility; fi
+    # Set install path for PHPCS sniffs.
+    # @link https://github.com/squizlabs/PHP_CodeSniffer/blob/4237c2fc98cc838730b76ee9cee316f99286a2a7/CodeSniffer.php#L1941
+    - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/scripts/phpcs --config-set installed_paths $SNIFFS_DIR; fi
+    # After CodeSniffer install you should refresh your path.
+    - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
 
 script:
-    - make lint
-    - make phpunit
+    # Search for PHP syntax errors.
+    - find -L . -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+    # WordPress Coding Standards.
+    # @link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
+    # @link http://pear.php.net/package/PHP_CodeSniffer/
+    # -p flag: Show progress of the run.
+    # -s flag: Show sniff codes in all reports.
+    # -v flag: Print verbose output.
+    # -n flag: Do not print warnings. (shortcut for --warning-severity=0)
+    # --standard: Use WordPress as the standard.
+    # --extensions: Only sniff PHP files.
+    - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/scripts/phpcs -p -s -v -n . --standard="WordPress-VIP" --extensions=php; fi
+    # Unit tests
+    - phpunit
