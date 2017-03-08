@@ -125,6 +125,7 @@ class CoAuthors_Guest_Authors
 		// Some of the common sizes used by get_avatar
 		$this->avatar_sizes = array(
 				32,
+				50,
 				64,
 				96,
 				128,
@@ -309,7 +310,7 @@ class CoAuthors_Guest_Authors
 					'id'                 => $coauthor->user_nicename,
 				);
 		}
-		echo json_encode( $retval );
+		echo wp_json_encode( $retval );
 		die();
 	}
 
@@ -674,11 +675,21 @@ class CoAuthors_Guest_Authors
 		foreach ( $fields as $field ) {
 			$pm_key = $this->get_post_meta_key( $field['key'] );
 			$value = get_post_meta( $post->ID, $pm_key, true );
-			echo '<tr><th>';
-			echo '<label for="' . esc_attr( $pm_key . '">' ) . esc_html( $field['label'] ) . '</label>';
-			echo '</th><td>';
-			echo '<textarea style="width:300px;margin-bottom:6px;" name="' . esc_attr( $pm_key ) . '">' . esc_textarea( $value ) . '</textarea>';
-			echo '</td></tr>';
+			printf( '
+				<tr>
+					<th>
+						<label for="%s">%s</label>
+					</th>
+					<td>
+						<textarea style="width:300px;margin-bottom:6px;" name="%s">%s</textarea>
+					</td>
+				</tr>
+				',
+				esc_attr( $pm_key ),
+				esc_html( $field['label'] ),
+				esc_attr( $pm_key ),
+				esc_textarea( $value )
+			);
 		}
 		echo '</tbody></table>';
 

@@ -79,7 +79,7 @@ jQuery( document ).ready(function () {
 			var options = { addDelete: true, addEdit: false };
 
 			// Create autosuggest box and text tag
-			if ( ! co ) var co = coauthors_create_autosuggest( author, coName )
+			if ( ! co ) var co = coauthors_create_autosuggest( author.name, coName )
 			var tag = coauthors_create_author_tag( author );
 			var input = coauthors_create_author_hidden_input( author );
 			var $gravatar = coauthors_create_author_gravatar( author, 25 );
