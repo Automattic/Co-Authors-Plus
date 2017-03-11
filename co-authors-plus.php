@@ -116,6 +116,9 @@ class CoAuthors_Plus {
 		// Support infinite scroll for Guest Authors on author pages
 		add_filter( 'infinite_scroll_js_settings', array( $this, 'filter_infinite_scroll_js_settings' ), 10, 2 );
 
+		// Delete CoAuthor Cache on Post Save & Post Delete
+		add_action( 'save_post', array( $this, 'clear_cache') );
+		add_action( 'delete_post', array( $this, 'clear_cache') );
 	}
 
 	/**
@@ -1468,6 +1471,15 @@ class CoAuthors_Plus {
 
 		// Send back the updated Open Graph Tags
 		return apply_filters( 'coauthors_open_graph_tags', $og_tags );
+	}
+
+	/**
+	 * Callback to clear the cache on post save and post delete.
+	 *
+	 * @param $post_id The Post ID.
+	 */
+	public function clear_cache( $post_id ) {
+		wp_cache_delete( 'coauthors_post_' . $post_id );
 	}
 }
 
