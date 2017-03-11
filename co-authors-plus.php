@@ -1479,7 +1479,7 @@ class CoAuthors_Plus {
 	 * @param $post_id The Post ID.
 	 */
 	public function clear_cache( $post_id ) {
-		wp_cache_delete( 'coauthors_post_' . $post_id );
+		wp_cache_delete( 'coauthors_post_' . $post_id, 'co-authors-plus' );
 	}
 }
 
