@@ -119,6 +119,7 @@ class CoAuthors_Plus {
 		// Delete CoAuthor Cache on Post Save & Post Delete
 		add_action( 'save_post', array( $this, 'clear_cache') );
 		add_action( 'delete_post', array( $this, 'clear_cache') );
+		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
 	}
 
 	/**
@@ -1481,6 +1482,23 @@ class CoAuthors_Plus {
 	public function clear_cache( $post_id ) {
 		wp_cache_delete( 'coauthors_post_' . $post_id, 'co-authors-plus' );
 	}
+
+	/**
+	 * Callback to clear the cache when an object's terms are changed.
+	 *
+	 * @param $post_id The Post ID.
+	 */
+	public function clear_cache_on_terms_set( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
+
+		// We only care about the coauthors taxonomy
+		if ( $this->coauthor_taxonomy !== $taxonomy ) {
+			return;
+		}
+
+		wp_cache_delete( 'coauthors_post_' . $object_id, 'co-authors-plus' );
+
+	}
+
 }
 
 global $coauthors_plus;
