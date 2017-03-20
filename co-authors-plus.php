@@ -1624,3 +1624,37 @@ function cap_filter_comment_moderation_email_recipients( $recipients, $comment_i
 	}
 	return $recipients;
 }
+
+/**
+ * Retrieve a list of coauthor terms for a single post.
+ *
+ * Grabs a correctly ordered list of authors for a single post, appropriately
+ * cached because it requires `wp_get_object_terms()` to succeed.
+ *
+ * @param int $post_id ID of the post for which to retrieve authors.
+ * @return array Array of coauthor WP_Term objects
+ */
+function cap_get_coauthor_terms_for_post( $post_id = false ) {
+
+	if ( ! $post_id ) {
+		return array();
+	}
+
+	global $coauthors_plus;
+
+	$cache_key = 'coauthors_post_' . $post_id;
+	$coauthor_terms = wp_cache_get( $cache_key, 'co-authors-plus' )
+
+	if ( false === $coauthor_terms ) {
+		$coauthor_terms = wp_get_object_terms( $post_id, $coauthors_plus->coauthor_taxonomy, array(
+			'orderby' => 'term_order',
+			'order' => 'ASC',
+		) );
+		wp_cache_set( $cache_key, $coauthor_terms, 'co-authors-plus' );
+	} else {
+		$coauthor_terms = array();
+	}
+
+	return $coauthor_terms;
+
+}
