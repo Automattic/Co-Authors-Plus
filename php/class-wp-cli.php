@@ -235,8 +235,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
 		$affected = 0;
 		foreach ( $posts as $post_id ) {
-			if ( $coauthors = cap_get_coauthor_terms_for_post( $post_id ) ) {
-				WP_CLI::line( sprintf( __( 'Skipping - Post #%d already has co-authors assigned: %s', 'co-authors-plus' ), $post_id, implode( ', ', wp_list_pluck( $coauthors, 'slug' ) ) ) );
+			$coauthors = cap_get_coauthor_terms_for_post( $post_id )
+			if ( ! empty( $coauthors ) ) {
+				WP_CLI::line( sprintf(
+					__( 'Skipping - Post #%d already has co-authors assigned: %s', 'co-authors-plus' ),
+					$post_id,
+					implode( ', ', wp_list_pluck( $coauthors, 'slug' ) )
+				) );
 				continue;
 			}
 
