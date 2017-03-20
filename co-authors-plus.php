@@ -1643,7 +1643,7 @@ function cap_get_coauthor_terms_for_post( $post_id = false ) {
 	global $coauthors_plus;
 
 	$cache_key = 'coauthors_post_' . $post_id;
-	$coauthor_terms = wp_cache_get( $cache_key, 'co-authors-plus' )
+	$coauthor_terms = wp_cache_get( $cache_key, 'co-authors-plus' );
 
 	if ( false === $coauthor_terms ) {
 		$coauthor_terms = wp_get_object_terms( $post_id, $coauthors_plus->coauthor_taxonomy, array(
