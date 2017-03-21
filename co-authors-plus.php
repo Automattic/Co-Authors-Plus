@@ -1652,7 +1652,7 @@ function cap_filter_comment_moderation_email_recipients( $recipients, $comment_i
  * @param int $post_id ID of the post for which to retrieve authors.
  * @return array Array of coauthor WP_Term objects
  */
-function cap_get_coauthor_terms_for_post( $post_id = false ) {
+function cap_get_coauthor_terms_for_post( $post_id ) {
 
 	if ( ! $post_id ) {
 		return array();
@@ -1664,13 +1664,13 @@ function cap_get_coauthor_terms_for_post( $post_id = false ) {
 	$coauthor_terms = wp_cache_get( $cache_key, 'co-authors-plus' );
 
 	if ( false === $coauthor_terms ) {
-		$coauthor_terms = wp_get_object_terms( $post_id, $coauthors_plus->coauthor_taxonomy, array(
+		$cached = wp_get_object_terms( $post_id, $coauthors_plus->coauthor_taxonomy, array(
 			'orderby' => 'term_order',
 			'order' => 'ASC',
 		) );
+		// Cache an empty array if the taxonomy doesn't exist.
+		$coauthor_terms = ( is_wp_error( $cached ) ) ? array() : $cached;
 		wp_cache_set( $cache_key, $coauthor_terms, 'co-authors-plus' );
-	} else {
-		$coauthor_terms = array();
 	}
 
 	return $coauthor_terms;
