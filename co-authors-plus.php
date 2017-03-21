@@ -1475,6 +1475,38 @@ class CoAuthors_Plus {
 	}
 
 	/**
+	 * Retrieve a list of coauthor terms for a single post.
+	 *
+	 * Grabs a correctly ordered list of authors for a single post, appropriately
+	 * cached because it requires `wp_get_object_terms()` to succeed.
+	 *
+	 * @param int $post_id ID of the post for which to retrieve authors.
+	 * @return array Array of coauthor WP_Term objects
+	 */
+	public function get_coauthor_terms_for_post( $post_id ) {
+
+		if ( ! $post_id ) {
+			return array();
+		}
+
+		$cache_key = 'coauthors_post_' . $post_id;
+		$coauthor_terms = wp_cache_get( $cache_key, 'co-authors-plus' );
+
+		if ( false === $coauthor_terms ) {
+			$cached = wp_get_object_terms( $post_id, $this->coauthor_taxonomy, array(
+				'orderby' => 'term_order',
+				'order' => 'ASC',
+			) );
+			// Cache an empty array if the taxonomy doesn't exist.
+			$coauthor_terms = ( is_wp_error( $cached ) ) ? array() : $cached;
+			wp_cache_set( $cache_key, $coauthor_terms, 'co-authors-plus' );
+		}
+
+		return $coauthor_terms;
+
+	}
+
+	/**
 	 * Callback to clear the cache on post save and post delete.
 	 *
 	 * @param $post_id The Post ID.
@@ -1653,26 +1685,6 @@ function cap_filter_comment_moderation_email_recipients( $recipients, $comment_i
  * @return array Array of coauthor WP_Term objects
  */
 function cap_get_coauthor_terms_for_post( $post_id ) {
-
-	if ( ! $post_id ) {
-		return array();
-	}
-
 	global $coauthors_plus;
-
-	$cache_key = 'coauthors_post_' . $post_id;
-	$coauthor_terms = wp_cache_get( $cache_key, 'co-authors-plus' );
-
-	if ( false === $coauthor_terms ) {
-		$cached = wp_get_object_terms( $post_id, $coauthors_plus->coauthor_taxonomy, array(
-			'orderby' => 'term_order',
-			'order' => 'ASC',
-		) );
-		// Cache an empty array if the taxonomy doesn't exist.
-		$coauthor_terms = ( is_wp_error( $cached ) ) ? array() : $cached;
-		wp_cache_set( $cache_key, $coauthor_terms, 'co-authors-plus' );
-	}
-
-	return $coauthor_terms;
-
+	return $coauthors_plus->get_coauthor_terms_for_post( $post_id );
 }
