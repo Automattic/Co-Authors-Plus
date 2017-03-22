@@ -1074,6 +1074,9 @@ class CoAuthors_Plus {
 
 		$authors = $this->search_authors( $search, $ignore );
 
+		// Return message if no authors found
+		if( empty( $authors ) ) echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.');
+
 		foreach ( $authors as $author ) {
 			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename ) . "\n";
 		}
