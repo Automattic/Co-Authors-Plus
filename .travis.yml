@@ -48,6 +48,15 @@ before_script:
     - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/scripts/phpcs --config-set installed_paths $SNIFFS_DIR; fi
     # After CodeSniffer install you should refresh your path.
     - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
+    # Properly handle PHPunit versions
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - |
+        if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then
+          composer global require "phpunit/phpunit=5.7.*"
+        elif [[ ${TRAVIS_PHP_VERSION:0:3} != "5.2" ]]; then
+          composer global require "phpunit/phpunit=4.8.*"
+        fi
+    - phpunit --version
 
 script:
     # Search for PHP syntax errors.
