@@ -1,35 +1,30 @@
 language: php
 
 php:
-    - "nightly"
+    - 7.1
 
 env:
     - WP_VERSION=latest
 
 matrix:
+matrix:
   include:
-# nightly+latest already included above as first build.
-#  - php: "nightly"
-#    env: WP_VERSION=latest
-   - php: "nightly"
-     env: WP_VERSION=4.6
-   - php: "nightly"
-     env: WP_VERSION=4.5
    - php: "5.2"
      env: WP_VERSION=latest
    - php: "5.2"
      env: WP_VERSION=4.6
-   - php: "5.2"
-     env: WP_VERSION=4.5
-   - php: "5.6"
-     env: WP_VERSION=latest
    - php: "5.6"
      env:
-         - WP_VERSION=4.6
+         - WP_VERSION=latest
          - SNIFF=1
    - php: "5.6"
-     env: WP_VERSION=4.5
-   - php: "7"
+     env: WP_VERSION=4.6
+   - php: "7.0"
+     env: WP_VERSION=latest
+   - php: "7.0"
+     env: WP_VERSION=4.6
+     # 7.1 / latest already included above as first build.
+   - php: "7.1"
      env: WP_VERSION=4.6
 
 before_script:
@@ -48,6 +43,15 @@ before_script:
     - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/scripts/phpcs --config-set installed_paths $SNIFFS_DIR; fi
     # After CodeSniffer install you should refresh your path.
     - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
+    # Properly handle PHPunit versions
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - |
+        if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then
+          composer global require "phpunit/phpunit=5.7.*"
+        elif [[ ${TRAVIS_PHP_VERSION:0:3} != "5.2" ]]; then
+          composer global require "phpunit/phpunit=4.8.*"
+        fi
+    - phpunit --version
 
 script:
     # Search for PHP syntax errors.
