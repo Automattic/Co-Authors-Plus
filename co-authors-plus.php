@@ -890,6 +890,17 @@ class CoAuthors_Plus {
 			// Delete term
 			wp_delete_term( $delete_user->user_login, $this->coauthor_taxonomy );
 		}
+
+		// Get the deleted user data by user id.
+		$user_data = get_user_by( 'id', $delete_id );
+
+		// Get the associated user.
+		$associated_user = $this->guest_authors->get_guest_author_by( 'linked_account', $user_data->data->user_login );
+
+		if ( isset( $associated_user->ID ) ) {
+			// Delete associated guest user.
+			$this->guest_authors->delete( $associated_user->ID );
+		}
 	}
 
 	/**
