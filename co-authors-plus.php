@@ -418,7 +418,6 @@ class CoAuthors_Plus {
 	function _filter_manage_posts_columns( $posts_columns ) {
 
 		$new_columns = array();
-
 		if ( ! $this->is_post_type_enabled() ) {
 			return $posts_columns;
 		}
