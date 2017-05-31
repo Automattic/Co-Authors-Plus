@@ -293,7 +293,12 @@ class CoAuthors_Plus {
 	public function is_post_type_enabled( $post_type = null ) {
 
 		if ( ! $post_type ) {
-			$post_type = get_post_type();
+			if ( is_admin() ) {
+				$post_type = get_current_screen()->post_type;
+			}
+			else {
+				$post_type = get_post_type();
+			}
 		}
 
 		return (bool) in_array( $post_type, $this->supported_post_types );
@@ -414,9 +419,7 @@ class CoAuthors_Plus {
 
 		$new_columns = array();
 
-		$post_type = get_current_screen()->post_type;
-
-		if ( ! $this->is_post_type_enabled( $post_type ) ) {
+		if ( ! $this->is_post_type_enabled() ) {
 			return $posts_columns;
 		}
 
@@ -1256,9 +1259,7 @@ class CoAuthors_Plus {
 	 */
 	public function js_vars() {
 
-		$post_type = get_current_screen()->post_type;
-
-		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled( $post_type ) || ! $this-> current_user_can_set_authors() ) {
+		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled() || ! $this-> current_user_can_set_authors() ) {
 			return;
 		}
 		?>
