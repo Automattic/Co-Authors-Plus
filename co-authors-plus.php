@@ -413,7 +413,10 @@ class CoAuthors_Plus {
 	function _filter_manage_posts_columns( $posts_columns ) {
 
 		$new_columns = array();
-		if ( ! $this->is_post_type_enabled() ) {
+
+		$post_type = get_current_screen()->post_type;
+
+		if ( ! $this->is_post_type_enabled( $post_type ) ) {
 			return $posts_columns;
 		}
 
@@ -959,11 +962,16 @@ class CoAuthors_Plus {
 		if ( ! $post ) {
 			$post = get_post();
 			if ( ! $post ) {
-				return false;
+				// if user is on pages, you need to grab post type another way
+				$post_type = get_current_screen()->post_type;
+			}
+			else {
+				$post_type = $post->post_type;
 			}
 		}
-
-		$post_type = $post->post_type;
+		else {
+			$post_type = $post->post_type;
+		}
 
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if ( ! $post_type ) {
@@ -1177,7 +1185,9 @@ class CoAuthors_Plus {
 	function enqueue_scripts( $hook_suffix ) {
 		global $pagenow, $post;
 
-		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled() || ! $this->current_user_can_set_authors() ) {
+		$post_type = get_current_screen()->post_type;
+
+		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
 			return;
 		}
 
