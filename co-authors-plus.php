@@ -1256,7 +1256,9 @@ class CoAuthors_Plus {
 	 */
 	public function js_vars() {
 
-		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled() || ! $this-> current_user_can_set_authors() ) {
+		$post_type = get_current_screen()->post_type;
+
+		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled( $post_type ) || ! $this-> current_user_can_set_authors() ) {
 			return;
 		}
 		?>
