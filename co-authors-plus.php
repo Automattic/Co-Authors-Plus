@@ -122,7 +122,7 @@ class CoAuthors_Plus {
 		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
 
 		// Add Co-Authors for comment notification
-		add_filter ( 'comment_notification_recipients', 'cap_notify_coauthors', 10, 2 );
+		add_filter ( 'comment_notification_recipients', array( $this, 'cap_notify_coauthors' ), 10, 2 );
 	}
 
 	/**
@@ -1538,52 +1538,49 @@ class CoAuthors_Plus {
 
 	}
 
+	/**
+	* Replace custom wp_notify_postauthor function by hooking to comment_notification_recipients filter. 
+	*  
+	* Whenever a comment is made on a post with co-authors, all co-authors will be notified via email * unless they are OP of comment or have no valid e-mail.
+	*
+	* @param array $emails List of email addresses to notify.
+	* @param int $comment_id Comment ID.
+	*
+	* @return array $emails The new list of email addresses to notify.
+	*/
+	function cap_notify_coauthors( $emails, $comment_id ) {
+		$comment = get_comment( $comment_id );
+		$post    = get_post( $comment->comment_post_ID );
+		$coauthors = get_coauthors( $post->ID );
+
+		foreach ( $coauthors as $author ) {
+			$email = is_email( $author->user_email );
+
+	 		// The comment was left by the co-author
+			if ( $comment->user_id == $author->ID ) {
+				continue;
+			}
+
+	 		// The co-author moderated a comment on their own post
+			if ( $author->ID == get_current_user_id() ) {
+				continue;
+			}
+
+	 		// If email is invalid for co-author
+			if ( false == $email ) {
+				continue;
+			}
+
+			$emails[] = $email;
+		}
+
+		return $emails;
+	}
+
 }
 
 global $coauthors_plus;
 $coauthors_plus = new CoAuthors_Plus();
-
-/**
-* Replace custom wp_notify_postauthor function by hooking to comment_notification_recipients filter. 
-*  
-* Whenever a comment is made on a post with co-authors, all co-authors will be notified via email unless
-* they are the OP of comment or have no e-mail.
-*
-* @param array $emails List of email addresses to notify.
-* @param int $comment_id Comment ID.
-*
-* @return array $emails The new list of email addresses to notify.
-*/
-
-if ( ! function_exists ( 'cap_notify_coauthors') ) :
- 	function cap_notify_coauthors( $emails, $comment_id ) {
- 		$comment = get_comment( $comment_id );
- 		$post    = get_post( $comment->comment_post_ID );
- 		$coauthors = get_coauthors( $post->ID );
-
- 		foreach ( $coauthors as $author ) {
-
- 			// The comment was left by the co-author
- 			if ( $comment->user_id == $author->ID ) {
- 				continue;
- 			}
-
- 			// The co-author moderated a comment on his own post
- 			if ( $author->ID == get_current_user_id() ) {
- 				continue;
- 			}
-
- 			// If there's no email to send the comment to
- 			if ( '' == $author->user_email ) {
- 				continue;
- 			}
-
- 			$emails[] = $author->user_email;
- 		}
-
- 		return $emails;
- 	}
-endif;
 
 /**
  * Filter array of moderation notification email addresses
