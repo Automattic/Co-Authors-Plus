@@ -14,8 +14,7 @@ function get_coauthors( $post_id = 0 ) {
 	}
 
 	if ( $post_id ) {
-		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy );
-
+		$coauthor_terms = cap_get_coauthor_terms_for_post( $post_id );
 		if ( is_array( $coauthor_terms ) && ! empty( $coauthor_terms ) ) {
 			foreach ( $coauthor_terms as $coauthor ) {
 				$coauthor_slug = preg_replace( '#^cap\-#', '', $coauthor->slug );
