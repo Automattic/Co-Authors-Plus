@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 4.7
+Tested up to: 4.7.3
 Requires at least: 4.1
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -56,6 +56,13 @@ Bug fixes and the ability to automatically add co-authors to your feeds.
 Bug fixes and minor enhancements
 
 == Changelog ==
+
+= 3.2.2 =
+* Fix broken author ordering in 4.7+ (props mslinnea)
+* Fix no moderation e-mail bug (props RobjS)
+* Cached functions in CLI commands (props jasonbahl)
+* Fix missing echos (props trepmal)
+* Add `coauthors_guest_author_query_args` filter (props trepmal)
 
 = 3.2.1 (May 16, 2016) =
 * Hotfix for broken Guest Author bio metabox (props JS Morisset)

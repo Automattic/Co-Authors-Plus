@@ -76,10 +76,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 				$count++;
 
-				$terms = get_the_terms( $single_post->ID, $coauthors_plus->coauthor_taxonomy );
-				
-				if ( is_wp_error( $terms ) ) {
-					WP_CLI::error( $terms->get_error_message() );
+				$terms = cap_get_coauthor_terms_for_post( $single_post->ID );
+				if ( empty( $terms ) ) {
+					WP_CLI::error( sprintf( 'No co-authors found for post #%d.', $single_post->ID ) );
 				}
 
 				if ( ! empty( $terms ) ) {
@@ -236,8 +235,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
 		$affected = 0;
 		foreach ( $posts as $post_id ) {
-			if ( $coauthors = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy ) ) {
-				WP_CLI::line( sprintf( __( 'Skipping - Post #%d already has co-authors assigned: %s', 'co-authors-plus' ), $post_id, implode( ', ', wp_list_pluck( $coauthors, 'slug' ) ) ) );
+			$coauthors = cap_get_coauthor_terms_for_post( $post_id );
+			if ( ! empty( $coauthors ) ) {
+				WP_CLI::line( sprintf(
+					__( 'Skipping - Post #%d already has co-authors assigned: %s', 'co-authors-plus' ),
+					$post_id,
+					implode( ', ', wp_list_pluck( $coauthors, 'slug' ) )
+				) );
 				continue;
 			}
 
@@ -545,8 +549,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		while ( $posts->post_count ) {
 
 			foreach ( $posts->posts as $single_post ) {
-				
-				$terms = get_the_terms( $single_post->ID, $coauthors_plus->coauthor_taxonomy );
+
+				$terms = cap_get_coauthor_terms_for_post( $single_post->ID );
 				if ( empty( $terms ) ) {
 					$saved = array(
 							$single_post->ID,
@@ -698,9 +702,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		WP_CLI::line( 'Found ' . count( $ids ) . ' revisions to look through' );
 		$affected = 0;
 		foreach ( $ids as $post_id ) {
-			
-			$terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy );
-			if ( ! $terms ) {
+
+			$terms = cap_get_coauthor_terms_for_post( $post_id );
+			if ( empty( $terms ) ) {
 				continue;
 			}
 
