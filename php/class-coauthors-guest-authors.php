@@ -91,7 +91,7 @@ class CoAuthors_Guest_Authors
 			'metabox_about' => __( 'About the guest author', 'co-authors-plus' ),
 		) );
 
-		// Register a post type to store our authors that aren't WP.com users
+		// Register a post type to store our guest authors 
 		$args = array(
 				'label' => $this->labels['singular'],
 				'labels' => array(
@@ -177,7 +177,7 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Handle the admin action to create a guest author based
-	 * on an existing WordPress user
+	 * on an existing user
 	 *
 	 * @since 3.0
 	 */
@@ -592,7 +592,7 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
-	 * Metabox to display all of the pertient names for a Guest Author without a user account
+	 * Metabox to display all of the pertient names for a Guest Author not linked to user account
 	 *
 	 * @since 3.0
 	 */
@@ -627,7 +627,8 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
-	 * Metabox to display all of the pertient contact details for a Guest Author without a user account
+	 * Metabox to display all of the pertient contact details for a Guest Author not linked to
+	 * user account
 	 *
 	 * @since 3.0
 	 */
