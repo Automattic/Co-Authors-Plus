@@ -207,7 +207,7 @@ class CoAuthors_Plus {
 		add_action( 'manage_posts_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
 		add_action( 'manage_pages_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
 
-		// Add quick-edit guest author select field
+		// Add quick-edit co-author select field
 		add_action( 'quick_edit_custom_box', array( $this, '_action_quick_edit_custom_box' ), 10, 2 );
 
 		// Hooks to modify the published post number count on the Users WP List Table
@@ -329,7 +329,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Callback for adding the custom 'authors' box
+	 * Callback for adding the custom 'Authors' box
 	 */
 	public function coauthors_meta_box( $post ) {
 		global $post, $coauthors_plus, $current_screen;
@@ -403,7 +403,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Removes the author dropdown from the post quick edit
+	 * Removes the default 'author' dropdown from quick edit
 	 */
 	function remove_quick_edit_authors_box() {
 		global $pagenow;
@@ -414,7 +414,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Add co-authors to author column on edit pages
+	 * Add co-authors to 'authors' column on edit pages
 	 *
 	 * @param array $post_columns
 	 */
@@ -526,7 +526,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * When we update the terms at all, we should update the published post count for each author and guest author
+	 * When we update the terms at all, we should update the published post count for each user
 	 */
 	function _update_users_posts_count( $tt_ids, $taxonomy ) {
 		global $wpdb;
@@ -670,7 +670,7 @@ class CoAuthors_Plus {
 			if ( $author_term = $this->get_author_term( $coauthor ) ) {
 				$terms[] = $author_term;
 			}
-			// If this coauthor has a linked account, we also need to get posts with those terms
+			// If this co-author has a linked account, we also need to get posts with those terms
 			if ( ! empty( $coauthor->linked_account ) ) {
 				$linked_account = get_user_by( 'login', $coauthor->linked_account );
 				if ( $guest_author_term = $this->get_author_term( $linked_account ) ) {
@@ -753,7 +753,7 @@ class CoAuthors_Plus {
 			}
 		}
 
-		// If for some reason we don't have the coauthors fields set
+		// If for some reason we don't have the co-authors fields set
 		if ( ! isset( $data['post_author'] ) ) {
 			$user = wp_get_current_user();
 			$data['post_author'] = $user->ID;
@@ -830,7 +830,7 @@ class CoAuthors_Plus {
 			$coauthors = array( $current_user->user_login );
 		}
 
-		// Set the coauthors
+		// Set the co-authors
 		$coauthors = array_unique( array_merge( $existing_coauthors, $coauthors ) );
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
@@ -866,9 +866,9 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Action taken when user is deleted.
-	 * - User term is removed from all associated posts
-	 * - Option to specify alternate user in place for each post
+	 * Action taken when co-author is deleted.
+	 * - Co-Author term is removed from all associated posts
+	 * - Option to specify alternate co-author in place for each post
 	 * @param delete_id
 	 */
 	function delete_user_action( $delete_id ) {
@@ -900,7 +900,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Restrict WordPress from blowing away author order when bulk editing terms
+	 * Restrict WordPress from blowing away co-author order when bulk editing terms
 	 *
 	 * @since 2.6
 	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
@@ -959,7 +959,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Checks to see if the current user can set authors or not
+	 * Checks to see if the current user can set co-authors or not
 	 */
 	function current_user_can_set_authors( $post = null ) {
 		global $typenow;
@@ -1065,7 +1065,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Main function that handles search-as-you-type for adding guest authors
+	 * Main function that handles search-as-you-type for adding co-authors
 	 */
 	public function ajax_suggest() {
 
@@ -1091,7 +1091,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Get matching guest authors based on a search value
+	 * Get matching co-authors based on a search value
 	 */
 	public function search_authors( $search = '', $ignored_authors = array() ) {
 
@@ -1482,9 +1482,9 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Retrieve a list of co-author terms for a single post.
+	 * Retrieve a list of author terms for a single post.
 	 *
-	 * Grabs a correctly ordered list of authors for a single post, appropriately
+	 * Grabs a correctly ordered list of co-authors for a single post, appropriately
 	 * cached because it requires `wp_get_object_terms()` to succeed.
 	 *
 	 * @param int $post_id ID of the post for which to retrieve co-authors.

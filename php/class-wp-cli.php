@@ -115,7 +115,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Subcommand to assign coauthors to a post based on a given meta key
+	 * Subcommand to assign co-authors to a post based on a given meta key
 	 *
 	 * @since 3.0
 	 *
@@ -408,8 +408,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Swap one Co Author with another on all posts for which they are an author. Unlike rename-coauthor,
-	 * this leaves the original Co Author term intact and works when the 'to' user already has a co-author term.
+	 * Swap one co-author with another on all posts for which they are a co-author. Unlike rename-coauthor,
+	 * this leaves the original co-author term intact and works when the 'to' user already has a co-author term.
 	 *
 	 * @subcommand swap-coauthors
 	 * @synopsis --from=<user-login> --to=<user-login> [--post_type=<ptype>] [--dry=<dry>]
@@ -611,7 +611,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Update the post count and description for each author
+	 * Update the post count and description for each author and guest author
 	 *
 	 * @since 3.0
 	 *
