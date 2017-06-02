@@ -293,11 +293,9 @@ class CoAuthors_Plus {
 	public function is_post_type_enabled( $post_type = null ) {
 
 		if ( ! $post_type ) {
-			if ( is_admin() ) {
+			$post_type = get_post_type();
+			if ( is_admin() && ! $post_type) {
 				$post_type = get_current_screen()->post_type;
-			}
-			else {
-				$post_type = get_post_type();
 			}
 		}
 
