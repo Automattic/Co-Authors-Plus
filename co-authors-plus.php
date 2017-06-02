@@ -174,7 +174,7 @@ class CoAuthors_Plus {
 
 		$post_types_with_authors = array_values( get_post_types() );
 		foreach ( $post_types_with_authors as $key => $name ) {
-			if ( ! post_type_supports( $name, 'author' ) || in_array( $name, array( 'revision', 'attachment' ) ) ) {
+			if ( ! post_type_supports( $name, $this->coauthor_taxonomy ) || in_array( $name, array( 'revision', 'attachment' ) ) ) {
 				unset( $post_types_with_authors[ $key ] );
 			}
 		}
@@ -401,7 +401,7 @@ class CoAuthors_Plus {
 		global $pagenow;
 
 		if ( 'edit.php' == $pagenow && $this->is_post_type_enabled() ) {
-			remove_post_type_support( get_post_type(), 'author' );
+			remove_post_type_support( get_post_type(), $this->coauthor_taxonomy );
 		}
 	}
 
@@ -423,7 +423,7 @@ class CoAuthors_Plus {
 				$new_columns['coauthors'] = __( 'Authors', 'co-authors-plus' );
 			}
 
-			if ( 'author' === $key ) {
+			if ( $this->coauthor_taxonomy === $key ) {
 				unset( $new_columns[ $key ] );
 			}
 		}
@@ -649,7 +649,7 @@ class CoAuthors_Plus {
 			if ( $query->get( 'author_name' ) ) {
 				$author_name = sanitize_title( $query->get( 'author_name' ) );
 			} else {
-				$author_data = get_userdata( $query->get( 'author' ) );
+				$author_data = get_userdata( $query->get( $this->coauthor_taxonomy ) );
 				if ( is_object( $author_data ) ) {
 					$author_name = $author_data->user_nicename;
 				} else {
@@ -898,8 +898,7 @@ class CoAuthors_Plus {
 	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
 	 */
 	function filter_wp_get_object_terms( $terms, $object_ids, $taxonomies, $args ) {
-
-		if ( ! isset( $_REQUEST['bulk_edit'] ) || "'author'" !== $taxonomies ) {
+		if ( ! isset( $_REQUEST['bulk_edit'] ) || $this->coauthor_taxonomy !== $taxonomies ) {
 			return $terms;
 		}
 
@@ -1048,7 +1047,7 @@ class CoAuthors_Plus {
 		$author = get_queried_object();
 
 		if ( $author && 'guest-author' == $author->type ) {
-			unset( $settings['query_args']['author'] );
+			unset( $settings['query_args'][$this->coauthor_taxonomy] );
 
 			$settings['query_args']['author_name'] = $author->user_nicename;
 		}
@@ -1397,19 +1396,19 @@ class CoAuthors_Plus {
 	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
 
 		// Don't add the author row again if another plugin has removed
-		if ( ! array_key_exists( 'author', $information_fields ) ) {
+		if ( ! array_key_exists( $this->coauthor_taxonomy, $information_fields ) ) {
 			return $information_fields;
 		}
 
 		$co_authors = get_coauthors( $post_id );
 		if ( count( $co_authors ) > 1 ) {
-			$information_fields['author']['label'] = __( 'Authors', 'co-authors-plus' );
+			$information_fields[$this->coauthor_taxonomy]['label'] = __( 'Authors', 'co-authors-plus' );
 		}
 		$co_authors_names = '';
 		foreach ( $co_authors as $co_author ) {
 			$co_authors_names .= $co_author->display_name . ', ';
 		}
-		$information_fields['author']['value'] = rtrim( $co_authors_names, ', ' );
+		$information_fields[$this->coauthor_taxonomy]['value'] = rtrim( $co_authors_names, ', ' );
 		return $information_fields;
 	}
 
@@ -1426,7 +1425,7 @@ class CoAuthors_Plus {
 	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
 
 		// We only want to modify the 'author' column
-		if ( 'author' != $column_name ) {
+		if ( $this->coauthor_taxonomy != $column_name ) {
 			return $column_name;
 		}
 
