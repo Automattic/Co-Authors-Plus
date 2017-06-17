@@ -248,8 +248,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$coauthors_plus->add_coauthors( $post_id, array( $coauthor->user_login ) );
 			WP_CLI::line( sprintf( __( "Updating - Adding %s's byline to post #%d", 'co-authors-plus' ), $coauthor->user_login, $post_id ) );
 			$affected++;
-			if ( $affected && 0 === $affected % 20 ) {
-				sleep( 5 );
+			if ( $affected && 0 === $affected % 100 ) {
+				sleep( 2 );
 			}
 		}
 		WP_CLI::success( sprintf( __( 'All done! %d posts were affected.', 'co-authors-plus' ), $affected ) );
