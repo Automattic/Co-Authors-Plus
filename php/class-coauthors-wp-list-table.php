@@ -137,10 +137,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Either there are no guest authors, or the search doesn't match any
+	 * Either there are no co-authors, or the search doesn't match any
 	 */
 	function no_items() {
-		esc_html_e( 'No matching guest authors were found.', 'co-authors-plus' );
+		esc_html_e( 'No matching co-authors were found.', 'co-authors-plus' );
 	}
 
 	/**
