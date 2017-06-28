@@ -36,6 +36,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			} else {
 				$created++;
 			}
+			WP_CLI::line( '# Processed ' . ( $created + $skipped ) . ' out of ' . count( $users ) . ' users.' );
+			$percent = number_format( ( ( $created + $skipped ) / count( $users ) * 100 ), 2 );
+			WP_CLI::line( "--- {$percent}% complete!" );
 		}
 
 		WP_CLI::line( 'All done! Here are your results:' );
