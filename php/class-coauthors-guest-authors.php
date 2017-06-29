@@ -498,7 +498,7 @@ class CoAuthors_Guest_Authors
 			wp_nonce_field( 'delete-guest-author' );
 			echo '<input type="hidden" id="id" name="id" value="' . esc_attr( (int) $_GET['id'] ) . '" />';
 			echo '<fieldset><ul style="list-style-type:none;">';
-			// show delete options if posts are > 0
+			// only show delete options if post count > 0
 			if ( $count > 0 ) {
 				// Reassign to another user
 				echo '<li class="hide-if-no-js"><label for="reassign-another">';
@@ -520,6 +520,7 @@ class CoAuthors_Guest_Authors
 				echo '<input type="hidden" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" checked="checked" />';
 			}
 			echo '</ul></fieldset>';
+			// disable disabled submit button for 0 post count
 			if ( 0 === $count ) {
 				submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true );
 			}
