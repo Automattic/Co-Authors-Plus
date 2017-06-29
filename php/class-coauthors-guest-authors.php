@@ -477,28 +477,30 @@ class CoAuthors_Guest_Authors
 			echo '<h2>' . esc_html( sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) ) . '</h2>';
 			echo '<p>' . esc_html(  sprintf( __( 'You have specified this %s for deletion:', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';
-
-			if ( $count === 0 ) {
-				$post_count_message = '<p>' . esc_html(  sprintf( __( 'There are %d posts associated with this guest author.', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) ) . '</p>';
-			}
-			else if ( $count === 1 ) {
-				$post_count_message = '<p>' . esc_html(  sprintf( __( 'There is %d post associated with this guest author. What should be done with the post assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) ) . '</p>';
+			// display wording differently per post count
+			if ( 0 === $count ) {
+				$post_count_message = '<p>' . esc_html(  sprintf( __( 'There are no posts associated with this guest author.', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
 			}
 			else {
-				$post_count_message = '<p>' . esc_html(  sprintf( __( 'There are %d posts associated with this guest author. What should be done with the posts assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) ) . '</p>';
+				$note = '<p class="description">' . esc_html( sprintf( __( "Note: If you'd like to delete the %s and all of their posts, you should delete their posts first and then come back to delete the %s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
+				if ( 1 === $count ) {
+					$post_count_message = '<p>' . esc_html(  sprintf( __( 'There is %d post associated with this guest author. What should be done with the post assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) ) . '</p>';
+				}
+				else {
+					$post_count_message = '<p>' . esc_html(  sprintf( __( 'There are %d posts associated with this guest author. What should be done with the posts assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) ) . '</p>';
+				}
+				$post_count_message .= $note;
 			}
 			echo $post_count_message;
-			if ( $count > 0 ) {
-				echo '<p class="description">' . esc_html( sprintf( __( "Note: If you'd like to delete the %s and all of their posts, you should delete their posts first and then come back to delete the %s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
-			}
 			echo '<form method="POST" action="' . esc_url( add_query_arg( 'page', 'view-guest-authors', admin_url( $this->parent_page ) ) ) . '">';
 			// Hidden stuffs
 			echo '<input type="hidden" name="action" value="delete-guest-author" />';
 			wp_nonce_field( 'delete-guest-author' );
 			echo '<input type="hidden" id="id" name="id" value="' . esc_attr( (int) $_GET['id'] ) . '" />';
 			echo '<fieldset><ul style="list-style-type:none;">';
-			// Reassign to another user
+			// show delete options if posts are > 0
 			if ( $count > 0 ) {
+				// Reassign to another user
 				echo '<li class="hide-if-no-js"><label for="reassign-another">';
 				echo '<input type="radio" id="reassign-another" name="reassign" class="reassign-option" value="reassign-another" />&nbsp;&nbsp;' . esc_html__( 'Reassign to another co-author:', 'co-authors-plus' ) . '&nbsp;&nbsp;</label>';
 				echo '<input type="hidden" id="leave-assigned-to" name="leave-assigned-to" style="width:200px;" />';
@@ -506,17 +508,19 @@ class CoAuthors_Guest_Authors
 				// Leave mapped to a linked account
 				if ( get_user_by( 'login', $guest_author->linked_account ) ) {
 					echo '<li><label for="leave-assigned">';
-					echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account ) );
+					echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ) ), $guest_author->linked_account );
 					echo '</label></li>';
 				}
 				// Remove bylines from the posts
-				echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline"/>&nbsp;&nbsp;' . esc_html__( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
+				echo '<li><label for="remove-byline">';
+				echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" />&nbsp;&nbsp;' . esc_html__( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
+				echo '</label></li>';
 			}
 			else {
-				echo '<input type="hidden" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" checked="checked"/>';
+				echo '<input type="hidden" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" checked="checked" />';
 			}
 			echo '</ul></fieldset>';
-			if ( $count === 0 ) {
+			if ( 0 === $count ) {
 				submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true );
 			}
 			else {
