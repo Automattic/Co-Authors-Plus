@@ -28,6 +28,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$users = get_users();
 		$created = 0;
 		$skipped = 0;
+		$progress = \WP_CLI\Utils\make_progress_bar( 'Processing guest authors...', count ( $users ) );
 		foreach ( $users as $user ) {
 
 			$result = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $user->ID );
@@ -36,15 +37,12 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			} else {
 				$created++;
 			}
-			WP_CLI::line( '# Processed ' . ( $created + $skipped ) . ' out of ' . count( $users ) . ' users.' );
-			$percent = number_format( ( ( $created + $skipped ) / count( $users ) * 100 ), 2 );
-			WP_CLI::line( "--- {$percent}% complete!" );
+			$progress->tick();
 		}
-
+		$progress->finish();
 		WP_CLI::line( 'All done! Here are your results:' );
 		WP_CLI::line( "- {$created} guest author profiles were created" );
 		WP_CLI::line( "- {$skipped} users already had guest author profiles" );
-
 	}
 
 	/**
