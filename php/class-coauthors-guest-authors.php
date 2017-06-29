@@ -484,7 +484,7 @@ class CoAuthors_Guest_Authors
 			// Leave mapped to a linked account
 			if ( get_user_by( 'login', $guest_author->linked_account ) ) {
 				echo '<li><label for="leave-assigned">';
-				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ) ), $guest_author->linked_account );
+				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account ) );
 				echo '</label></li>';
 			}
 			// Remove bylines from the posts
