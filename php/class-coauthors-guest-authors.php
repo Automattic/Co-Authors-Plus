@@ -89,6 +89,10 @@ class CoAuthors_Guest_Authors
 			'not_found_in_trash' => __( 'No guest authors found in Trash', 'co-authors-plus' ),
 			'update_item' => __( 'Update Guest Author', 'co-authors-plus' ),
 			'metabox_about' => __( 'About the guest author', 'co-authors-plus' ),
+			'featured_image' => __( 'Avatar', 'co-authors-plus' ),
+			'set_featured_image' => __( 'Set Avatar', 'co-authors-plus' ),
+			'use_featured_image' => __( 'Use Avatar', 'co-authors-plus' ),
+			'remove_featured_image' => __( 'Remove Avatar', 'co-authors-plus' ),
 		) );
 
 		// Register a post type to store our guest authors 
@@ -106,6 +110,10 @@ class CoAuthors_Guest_Authors
 						'search_items' => $this->labels['search_items'],
 						'not_found' => $this->labels['not_found'],
 						'not_found_in_trash' => $this->labels['not_found_in_trash'],
+						'featured_image' => $this->labels['featured_image'],
+						'set_featured_image' => $this->labels['set_featured_image'],
+						'use_featured_image' => $this->labels['use_featured_image'],
+						'remove_featured_image' => $this->labels['remove_featured_image']
 					),
 				'public' => true,
 				'publicly_queryable' => false,
