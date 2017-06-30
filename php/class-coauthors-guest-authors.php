@@ -123,17 +123,7 @@ class CoAuthors_Guest_Authors
 		register_post_type( $this->post_type, $args );
 
 		// Some of the common sizes used by get_avatar
-		$this->avatar_sizes = array(
-				32,
-				50,
-				64,
-				96,
-				128,
-			);
-		$this->avatar_sizes = apply_filters( 'coauthors_guest_author_avatar_sizes', $this->avatar_sizes );
-		foreach ( $this->avatar_sizes as $size ) {
-			add_image_size( 'guest-author-' . $size, $size, $size, true );
-		}
+		$this->avatar_sizes = array();
 
 		// Hacky way to remove the title and the editor
 		remove_post_type_support( $this->post_type, 'title' );
@@ -932,11 +922,8 @@ class CoAuthors_Guest_Authors
 		$args = array(
 				'class' => "avatar avatar-{$size} photo",
 			);
-		if ( in_array( $size, $this->avatar_sizes ) ) {
-			$size = 'guest-author-' . $size;
-		} else {
-			$size = array( $size, $size );
-		}
+
+		$size = array( $size, $size );
 
 		$thumbnail = get_the_post_thumbnail( $guest_author->ID, $size, $args );
 
