@@ -448,6 +448,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 		'style'            => 'list',
 		'html'             => true,
 		'number'           => 20, // A sane limit to start to avoid breaking all the things
+		'guest_authors_only' => false
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -472,6 +473,17 @@ function coauthors_wp_list_authors( $args = array() ) {
 	}
 
 	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
+	
+	// only show guest authors if the $args is set to true
+	if ( $args['guest_authors_only'] ) {
+		$guest_authors = [];
+		foreach ( $authors as $author ) {
+			if ( $author->type === 'guest-author' ) {
+				$guest_authors[] = $author;
+			}
+		}
+		$authors = $guest_authors;
+	}
 
 	foreach ( (array) $authors as $author ) {
 
