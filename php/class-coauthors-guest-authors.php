@@ -479,19 +479,24 @@ class CoAuthors_Guest_Authors
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';
 			// display wording differently per post count
 			if ( 0 === $count ) {
-				$post_count_message = '<p>' . esc_html(  sprintf( __( 'There are no posts associated with this guest author.', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
+				$post_count_message = '<p>' . sprintf( __( 'There are no posts associated with this guest author.', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) . '</p>';
 			}
 			else {
-				$note = '<p class="description">' . esc_html( sprintf( __( "Note: If you'd like to delete the %s and all of their posts, you should delete their posts first and then come back to delete the %s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
+				$note = '<p class="description">' . sprintf( __( "Note: If you'd like to delete the %s and all of their posts, you should delete their posts first and then come back to delete the %s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) . '</p>';
 				if ( 1 === $count ) {
-					$post_count_message = '<p>' . esc_html(  sprintf( __( 'There is %d post associated with this guest author. What should be done with the post assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) ) . '</p>';
+					$post_count_message = '<p>' . sprintf( __( 'There is %d post associated with this guest author. What should be done with the post assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
 				}
 				else {
-					$post_count_message = '<p>' . esc_html(  sprintf( __( 'There are %d posts associated with this guest author. What should be done with the posts assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) ) . '</p>';
+					$post_count_message = '<p>' . sprintf( __( 'There are %d posts associated with this guest author. What should be done with the posts assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
 				}
 				$post_count_message .= $note;
 			}
-			echo $post_count_message;
+			$allowed_html = array(  
+				'p' => array( 
+					'class' => array(), 
+				),
+			);
+			echo wp_kses( $post_count_message, $allowed_html );
 			echo '<form method="POST" action="' . esc_url( add_query_arg( 'page', 'view-guest-authors', admin_url( $this->parent_page ) ) ) . '">';
 			// Hidden stuffs
 			echo '<input type="hidden" name="action" value="delete-guest-author" />';
