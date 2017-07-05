@@ -22,41 +22,27 @@ This plugin is an almost complete rewrite of the Co-Authors plugin originally de
 
 * How do I add Co-Authors Plus support to my theme?
 
-> If you've just installed Co-Authors Plus, you might notice that the bylines are being added in the backend but aren't appearing on the frontend. You'll need to [add the template tags to your theme](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) before the bylines will appear.
+If you've just installed Co-Authors Plus, you might notice that the bylines are being added in the backend but aren't appearing on the frontend. You'll need to [add the template tags to your theme](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) before the bylines will appear.
 
-* What happens to posts and pages when I delete a user assigned to a post or page as a coauthor? =
+* What happens to posts and pages when I delete a user assigned to a post or page as a coauthor?
 
-> When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
+When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
-* Can I use Co-Authors Plus with WordPress multisite? =
+* Can I use Co-Authors Plus with WordPress multisite? 
 
-> Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
+Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
 
 * Who needs permission to do what? 
 
-> To assign co-authors to posts, a WordPress user will need the `edit_others_posts` capability. This is typically granted to the Editor role, but can be altered with the `coauthors_plus_edit_authors` filter.
+To assign co-authors to posts, a WordPress user will need the `edit_others_posts` capability. This is typically granted to the Editor role, but can be altered with the `coauthors_plus_edit_authors` filter.
 
-> To create new guest author profiles, a WordPress will need the `list_users` capability. This is typically granted to the Administrator role, but can be altered with the `coauthors_guest_author_manage_cap` filter.
+To create new guest author profiles, a WordPress will need the `list_users` capability. This is typically granted to the Administrator role, but can be altered with the `coauthors_guest_author_manage_cap` filter.
 
 * Can I easily create a list of all co-authors? 
 
-> Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
+Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
 
-## Upgrade Notice
-
-**3.1**
-Manage co-authors from quick edit, Jetpack Open Graph support, bug fixes.
-
-**3.0.7**
-Support for symlink installations, updated French translation, bug fixes.
-
-**3.0.4**
-Bug fixes and the ability to automatically add co-authors to your feeds.
-
-**3.0.1**
-Bug fixes and minor enhancements
-
-### Changelog ###
+## Changelog ##
 
 **3.2.2**
 * Fix broken author ordering in 4.7+ (props mslinnea)
