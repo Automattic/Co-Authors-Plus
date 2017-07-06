@@ -1026,10 +1026,10 @@ class CoAuthors_Plus {
 			$term = $this->get_author_term( $authordata );
 		}
 
-		if ( ( is_object( $authordata ) )
-			|| ( ! empty( $term ) && $term->count ) ) {
+		if ( is_object( $authordata ) || ! empty( $term ) ) {
 			$wp_query->queried_object = $authordata;
 			$wp_query->queried_object_id = $authordata->ID;
+			add_filter( 'pre_handle_404', '__return_true' );
 		} else {
 			$wp_query->queried_object = $wp_query->queried_object_id = null;
 			$wp_query->is_author = $wp_query->is_archive = false;
