@@ -128,6 +128,9 @@ class CoAuthors_Plus {
 		add_action( 'save_post', array( $this, 'clear_cache') );
 		add_action( 'delete_post', array( $this, 'clear_cache') );
 		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
+
+		// Change Author Archive header to plural
+		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 2 );
 	}
 
 	/**
@@ -1541,6 +1544,15 @@ class CoAuthors_Plus {
 
 	}
 
+	/**
+	 * Filter of the header of author archive pages to correctly display author.
+	 */
+	public function filter_author_archive_title() {
+		if ( is_author() ) {
+			$author = sanitize_user( get_query_var( 'author_name' ) );
+			return "Author: ". $author;
+		}
+	}
 }
 
 global $coauthors_plus;
