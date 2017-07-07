@@ -129,7 +129,7 @@ class CoAuthors_Plus {
 		add_action( 'delete_post', array( $this, 'clear_cache') );
 		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
 
-		// Change Author Archive header to plural
+		// Filter to correct author on author archive page
 		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 2 );
 	}
 
