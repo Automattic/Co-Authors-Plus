@@ -389,7 +389,7 @@ function coauthors_links_single( $author ) {
 	}
 	else {
 		if ( get_the_author_meta( 'url' ) ) {
-			return sprintf( '<a href="%s" title="%s" rel="external">%s</a>',
+			return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
 				get_the_author_meta( 'url' ),
 				esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), get_the_author() ) ),
 				get_the_author()
