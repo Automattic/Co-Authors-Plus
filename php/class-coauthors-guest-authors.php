@@ -201,6 +201,8 @@ class CoAuthors_Guest_Authors
 			wp_die( esc_html( $post_id->get_error_message() ) );
 		}
 
+		do_action( 'cap_guest_author_create' );
+
 		// Redirect to the edit Guest Author screen
 		$edit_link = get_edit_post_link( $post_id, 'redirect' );
 		$redirect_to = add_query_arg( 'message', 'guest-author-created', $edit_link );
@@ -271,6 +273,8 @@ class CoAuthors_Guest_Authors
 			$args['message'] = 'delete-error';
 		} else {
 			$args['message'] = 'guest-author-deleted';
+
+			do_action( 'cap_guest_author_del' );
 		}
 
 		// Redirect to safety
