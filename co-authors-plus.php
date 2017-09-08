@@ -886,7 +886,7 @@ class CoAuthors_Plus {
 
 				if ( $post_ids ) {
 					foreach ( $post_ids as $post_id ) {
-						$this->add_coauthors( $post_id, array( $reassign_user->user_login ), true );
+						$this->add_coauthors( $post_id, array( $reassign_user->user_nicename ), true );
 					}
 				}
 			}
