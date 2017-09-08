@@ -1026,10 +1026,10 @@ class CoAuthors_Plus {
 			$term = $this->get_author_term( $authordata );
 		}
 
-		if ( ( is_object( $authordata ) )
-			|| ( ! empty( $term ) && $term->count ) ) {
+		if ( is_object( $authordata ) || ! empty( $term ) ) {
 			$wp_query->queried_object = $authordata;
 			$wp_query->queried_object_id = $authordata->ID;
+			add_filter( 'pre_handle_404', '__return_true' );
 		} else {
 			$wp_query->queried_object = $wp_query->queried_object_id = null;
 			$wp_query->is_author = $wp_query->is_archive = false;
@@ -1344,11 +1344,20 @@ class CoAuthors_Plus {
 		if ( false !== ( $term = wp_cache_get( $cache_key, 'co-authors-plus' ) ) ) {
 			return $term;
 		}
-
-		// See if the prefixed term is available, otherwise default to just the nicename
-		$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
-		if ( ! $term ) {
-			$term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy );
+		
+		// use linked user for accurate post count
+		if ( ! empty ( $coauthor->linked_account ) ) {
+			$term = get_term_by( 'slug', 'cap-' . $coauthor->linked_account, $this->coauthor_taxonomy );
+			if ( ! $term ) {
+				$term = get_term_by( 'slug', $coauthor->linked_account, $this->coauthor_taxonomy );
+			}
+		}
+		else {
+			// See if the prefixed term is available, otherwise default to just the nicename
+			$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
+			if ( ! $term ) {
+				$term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy );
+			}
 		}
 		wp_cache_set( $cache_key, $term, 'co-authors-plus' );
 		return $term;
