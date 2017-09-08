@@ -794,7 +794,7 @@ class CoAuthors_Plus {
 			if ( ! $this->has_author_terms( $post_id ) ) {
 				$user = get_userdata( $post->post_author );
 				if ( $user ) {
-					$this->add_coauthors( $post_id, array( $user->user_login ) );
+					$this->add_coauthors( $post_id, array( $user->user_nicename ) );
 				}
 			}
 		}
