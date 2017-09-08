@@ -89,6 +89,10 @@ class CoAuthors_Guest_Authors
 			'not_found_in_trash' => __( 'No guest authors found in Trash', 'co-authors-plus' ),
 			'update_item' => __( 'Update Guest Author', 'co-authors-plus' ),
 			'metabox_about' => __( 'About the guest author', 'co-authors-plus' ),
+			'featured_image' => __( 'Avatar', 'co-authors-plus' ),
+			'set_featured_image' => __( 'Set Avatar', 'co-authors-plus' ),
+			'use_featured_image' => __( 'Use Avatar', 'co-authors-plus' ),
+			'remove_featured_image' => __( 'Remove Avatar', 'co-authors-plus' ),
 		) );
 
 		// Register a post type to store our guest authors 
@@ -106,6 +110,10 @@ class CoAuthors_Guest_Authors
 						'search_items' => $this->labels['search_items'],
 						'not_found' => $this->labels['not_found'],
 						'not_found_in_trash' => $this->labels['not_found_in_trash'],
+						'featured_image' => $this->labels['featured_image'],
+						'set_featured_image' => $this->labels['set_featured_image'],
+						'use_featured_image' => $this->labels['use_featured_image'],
+						'remove_featured_image' => $this->labels['remove_featured_image']
 					),
 				'public' => true,
 				'publicly_queryable' => false,
@@ -123,17 +131,7 @@ class CoAuthors_Guest_Authors
 		register_post_type( $this->post_type, $args );
 
 		// Some of the common sizes used by get_avatar
-		$this->avatar_sizes = array(
-				32,
-				50,
-				64,
-				96,
-				128,
-			);
-		$this->avatar_sizes = apply_filters( 'coauthors_guest_author_avatar_sizes', $this->avatar_sizes );
-		foreach ( $this->avatar_sizes as $size ) {
-			add_image_size( 'guest-author-' . $size, $size, $size, true );
-		}
+		$this->avatar_sizes = array();
 
 		// Hacky way to remove the title and the editor
 		remove_post_type_support( $this->post_type, 'title' );
@@ -202,6 +200,8 @@ class CoAuthors_Guest_Authors
 		if ( is_wp_error( $post_id ) ) {
 			wp_die( esc_html( $post_id->get_error_message() ) );
 		}
+
+		do_action( 'cap_guest_author_create' );
 
 		// Redirect to the edit Guest Author screen
 		$edit_link = get_edit_post_link( $post_id, 'redirect' );
@@ -273,6 +273,8 @@ class CoAuthors_Guest_Authors
 			$args['message'] = 'delete-error';
 		} else {
 			$args['message'] = 'guest-author-deleted';
+
+			do_action( 'cap_guest_author_del' );
 		}
 
 		// Redirect to safety
@@ -484,7 +486,7 @@ class CoAuthors_Guest_Authors
 			// Leave mapped to a linked account
 			if ( get_user_by( 'login', $guest_author->linked_account ) ) {
 				echo '<li><label for="leave-assigned">';
-				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ) ), $guest_author->linked_account );
+				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account ) );
 				echo '</label></li>';
 			}
 			// Remove bylines from the posts
@@ -932,11 +934,8 @@ class CoAuthors_Guest_Authors
 		$args = array(
 				'class' => "avatar avatar-{$size} photo",
 			);
-		if ( in_array( $size, $this->avatar_sizes ) ) {
-			$size = 'guest-author-' . $size;
-		} else {
-			$size = array( $size, $size );
-		}
+
+		$size = array( $size, $size );
 
 		$thumbnail = get_the_post_thumbnail( $guest_author->ID, $size, $args );
 
