@@ -128,6 +128,9 @@ class CoAuthors_Plus {
 		add_action( 'save_post', array( $this, 'clear_cache') );
 		add_action( 'delete_post', array( $this, 'clear_cache') );
 		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
+
+		// Filter to correct author on author archive page
+		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 2 );
 	}
 
 	/**
@@ -794,7 +797,7 @@ class CoAuthors_Plus {
 			if ( ! $this->has_author_terms( $post_id ) ) {
 				$user = get_userdata( $post->post_author );
 				if ( $user ) {
-					$this->add_coauthors( $post_id, array( $user->user_login ) );
+					$this->add_coauthors( $post_id, array( $user->user_nicename ) );
 				}
 			}
 		}
@@ -886,7 +889,7 @@ class CoAuthors_Plus {
 
 				if ( $post_ids ) {
 					foreach ( $post_ids as $post_id ) {
-						$this->add_coauthors( $post_id, array( $reassign_user->user_login ), true );
+						$this->add_coauthors( $post_id, array( $reassign_user->user_nicename ), true );
 					}
 				}
 			}
@@ -896,6 +899,17 @@ class CoAuthors_Plus {
 		if ( is_object( $delete_user ) ) {
 			// Delete term
 			wp_delete_term( $delete_user->user_login, $this->coauthor_taxonomy );
+		}
+
+		// Get the deleted user data by user id.
+		$user_data = get_user_by( 'id', $delete_id );
+
+		// Get the associated user.
+		$associated_user = $this->guest_authors->get_guest_author_by( 'linked_account', $user_data->data->user_login );
+
+		if ( isset( $associated_user->ID ) ) {
+			// Delete associated guest user.
+			$this->guest_authors->delete( $associated_user->ID );
 		}
 	}
 
@@ -1080,6 +1094,9 @@ class CoAuthors_Plus {
 		$ignore = array_map( 'sanitize_text_field', explode( ',', $_REQUEST['existing_authors'] ) );
 
 		$authors = $this->search_authors( $search, $ignore );
+
+		// Return message if no authors found
+		if( empty( $authors ) ) echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.');
 
 		foreach ( $authors as $author ) {
 			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename ) . "\n";
@@ -1550,6 +1567,15 @@ class CoAuthors_Plus {
 
 	}
 
+	/**
+	 * Filter of the header of author archive pages to correctly display author.
+	 */
+	public function filter_author_archive_title() {
+		if ( is_author() ) {
+			$author = sanitize_user( get_query_var( 'author_name' ) );
+			return "Author: ". $author;
+		}
+	}
 }
 
 global $coauthors_plus;
