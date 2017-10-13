@@ -88,6 +88,7 @@
 				}
 	#coauthors-loading {
 		margin: 10px 0px 5px 10px;
+		float: left;
 	}
 
 #coauthors-readonly {

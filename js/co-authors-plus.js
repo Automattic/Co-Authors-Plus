@@ -337,7 +337,7 @@ jQuery( document ).ready(function () {
 		var newCO = coauthors_create_autosuggest( '', false );
 		coauthors_add_to_table( newCO );
 
-		$coauthors_loading = jQuery( '#ajax-loading' ).clone().attr( 'id', 'coauthors-loading' );
+		$coauthors_loading = jQuery( '#publishing-action .spinner' ).clone().attr( 'id', 'coauthors-loading' );
 		move_loading( newCO );
 
 
