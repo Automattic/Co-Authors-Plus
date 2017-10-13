@@ -475,6 +475,12 @@ function coauthors_wp_list_authors( $args = array() ) {
 
 	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
 
+	// remove duplicates from linked accounts
+	$linked_accounts = array_unique( array_column( $authors, 'linked_account' ) );
+	foreach ( $linked_accounts as $linked_account ) {
+		unset( $authors[$linked_account] );
+	}
+
 	foreach ( (array) $authors as $author ) {
 
 		$link = '';
