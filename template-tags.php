@@ -440,16 +440,17 @@ function coauthors_wp_list_authors( $args = array() ) {
 	global $coauthors_plus;
 
 	$defaults = array(
-		'optioncount'      => false,
-		'show_fullname'    => false,
-		'hide_empty'       => true,
-		'feed'             => '',
-		'feed_image'       => '',
-		'feed_type'        => '',
-		'echo'             => true,
-		'style'            => 'list',
-		'html'             => true,
-		'number'           => 20, // A sane limit to start to avoid breaking all the things
+		'optioncount'        => false,
+		'show_fullname'      => false,
+		'hide_empty'         => true,
+		'feed'               => '',
+		'feed_image'         => '',
+		'feed_type'          => '',
+		'echo'               => true,
+		'style'              => 'list',
+		'html'               => true,
+		'number'           	 => 20, // A sane limit to start to avoid breaking all the things
+		'guest_authors_only' => false
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -461,6 +462,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 			'number'       => (int) $args['number'],
 		);
 	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
+
 	$authors = array();
 	foreach ( $author_terms as $author_term ) {
 		// Something's wrong in the state of Denmark
@@ -470,7 +472,13 @@ function coauthors_wp_list_authors( $args = array() ) {
 
 		$authors[ $author_term->name ] = $coauthor;
 
-		$authors[ $author_term->name ]->post_count = $author_term->count;
+		// only show guest authors if the $args is set to true
+		if ( ! $args['guest_authors_only'] ||  $authors[ $author_term->name ]->type === 'guest-author' ) {
+			$authors[ $author_term->name ]->post_count = $author_term->count;
+		}
+		else {
+			unset( $authors[ $author_term->name ] );
+		}
 	}
 
 	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
