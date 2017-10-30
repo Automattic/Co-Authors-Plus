@@ -42,6 +42,22 @@ To create new guest author profiles, a WordPress will need the `list_users` capa
 
 Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
 
+* I have a large database, will this make it slow?
+
+If the site has a large database, you may run into issues with heavier than usual queries. You can work around this by disabling compat mode and force it to use simpler, tax-only queries by adding the following to your theme:
+
+```
+// Use simple tax queries for CAP to improve performance
+add_filter( 'coauthors_plus_should_query_post_author', '__return_false' );
+```
+
+Note that this requires the site(s) to have proper terms set up for all users. You can do this with the following wp-cli command:
+
+```
+# This is pretty long-running and can be expensive; be careful!
+$ wp --url=example.com co-authors-plus create-terms-for-posts
+```
+
 ## Changelog ##
 
 **3.2.2**
