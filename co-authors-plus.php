@@ -963,13 +963,13 @@ class CoAuthors_Plus {
 		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
 		$term = $this->get_author_term( $user );
-		$guest_count = get_term_by( 'slug', 'cap-' . $user->user_nicename, $this->coauthor_taxonomy );
+		$guest_term = get_term_by( 'slug', 'cap-' . $user->user_nicename, $this->coauthor_taxonomy );
 		// Only modify the count if it has a linked account with posts or the author exists as a term
-		if ( $user->linked_account && $guest_count->count ) {
-			if ( $term ) {
-				$count = $guest_count->count + $term->count;
+		if ( $user->linked_account && $guest_term->count ) {
+			if ( $term && ! is_wp_error( $term )) {
+				$count = $guest_term->count + $term->count;
 			} else {
-				$count = $guest_count->count;
+				$count = $guest_term->count;
 			}
 		} elseif ( $term && ! is_wp_error( $term ) ) {
 			$count = $term->count;
