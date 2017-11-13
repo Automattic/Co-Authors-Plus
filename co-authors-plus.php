@@ -732,7 +732,7 @@ class CoAuthors_Plus {
 	function coauthors_set_post_author_field( $data, $postarr ) {
 
 		// Bail on autosave
-		if ( defined( 'DOING_AUTOSAVE' ) && ! DOING_AUTOSAVE ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $data;
 		}
 
@@ -775,7 +775,7 @@ class CoAuthors_Plus {
 	 */
 	function coauthors_update_post( $post_id, $post ) {
 
-		if ( defined( 'DOING_AUTOSAVE' ) && ! DOING_AUTOSAVE ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
 
