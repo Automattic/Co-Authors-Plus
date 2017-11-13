@@ -305,6 +305,9 @@ class CoAuthors_Plus {
 
 		if ( ! $post_type ) {
 			$post_type = get_post_type();
+			if ( is_admin() && ! $post_type) {
+				$post_type = get_current_screen()->post_type;
+			}
 		}
 
 		return (bool) in_array( $post_type, $this->supported_post_types );
@@ -987,11 +990,16 @@ class CoAuthors_Plus {
 		if ( ! $post ) {
 			$post = get_post();
 			if ( ! $post ) {
-				return false;
+				// if user is on pages, you need to grab post type another way
+				$post_type = get_current_screen()->post_type;
+			}
+			else {
+				$post_type = $post->post_type;
 			}
 		}
-
-		$post_type = $post->post_type;
+		else {
+			$post_type = $post->post_type;
+		}
 
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if ( ! $post_type ) {
