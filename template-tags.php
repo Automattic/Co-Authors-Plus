@@ -14,8 +14,7 @@ function get_coauthors( $post_id = 0 ) {
 	}
 
 	if ( $post_id ) {
-		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy );
-
+		$coauthor_terms = cap_get_coauthor_terms_for_post( $post_id );
 		if ( is_array( $coauthor_terms ) && ! empty( $coauthor_terms ) ) {
 			foreach ( $coauthor_terms as $coauthor ) {
 				$coauthor_slug = preg_replace( '#^cap\-#', '', $coauthor->slug );
@@ -36,6 +35,8 @@ function get_coauthors( $post_id = 0 ) {
 			}
 		} // the empty else case is because if we force guest authors, we don't ever care what value wp_posts.post_author has.
 	}
+	// remove duplicate $coauthors objects from mapping user accounts to guest authors accounts
+	$coauthors = array_unique( $coauthors, SORT_REGULAR );
 	return $coauthors;
 }
 
@@ -377,14 +378,24 @@ function coauthors_emails( $between = null, $betweenLast = null, $before = null,
  * @return string
  */
 function coauthors_links_single( $author ) {
-	if ( get_the_author_meta( 'url' ) ) {
-		return sprintf( '<a href="%s" title="%s" rel="external">%s</a>',
-			get_the_author_meta( 'url' ),
-			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), get_the_author() ) ),
-			get_the_author()
+	if ( 'guest-author' === $author->type ) {
+		if ( get_the_author_meta( 'website' ) ) {
+			return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
+				esc_url( get_the_author_meta( 'website' ) ),
+				esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
+				esc_html( get_the_author() )
+			);
+		} 
+	}
+	elseif ( get_the_author_meta( 'url' ) ) {
+		return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
+			esc_url( get_the_author_meta( 'url' ) ),
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
+			esc_html( get_the_author() )
 		);
-	} else {
-		return get_the_author();
+	} 
+	else {
+		return esc_html( get_the_author() );
 	}
 }
 
@@ -439,16 +450,17 @@ function coauthors_wp_list_authors( $args = array() ) {
 	global $coauthors_plus;
 
 	$defaults = array(
-		'optioncount'      => false,
-		'show_fullname'    => false,
-		'hide_empty'       => true,
-		'feed'             => '',
-		'feed_image'       => '',
-		'feed_type'        => '',
-		'echo'             => true,
-		'style'            => 'list',
-		'html'             => true,
-		'number'           => 20, // A sane limit to start to avoid breaking all the things
+		'optioncount'        => false,
+		'show_fullname'      => false,
+		'hide_empty'         => true,
+		'feed'               => '',
+		'feed_image'         => '',
+		'feed_type'          => '',
+		'echo'               => true,
+		'style'              => 'list',
+		'html'               => true,
+		'number'           	 => 20, // A sane limit to start to avoid breaking all the things
+		'guest_authors_only' => false
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -460,6 +472,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 			'number'       => (int) $args['number'],
 		);
 	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
+
 	$authors = array();
 	foreach ( $author_terms as $author_term ) {
 		// Something's wrong in the state of Denmark
@@ -469,10 +482,22 @@ function coauthors_wp_list_authors( $args = array() ) {
 
 		$authors[ $author_term->name ] = $coauthor;
 
-		$authors[ $author_term->name ]->post_count = $author_term->count;
+		// only show guest authors if the $args is set to true
+		if ( ! $args['guest_authors_only'] ||  $authors[ $author_term->name ]->type === 'guest-author' ) {
+			$authors[ $author_term->name ]->post_count = $author_term->count;
+		}
+		else {
+			unset( $authors[ $author_term->name ] );
+		}
 	}
 
 	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
+
+	// remove duplicates from linked accounts
+	$linked_accounts = array_unique( array_column( $authors, 'linked_account' ) );
+	foreach ( $linked_accounts as $linked_account ) {
+		unset( $authors[$linked_account] );
+	}
 
 	foreach ( (array) $authors as $author ) {
 

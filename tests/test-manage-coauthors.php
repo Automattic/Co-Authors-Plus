@@ -2,6 +2,57 @@
 
 class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
+	public function setUp() {
+		parent::setUp();
+
+		$this->author1 = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'author1' ) );
+		$this->editor1 = $this->factory->user->create( array( 'role' => 'editor', 'user_login' => 'editor2' ) );
+
+		$post = array(
+			'post_author'     => $this->author1,
+			'post_status'     => 'publish',
+			'post_content'    => rand_str(),
+			'post_title'      => rand_str(),
+			'post_type'       => 'post',
+		);
+
+		$this->author1_post1 = wp_insert_post( $post );
+
+		$post = array(
+			'post_author'     => $this->author1,
+			'post_status'     => 'publish',
+			'post_content'    => rand_str(),
+			'post_title'      => rand_str(),
+			'post_type'       => 'post',
+		);
+
+		$this->author1_post2 = wp_insert_post( $post );
+
+		$page = array(
+			'post_author'     => $this->author1,
+			'post_status'     => 'publish',
+			'post_content'    => rand_str(),
+			'post_title'      => rand_str(),
+			'post_type'       => 'page',
+		);
+
+		$this->author1_page1 = wp_insert_post( $page );
+
+		$page = array(
+			'post_author'     => $this->author1,
+			'post_status'     => 'publish',
+			'post_content'    => rand_str(),
+			'post_title'      => rand_str(),
+			'post_type'       => 'page',
+		);
+
+		$this->author1_page2 = wp_insert_post( $page );
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+	}
+
 	/**
 	 * Test assigning a Co-Author to a post
 	 */

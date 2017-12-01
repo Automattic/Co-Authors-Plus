@@ -39,9 +39,9 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-	 * Save coauthor
-	 * @param int Author ID
-	 * @param string Author Name
+	 * Save co-author
+	 * @param int Co-Author ID
+	 * @param string Co-Author Name
 	 * @param object The autosuggest input box
 	 */
 	function coauthors_save_coauthor( author, co ) {
@@ -59,8 +59,8 @@ jQuery( document ).ready(function () {
 
 
 	/*
-	 * Add coauthor
-	 * @param string Author Name
+	 * Add co-author
+	 * @param string Co-Author Name
 	 * @param object The autosuggest input box
 	 * @param boolean Initial set up or not?
 	 */
@@ -70,11 +70,11 @@ jQuery( document ).ready(function () {
 		if ( co && co.siblings( '.coauthor-tag' ).length ) {
 			coauthors_save_coauthor( author, co );
 		} else {
-			// Not editing, so we create a new author entry
+			// Not editing, so we create a new co-author entry
 			if ( count == 0 ) {
 				var coName = ( count == 0 ) ? 'coauthors-main' : '';
-				// Add new author to <select>
-				//coauthors_select_author( author );
+				// Add new co-author to <select>
+				//coauthors_select_author( co-author );
 			}
 			var options = { addDelete: true, addEdit: false };
 
@@ -98,7 +98,7 @@ jQuery( document ).ready(function () {
 
 		co.bind( 'blur', coauthors_stop_editing );
 
-		// Set the value for the auto-suggest box to the Author's name and hide it
+		// Set the value for the auto-suggest box to the co-author's name and hide it
 		co.val( unescape( author.name ) )
 			.hide()
 			.unbind( 'focus' )
@@ -132,8 +132,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-	 * Adds a delete and edit button next to an author
-	 * @param object The row to which the new author should be added
+	 * Adds a delete and edit button next to a co-author
+	 * @param object The row to which the new co-author should be added
 	 */
 	function coauthors_insert_author_edit_cells( $div, options ){
 
@@ -156,7 +156,7 @@ jQuery( document ).ready(function () {
 
 	/*
 	 * Creates autosuggest input box
-	 * @param string [optional] Name of the author
+	 * @param string [optional] Name of the co-author
 	 * @param string [optional] Name to be applied to the input box
 	 */
 	function coauthors_create_autosuggest( authorName, inputName ) {
@@ -189,7 +189,7 @@ jQuery( document ).ready(function () {
 
 	}
 
-	// Callback for when a user selects an author
+	// Callback for when a user selects a co-author
 	function coauthors_autosuggest_select() {
 		$this = jQuery( this );
 		var vals = this.value.split( '|' );
@@ -234,8 +234,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-	 * Creates the text tag for an author
-	 * @param string Name of the author
+	 * Creates the text tag for a co-author
+	 * @param string Name of the co-author
 	 */
 	function coauthors_create_author_tag( author ) {
 
@@ -278,8 +278,8 @@ jQuery( document ).ready(function () {
 	}
 
 	/*
-	 * Creates the text tag for an author
-	 * @param string Name of the author
+	 * Creates the text tag for a co-author
+	 * @param string Name of the co-author
 	 */
 	function coauthors_create_author_hidden_input ( author ) {
 		var input = jQuery( '<input />' )
@@ -319,7 +319,7 @@ jQuery( document ).ready(function () {
 			$coauthors_div.append( table );
 		}
 
-		// Select authors already added to the post
+		// Select co-authors already added to the post
 		var addedAlready = [];
 		//jQuery('#the-list tr').each(function(){
 		var count = 0;
@@ -337,11 +337,11 @@ jQuery( document ).ready(function () {
 		var newCO = coauthors_create_autosuggest( '', false );
 		coauthors_add_to_table( newCO );
 
-		$coauthors_loading = jQuery( '#ajax-loading' ).clone().attr( 'id', 'coauthors-loading' );
+		$coauthors_loading = jQuery( '#publishing-action .spinner' ).clone().attr( 'id', 'coauthors-loading' );
 		move_loading( newCO );
 
 
-		// Make co-authors sortable so an editor can control the order of the authors
+		// Make co-authors sortable so an editor can control the order of the co-authors
 		jQuery( '#coauthors-edit' ).ready(function( $ ) {
 			$( '#coauthors-list' ).sortable({
 				axis: 'y',
@@ -398,7 +398,7 @@ jQuery( document ).ready(function () {
 			});
 		}
 
-		// Remove the read-only coauthors so we don't get craziness
+		// Remove the read-only co-authors so we don't get craziness
 		jQuery( '#coauthors-readonly' ).remove();
 		coauthors_initialize( post_coauthors );
 	}
@@ -425,7 +425,7 @@ jQuery( document ).ready(function () {
 				var el = jQuery( '.inline-edit-group.inline-edit-coauthors', '#edit-' + postId );
 				el.detach().appendTo( '.quick-edit-row .inline-edit-col-left .inline-edit-col' ).show();
 
-				// initialize coauthors
+				// initialize co-authors
 				var post_coauthors = jQuery.map( jQuery( '.column-coauthors a', $postRow ), function( el ) {
 					return {
 						login: jQuery( el ).data( 'user_login' ),
