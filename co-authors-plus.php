@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Co-Authors Plus - lipemat
+Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
 Version: 3.2.2
