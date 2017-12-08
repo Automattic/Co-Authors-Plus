@@ -305,6 +305,9 @@ class CoAuthors_Plus {
 
 		if ( ! $post_type ) {
 			$post_type = get_post_type();
+			if ( is_admin() && ! $post_type) {
+				$post_type = get_current_screen()->post_type;
+			}
 		}
 
 		return (bool) in_array( $post_type, $this->supported_post_types );
@@ -699,8 +702,28 @@ class CoAuthors_Plus {
 					$this->having_terms .= ' ' . $wpdb->term_taxonomy .'.term_id = \''. $term->term_id .'\' OR ';
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
+
+				$id = is_author() ? get_queried_object_id() : '\d';
+
+				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+
+				// the block targets the private posts clause (if it exists)
+				if (
+					is_user_logged_in() &&
+					is_author() &&
+					get_queried_object_id() != get_current_user_id()
+				) {
+					$current_coauthor      = $this->get_coauthor_by( 'user_nicename', wp_get_current_user()->user_nicename );
+					$current_coauthor_term = $this->get_author_term( $current_coauthor );
+
+					$current_user_query  = $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $current_coauthor_term->term_id .'\'';
+					$this->having_terms .= ' ' . $wpdb->term_taxonomy .'.term_id = \''. $current_coauthor_term->term_id .'\' OR ';
+
+					$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . get_current_user_id() . '))/', $current_user_query, $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				}
+
 				$this->having_terms = rtrim( $this->having_terms, ' OR' );
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(\d+))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+
 			}
 		}
 		return $where;
@@ -732,7 +755,7 @@ class CoAuthors_Plus {
 	function coauthors_set_post_author_field( $data, $postarr ) {
 
 		// Bail on autosave
-		if ( defined( 'DOING_AUTOSAVE' ) && ! DOING_AUTOSAVE ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $data;
 		}
 
@@ -775,7 +798,7 @@ class CoAuthors_Plus {
 	 */
 	function coauthors_update_post( $post_id, $post ) {
 
-		if ( defined( 'DOING_AUTOSAVE' ) && ! DOING_AUTOSAVE ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
 
@@ -963,8 +986,15 @@ class CoAuthors_Plus {
 		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
 		$term = $this->get_author_term( $user );
-		// Only modify the count if the author already exists as a term
-		if ( $term && ! is_wp_error( $term ) ) {
+		$guest_term = get_term_by( 'slug', 'cap-' . $user->user_nicename, $this->coauthor_taxonomy );
+		// Only modify the count if it has a linked account with posts or the author exists as a term
+		if ( $user->linked_account && $guest_term->count ) {
+			if ( $term && ! is_wp_error( $term )) {
+				$count = $guest_term->count + $term->count;
+			} else {
+				$count = $guest_term->count;
+			}
+		} elseif ( $term && ! is_wp_error( $term ) ) {
 			$count = $term->count;
 		}
 
@@ -980,11 +1010,16 @@ class CoAuthors_Plus {
 		if ( ! $post ) {
 			$post = get_post();
 			if ( ! $post ) {
-				return false;
+				// if user is on pages, you need to grab post type another way
+				$post_type = get_current_screen()->post_type;
+			}
+			else {
+				$post_type = $post->post_type;
 			}
 		}
-
-		$post_type = $post->post_type;
+		else {
+			$post_type = $post->post_type;
+		}
 
 		// TODO: need to fix this; shouldn't just say no if don't have post_type
 		if ( ! $post_type ) {
