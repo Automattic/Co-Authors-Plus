@@ -11,7 +11,7 @@ jQuery( document ).ready(function () {
 		return false;
 	};
 
-	var $coauthors_loading;
+	var $coauthors_loading = jQuery("<span id='ajax-loading'></span>");
 
 	function coauthors_delete( elem ) {
 
