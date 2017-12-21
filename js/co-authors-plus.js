@@ -243,7 +243,7 @@ jQuery( document ).ready(function () {
 	function coauthors_create_author_tag( author ) {
 
 		var $tag = jQuery( '<span></span>' )
-							.html( decodeURIComponent( author.name ) )
+							.text( decodeURIComponent( author.name ) )
 							.attr( 'title', coAuthorsPlusStrings.input_box_title )
 							.addClass( 'coauthor-tag' )
 							// Add Click event to edit
