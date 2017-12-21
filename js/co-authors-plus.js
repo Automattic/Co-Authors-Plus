@@ -99,7 +99,8 @@ jQuery( document ).ready(function () {
 		co.bind( 'blur', coauthors_stop_editing );
 
 		// Set the value for the auto-suggest box to the co-author's name and hide it
-		co.val( unescape( author.name ) )
+		// unescape() is deprecated, so replacing it with decodeURIComponent() here and every places.
+		co.val( decodeURIComponent( author.name ) )
 			.hide()
 			.unbind( 'focus' )
 			;
@@ -178,7 +179,7 @@ jQuery( document ).ready(function () {
 			;
 
 		if ( authorName )
-			$co.attr( 'value', unescape( authorName ) );
+			$co.attr( 'value', decodeURIComponent( authorName ) );
 		else
 			$co.attr( 'value', coAuthorsPlusStrings.search_box_text )
 				.focus( function(){ $co.val( '' ) } )
@@ -199,7 +200,9 @@ jQuery( document ).ready(function () {
 		author.login = jQuery.trim( vals[1] );
 		author.name = jQuery.trim( vals[2] );
 		author.email = jQuery.trim( vals[3] );
-		author.nicename = jQuery.trim( vals[4] );
+
+		// Decode user-nicename if it has special characters in it.
+		author.nicename = decodeURIComponent( jQuery.trim( vals[4] ) );
 
 		if ( author.id=='New' ) {
 			coauthors_new_author_display( name );
@@ -240,7 +243,7 @@ jQuery( document ).ready(function () {
 	function coauthors_create_author_tag( author ) {
 
 		var $tag = jQuery( '<span></span>' )
-							.html( unescape( author.name ) )
+							.html( decodeURIComponent( author.name ) )
 							.attr( 'title', coAuthorsPlusStrings.input_box_title )
 							.addClass( 'coauthor-tag' )
 							// Add Click event to edit
@@ -287,7 +290,7 @@ jQuery( document ).ready(function () {
 							'type': 'hidden',
 							'id': 'coauthors_hidden_input',
 							'name': 'coauthors[]',
-							'value': unescape( author.nicename )
+							'value': decodeURIComponent( author.nicename )
 							})
 						;
 

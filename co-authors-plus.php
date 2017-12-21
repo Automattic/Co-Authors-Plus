@@ -766,7 +766,10 @@ class CoAuthors_Plus {
 
 		// This action happens when a post is saved while editing a post
 		if ( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
-			$author = sanitize_text_field( $_POST['coauthors'][0] );
+
+			// urlencode() is for encoding coauthor name with special characters to compare names when getting coauthor.
+			$author = urlencode( sanitize_text_field( $_POST['coauthors'][0] ) );
+
 			if ( $author ) {
 				$author_data = $this->get_coauthor_by( 'user_nicename', $author );
 				// If it's a guest author and has a linked account, store that information in post_author
@@ -812,7 +815,7 @@ class CoAuthors_Plus {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
 
 				$coauthors = (array) $_POST['coauthors'];
-				$coauthors = array_map( 'sanitize_text_field', $coauthors );
+				$coauthors = array_map( 'sanitize_title', $coauthors );
 				$this->add_coauthors( $post_id, $coauthors );
 			}
 		} else {
@@ -1134,7 +1137,7 @@ class CoAuthors_Plus {
 		if( empty( $authors ) ) echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.');
 
 		foreach ( $authors as $author ) {
-			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename ) . "\n";
+			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . urldecode( $author->user_nicename ) ) . "\n";
 		}
 
 		die();
