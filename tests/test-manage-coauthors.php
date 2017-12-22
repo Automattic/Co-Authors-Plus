@@ -227,7 +227,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$post_backup    = $_POST;
 		$request_backup = $_REQUEST;
 
-		$_REQUEST['coauthors-nonce'] = '';
+		$_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );;
 		$_POST['coauthors']          = array(
 			$user->user_nicename,
 		);
@@ -278,7 +278,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$post_backup    = $_POST;
 		$request_backup = $_REQUEST;
 
-		$_REQUEST['coauthors-nonce'] = '';
+		$_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );;
 		$_POST['coauthors']          = array(
 			$author1->user_nicename,
 		);
