@@ -48,6 +48,10 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		);
 
 		$this->author1_page2 = wp_insert_post( $page );
+
+		$this->post_array = array(
+			'ID' => $this->author1,
+		);
 	}
 
 	public function tearDown() {
@@ -148,11 +152,13 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * When filtering post data before saving to db, post_author should be set appropriately
+	 * Returns data as it is when post type is not allowed.
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_set_post_author_field()
 	 */
-	public function test_wp_insert_post_data_set_post_author() {
+	public function test_coauthors_set_post_author_field_when_post_type_is_attachment() {
 
 		global $coauthors_plus;
 
@@ -161,92 +167,220 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 			'coauthors_set_post_author_field',
 		) ) );
 
-		wp_set_current_user( $this->author1 );
+		$post_id = $this->factory->post->create( array(
+			'post_author' => $this->author1,
+			'post_type'   => 'attachment',
+		) );
 
-		$author1       = get_user_by( 'id', $this->author1 );
+		$post = get_post( $post_id );
+
+		$data = array(
+			'post_type'   => $post->post_type,
+			'post_author' => $post->post_author,
+		);
+
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+
+		$this->assertEquals( $data, $new_data );
+	}
+
+	/**
+	 * Compares data when coauthor is not set in the post array.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_set_post_author_field()
+	 */
+	public function test_coauthors_set_post_author_field_when_coauthor_is_not_set() {
+
+		global $coauthors_plus;
+
 		$author1_post1 = get_post( $this->author1_post1 );
-		$data          = array(
+
+		$data = array(
 			'post_type'   => $author1_post1->post_type,
 			'post_author' => $author1_post1->post_author,
 		);
 
-		// Check post type is enabled or not.
-		$this->assertTrue( $coauthors_plus->is_post_type_enabled( $data['post_type'] ) );
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
 
-		// Encoding user nicename if it has any special characters in it.
-		$author = urlencode( sanitize_text_field( $author1->user_nicename ) );
-		$this->assertNotEmpty( $author );
-
-		// Create guest author with linked account with user.
-		$coauthors_plus->guest_authors = new CoAuthors_Guest_Authors;
-		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->editor1 );
-
-		$editor1      = get_user_by( 'id', $this->editor1 );
-		$editor1_data = $coauthors_plus->get_coauthor_by( 'user_nicename', $editor1->user_nicename );
-
-		$this->assertEquals( 'guest-author', $editor1_data->type );
-		$this->assertNotEmpty( $editor1_data->linked_account );
-
-		// Main WP user.
-		$author_data = $coauthors_plus->get_coauthor_by( 'user_nicename', $author );
-		$this->assertEquals( 'wpuser', $author_data->type );
-
-		// Checks if post_author is unset somehow and it is available from wp_get_current_user().
-		unset( $data['post_author'] );
-
-		$user = wp_get_current_user();
-
-		$this->assertNotEmpty( $user->ID );
-		$this->assertGreaterThan( 0, $user->ID );
+		$this->assertEquals( $data, $new_data );
 	}
 
 	/**
-	 * Adding coauthors when saving post.
+	 * Compares data when coauthor is set in the post array.
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_set_post_author_field()
 	 */
-	public function test_save_post_to_update_post_coauthor() {
+	public function test_coauthors_set_post_author_field_when_coauthor_is_set() {
 
 		global $coauthors_plus;
 
-		$this->assertEquals( 10, has_filter( 'wp_insert_post_data', array(
-			$coauthors_plus,
-			'coauthors_set_post_author_field'
-		) ) );
+		$user_id = $this->factory->user->create( array(
+			'user_login'    => 'test_admin',
+			'user_nicename' => 'test_admiи',
+		) );
+
+		$user = get_user_by( 'id', $user_id );
+
+		$_REQUEST['coauthors-nonce'] = '';
+		$_POST['coauthors']          = array(
+			$user->user_nicename,
+		);
+
+		$post_id = $this->factory->post->create( array(
+			'post_author' => $user_id,
+		) );
+
+		$post = get_post( $post_id );
+
+		$data = array(
+			'post_type'   => $post->post_type,
+			'post_author' => $post->post_author,
+		);
+
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+
+		$this->assertEquals( $data, $new_data );
+	}
+
+	/**
+	 * Compares data when coauthor is set and it is linked with main wp user.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_set_post_author_field()
+	 */
+	public function test_coauthors_set_post_author_field_when_guest_author_is_linked_with_wp_user() {
+
+		global $coauthors_plus;
+
+		$author1 = get_user_by( 'id', $this->author1 );
 
 		$author1_post1 = get_post( $this->author1_post1 );
 
-		// Check post type is enabled or not.
-		$this->assertTrue( $coauthors_plus->is_post_type_enabled( $author1_post1->post_type ) );
+		$data = array(
+			'post_type'   => $author1_post1->post_type,
+			'post_author' => $author1_post1->post_author,
+		);
 
-		// If post does not have author terms.
-		$post_id = $this->factory->post->create();
-		$post    = get_post( $post_id );
-		$user    = get_userdata( $post->post_author );
+		$_REQUEST['coauthors-nonce'] = '';
+		$_POST['coauthors']          = array(
+			$author1->user_nicename,
+		);
 
-		$this->assertFalse( $coauthors_plus->has_author_terms( $post_id ) );
-		$this->assertFalse( $user );
+		// Create guest author with linked account with user.
+		$coauthors_plus->guest_authors = new CoAuthors_Guest_Authors;
+		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->author1 );
 
-		// If current user is not allowed to set authors.
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+
+		$this->assertEquals( $data, $new_data );
+	}
+
+	/**
+	 * Compares post author when it is not set in the main data array somehow.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_set_post_author_field()
+	 */
+	public function test_coauthors_set_post_author_field_when_post_author_is_not_set() {
+
+		global $coauthors_plus;
+
 		wp_set_current_user( $this->author1 );
 
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $author1_post1 ) );
-		$this->assertTrue( $coauthors_plus->has_author_terms( $this->author1_post1 ) );
+		$_REQUEST = $_POST = array();
+		$data     = array( 'post_type' => 'post' );
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
 
-		// If current user is allowed to set authors.
+		$this->assertEquals( $this->author1, $new_data['post_author'] );
+	}
+
+	/**
+	 * Bypass coauthors_update_post() when post type is not allowed.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_update_post()
+	 */
+	public function test_coauthors_update_post_when_post_type_is_attachment() {
+
+		global $coauthors_plus;
+
+		$this->assertEquals( 10, has_action( 'save_post', array(
+			$coauthors_plus,
+			'coauthors_update_post',
+		) ) );
+
+		$post_id = $this->factory->post->create( array(
+			'post_author' => $this->author1,
+			'post_type'   => 'attachment',
+		) );
+
+		$post   = get_post( $post_id );
+		$return = $coauthors_plus->coauthors_update_post( $post_id, $post );
+
+		$this->assertNull( $return );
+	}
+
+	/**
+	 * Checks coauthors when current user cal set authors.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_update_post()
+	 */
+	public function test_coauthors_update_post_when_current_user_can_set_authors() {
+
+		global $coauthors_plus;
+
 		wp_set_current_user( $this->admin1 );
 
-		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $author1_post1 ) );
+		$admin1  = get_user_by( 'id', $this->admin1 );
+		$author1 = get_user_by( 'id', $this->author1 );
 
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$post_id = $this->factory->post->create( array(
+			'post_author' => $this->admin1,
+		) );
 
-		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ), true );
+		$post = get_post( $post_id );
 
-		$_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );
-		$_POST['coauthors']          = get_coauthors( $this->author1_post1 );
+		$_POST['coauthors-nonce'] = $_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );
+		$_POST['coauthors']       = array(
+			$admin1->user_nicename,
+			$author1->user_nicename,
+		);
 
-		$this->assertNotEmpty( $_REQUEST['coauthors-nonce'] );
-		$this->assertNotEmpty( $_POST['coauthors'] );
-		$this->assertNotEmpty( check_admin_referer( 'coauthors-edit', 'coauthors-nonce' ) );
+		$coauthors_plus->coauthors_update_post( $post_id, $post );
+
+		$coauthors = get_coauthors( $this->author1_post1 );
+
+		$this->assertEquals( array( $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
+	}
+
+	/**
+	 * Coauthors should be empty if post does not have any author terms
+	 * and current user can not set authors for the post.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
+	 *
+	 * @covers :: coauthors_update_post()
+	 */
+	public function test_coauthors_update_post_when_post_has_not_author_terms() {
+
+		global $coauthors_plus;
+
+		$post_id = $this->factory->post->create();
+		$post    = get_post( $post_id );
+
+		$coauthors_plus->coauthors_update_post( $post_id, $post );
+
+		$coauthors = get_coauthors( $post_id );
+
+		$this->assertEmpty( $coauthors );
 	}
 }
