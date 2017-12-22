@@ -48,10 +48,6 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		);
 
 		$this->author1_page2 = wp_insert_post( $page );
-
-		$this->post_array = array(
-			'ID' => $this->author1,
-		);
 	}
 
 	public function tearDown() {
@@ -156,7 +152,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_set_post_author_field()
+	 * @covers ::coauthors_set_post_author_field()
 	 */
 	public function test_coauthors_set_post_author_field_when_post_type_is_attachment() {
 
@@ -174,12 +170,13 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$post = get_post( $post_id );
 
-		$data = array(
+		$data = $post_array = array(
+			'ID'          => $post->ID,
 			'post_type'   => $post->post_type,
 			'post_author' => $post->post_author,
 		);
 
-		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );
 
 		$this->assertEquals( $data, $new_data );
 	}
@@ -189,7 +186,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_set_post_author_field()
+	 * @covers ::coauthors_set_post_author_field()
 	 */
 	public function test_coauthors_set_post_author_field_when_coauthor_is_not_set() {
 
@@ -197,12 +194,13 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$author1_post1 = get_post( $this->author1_post1 );
 
-		$data = array(
+		$data = $post_array = array(
+			'ID'          => $author1_post1->ID,
 			'post_type'   => $author1_post1->post_type,
 			'post_author' => $author1_post1->post_author,
 		);
 
-		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );
 
 		$this->assertEquals( $data, $new_data );
 	}
@@ -212,7 +210,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_set_post_author_field()
+	 * @covers ::coauthors_set_post_author_field()
 	 */
 	public function test_coauthors_set_post_author_field_when_coauthor_is_set() {
 
@@ -225,6 +223,10 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$user = get_user_by( 'id', $user_id );
 
+		// Backing up global variables.
+		$post_backup    = $_POST;
+		$request_backup = $_REQUEST;
+
 		$_REQUEST['coauthors-nonce'] = '';
 		$_POST['coauthors']          = array(
 			$user->user_nicename,
@@ -236,14 +238,19 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$post = get_post( $post_id );
 
-		$data = array(
+		$data = $post_array = array(
+			'ID'          => $post->ID,
 			'post_type'   => $post->post_type,
 			'post_author' => $post->post_author,
 		);
 
-		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );
 
 		$this->assertEquals( $data, $new_data );
+
+		// Store global variables from backup.
+		$_POST    = $post_backup;
+		$_REQUEST = $request_backup;
 	}
 
 	/**
@@ -251,7 +258,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_set_post_author_field()
+	 * @covers ::coauthors_set_post_author_field()
 	 */
 	public function test_coauthors_set_post_author_field_when_guest_author_is_linked_with_wp_user() {
 
@@ -261,10 +268,15 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$author1_post1 = get_post( $this->author1_post1 );
 
-		$data = array(
+		$data = $post_array = array(
+			'ID'          => $author1_post1->ID,
 			'post_type'   => $author1_post1->post_type,
 			'post_author' => $author1_post1->post_author,
 		);
+
+		// Backing up global variables.
+		$post_backup    = $_POST;
+		$request_backup = $_REQUEST;
 
 		$_REQUEST['coauthors-nonce'] = '';
 		$_POST['coauthors']          = array(
@@ -275,9 +287,13 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$coauthors_plus->guest_authors = new CoAuthors_Guest_Authors;
 		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->author1 );
 
-		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );
 
 		$this->assertEquals( $data, $new_data );
+
+		// Store global variables from backup.
+		$_POST    = $post_backup;
+		$_REQUEST = $request_backup;
 	}
 
 	/**
@@ -285,7 +301,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_set_post_author_field()
+	 * @covers ::coauthors_set_post_author_field()
 	 */
 	public function test_coauthors_set_post_author_field_when_post_author_is_not_set() {
 
@@ -293,11 +309,29 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		wp_set_current_user( $this->author1 );
 
+		// Backing up global variables.
+		$post_backup    = $_POST;
+		$request_backup = $_REQUEST;
+
 		$_REQUEST = $_POST = array();
-		$data     = array( 'post_type' => 'post' );
-		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $this->post_array );
+
+		$author1_post1 = get_post( $this->author1_post1 );
+
+		$data = $post_array = array(
+			'ID'          => $author1_post1->ID,
+			'post_type'   => $author1_post1->post_type,
+			'post_author' => $author1_post1->post_author,
+		);
+
+		unset( $data['post_author'] );
+
+		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );
 
 		$this->assertEquals( $this->author1, $new_data['post_author'] );
+
+		// Store global variables from backup.
+		$_POST    = $post_backup;
+		$_REQUEST = $request_backup;
 	}
 
 	/**
@@ -305,7 +339,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_update_post()
+	 * @covers ::coauthors_update_post()
 	 */
 	public function test_coauthors_update_post_when_post_type_is_attachment() {
 
@@ -328,11 +362,11 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Checks coauthors when current user cal set authors.
+	 * Checks coauthors when current user can set authors.
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_update_post()
+	 * @covers ::coauthors_update_post()
 	 */
 	public function test_coauthors_update_post_when_current_user_can_set_authors() {
 
@@ -349,6 +383,10 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$post = get_post( $post_id );
 
+		// Backing up global variables.
+		$post_backup    = $_POST;
+		$request_backup = $_REQUEST;
+
 		$_POST['coauthors-nonce'] = $_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );
 		$_POST['coauthors']       = array(
 			$admin1->user_nicename,
@@ -357,9 +395,13 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$coauthors_plus->coauthors_update_post( $post_id, $post );
 
-		$coauthors = get_coauthors( $this->author1_post1 );
+		$coauthors = get_coauthors( $post_id );
 
-		$this->assertEquals( array( $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $this->admin1, $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
+
+		// Store global variables from backup.
+		$_POST    = $post_backup;
+		$_REQUEST = $request_backup;
 	}
 
 	/**
@@ -368,7 +410,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers :: coauthors_update_post()
+	 * @covers ::coauthors_update_post()
 	 */
 	public function test_coauthors_update_post_when_post_has_not_author_terms() {
 
