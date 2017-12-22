@@ -17,7 +17,7 @@ function coauthors_plus_upgrade_20() {
 	// Get all posts with meta_key _coauthor
 	$all_posts = get_posts( array( 'numberposts' => '-1', 'meta_key' => '_coauthor' ) );
 
-	if ( is_array( $all_posts ) ) {
+	//if ( is_array( $all_posts ) ) { Perhaps we don't need to check if it's an array, we're already done so in our get_posts function
 		foreach ( $all_posts as $single_post ) {
 
 			// reset execution time limit
@@ -44,5 +44,5 @@ function coauthors_plus_upgrade_20() {
 			$coauthors_plus->add_coauthors( $single_post->ID, $coauthors );
 
 		}
-	}
+	//}
 }
