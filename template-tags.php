@@ -239,12 +239,15 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 
 	global $coauthors_plus_template_filters;
 
-	/**
-	 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
-	 *
-	 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
-	 */
-	remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+
+		/**
+		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
+		 *
+		 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
+		 */
+		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
 
 	$coauthors_posts_links = coauthors__echo( 'coauthors_posts_links_single', 'callback', array(
 		'between'     => $between,
@@ -253,7 +256,9 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 		'after'       => $after,
 	), null, $echo );
 
-	add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
 
 	return $coauthors_posts_links;
 }
@@ -362,12 +367,15 @@ function coauthors_links( $between = null, $betweenLast = null, $before = null, 
 
 	global $coauthors_plus_template_filters;
 
-	/**
-	 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
-	 *
-	 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
-	 */
-	remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+
+		/**
+		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
+		 *
+		 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
+		 */
+		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
 
 	$coauthors_links = coauthors__echo( 'coauthors_links_single', 'callback', array(
 		'between'     => $between,
@@ -376,7 +384,9 @@ function coauthors_links( $between = null, $betweenLast = null, $before = null, 
 		'after'       => $after,
 	), null, $echo );
 
-	add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
 
 	return $coauthors_links;
 }
