@@ -36,6 +36,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus, $coauthors_plus_template_filters;
 
+		// Backing up global post.
+		$post_backup = $GLOBALS['post'];
+
 		$GLOBALS['post'] = get_post( $this->post_id );
 
 		// Checks for single post author.
@@ -54,10 +57,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertContains( 'href="' . get_author_posts_url( $author1->ID, $author1->user_nicename ) . '"', $multiple_cpl, 'Main author link not found.' );
 		$this->assertContains( $author1->display_name, $multiple_cpl, 'Main author name not found.' );
+
+		// Here we are checking author name should not be more then one time.
+		// Asserting ">{$author1->display_name}<" because "$author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $multiple_cpl, ">{$author1->display_name}<" ) );
 		$this->assertContains( ' and ', $multiple_cpl, 'Coauthors name separator is not matched.' );
 		$this->assertContains( 'href="' . get_author_posts_url( $editor1->ID, $editor1->user_nicename ) . '"', $multiple_cpl, 'Coauthor link not found.' );
 		$this->assertContains( $editor1->display_name, $multiple_cpl, 'Coauthor name not found.' );
+
+		// Here we are checking editor name should not be more then one time.
+		// Asserting ">{$editor1->display_name}<" because "$editor1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $multiple_cpl, ">{$editor1->display_name}<" ) );
 
 		$multiple_cpl = coauthors_links( null, ' or ', null, null, false );
@@ -69,7 +78,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'filter_the_author',
 		) ) );
 
-		unset( $coauthors_plus_template_filters );
+		// Restore backed up post to global.
+		$GLOBALS['post'] = $post_backup;
 	}
 
 	/**
@@ -82,6 +92,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	public function test_coauthors_links() {
 
 		global $coauthors_plus, $coauthors_plus_template_filters;
+
+		// Backing up global post.
+		$post_backup = $GLOBALS['post'];
 
 		$GLOBALS['post'] = get_post( $this->post_id );
 
@@ -113,6 +126,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'filter_the_author',
 		) ) );
 
-		unset( $coauthors_plus_template_filters );
+		// Restore backed up post to global.
+		$GLOBALS['post'] = $post_backup;
 	}
 }
