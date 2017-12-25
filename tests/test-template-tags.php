@@ -7,8 +7,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		parent::setUp();
 
 		/**
-		 * When `coauthors_auto_apply_template_tags` is set to true,
-		 * we need CoAuthors_Template_Filters object to check `the_author` filter.
+		 * When 'coauthors_auto_apply_template_tags' is set to true,
+		 * we need CoAuthors_Template_Filters object to check 'the_author' filter.
 		 */
 		global $coauthors_plus_template_filters;
 		$coauthors_plus_template_filters = new CoAuthors_Template_Filters;
