@@ -362,13 +362,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( 1, substr_count( $last_names, $editor1->user_login ) );
 
 		$last_name = 'Test';
-		$user_id    = $this->factory->user->create( array(
+		$user_id   = $this->factory->user->create( array(
 			'last_name' => $last_name,
 		) );
-		$post_id    = $this->factory->post->create( array(
+		$post_id   = $this->factory->post->create( array(
 			'post_author' => $user_id,
 		) );
-		$post       = get_post( $post_id );
+		$post      = get_post( $post_id );
 
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
@@ -434,6 +434,66 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertEquals( $nick_name, $nick_names );
 		$this->assertEquals( 1, substr_count( $nick_names, $nick_name ) );
+
+		// Restore global post from backup.
+		$post = $post_backup;
+	}
+
+	/**
+	 * Checks co-authors email addresses.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_emails()
+	 */
+	public function test_coauthors_emails() {
+
+		global $post, $coauthors_plus;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post    = get_post( $this->post_id );
+		$author1 = get_user_by( 'id', $this->author1 );
+		$editor1 = get_user_by( 'id', $this->editor1 );
+
+		$emails = coauthors_emails( null, null, null, null, false );
+
+		$this->assertEquals( $author1->user_email, $emails );
+		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
+
+		$emails = coauthors_emails( '</span><span>', '</span><span>', '<span>', '</span>', false );
+
+		$this->assertEquals( '<span>' . $author1->user_email . '</span>', $emails );
+		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
+
+		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+
+		$emails = coauthors_emails( null, null, null, null, false );
+
+		$this->assertEquals( $author1->user_email . ' and ' . $editor1->user_email, $emails );
+		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
+		$this->assertEquals( 1, substr_count( $emails, $editor1->user_email ) );
+
+		$emails = coauthors_emails( '</span><span>', '</span><span>', '<span>', '</span>', false );
+
+		$this->assertEquals( '<span>' . $author1->user_email . '</span><span>' . $editor1->user_email . '</span>', $emails );
+		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
+		$this->assertEquals( 1, substr_count( $emails, $editor1->user_email ) );
+
+		$email   = 'test@example.org';
+		$user_id = $this->factory->user->create( array(
+			'user_email' => $email,
+		) );
+		$post_id = $this->factory->post->create( array(
+			'post_author' => $user_id,
+		) );
+		$post    = get_post( $post_id );
+
+		$emails = coauthors_emails( null, null, null, null, false );
+
+		$this->assertEquals( $email, $emails );
+		$this->assertEquals( 1, substr_count( $emails, $email ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
