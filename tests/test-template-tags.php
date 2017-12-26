@@ -248,4 +248,46 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Asserting ">{$author1->display_name}<" because "$author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $author_link, ">{$author1->display_name}<" ) );
 	}
+
+	public function test_coauthors_firstnames() {
+
+		global $post, $coauthors_plus;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post    = get_post( $this->post_id );
+		$author1 = get_user_by( 'id', $this->author1 );
+		$editor1 = get_user_by( 'id', $this->editor1 );
+
+		$first_names = coauthors_firstnames( null, null, null, null, false );
+
+		$this->assertEquals( $author1->user_login, $first_names );
+		$this->assertEquals( 1, substr_count( $first_names, $author1->user_login ) );
+
+		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+
+		$first_names = coauthors_firstnames( null, null, null, null, false );
+
+		$this->assertEquals( $author1->user_login . ' and ' . $editor1->user_login, $first_names );
+		$this->assertEquals( 1, substr_count( $first_names, $author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $first_names, $editor1->user_login ) );
+
+		$first_name = 'Test';
+		$user_id    = $this->factory->user->create( array(
+			'first_name' => $first_name,
+		) );
+		$post_id    = $this->factory->post->create( array(
+			'post_author' => $user_id,
+		) );
+		$post       = get_post( $post_id );
+
+		$first_names = coauthors_firstnames( null, null, null, null, false );
+
+		$this->assertEquals( $first_name, $first_names );
+		$this->assertEquals( 1, substr_count( $first_names, $first_name ) );
+
+		// Restore global post from backup.
+		$post = $post_backup;
+	}
 }
