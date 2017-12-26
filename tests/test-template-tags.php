@@ -599,4 +599,50 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Restore global author data from backup.
 		$authordata = $authordata_backup;
 	}
+
+	/**
+	 * Checks co-authors IDs.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_ids()
+	 */
+	public function test_coauthors_ids() {
+
+		global $post, $coauthors_plus;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post    = get_post( $this->post_id );
+		$author1 = get_user_by( 'id', $this->author1 );
+		$editor1 = get_user_by( 'id', $this->editor1 );
+
+		$ids = coauthors_ids( null, null, null, null, false );
+
+		$this->assertEquals( $author1->ID, $ids );
+		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
+
+		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
+
+		$this->assertEquals( '<span>' . $author1->ID . '</span>', $ids );
+		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
+
+		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+
+		$ids = coauthors_ids( null, null, null, null, false );
+
+		$this->assertEquals( $author1->ID . ' and ' . $editor1->ID, $ids );
+		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
+		$this->assertEquals( 1, substr_count( $ids, $editor1->ID ) );
+
+		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
+
+		$this->assertEquals( '<span>' . $author1->ID . '</span><span>' . $editor1->ID . '</span>', $ids );
+		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
+		$this->assertEquals( 1, substr_count( $ids, $editor1->ID ) );
+
+		// Restore global post from backup.
+		$post = $post_backup;
+	}
 }
