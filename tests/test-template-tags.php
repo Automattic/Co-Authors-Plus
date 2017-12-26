@@ -190,4 +190,42 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Restore global post from backup.
 		$post = $post_backup;
 	}
+
+	/**
+	 * Tests for co-authors display names, without links to their posts.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors()
+	 **/
+	public function test_coauthors() {
+
+		global $post, $coauthors_plus;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post    = get_post( $this->post_id );
+		$author1 = get_user_by( 'id', $this->author1 );
+		$editor1 = get_user_by( 'id', $this->editor1 );
+
+		// Checks for single post author.
+		$coauthors = coauthors( null, null, null, null, false );
+
+		$this->assertEquals( $author1->display_name, $coauthors );
+		$this->assertEquals( 1, substr_count( $coauthors, $author1->display_name ) );
+		$this->assertEquals( 0, substr_count( $coauthors, $editor1->display_name ) );
+
+		// Checks for multiple post author.
+		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+
+		$coauthors = coauthors( null, null, null, null, false );
+
+		$this->assertEquals( $author1->display_name . ' and ' . $editor1->display_name, $coauthors );
+		$this->assertEquals( 1, substr_count( $coauthors, $author1->display_name ) );
+		$this->assertEquals( 1, substr_count( $coauthors, $editor1->display_name ) );
+
+		// Restore global post from backup.
+		$post = $post_backup;
+	}
 }
