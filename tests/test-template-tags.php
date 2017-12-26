@@ -249,6 +249,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( 1, substr_count( $author_link, ">{$author1->display_name}<" ) );
 	}
 
+	/**
+	 * Checks co-authors first names, without links to their posts.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_firstnames()
+	 */
 	public function test_coauthors_firstnames() {
 
 		global $post, $coauthors_plus;
