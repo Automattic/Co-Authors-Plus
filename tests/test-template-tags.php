@@ -228,4 +228,24 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Restore global post from backup.
 		$post = $post_backup;
 	}
+
+	/**
+	 * Checks single co-author linked to their post archive.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_posts_links_single()
+	 */
+	public function test_coauthors_posts_links_single() {
+
+		$author1     = get_user_by( 'id', $this->author1 );
+		$author_link = coauthors_posts_links_single( $author1 );
+
+		$this->assertContains( 'href="' . get_author_posts_url( $author1->ID, $author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
+		$this->assertContains( $author1->display_name, $author_link, 'Author name not found.' );
+
+		// Here we are checking author name should not be more then one time.
+		// Asserting ">{$author1->display_name}<" because "$author1->display_name" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $author_link, ">{$author1->display_name}<" ) );
+	}
 }
