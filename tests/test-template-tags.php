@@ -297,4 +297,53 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Restore global post from backup.
 		$post = $post_backup;
 	}
+
+	/**
+	 * Checks co-authors last names, without links to their posts.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_lastnames()
+	 */
+	public function test_coauthors_lastnames() {
+
+		global $post, $coauthors_plus;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post    = get_post( $this->post_id );
+		$author1 = get_user_by( 'id', $this->author1 );
+		$editor1 = get_user_by( 'id', $this->editor1 );
+
+		$last_names = coauthors_lastnames( null, null, null, null, false );
+
+		$this->assertEquals( $author1->user_login, $last_names );
+		$this->assertEquals( 1, substr_count( $last_names, $author1->user_login ) );
+
+		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+
+		$last_names = coauthors_lastnames( null, null, null, null, false );
+
+		$this->assertEquals( $author1->user_login . ' and ' . $editor1->user_login, $last_names );
+		$this->assertEquals( 1, substr_count( $last_names, $author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $last_names, $editor1->user_login ) );
+
+		$last_name = 'Test';
+		$user_id    = $this->factory->user->create( array(
+			'last_name' => $last_name,
+		) );
+		$post_id    = $this->factory->post->create( array(
+			'post_author' => $user_id,
+		) );
+		$post       = get_post( $post_id );
+
+		$last_names = coauthors_lastnames( null, null, null, null, false );
+
+		$this->assertEquals( $last_name, $last_names );
+		$this->assertEquals( 1, substr_count( $last_names, $last_name ) );
+
+		// Restore global post from backup.
+		$post = $post_backup;
+	}
 }
