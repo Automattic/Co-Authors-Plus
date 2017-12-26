@@ -498,4 +498,105 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Restore global post from backup.
 		$post = $post_backup;
 	}
+
+	/**
+	 * Checks single co-author if he/she is a guest author.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_links_single()
+	 */
+	public function test_coauthors_links_single_when_guest_author() {
+
+		global $authordata;
+
+		// Backing up global author data.
+		$authordata_backup = $authordata;
+
+		$author1       = get_user_by( 'id', $this->author1 );
+		$author1->type = 'guest-author';
+		$author_link   = coauthors_links_single( $author1 );
+
+		$this->assertNull( $author_link );
+
+		update_user_meta( $this->author1, 'website', 'example.org' );
+
+		$author_link = coauthors_links_single( $author1 );
+
+		$this->assertNull( $author_link );
+
+		$authordata  = $author1;
+		$author_link = coauthors_links_single( $author1 );
+
+		$this->assertContains( get_the_author_meta( 'website' ), $author_link, 'Author link not found.' );
+		$this->assertContains( get_the_author(), $author_link, 'Author name not found.' );
+
+		// Here we are checking author name should not be more then one time.
+		// Asserting ">get_the_author()<" because "get_the_author()" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $author_link, '>' . get_the_author() . '<' ) );
+
+		// Restore global author data from backup.
+		$authordata = $authordata_backup;
+	}
+
+	/**
+	 * Checks single co-author when user's url is set and not a guest author.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_links_single()
+	 */
+	public function test_coauthors_links_single_author_url_is_set() {
+
+		global $authordata;
+
+		// Backing up global author data.
+		$authordata_backup = $authordata;
+
+		$user_id = $this->factory->user->create( array(
+			'user_url' => 'example.org',
+		) );
+		$user    = get_user_by( 'id', $user_id );
+
+		$authordata  = $user;
+		$author_link = coauthors_links_single( $user );
+
+		$this->assertContains( get_the_author_meta( 'url' ), $author_link, 'Author link not found.' );
+		$this->assertContains( get_the_author(), $author_link, 'Author name not found.' );
+
+		// Here we are checking author name should not be more then one time.
+		// Asserting ">get_the_author()<" because "get_the_author()" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $author_link, '>' . get_the_author() . '<' ) );
+
+		// Restore global author data from backup.
+		$authordata = $authordata_backup;
+	}
+
+	/**
+	 * Checks single co-author when user's website/url not exist.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_links_single()
+	 */
+	public function test_coauthors_links_single_when_url_not_exist() {
+
+		global $authordata;
+
+		// Backing up global author data.
+		$authordata_backup = $authordata;
+
+		$author1     = get_user_by( 'id', $this->author1 );
+		$author_link = coauthors_links_single( $author1 );
+
+		$this->assertEmpty( $author_link );
+
+		$authordata  = $author1;
+		$author_link = coauthors_links_single( $author1 );
+
+		$this->assertEquals( get_the_author(), $author_link );
+
+		// Restore global author data from backup.
+		$authordata = $authordata_backup;
+	}
 }
