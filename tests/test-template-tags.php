@@ -645,4 +645,33 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Restore global post from backup.
 		$post = $post_backup;
 	}
+
+	/**
+	 * Checks co-authors meta.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::get_the_coauthor_meta()
+	 */
+	public function test_get_the_coauthor_meta() {
+
+		global $post;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$this->assertEmpty( get_the_coauthor_meta( '' ) );
+
+		update_user_meta( $this->author1, 'test_meta', 'test_meta' );
+
+		$this->assertEmpty( get_the_coauthor_meta( 'test_meta' ) );
+
+		$post = get_post( $this->post_id );
+		$meta = get_the_coauthor_meta( 'test_meta' );
+
+		$this->assertEquals( 'test_meta', $meta[ $this->author1 ] );
+
+		// Restore global post from backup.
+		$post = $post_backup;
+	}
 }
