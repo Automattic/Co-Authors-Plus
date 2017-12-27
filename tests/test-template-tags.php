@@ -912,6 +912,112 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$coauthors_plus->add_coauthors( $this->post_id, array( $guest_author->user_login ), true );
 
-		$this->assertEquals( $guest_author->display_name, coauthors_wp_list_authors( $args ) );
+		$this->assertContains( $guest_author->display_name, coauthors_wp_list_authors( $args ) );
+	}
+
+	/**
+	 * Checks co-author's avatar.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_get_avatar()
+	 */
+	public function test_coauthors_get_avatar_default() {
+
+		$this->assertEmpty( coauthors_get_avatar( $this->author1 ) );
+
+		$author1 = get_user_by( 'id', $this->author1 );
+
+		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*' />$|", coauthors_get_avatar( $author1 ) ), 1 );
+	}
+
+	/**
+	 * Checks co-author's avatar when author is a guest author.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_get_avatar()
+	 */
+	public function test_coauthors_get_avatar_when_guest_author() {
+
+		global $coauthors_plus;
+
+		$guest_author_id = $coauthors_plus->guest_authors->create( array(
+			'user_login'   => 'author2',
+			'display_name' => 'author2',
+		) );
+
+		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
+
+		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*' />$|", coauthors_get_avatar( $guest_author ) ), 1 );
+
+		$filename = rand_str() . '.jpg';
+		$contents = rand_str();
+		$upload   = wp_upload_bits( $filename, null, $contents );
+
+		$this->assertTrue( empty( $upload['error'] ) );
+
+		$attachment_id = $this->_make_attachment( $upload );
+
+		set_post_thumbnail( $guest_author->ID, $attachment_id );
+
+		$avatar         = coauthors_get_avatar( $guest_author );
+		$attachment_url = wp_get_attachment_url( $attachment_id );
+
+		$this->assertContains( $filename, $avatar );
+		$this->assertContains( 'src="' . $attachment_url . '"', $avatar );
+	}
+
+	/**
+	 * Checks co-author's avatar when user's email is not set somehow.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_get_avatar()
+	 */
+	public function test_coauthors_get_avatar_when_user_email_not_set() {
+
+		global $coauthors_plus;
+
+		$guest_author_id = $coauthors_plus->guest_authors->create( array(
+			'user_login'   => 'author2',
+			'display_name' => 'author2',
+		) );
+
+		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
+
+		unset( $guest_author->user_email );
+
+		$this->assertEmpty( coauthors_get_avatar( $guest_author ) );
+	}
+
+	/**
+	 * Checks co-author's avatar with size.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_get_avatar()
+	 */
+	public function test_coauthors_get_avatar_size() {
+
+		$size    = '100';
+		$author1 = get_user_by( 'id', $this->author1 );
+
+		$this->assertEquals( preg_match( "|^<img .*height='$size'.*width='$size'|", coauthors_get_avatar( $author1, $size ) ), 1 );
+	}
+
+	/**
+	 * Checks co-author's avatar with alt.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_get_avatar()
+	 */
+	public function test_coauthors_get_avatar_alt() {
+
+		$alt     = 'Test';
+		$author1 = get_user_by( 'id', $this->author1 );
+
+		$this->assertEquals( preg_match( "|^<img alt='$alt'|", coauthors_get_avatar( $author1, 96, '', $alt ) ), 1 );
 	}
 }
