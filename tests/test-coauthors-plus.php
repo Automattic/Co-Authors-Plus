@@ -139,14 +139,14 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Checks when post type set using global post.
 		$this->assertTrue( $coauthors_plus->is_post_type_enabled() );
 
-		$post = '';
+		$post   = '';
+		$screen = get_current_screen();
 
 		// Set the edit post current screen.
 		set_current_screen( 'edit-post' );
 		$this->assertTrue( $coauthors_plus->is_post_type_enabled() );
 
-		set_current_screen( 'edit' );
-		$this->assertFalse( $coauthors_plus->is_post_type_enabled() );
+		$GLOBALS['current_screen'] = $screen;
 
 		// Restore global post from backup.
 		$post = $post_backup;
