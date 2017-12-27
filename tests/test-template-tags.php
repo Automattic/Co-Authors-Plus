@@ -42,15 +42,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		// Compare single author.
-		$coauthors = get_coauthors( $this->post_id );
-		$this->assertEquals( array( $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $this->author1 ), wp_list_pluck( get_coauthors( $this->post_id ), 'ID' ) );
 
 		// Compare multiple authors.
 		$editor1 = get_user_by( 'id', $this->editor1 );
 		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
-
-		$coauthors = get_coauthors( $this->post_id );
-		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( get_coauthors( $this->post_id ), 'ID' ) );
 	}
 
 	/**
@@ -85,14 +82,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertEmpty( get_coauthors( $post_id ) );
 
-		$user_id   = $this->factory->user->create();
-		$post_id   = $this->factory->post->create( array(
+		$user_id = $this->factory->user->create();
+		$post_id = $this->factory->post->create( array(
 			'post_author' => $user_id,
 		) );
-		$post      = get_post( $post_id );
-		$coauthors = get_coauthors( $post_id );
+		$post    = get_post( $post_id );
 
-		$this->assertEquals( array( $user_id ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $user_id ), wp_list_pluck( get_coauthors( $post_id ), 'ID' ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -148,10 +144,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	public function test_is_coauthor_for_post_when_user_numeric_or_user_login_set_but_no_coauthor() {
 
 		$this->assertFalse( is_coauthor_for_post( $this->editor1, $this->post_id ) );
-
-		$editor1 = get_user_by( 'id', $this->editor1 );
-
-		$this->assertFalse( is_coauthor_for_post( $editor1, $this->post_id ) );
+		$this->assertFalse( is_coauthor_for_post( get_user_by( 'id', $this->editor1 ), $this->post_id ) );
 	}
 
 	/**
@@ -515,15 +508,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$author1       = get_user_by( 'id', $this->author1 );
 		$author1->type = 'guest-author';
-		$author_link   = coauthors_links_single( $author1 );
 
-		$this->assertNull( $author_link );
+		$this->assertNull( coauthors_links_single( $author1 ) );
 
 		update_user_meta( $this->author1, 'website', 'example.org' );
 
-		$author_link = coauthors_links_single( $author1 );
-
-		$this->assertNull( $author_link );
+		$this->assertNull( coauthors_links_single( $author1 ) );
 
 		$authordata  = $author1;
 		$author_link = coauthors_links_single( $author1 );
@@ -673,5 +663,255 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Restore global post from backup.
 		$post = $post_backup;
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with default args.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_default_args() {
+
+		global $coauthors_plus;
+
+		$args = array(
+			'echo' => false,
+		);
+
+		$author1   = get_user_by( 'id', $this->author1 );
+		$editor1   = get_user_by( 'id', $this->editor1 );
+		$coauthors = coauthors_wp_list_authors( $args );
+
+		$this->assertContains( 'href="' . get_author_posts_url( $author1->ID, $author1->user_nicename ) . '"', $coauthors, 'Author link not found.' );
+		$this->assertContains( $author1->display_name, $coauthors, 'Author name not found.' );
+
+		$coauthors = coauthors_wp_list_authors( $args );
+
+		$this->assertNotContains( 'href="' . get_author_posts_url( $editor1->ID, $editor1->user_nicename ) . '"', $coauthors );
+		$this->assertNotContains( $editor1->display_name, $coauthors );
+
+		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+
+		$coauthors = coauthors_wp_list_authors( $args );
+
+		$this->assertContains( 'href="' . get_author_posts_url( $author1->ID, $author1->user_nicename ) . '"', $coauthors, 'Main author link not found.' );
+		$this->assertContains( $author1->display_name, $coauthors, 'Main author name not found.' );
+
+		// Here we are checking author name should not be more then one time.
+		// Asserting ">{$author1->display_name}<" because "$author1->display_name" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $coauthors, ">{$author1->display_name}<" ) );
+
+		$this->assertContains( '</li><li>', $coauthors, 'Coauthors name separator is not matched.' );
+		$this->assertContains( 'href="' . get_author_posts_url( $editor1->ID, $editor1->user_nicename ) . '"', $coauthors, 'Coauthor link not found.' );
+		$this->assertContains( $editor1->display_name, $coauthors, 'Coauthor name not found.' );
+
+		// Here we are checking editor name should not be more then one time.
+		// Asserting ">{$editor1->display_name}<" because "$editor1->display_name" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $coauthors, ">{$editor1->display_name}<" ) );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with optioncount option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_optioncount() {
+
+		$this->assertContains( '(' . count_user_posts( $this->author1 ) . ')', coauthors_wp_list_authors( array(
+			'echo'        => false,
+			'optioncount' => true,
+		) ) );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with show_fullname option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_show_fullname() {
+
+		$args = array(
+			'echo'          => false,
+			'show_fullname' => true,
+		);
+
+		$author1 = get_user_by( 'id', $this->author1 );
+
+		$this->assertContains( $author1->display_name, coauthors_wp_list_authors( $args ) );
+
+		$user = $this->factory->user->create_and_get( array(
+			'first_name' => 'First',
+			'last_name'  => 'Last',
+		) );
+
+		$this->factory->post->create( array(
+			'post_author' => $user->ID,
+		) );
+
+		$this->assertContains( "{$user->user_firstname} {$user->user_lastname}", coauthors_wp_list_authors( $args ) );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with hide_empty option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_hide_empty() {
+
+		global $coauthors_plus;
+
+		$coauthors_plus->guest_authors->create( array(
+			'user_login'   => 'author2',
+			'display_name' => 'author2',
+		) );
+
+		$this->assertContains( 'author2', coauthors_wp_list_authors( array(
+			'echo'       => false,
+			'hide_empty' => false,
+		) ) );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with feed option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_feed() {
+
+		$feed_text = 'link to feed';
+		$coauthors = coauthors_wp_list_authors( array(
+			'echo' => false,
+			'feed' => $feed_text,
+		) );
+
+		$this->assertContains( get_author_feed_link( $this->author1 ), $coauthors );
+		$this->assertContains( $feed_text, $coauthors );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with feed_image option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_feed_image() {
+
+		$feed_image = WP_TESTS_DOMAIN . '/path/to/a/graphic.png';
+		$coauthors  = coauthors_wp_list_authors( array(
+			'echo'       => false,
+			'feed_image' => $feed_image,
+		) );
+
+		$this->assertContains( get_author_feed_link( $this->author1 ), $coauthors );
+		$this->assertContains( $feed_image, $coauthors );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with feed_type option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_feed_type() {
+
+		$feed_type = 'atom';
+		$feed_text = 'link to feed';
+		$coauthors = coauthors_wp_list_authors( array(
+			'echo'      => false,
+			'feed_type' => $feed_type,
+			'feed'      => $feed_text,
+		) );
+
+		$this->assertContains( get_author_feed_link( $this->author1, $feed_type ), $coauthors );
+		$this->assertContains( $feed_type, $coauthors );
+		$this->assertContains( $feed_text, $coauthors );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with style option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_style() {
+
+		$coauthors = coauthors_wp_list_authors( array(
+			'echo'  => false,
+			'style' => 'none',
+		) );
+
+		$this->assertNotContains( '<li>', $coauthors );
+		$this->assertNotContains( '</li>', $coauthors );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with html option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_html() {
+
+		global $coauthors_plus;
+
+		$args = array(
+			'echo' => false,
+			'html' => false,
+		);
+
+		$author1 = get_user_by( 'id', $this->author1 );
+		$editor1 = get_user_by( 'id', $this->editor1 );
+
+		$this->assertEquals( $author1->display_name, coauthors_wp_list_authors( $args ) );
+
+		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+
+		$this->assertEquals( "$author1->display_name, $editor1->display_name", coauthors_wp_list_authors( $args ) );
+	}
+
+	/**
+	 * Checks all the co-authors of the blog with guest_authors_only option.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
+	 *
+	 * @covers ::coauthors_wp_list_authors()
+	 */
+	public function test_coauthors_wp_list_authors_for_guest_authors_only() {
+
+		global $coauthors_plus;
+
+		$args = array(
+			'echo'               => false,
+			'guest_authors_only' => true,
+		);
+
+		$this->assertEmpty( coauthors_wp_list_authors( $args ) );
+
+		$guest_author_id = $coauthors_plus->guest_authors->create( array(
+			'user_login'   => 'author2',
+			'display_name' => 'author2',
+		) );
+
+		$this->assertEmpty( coauthors_wp_list_authors( $args ) );
+
+		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
+
+		$coauthors_plus->add_coauthors( $this->post_id, array( $guest_author->user_login ), true );
+
+		$this->assertEquals( $guest_author->display_name, coauthors_wp_list_authors( $args ) );
 	}
 }
