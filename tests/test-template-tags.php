@@ -186,12 +186,10 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$coauthors = coauthors( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->display_name, $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
 
 		$coauthors = coauthors( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->display_name . '</span>', $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
 
 		// Checks for multiple post author.
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
@@ -199,14 +197,10 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$coauthors = coauthors( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->display_name . ' and ' . $this->editor1->display_name, $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
-		$this->assertEquals( 1, substr_count( $coauthors, $this->editor1->display_name ) );
 
 		$coauthors = coauthors( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->display_name . '</span><span>' . $this->editor1->display_name . '</span>', $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
-		$this->assertEquals( 1, substr_count( $coauthors, $this->editor1->display_name ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -244,30 +238,26 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$post = $this->post;
 
+		// Checking when first name is not set for user, so it should match with user_login.
 		$first_names = coauthors_firstnames( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_login, $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
 
 		$first_names = coauthors_firstnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_login . '</span>', $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$first_names = coauthors_firstnames( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_login . ' and ' . $this->editor1->user_login, $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $first_names, $this->editor1->user_login ) );
 
 		$first_names = coauthors_firstnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_login . '</span><span>' . $this->editor1->user_login . '</span>', $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $first_names, $this->editor1->user_login ) );
 
+		// Checking when first name is set for user.
 		$first_name = 'Test';
 		$user_id    = $this->factory->user->create( array(
 			'first_name' => $first_name,
@@ -279,7 +269,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$first_names = coauthors_firstnames( null, null, null, null, false );
 
 		$this->assertEquals( $first_name, $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $first_name ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -300,30 +289,26 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$post = $this->post;
 
+		// Checking when last name is not set for user, so it should match with user_login.
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_login, $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
 
 		$last_names = coauthors_lastnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_login . '</span>', $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_login . ' and ' . $this->editor1->user_login, $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $last_names, $this->editor1->user_login ) );
 
 		$last_names = coauthors_lastnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_login . '</span><span>' . $this->editor1->user_login . '</span>', $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $last_names, $this->editor1->user_login ) );
 
+		// Checking when last name is set for user.
 		$last_name = 'Test';
 		$user_id   = $this->factory->user->create( array(
 			'last_name' => $last_name,
@@ -335,7 +320,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
 		$this->assertEquals( $last_name, $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $last_name ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -356,30 +340,26 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$post = $this->post;
 
+		// Checking when nickname is not set for user, so it should match with user_login.
 		$nick_names = coauthors_nicknames( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_login, $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
 
 		$nick_names = coauthors_nicknames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_login . '</span>', $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$nick_names = coauthors_nicknames( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_login . ' and ' . $this->editor1->user_login, $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $nick_names, $this->editor1->user_login ) );
 
 		$nick_names = coauthors_nicknames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_login . '</span><span>' . $this->editor1->user_login . '</span>', $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $nick_names, $this->editor1->user_login ) );
 
+		// Checking when nickname is set for user.
 		$nick_name = 'Test';
 		$user_id   = $this->factory->user->create( array(
 			'nickname' => $nick_name,
@@ -391,7 +371,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$nick_names = coauthors_nicknames( null, null, null, null, false );
 
 		$this->assertEquals( $nick_name, $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $nick_name ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -415,26 +394,20 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$emails = coauthors_emails( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_email, $emails );
-		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
 
 		$emails = coauthors_emails( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_email . '</span>', $emails );
-		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$emails = coauthors_emails( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->user_email . ' and ' . $this->editor1->user_email, $emails );
-		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
-		$this->assertEquals( 1, substr_count( $emails, $this->editor1->user_email ) );
 
 		$emails = coauthors_emails( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->user_email . '</span><span>' . $this->editor1->user_email . '</span>', $emails );
-		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
-		$this->assertEquals( 1, substr_count( $emails, $this->editor1->user_email ) );
 
 		$email   = 'test@example.org';
 		$user_id = $this->factory->user->create( array(
@@ -447,7 +420,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$emails = coauthors_emails( null, null, null, null, false );
 
 		$this->assertEquals( $email, $emails );
-		$this->assertEquals( 1, substr_count( $emails, $email ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -561,26 +533,20 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$ids = coauthors_ids( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->ID, $ids );
-		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
 
 		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->ID . '</span>', $ids );
-		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$ids = coauthors_ids( null, null, null, null, false );
 
 		$this->assertEquals( $this->author1->ID . ' and ' . $this->editor1->ID, $ids );
-		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
-		$this->assertEquals( 1, substr_count( $ids, $this->editor1->ID ) );
 
 		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
 		$this->assertEquals( '<span>' . $this->author1->ID . '</span><span>' . $this->editor1->ID . '</span>', $ids );
-		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
-		$this->assertEquals( 1, substr_count( $ids, $this->editor1->ID ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
