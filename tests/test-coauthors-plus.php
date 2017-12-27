@@ -9,7 +9,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
 		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
 
-		$this->post_id = wp_insert_post( array(
+		$this->post = $this->factory->post->create_and_get( array(
 			'post_author'  => $this->author1->ID,
 			'post_status'  => 'publish',
 			'post_content' => rand_str(),
@@ -105,5 +105,50 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertInstanceOf( stdClass::class, $coauthor );
 		$this->assertObjectHasAttribute( 'linked_account', $coauthor );
 		$this->assertEquals( $this->editor1->user_login, $coauthor->linked_account );
+	}
+
+	/**
+	 * Checks coauthors plus is enabled for this post type.
+	 *
+	 * @covers ::is_post_type_enabled()
+	 */
+	public function test_is_post_type_enabled() {
+
+		global $coauthors_plus, $post;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		// Checks when post type is null.
+		$this->assertFalse( $coauthors_plus->is_post_type_enabled() );
+
+		// Checks when post type is post.
+		$this->assertTrue( $coauthors_plus->is_post_type_enabled( 'post' ) );
+
+		// Checks when post type is page.
+		$this->assertTrue( $coauthors_plus->is_post_type_enabled( 'page' ) );
+
+		// Checks when post type is attachment.
+		$this->assertFalse( $coauthors_plus->is_post_type_enabled( 'attachment' ) );
+
+		// Checks when post type is revision.
+		$this->assertFalse( $coauthors_plus->is_post_type_enabled( 'revision' ) );
+
+		$post = $this->post;
+
+		// Checks when post type set using global post.
+		$this->assertTrue( $coauthors_plus->is_post_type_enabled() );
+
+		$post = '';
+
+		// Set the edit post current screen.
+		set_current_screen( 'edit-post' );
+		$this->assertTrue( $coauthors_plus->is_post_type_enabled() );
+
+		set_current_screen( 'edit' );
+		$this->assertFalse( $coauthors_plus->is_post_type_enabled() );
+
+		// Restore global post from backup.
+		$post = $post_backup;
 	}
 }
