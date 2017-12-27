@@ -6,11 +6,11 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		parent::setUp();
 
-		$this->author1 = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'author1' ) );
-		$this->editor1 = $this->factory->user->create( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
+		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
+		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
 
-		$this->post_id = wp_insert_post( array(
-			'post_author'  => $this->author1,
+		$this->post = $this->factory->post->create_and_get( array(
+			'post_author'  => $this->author1->ID,
 			'post_status'  => 'publish',
 			'post_content' => rand_str(),
 			'post_title'   => rand_str(),
@@ -20,8 +20,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Checks coauthors when post not exist.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::get_coauthors()
 	 */
@@ -33,8 +31,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks coauthors when post exist (not global).
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::get_coauthors()
 	 */
 	public function test_get_coauthors_when_post_exists() {
@@ -42,18 +38,18 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		// Compare single author.
-		$this->assertEquals( array( $this->author1 ), wp_list_pluck( get_coauthors( $this->post_id ), 'ID' ) );
+		$this->assertEquals( array( $this->author1->ID ), wp_list_pluck( get_coauthors( $this->post->ID ), 'ID' ) );
 
 		// Compare multiple authors.
-		$editor1 = get_user_by( 'id', $this->editor1 );
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
-		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( get_coauthors( $this->post_id ), 'ID' ) );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
+		$this->assertEquals( array(
+			$this->author1->ID,
+			$this->editor1->ID,
+		), wp_list_pluck( get_coauthors( $this->post->ID ), 'ID' ) );
 	}
 
 	/**
 	 * Checks coauthors when terms for post not exist.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::get_coauthors()
 	 */
@@ -66,8 +62,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks coauthors when post not exist.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::get_coauthors()
 	 */
 	public function test_get_coauthors_when_global_post_exists() {
@@ -77,18 +71,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post_id = $this->factory->post->create();
-		$post    = get_post( $post_id );
+		$post = $this->factory->post->create_and_get();
 
-		$this->assertEmpty( get_coauthors( $post_id ) );
+		$this->assertEmpty( get_coauthors() );
 
 		$user_id = $this->factory->user->create();
-		$post_id = $this->factory->post->create( array(
+		$post    = $this->factory->post->create_and_get( array(
 			'post_author' => $user_id,
 		) );
-		$post    = get_post( $post_id );
 
-		$this->assertEquals( array( $user_id ), wp_list_pluck( get_coauthors( $post_id ), 'ID' ) );
+		$this->assertEquals( array( $user_id ), wp_list_pluck( get_coauthors(), 'ID' ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -96,8 +88,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Checks whether user is a coauthor of the post when user or post not exists.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::is_coauthor_for_post()
 	 */
@@ -109,10 +99,10 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$post_backup = $post;
 
 		$this->assertFalse( is_coauthor_for_post( '' ) );
-		$this->assertFalse( is_coauthor_for_post( '', $this->post_id ) );
-		$this->assertFalse( is_coauthor_for_post( $this->author1 ) );
+		$this->assertFalse( is_coauthor_for_post( '', $this->post->ID ) );
+		$this->assertFalse( is_coauthor_for_post( $this->author1->ID ) );
 
-		$post = get_post( $this->post_id );
+		$post = $this->post;
 
 		$this->assertFalse( is_coauthor_for_post( '' ) );
 
@@ -123,8 +113,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks whether user is a coauthor of the post when user is not expected as ID,
 	 * or user_login is not set in user object.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::is_coauthor_for_post()
 	 */
@@ -137,20 +125,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 * Checks whether user is a coauthor of the post when user is set in either way,
 	 * as user_id or user object but he/she is not coauthor of the post.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::is_coauthor_for_post()
 	 */
-	public function test_is_coauthor_for_post_when_user_numeric_or_user_login_set_but_no_coauthor() {
+	public function test_is_coauthor_for_post_when_user_numeric_or_user_login_set_but_not_coauthor() {
 
-		$this->assertFalse( is_coauthor_for_post( $this->editor1, $this->post_id ) );
-		$this->assertFalse( is_coauthor_for_post( get_user_by( 'id', $this->editor1 ), $this->post_id ) );
+		$this->assertFalse( is_coauthor_for_post( $this->editor1->ID, $this->post->ID ) );
+		$this->assertFalse( is_coauthor_for_post( $this->editor1, $this->post->ID ) );
 	}
 
 	/**
 	 * Checks whether user is a coauthor of the post.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::is_coauthor_for_post()
 	 */
@@ -161,24 +145,23 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		// Checking with specific post and user_id as well ass user object.
+		$this->assertTrue( is_coauthor_for_post( $this->author1->ID, $this->post->ID ) );
+		$this->assertTrue( is_coauthor_for_post( $this->author1, $this->post->ID ) );
 
-		$this->assertTrue( is_coauthor_for_post( $this->author1, $this->post_id ) );
-		$this->assertTrue( is_coauthor_for_post( $author1, $this->post_id ) );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$this->assertTrue( is_coauthor_for_post( $this->editor1->ID, $this->post->ID ) );
+		$this->assertTrue( is_coauthor_for_post( $this->editor1, $this->post->ID ) );
 
-		$this->assertTrue( is_coauthor_for_post( $this->editor1, $this->post_id ) );
-		$this->assertTrue( is_coauthor_for_post( $editor1, $this->post_id ) );
+		// Now checking with global post and user_id as well ass user object.
+		$post = $this->post;
 
-		$post = get_post( $this->post_id );
-
+		$this->assertTrue( is_coauthor_for_post( $this->author1->ID ) );
 		$this->assertTrue( is_coauthor_for_post( $this->author1 ) );
-		$this->assertTrue( is_coauthor_for_post( $author1 ) );
 
+		$this->assertTrue( is_coauthor_for_post( $this->editor1->ID ) );
 		$this->assertTrue( is_coauthor_for_post( $this->editor1 ) );
-		$this->assertTrue( is_coauthor_for_post( $editor1 ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -187,9 +170,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Tests for co-authors display names, without links to their posts.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors()
+	 * @covers ::coauthors__echo()
 	 **/
 	public function test_coauthors() {
 
@@ -198,35 +180,33 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post    = get_post( $this->post_id );
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$post = $this->post;
 
 		// Checks for single post author.
 		$coauthors = coauthors( null, null, null, null, false );
 
-		$this->assertEquals( $author1->display_name, $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $author1->display_name ) );
+		$this->assertEquals( $this->author1->display_name, $coauthors );
+		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
 
 		$coauthors = coauthors( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->display_name . '</span>', $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $author1->display_name ) );
+		$this->assertEquals( '<span>' . $this->author1->display_name . '</span>', $coauthors );
+		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
 
 		// Checks for multiple post author.
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$coauthors = coauthors( null, null, null, null, false );
 
-		$this->assertEquals( $author1->display_name . ' and ' . $editor1->display_name, $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $author1->display_name ) );
-		$this->assertEquals( 1, substr_count( $coauthors, $editor1->display_name ) );
+		$this->assertEquals( $this->author1->display_name . ' and ' . $this->editor1->display_name, $coauthors );
+		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
+		$this->assertEquals( 1, substr_count( $coauthors, $this->editor1->display_name ) );
 
 		$coauthors = coauthors( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->display_name . '</span><span>' . $editor1->display_name . '</span>', $coauthors );
-		$this->assertEquals( 1, substr_count( $coauthors, $author1->display_name ) );
-		$this->assertEquals( 1, substr_count( $coauthors, $editor1->display_name ) );
+		$this->assertEquals( '<span>' . $this->author1->display_name . '</span><span>' . $this->editor1->display_name . '</span>', $coauthors );
+		$this->assertEquals( 1, substr_count( $coauthors, $this->author1->display_name ) );
+		$this->assertEquals( 1, substr_count( $coauthors, $this->editor1->display_name ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -235,29 +215,25 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks single co-author linked to their post archive.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_posts_links_single()
 	 */
 	public function test_coauthors_posts_links_single() {
 
-		$author1     = get_user_by( 'id', $this->author1 );
-		$author_link = coauthors_posts_links_single( $author1 );
+		$author_link = coauthors_posts_links_single( $this->author1 );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $author1->ID, $author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
-		$this->assertContains( $author1->display_name, $author_link, 'Author name not found.' );
+		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
+		$this->assertContains( $this->author1->display_name, $author_link, 'Author name not found.' );
 
 		// Here we are checking author name should not be more then one time.
-		// Asserting ">{$author1->display_name}<" because "$author1->display_name" can be multiple times like in href, title, etc.
-		$this->assertEquals( 1, substr_count( $author_link, ">{$author1->display_name}<" ) );
+		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $author_link, ">{$this->author1->display_name}<" ) );
 	}
 
 	/**
 	 * Checks co-authors first names, without links to their posts.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_firstnames()
+	 * @covers ::coauthors__echo()
 	 */
 	public function test_coauthors_firstnames() {
 
@@ -266,42 +242,39 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post    = get_post( $this->post_id );
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$post = $this->post;
 
 		$first_names = coauthors_firstnames( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_login, $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $author1->user_login ) );
+		$this->assertEquals( $this->author1->user_login, $first_names );
+		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
 
 		$first_names = coauthors_firstnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_login . '</span>', $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $author1->user_login ) );
+		$this->assertEquals( '<span>' . $this->author1->user_login . '</span>', $first_names );
+		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$first_names = coauthors_firstnames( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_login . ' and ' . $editor1->user_login, $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $first_names, $editor1->user_login ) );
+		$this->assertEquals( $this->author1->user_login . ' and ' . $this->editor1->user_login, $first_names );
+		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $first_names, $this->editor1->user_login ) );
 
 		$first_names = coauthors_firstnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_login . '</span><span>' . $editor1->user_login . '</span>', $first_names );
-		$this->assertEquals( 1, substr_count( $first_names, $author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $first_names, $editor1->user_login ) );
+		$this->assertEquals( '<span>' . $this->author1->user_login . '</span><span>' . $this->editor1->user_login . '</span>', $first_names );
+		$this->assertEquals( 1, substr_count( $first_names, $this->author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $first_names, $this->editor1->user_login ) );
 
 		$first_name = 'Test';
 		$user_id    = $this->factory->user->create( array(
 			'first_name' => $first_name,
 		) );
-		$post_id    = $this->factory->post->create( array(
+		$post       = $this->factory->post->create_and_get( array(
 			'post_author' => $user_id,
 		) );
-		$post       = get_post( $post_id );
 
 		$first_names = coauthors_firstnames( null, null, null, null, false );
 
@@ -315,9 +288,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks co-authors last names, without links to their posts.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_lastnames()
+	 * @covers ::coauthors__echo()
 	 */
 	public function test_coauthors_lastnames() {
 
@@ -326,42 +298,39 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post    = get_post( $this->post_id );
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$post = $this->post;
 
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_login, $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $author1->user_login ) );
+		$this->assertEquals( $this->author1->user_login, $last_names );
+		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
 
 		$last_names = coauthors_lastnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_login . '</span>', $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $author1->user_login ) );
+		$this->assertEquals( '<span>' . $this->author1->user_login . '</span>', $last_names );
+		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_login . ' and ' . $editor1->user_login, $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $last_names, $editor1->user_login ) );
+		$this->assertEquals( $this->author1->user_login . ' and ' . $this->editor1->user_login, $last_names );
+		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $last_names, $this->editor1->user_login ) );
 
 		$last_names = coauthors_lastnames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_login . '</span><span>' . $editor1->user_login . '</span>', $last_names );
-		$this->assertEquals( 1, substr_count( $last_names, $author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $last_names, $editor1->user_login ) );
+		$this->assertEquals( '<span>' . $this->author1->user_login . '</span><span>' . $this->editor1->user_login . '</span>', $last_names );
+		$this->assertEquals( 1, substr_count( $last_names, $this->author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $last_names, $this->editor1->user_login ) );
 
 		$last_name = 'Test';
 		$user_id   = $this->factory->user->create( array(
 			'last_name' => $last_name,
 		) );
-		$post_id   = $this->factory->post->create( array(
+		$post      = $this->factory->post->create_and_get( array(
 			'post_author' => $user_id,
 		) );
-		$post      = get_post( $post_id );
 
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
@@ -375,9 +344,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks co-authors nicknames, without links to their posts.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_nicknames()
+	 * @covers ::coauthors__echo()
 	 */
 	public function test_coauthors_nicknames() {
 
@@ -386,42 +354,39 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post    = get_post( $this->post_id );
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$post = $this->post;
 
 		$nick_names = coauthors_nicknames( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_login, $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $author1->user_login ) );
+		$this->assertEquals( $this->author1->user_login, $nick_names );
+		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
 
 		$nick_names = coauthors_nicknames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_login . '</span>', $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $author1->user_login ) );
+		$this->assertEquals( '<span>' . $this->author1->user_login . '</span>', $nick_names );
+		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$nick_names = coauthors_nicknames( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_login . ' and ' . $editor1->user_login, $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $nick_names, $editor1->user_login ) );
+		$this->assertEquals( $this->author1->user_login . ' and ' . $this->editor1->user_login, $nick_names );
+		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $nick_names, $this->editor1->user_login ) );
 
 		$nick_names = coauthors_nicknames( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_login . '</span><span>' . $editor1->user_login . '</span>', $nick_names );
-		$this->assertEquals( 1, substr_count( $nick_names, $author1->user_login ) );
-		$this->assertEquals( 1, substr_count( $nick_names, $editor1->user_login ) );
+		$this->assertEquals( '<span>' . $this->author1->user_login . '</span><span>' . $this->editor1->user_login . '</span>', $nick_names );
+		$this->assertEquals( 1, substr_count( $nick_names, $this->author1->user_login ) );
+		$this->assertEquals( 1, substr_count( $nick_names, $this->editor1->user_login ) );
 
 		$nick_name = 'Test';
 		$user_id   = $this->factory->user->create( array(
 			'nickname' => $nick_name,
 		) );
-		$post_id   = $this->factory->post->create( array(
+		$post      = $this->factory->post->create_and_get( array(
 			'post_author' => $user_id,
 		) );
-		$post      = get_post( $post_id );
 
 		$nick_names = coauthors_nicknames( null, null, null, null, false );
 
@@ -435,9 +400,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks co-authors email addresses.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_emails()
+	 * @covers ::coauthors__echo()
 	 */
 	public function test_coauthors_emails() {
 
@@ -446,42 +410,39 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post    = get_post( $this->post_id );
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$post = $this->post;
 
 		$emails = coauthors_emails( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_email, $emails );
-		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
+		$this->assertEquals( $this->author1->user_email, $emails );
+		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
 
 		$emails = coauthors_emails( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_email . '</span>', $emails );
-		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
+		$this->assertEquals( '<span>' . $this->author1->user_email . '</span>', $emails );
+		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$emails = coauthors_emails( null, null, null, null, false );
 
-		$this->assertEquals( $author1->user_email . ' and ' . $editor1->user_email, $emails );
-		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
-		$this->assertEquals( 1, substr_count( $emails, $editor1->user_email ) );
+		$this->assertEquals( $this->author1->user_email . ' and ' . $this->editor1->user_email, $emails );
+		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
+		$this->assertEquals( 1, substr_count( $emails, $this->editor1->user_email ) );
 
 		$emails = coauthors_emails( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->user_email . '</span><span>' . $editor1->user_email . '</span>', $emails );
-		$this->assertEquals( 1, substr_count( $emails, $author1->user_email ) );
-		$this->assertEquals( 1, substr_count( $emails, $editor1->user_email ) );
+		$this->assertEquals( '<span>' . $this->author1->user_email . '</span><span>' . $this->editor1->user_email . '</span>', $emails );
+		$this->assertEquals( 1, substr_count( $emails, $this->author1->user_email ) );
+		$this->assertEquals( 1, substr_count( $emails, $this->editor1->user_email ) );
 
 		$email   = 'test@example.org';
 		$user_id = $this->factory->user->create( array(
 			'user_email' => $email,
 		) );
-		$post_id = $this->factory->post->create( array(
+		$post    = $this->factory->post->create_and_get( array(
 			'post_author' => $user_id,
 		) );
-		$post    = get_post( $post_id );
 
 		$emails = coauthors_emails( null, null, null, null, false );
 
@@ -495,8 +456,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks single co-author if he/she is a guest author.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_links_single()
 	 */
 	public function test_coauthors_links_single_when_guest_author() {
@@ -506,17 +465,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global author data.
 		$authordata_backup = $authordata;
 
-		$author1       = get_user_by( 'id', $this->author1 );
-		$author1->type = 'guest-author';
+		$this->author1->type = 'guest-author';
 
-		$this->assertNull( coauthors_links_single( $author1 ) );
+		$this->assertNull( coauthors_links_single( $this->author1 ) );
 
-		update_user_meta( $this->author1, 'website', 'example.org' );
+		update_user_meta( $this->author1->ID, 'website', 'example.org' );
 
-		$this->assertNull( coauthors_links_single( $author1 ) );
+		$this->assertNull( coauthors_links_single( $this->author1 ) );
 
-		$authordata  = $author1;
-		$author_link = coauthors_links_single( $author1 );
+		$authordata  = $this->author1;
+		$author_link = coauthors_links_single( $this->author1 );
 
 		$this->assertContains( get_the_author_meta( 'website' ), $author_link, 'Author link not found.' );
 		$this->assertContains( get_the_author(), $author_link, 'Author name not found.' );
@@ -531,8 +489,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Checks single co-author when user's url is set and not a guest author.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_links_single()
 	 */
@@ -565,8 +521,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks single co-author when user's website/url not exist.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_links_single()
 	 */
 	public function test_coauthors_links_single_when_url_not_exist() {
@@ -576,13 +530,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global author data.
 		$authordata_backup = $authordata;
 
-		$author1     = get_user_by( 'id', $this->author1 );
-		$author_link = coauthors_links_single( $author1 );
+		$author_link = coauthors_links_single( $this->author1 );
 
 		$this->assertEmpty( $author_link );
 
-		$authordata  = $author1;
-		$author_link = coauthors_links_single( $author1 );
+		$authordata  = $this->author1;
+		$author_link = coauthors_links_single( $this->author1 );
 
 		$this->assertEquals( get_the_author(), $author_link );
 
@@ -593,9 +546,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks co-authors IDs.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_ids()
+	 * @covers ::coauthors__echo()
 	 */
 	public function test_coauthors_ids() {
 
@@ -604,33 +556,31 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post    = get_post( $this->post_id );
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$post = $this->post;
 
 		$ids = coauthors_ids( null, null, null, null, false );
 
-		$this->assertEquals( $author1->ID, $ids );
-		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
+		$this->assertEquals( $this->author1->ID, $ids );
+		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
 
 		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->ID . '</span>', $ids );
-		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
+		$this->assertEquals( '<span>' . $this->author1->ID . '</span>', $ids );
+		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$ids = coauthors_ids( null, null, null, null, false );
 
-		$this->assertEquals( $author1->ID . ' and ' . $editor1->ID, $ids );
-		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
-		$this->assertEquals( 1, substr_count( $ids, $editor1->ID ) );
+		$this->assertEquals( $this->author1->ID . ' and ' . $this->editor1->ID, $ids );
+		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
+		$this->assertEquals( 1, substr_count( $ids, $this->editor1->ID ) );
 
 		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $author1->ID . '</span><span>' . $editor1->ID . '</span>', $ids );
-		$this->assertEquals( 1, substr_count( $ids, $author1->ID ) );
-		$this->assertEquals( 1, substr_count( $ids, $editor1->ID ) );
+		$this->assertEquals( '<span>' . $this->author1->ID . '</span><span>' . $this->editor1->ID . '</span>', $ids );
+		$this->assertEquals( 1, substr_count( $ids, $this->author1->ID ) );
+		$this->assertEquals( 1, substr_count( $ids, $this->editor1->ID ) );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -638,8 +588,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Checks co-authors meta.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::get_the_coauthor_meta()
 	 */
@@ -652,14 +600,14 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertEmpty( get_the_coauthor_meta( '' ) );
 
-		update_user_meta( $this->author1, 'test_meta', 'test_meta' );
+		update_user_meta( $this->author1->ID, 'meta_key', 'meta_value' );
 
-		$this->assertEmpty( get_the_coauthor_meta( 'test_meta' ) );
+		$this->assertEmpty( get_the_coauthor_meta( 'meta_key' ) );
 
-		$post = get_post( $this->post_id );
-		$meta = get_the_coauthor_meta( 'test_meta' );
+		$post = $this->post;
+		$meta = get_the_coauthor_meta( 'meta_key' );
 
-		$this->assertEquals( 'test_meta', $meta[ $this->author1 ] );
+		$this->assertEquals( 'meta_value', $meta[ $this->author1->ID ] );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -667,8 +615,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Checks all the co-authors of the blog with default args.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
@@ -680,48 +626,44 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'echo' => false,
 		);
 
-		$author1   = get_user_by( 'id', $this->author1 );
-		$editor1   = get_user_by( 'id', $this->editor1 );
 		$coauthors = coauthors_wp_list_authors( $args );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $author1->ID, $author1->user_nicename ) . '"', $coauthors, 'Author link not found.' );
-		$this->assertContains( $author1->display_name, $coauthors, 'Author name not found.' );
-
-		$coauthors = coauthors_wp_list_authors( $args );
-
-		$this->assertNotContains( 'href="' . get_author_posts_url( $editor1->ID, $editor1->user_nicename ) . '"', $coauthors );
-		$this->assertNotContains( $editor1->display_name, $coauthors );
-
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
+		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $coauthors, 'Author link not found.' );
+		$this->assertContains( $this->author1->display_name, $coauthors, 'Author name not found.' );
 
 		$coauthors = coauthors_wp_list_authors( $args );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $author1->ID, $author1->user_nicename ) . '"', $coauthors, 'Main author link not found.' );
-		$this->assertContains( $author1->display_name, $coauthors, 'Main author name not found.' );
+		$this->assertNotContains( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors );
+		$this->assertNotContains( $this->editor1->display_name, $coauthors );
+
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
+
+		$coauthors = coauthors_wp_list_authors( $args );
+
+		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $coauthors, 'Main author link not found.' );
+		$this->assertContains( $this->author1->display_name, $coauthors, 'Main author name not found.' );
 
 		// Here we are checking author name should not be more then one time.
-		// Asserting ">{$author1->display_name}<" because "$author1->display_name" can be multiple times like in href, title, etc.
-		$this->assertEquals( 1, substr_count( $coauthors, ">{$author1->display_name}<" ) );
+		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $coauthors, ">{$this->author1->display_name}<" ) );
 
 		$this->assertContains( '</li><li>', $coauthors, 'Coauthors name separator is not matched.' );
-		$this->assertContains( 'href="' . get_author_posts_url( $editor1->ID, $editor1->user_nicename ) . '"', $coauthors, 'Coauthor link not found.' );
-		$this->assertContains( $editor1->display_name, $coauthors, 'Coauthor name not found.' );
+		$this->assertContains( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors, 'Coauthor link not found.' );
+		$this->assertContains( $this->editor1->display_name, $coauthors, 'Coauthor name not found.' );
 
 		// Here we are checking editor name should not be more then one time.
-		// Asserting ">{$editor1->display_name}<" because "$editor1->display_name" can be multiple times like in href, title, etc.
-		$this->assertEquals( 1, substr_count( $coauthors, ">{$editor1->display_name}<" ) );
+		// Asserting ">{$this->editor1->display_name}<" because "$this->editor1->display_name" can be multiple times like in href, title, etc.
+		$this->assertEquals( 1, substr_count( $coauthors, ">{$this->editor1->display_name}<" ) );
 	}
 
 	/**
 	 * Checks all the co-authors of the blog with optioncount option.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
 	public function test_coauthors_wp_list_authors_for_optioncount() {
 
-		$this->assertContains( '(' . count_user_posts( $this->author1 ) . ')', coauthors_wp_list_authors( array(
+		$this->assertContains( '(' . count_user_posts( $this->author1->ID ) . ')', coauthors_wp_list_authors( array(
 			'echo'        => false,
 			'optioncount' => true,
 		) ) );
@@ -729,8 +671,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Checks all the co-authors of the blog with show_fullname option.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
@@ -741,9 +681,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'show_fullname' => true,
 		);
 
-		$author1 = get_user_by( 'id', $this->author1 );
-
-		$this->assertContains( $author1->display_name, coauthors_wp_list_authors( $args ) );
+		$this->assertContains( $this->author1->display_name, coauthors_wp_list_authors( $args ) );
 
 		$user = $this->factory->user->create_and_get( array(
 			'first_name' => 'First',
@@ -759,8 +697,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * Checks all the co-authors of the blog with hide_empty option.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
@@ -782,8 +718,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks all the co-authors of the blog with feed option.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
 	public function test_coauthors_wp_list_authors_for_feed() {
@@ -794,14 +728,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'feed' => $feed_text,
 		) );
 
-		$this->assertContains( get_author_feed_link( $this->author1 ), $coauthors );
+		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
 		$this->assertContains( $feed_text, $coauthors );
 	}
 
 	/**
 	 * Checks all the co-authors of the blog with feed_image option.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
@@ -813,14 +745,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'feed_image' => $feed_image,
 		) );
 
-		$this->assertContains( get_author_feed_link( $this->author1 ), $coauthors );
+		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
 		$this->assertContains( $feed_image, $coauthors );
 	}
 
 	/**
 	 * Checks all the co-authors of the blog with feed_type option.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
@@ -834,15 +764,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'feed'      => $feed_text,
 		) );
 
-		$this->assertContains( get_author_feed_link( $this->author1, $feed_type ), $coauthors );
+		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID, $feed_type ) ), $coauthors );
 		$this->assertContains( $feed_type, $coauthors );
 		$this->assertContains( $feed_text, $coauthors );
 	}
 
 	/**
 	 * Checks all the co-authors of the blog with style option.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
@@ -860,8 +788,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks all the co-authors of the blog with html option.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
 	public function test_coauthors_wp_list_authors_for_html() {
@@ -873,20 +799,15 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'html' => false,
 		);
 
-		$author1 = get_user_by( 'id', $this->author1 );
-		$editor1 = get_user_by( 'id', $this->editor1 );
+		$this->assertEquals( $this->author1->display_name, coauthors_wp_list_authors( $args ) );
 
-		$this->assertEquals( $author1->display_name, coauthors_wp_list_authors( $args ) );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $editor1->user_login ), true );
-
-		$this->assertEquals( "$author1->display_name, $editor1->display_name", coauthors_wp_list_authors( $args ) );
+		$this->assertEquals( "{$this->author1->display_name}, {$this->editor1->display_name}", coauthors_wp_list_authors( $args ) );
 	}
 
 	/**
 	 * Checks all the co-authors of the blog with guest_authors_only option.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_wp_list_authors()
 	 */
@@ -910,7 +831,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
 
-		$coauthors_plus->add_coauthors( $this->post_id, array( $guest_author->user_login ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $guest_author->user_login ), true );
 
 		$this->assertContains( $guest_author->display_name, coauthors_wp_list_authors( $args ) );
 	}
@@ -918,23 +839,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks co-author's avatar.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_get_avatar()
 	 */
 	public function test_coauthors_get_avatar_default() {
 
-		$this->assertEmpty( coauthors_get_avatar( $this->author1 ) );
-
-		$author1 = get_user_by( 'id', $this->author1 );
-
-		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*' />$|", coauthors_get_avatar( $author1 ) ), 1 );
+		$this->assertEmpty( coauthors_get_avatar( $this->author1->ID ) );
+		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*' />$|", coauthors_get_avatar( $this->author1 ) ), 1 );
 	}
 
 	/**
 	 * Checks co-author's avatar when author is a guest author.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
 	 *
 	 * @covers ::coauthors_get_avatar()
 	 */
@@ -971,8 +885,6 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks co-author's avatar when user's email is not set somehow.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_get_avatar()
 	 */
 	public function test_coauthors_get_avatar_when_user_email_not_set() {
@@ -994,30 +906,22 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks co-author's avatar with size.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_get_avatar()
 	 */
 	public function test_coauthors_get_avatar_size() {
 
-		$size    = '100';
-		$author1 = get_user_by( 'id', $this->author1 );
-
-		$this->assertEquals( preg_match( "|^<img .*height='$size'.*width='$size'|", coauthors_get_avatar( $author1, $size ) ), 1 );
+		$size = '100';
+		$this->assertEquals( preg_match( "|^<img .*height='$size'.*width='$size'|", coauthors_get_avatar( $this->author1, $size ) ), 1 );
 	}
 
 	/**
 	 * Checks co-author's avatar with alt.
 	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/184
-	 *
 	 * @covers ::coauthors_get_avatar()
 	 */
 	public function test_coauthors_get_avatar_alt() {
 
-		$alt     = 'Test';
-		$author1 = get_user_by( 'id', $this->author1 );
-
-		$this->assertEquals( preg_match( "|^<img alt='$alt'|", coauthors_get_avatar( $author1, 96, '', $alt ) ), 1 );
+		$alt = 'Test';
+		$this->assertEquals( preg_match( "|^<img alt='$alt'|", coauthors_get_avatar( $this->author1, 96, '', $alt ) ), 1 );
 	}
 }
