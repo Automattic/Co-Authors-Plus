@@ -537,12 +537,16 @@ function coauthors_wp_list_authors( $args = array() ) {
 				if ( empty( $args['feed_image'] ) ) {
 					$link .= '(';
 				}
-				$link .= '<a href="' . get_author_feed_link( $author->ID ) . '"';
+				$link .= '<a href="' . get_author_feed_link( $author->ID, $args['feed_type'] ) . '"';
+
+				$alt   = '';
+				$title = '';
 
 				if ( ! empty( $args['feed'] ) ) {
+
 					$title = ' title="' . esc_attr( $args['feed'] ) . '"';
-					$alt = ' alt="' . esc_attr( $args['feed'] ) . '"';
-					$name = $feed;
+					$alt   = ' alt="' . esc_attr( $args['feed'] ) . '"';
+					$name  = $args['feed'];
 					$link .= $title;
 				}
 
