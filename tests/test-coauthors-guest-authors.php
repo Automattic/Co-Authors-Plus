@@ -138,4 +138,69 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$this->assertContains( $filename, $thumbnail );
 		$this->assertContains( 'src="' . wp_get_attachment_url( $attachment_id ) . '"', $thumbnail );
 	}
+
+	/**
+	 * Checks all of the meta fields that can be associated with a guest author.
+	 *
+	 * @covers CoAuthors_Guest_Authors::get_guest_author_fields()
+	 */
+	public function test_get_guest_author_fields() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Checks all the meta fields.
+		$fields = $guest_author_obj->get_guest_author_fields();
+
+		$this->assertNotEmpty( $fields );
+		$this->assertInternalType( 'array', $fields );
+
+		$keys = wp_list_pluck( $fields, 'key' );
+
+		$global_fields = array(
+			'display_name',
+			'first_name',
+			'last_name',
+			'user_login',
+			'user_email',
+			'linked_account',
+			'website',
+			'aim',
+			'yahooim',
+			'jabber',
+			'description'
+		);
+
+		$this->assertEquals( $global_fields, $keys );
+
+		// Checks all the meta fields with group that does not exist.
+		$fields = $guest_author_obj->get_guest_author_fields( 'test' );
+
+		$this->assertEmpty( $fields );
+
+		// Checks all the meta fields with group "name".
+		$fields = $guest_author_obj->get_guest_author_fields( 'name' );
+		$keys = wp_list_pluck( $fields, 'key' );
+
+		$this->assertEquals( array( 'display_name', 'first_name', 'last_name' ), $keys );
+
+		// Checks all the meta fields with group "slug".
+		$fields = $guest_author_obj->get_guest_author_fields( 'slug' );
+		$keys   = wp_list_pluck( $fields, 'key' );
+
+		$this->assertEquals( array( 'user_login', 'linked_account' ), $keys );
+
+		// Checks all the meta fields with group "contact-info".
+		$fields = $guest_author_obj->get_guest_author_fields( 'contact-info' );
+		$keys   = wp_list_pluck( $fields, 'key' );
+
+		$this->assertEquals( array( 'user_email', 'website', 'aim', 'yahooim', 'jabber' ), $keys );
+
+		// Checks all the meta fields with group "about".
+		$fields = $guest_author_obj->get_guest_author_fields( 'about' );
+		$keys   = wp_list_pluck( $fields, 'key' );
+
+		$this->assertEquals( array( 'description' ), $keys );
+	}
 }
