@@ -169,7 +169,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			'aim',
 			'yahooim',
 			'jabber',
-			'description'
+			'description',
 		);
 
 		$this->assertEquals( $global_fields, $keys );
@@ -181,7 +181,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		// Checks all the meta fields with group "name".
 		$fields = $guest_author_obj->get_guest_author_fields( 'name' );
-		$keys = wp_list_pluck( $fields, 'key' );
+		$keys   = wp_list_pluck( $fields, 'key' );
 
 		$this->assertEquals( array( 'display_name', 'first_name', 'last_name' ), $keys );
 
@@ -202,5 +202,62 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$keys   = wp_list_pluck( $fields, 'key' );
 
 		$this->assertEquals( array( 'description' ), $keys );
+	}
+
+	/**
+	 * Checks all of the user accounts that have been linked.
+	 *
+	 * @covers CoAuthors_Guest_Authors::get_all_linked_accounts()
+	 */
+	public function test_get_all_linked_accounts() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		$this->assertEmpty( $guest_author_obj->get_all_linked_accounts() );
+
+		// Checks when guest author ( not linked account ) exists.
+		$guest_author_obj->create( array(
+			'user_login'   => 'author2',
+			'display_name' => 'author2',
+		) );
+
+		$this->assertEmpty( $guest_author_obj->get_all_linked_accounts() );
+
+		// Create guest author from existing user and check.
+		$guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+
+		$linked_accounts    = $guest_author_obj->get_all_linked_accounts();
+		$linked_account_ids = wp_list_pluck( $linked_accounts, 'ID' );
+
+		$this->assertNotEmpty( $linked_accounts );
+		$this->assertInternalType( 'array', $linked_accounts );
+		$this->assertTrue( in_array( $this->editor1->ID, $linked_account_ids, true ) );
+	}
+
+	/**
+	 * Checks all of the user accounts that have been linked using cache.
+	 *
+	 * @covers CoAuthors_Guest_Authors::get_all_linked_accounts()
+	 */
+	public function test_get_all_linked_accounts_with_cache() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		$cache_key = 'all-linked-accounts';
+
+		// Checks when guest author does not exist in cache.
+		$this->assertFalse( wp_cache_get( $cache_key, $guest_author_obj::$cache_group ) );
+
+		// Checks when guest author exists in cache.
+		$guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+
+		$linked_accounts       = $guest_author_obj->get_all_linked_accounts();
+		$linked_accounts_cache = wp_cache_get( $cache_key, $guest_author_obj::$cache_group );
+
+		$this->assertEquals( $linked_accounts, $linked_accounts_cache );
 	}
 }
