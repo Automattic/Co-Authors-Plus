@@ -488,4 +488,100 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$this->assertFalse( $coauthors_plus->get_author_term( $coauthor ) );
 	}
+
+	/**
+	 * Checks update author term when passed coauthor is not an object.
+	 *
+	 * @covers ::update_author_term()
+	 */
+	public function test_update_author_term_when_coauthor_is_not_object() {
+
+		global $coauthors_plus;
+
+		$this->assertEmpty( $coauthors_plus->update_author_term( '' ) );
+		$this->assertEmpty( $coauthors_plus->update_author_term( $this->author1->ID ) );
+		$this->assertEmpty( $coauthors_plus->update_author_term( (array) $this->author1 ) );
+	}
+
+	/**
+	 * Checks update author term when author term exists for passed coauthor.
+	 *
+	 * @covers ::update_author_term()
+	 */
+	public function test_update_author_term_when_author_term_exists() {
+
+		global $coauthors_plus;
+
+		// Checks term description.
+		$author_term = $coauthors_plus->update_author_term( $this->author1 );
+
+		$this->assertEquals( $this->author1->display_name . ' ' . $this->author1->first_name . ' ' . $this->author1->last_name . ' ' . $this->author1->user_login . ' ' . $this->author1->ID . ' ' . $this->author1->user_email, $author_term->description );
+
+		// Checks term description after updating user.
+		wp_update_user( array(
+			'ID'         => $this->author1->ID,
+			'first_name' => 'author1',
+		) );
+
+		$author_term = $coauthors_plus->update_author_term( $this->author1 );
+
+		$this->assertEquals( $this->author1->display_name . ' ' . $this->author1->first_name . ' ' . $this->author1->last_name . ' ' . $this->author1->user_login . ' ' . $this->author1->ID . ' ' . $this->author1->user_email, $author_term->description );
+
+		// Backup coauthor taxonomy.
+		$taxonomy_backup = $coauthors_plus->coauthor_taxonomy;
+
+		wp_update_user( array(
+			'ID'         => $this->author1->ID,
+			'last_name' => 'author1',
+		) );
+
+		// Checks with different taxonomy.
+		$coauthors_plus->coauthor_taxonomy = 'abcd';
+
+		$this->assertFalse( $coauthors_plus->update_author_term( $this->author1 ) );
+
+		// Restore coauthor taxonomy from backup.
+		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
+	}
+
+	/**
+	 * Checks update author term when author term does not exist for passed coauthor.
+	 *
+	 * @covers ::update_author_term()
+	 */
+	public function test_update_author_term_when_author_term_not_exist() {
+
+		global $coauthors_plus;
+
+		// Checks term description.
+		$author_term = $coauthors_plus->update_author_term( $this->editor1 );
+
+		$this->assertEquals( $this->editor1->display_name . ' ' . $this->editor1->first_name . ' ' . $this->editor1->last_name . ' ' . $this->editor1->user_login . ' ' . $this->editor1->ID . ' ' . $this->editor1->user_email, $author_term->description );
+
+		// Checks term description after updating user.
+		wp_update_user( array(
+			'ID'         => $this->editor1->ID,
+			'first_name' => 'editor1',
+		) );
+
+		$author_term = $coauthors_plus->update_author_term( $this->editor1 );
+
+		$this->assertEquals( $this->editor1->display_name . ' ' . $this->editor1->first_name . ' ' . $this->editor1->last_name . ' ' . $this->editor1->user_login . ' ' . $this->editor1->ID . ' ' . $this->editor1->user_email, $author_term->description );
+
+		// Backup coauthor taxonomy.
+		$taxonomy_backup = $coauthors_plus->coauthor_taxonomy;
+
+		wp_update_user( array(
+			'ID'        => $this->editor1->ID,
+			'last_name' => 'editor1',
+		) );
+
+		// Checks with different taxonomy.
+		$coauthors_plus->coauthor_taxonomy = 'abcd';
+
+		$this->assertFalse( $coauthors_plus->update_author_term( $this->editor1 ) );
+
+		// Restore coauthor taxonomy from backup.
+		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
+	}
 }
