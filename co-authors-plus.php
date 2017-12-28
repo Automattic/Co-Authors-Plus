@@ -1011,7 +1011,8 @@ class CoAuthors_Plus {
 			$post = get_post();
 			if ( ! $post ) {
 				// if user is on pages, you need to grab post type another way
-				$post_type = get_current_screen()->post_type;
+				$current_screen = get_current_screen();
+				$post_type      = ! empty( $current_screen->post_type ) ? $current_screen->post_type : '';
 			}
 			else {
 				$post_type = $post->post_type;
