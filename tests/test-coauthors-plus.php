@@ -400,4 +400,92 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertNotContains( $this->author1->user_login, $authors );
 		$this->assertArrayHasKey( $author2->user_login, $authors );
 	}
+
+	/**
+	 * Checks the author term for a given co-author when passed coauthor is not an object.
+	 *
+	 * @covers ::get_author_term()
+	 */
+	public function test_get_author_term_when_coauthor_is_not_object() {
+
+		global $coauthors_plus;
+
+		$this->assertEmpty( $coauthors_plus->get_author_term( '' ) );
+		$this->assertEmpty( $coauthors_plus->get_author_term( $this->author1->ID ) );
+		$this->assertEmpty( $coauthors_plus->get_author_term( (array) $this->author1 ) );
+	}
+
+	/**
+	 * Checks the author term for a given co-author using cache.
+	 *
+	 * @covers ::get_author_term()
+	 */
+	public function test_get_author_term_using_caching() {
+
+		global $coauthors_plus;
+
+		$cache_key = 'author-term-' . $this->author1->user_nicename;
+
+		// Checks when term does not exist in cache.
+		$this->assertFalse( wp_cache_get( $cache_key, 'co-authors-plus' ) );
+
+		// Checks when term exists in cache.
+		$author_term        = $coauthors_plus->get_author_term( $this->author1 );
+		$author_term_cached = wp_cache_get( $cache_key, 'co-authors-plus' );
+
+		$this->assertInternalType( 'object', $author_term );
+		$this->assertInstanceOf( WP_Term::class, $author_term );
+		$this->assertEquals( $author_term, $author_term_cached );
+	}
+
+	/**
+	 * Checks the author term for a given co-author with having linked account.
+	 *
+	 * @covers ::get_author_term()
+	 */
+	public function test_get_author_term_when_author_has_linked_account() {
+
+		global $coauthors_plus;
+
+		// Checks when term exists using linked account.
+		$coauthor_id = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->editor1->ID );
+		$coauthor    = $coauthors_plus->get_coauthor_by( 'id', $coauthor_id );
+
+		$author_term = $coauthors_plus->get_author_term( $coauthor );
+
+		$this->assertInternalType( 'object', $author_term );
+		$this->assertInstanceOf( WP_Term::class, $author_term );
+
+		// Checks when term does not exist or deleted somehow.
+		wp_delete_term( $author_term->term_id, $author_term->taxonomy );
+
+		$this->assertFalse( $coauthors_plus->get_author_term( $coauthor ) );
+	}
+
+	/**
+	 * Checks the author term for a given co-author without having linked account.
+	 *
+	 * @covers ::get_author_term()
+	 */
+	public function test_get_author_term_when_author_has_not_linked_account() {
+
+		global $coauthors_plus;
+
+		// Checks when term exists without linked account.
+		$coauthor_id = $coauthors_plus->guest_authors->create( array(
+			'display_name' => 'guest',
+			'user_login'   => 'guest',
+		) );
+		$coauthor    = $coauthors_plus->get_coauthor_by( 'id', $coauthor_id );
+
+		$author_term = $coauthors_plus->get_author_term( $coauthor );
+
+		$this->assertInternalType( 'object', $author_term );
+		$this->assertInstanceOf( WP_Term::class, $author_term );
+
+		// Checks when term does not exist or deleted somehow.
+		wp_delete_term( $author_term->term_id, $author_term->taxonomy );
+
+		$this->assertFalse( $coauthors_plus->get_author_term( $coauthor ) );
+	}
 }
