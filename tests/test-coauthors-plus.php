@@ -247,4 +247,157 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
 	}
+
+	/**
+	 * Checks matching co-authors based on a search value when no arguments provided.
+	 *
+	 * @covers ::search_authors()
+	 */
+	public function test_search_authors_no_args() {
+
+		global $coauthors_plus;
+
+		// Checks when search term is empty.
+		$authors = $coauthors_plus->search_authors();
+
+		$this->assertNotEmpty( $authors );
+		$this->assertArrayHasKey( 'admin', $authors );
+		$this->assertArrayHasKey( $this->author1->user_login, $authors );
+		$this->assertArrayHasKey( $this->editor1->user_login, $authors );
+
+		// Checks when search term is empty and any subscriber exists.
+		$subscriber1 = $this->factory->user->create_and_get( array(
+			'role' => 'subscriber',
+		) );
+
+		$authors = $coauthors_plus->search_authors();
+
+		$this->assertNotEmpty( $authors );
+		$this->assertNotContains( $subscriber1->user_login, $authors );
+
+		// Checks when search term is empty and any contributor exists.
+		$contributor1 = $this->factory->user->create_and_get( array(
+			'role' => 'contributor',
+		) );
+
+		$authors = $coauthors_plus->search_authors();
+
+		$this->assertNotEmpty( $authors );
+		$this->assertArrayHasKey( $contributor1->user_login, $authors );
+	}
+
+	/**
+	 * Checks matching co-authors based on a search value when only search keyword is provided.
+	 *
+	 * @covers ::search_authors()
+	 */
+	public function test_search_authors_when_search_keyword_provided() {
+
+		global $coauthors_plus;
+
+		// Checks when author does not exist with searched term.
+		$this->assertEmpty( $coauthors_plus->search_authors( 'test' ) );
+
+		// Checks when author searched using ID.
+		$authors = $coauthors_plus->search_authors( $this->author1->ID );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertArrayHasKey( $this->author1->user_login, $authors );
+		$this->assertNotContains( $this->editor1->user_login, $authors );
+		$this->assertNotContains( 'admin', $authors );
+
+		// Checks when author searched using display_name.
+		$authors = $coauthors_plus->search_authors( $this->author1->display_name );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertArrayHasKey( $this->author1->user_login, $authors );
+		$this->assertNotContains( $this->editor1->user_login, $authors );
+		$this->assertNotContains( 'admin', $authors );
+
+		// Checks when author searched using user_email.
+		$authors = $coauthors_plus->search_authors( $this->author1->user_email );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertArrayHasKey( $this->author1->user_login, $authors );
+		$this->assertNotContains( $this->editor1->user_login, $authors );
+		$this->assertNotContains( 'admin', $authors );
+
+		// Checks when author searched using user_login.
+		$authors = $coauthors_plus->search_authors( $this->author1->user_login );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertArrayHasKey( $this->author1->user_login, $authors );
+		$this->assertNotContains( $this->editor1->user_login, $authors );
+		$this->assertNotContains( 'admin', $authors );
+
+		// Checks when any subscriber exists using ID but not author.
+		$subscriber1 = $this->factory->user->create_and_get( array(
+			'role' => 'subscriber',
+		) );
+
+		$this->assertEmpty( $coauthors_plus->search_authors( $subscriber1->ID ) );
+	}
+
+	/**
+	 * Checks matching co-authors based on a search value when only ignore authors are provided.
+	 *
+	 * @covers ::search_authors()
+	 */
+	public function test_search_authors_when_ignored_authors_provided() {
+
+		global $coauthors_plus;
+
+		// Ignoring single author.
+		$ignored_authors = array( $this->author1->user_login );
+
+		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertNotContains( $this->author1->user_login, $authors );
+
+		// Checks when ignoring author1 but also exists one more author with similar kind of data.
+		$author2 = $this->factory->user->create_and_get( array(
+			'role' => 'author',
+		) );
+
+		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertNotContains( $this->author1->user_login, $authors );
+		$this->assertArrayHasKey( $author2->user_login, $authors );
+
+		// Ignoring multiple authors.
+		$authors = $coauthors_plus->search_authors( '', array( $this->author1->user_login, $author2->user_login ) );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertNotContains( $this->author1->user_login, $authors );
+		$this->assertNotContains( $author2->user_login, $authors );
+	}
+
+	/**
+	 * Checks matching co-authors based on a search value when search keyword as well as ignore authors are provided.
+	 *
+	 * @covers ::search_authors()
+	 */
+	public function test_search_authors_when_search_keyword_and_ignored_authors_provided() {
+
+		global $coauthors_plus;
+
+		// Checks when ignoring author1.
+		$ignored_authors = array( $this->author1->user_login );
+
+		$this->assertEmpty( $coauthors_plus->search_authors( $this->author1->ID, $ignored_authors ) );
+
+		// Checks when ignoring author1 but also exists one more author with similar kind of data.
+		$author2 = $this->factory->user->create_and_get( array(
+			'role'       => 'author',
+			'user_login' => 'author2',
+		) );
+
+		$authors = $coauthors_plus->search_authors( 'author', $ignored_authors );
+
+		$this->assertNotEmpty( $authors );
+		$this->assertNotContains( $this->author1->user_login, $authors );
+		$this->assertArrayHasKey( $author2->user_login, $authors );
+	}
 }
