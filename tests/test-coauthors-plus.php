@@ -21,7 +21,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks whether the guest authors functionality is enabled or not.
 	 *
-	 * @covers ::is_guest_authors_enabled()
+	 * @covers CoAuthors_Plus::is_guest_authors_enabled()
 	 */
 	public function test_is_guest_authors_enabled() {
 
@@ -37,7 +37,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks coauthor object when he/she is a guest author.
 	 *
-	 * @covers ::get_coauthor_by()
+	 * @covers CoAuthors_Plus::get_coauthor_by()
 	 */
 	public function test_get_coauthor_by_when_guest_author() {
 
@@ -60,7 +60,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks coauthor object when he/she is a wp author.
 	 *
-	 * @covers ::get_coauthor_by()
+	 * @covers CoAuthors_Plus::get_coauthor_by()
 	 */
 	public function test_get_coauthor_by_when_wp_user() {
 
@@ -110,7 +110,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks coauthors plus is enabled for this post type.
 	 *
-	 * @covers ::is_post_type_enabled()
+	 * @covers CoAuthors_Plus::is_post_type_enabled()
 	 */
 	public function test_is_post_type_enabled() {
 
@@ -155,7 +155,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks if the current user can set co-authors or not using current screen.
 	 *
-	 * @covers ::current_user_can_set_authors()
+	 * @covers CoAuthors_Plus::current_user_can_set_authors()
 	 */
 	public function test_current_user_can_set_authors_using_current_screen() {
 
@@ -167,7 +167,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks if the current user can set co-authors or not using global post.
 	 *
-	 * @covers ::current_user_can_set_authors()
+	 * @covers CoAuthors_Plus::current_user_can_set_authors()
 	 */
 	public function test_current_user_can_set_authors_using_global_post() {
 
@@ -213,7 +213,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks if the current user can set co-authors or not using normal post.
 	 *
-	 * @covers ::current_user_can_set_authors()
+	 * @covers CoAuthors_Plus::current_user_can_set_authors()
 	 */
 	public function test_current_user_can_set_authors_using_normal_post() {
 
@@ -251,7 +251,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks matching co-authors based on a search value when no arguments provided.
 	 *
-	 * @covers ::search_authors()
+	 * @covers CoAuthors_Plus::search_authors()
 	 */
 	public function test_search_authors_no_args() {
 
@@ -289,7 +289,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks matching co-authors based on a search value when only search keyword is provided.
 	 *
-	 * @covers ::search_authors()
+	 * @covers CoAuthors_Plus::search_authors()
 	 */
 	public function test_search_authors_when_search_keyword_provided() {
 
@@ -341,7 +341,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks matching co-authors based on a search value when only ignore authors are provided.
 	 *
-	 * @covers ::search_authors()
+	 * @covers CoAuthors_Plus::search_authors()
 	 */
 	public function test_search_authors_when_ignored_authors_provided() {
 
@@ -377,7 +377,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks matching co-authors based on a search value when search keyword as well as ignore authors are provided.
 	 *
-	 * @covers ::search_authors()
+	 * @covers CoAuthors_Plus::search_authors()
 	 */
 	public function test_search_authors_when_search_keyword_and_ignored_authors_provided() {
 
@@ -404,7 +404,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks the author term for a given co-author when passed coauthor is not an object.
 	 *
-	 * @covers ::get_author_term()
+	 * @covers CoAuthors_Plus::get_author_term()
 	 */
 	public function test_get_author_term_when_coauthor_is_not_object() {
 
@@ -418,7 +418,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks the author term for a given co-author using cache.
 	 *
-	 * @covers ::get_author_term()
+	 * @covers CoAuthors_Plus::get_author_term()
 	 */
 	public function test_get_author_term_using_caching() {
 
@@ -441,7 +441,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks the author term for a given co-author with having linked account.
 	 *
-	 * @covers ::get_author_term()
+	 * @covers CoAuthors_Plus::get_author_term()
 	 */
 	public function test_get_author_term_when_author_has_linked_account() {
 
@@ -465,7 +465,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks the author term for a given co-author without having linked account.
 	 *
-	 * @covers ::get_author_term()
+	 * @covers CoAuthors_Plus::get_author_term()
 	 */
 	public function test_get_author_term_when_author_has_not_linked_account() {
 
@@ -492,7 +492,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks update author term when passed coauthor is not an object.
 	 *
-	 * @covers ::update_author_term()
+	 * @covers CoAuthors_Plus::update_author_term()
 	 */
 	public function test_update_author_term_when_coauthor_is_not_object() {
 
@@ -506,7 +506,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks update author term when author term exists for passed coauthor.
 	 *
-	 * @covers ::update_author_term()
+	 * @covers CoAuthors_Plus::update_author_term()
 	 */
 	public function test_update_author_term_when_author_term_exists() {
 
@@ -547,7 +547,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	/**
 	 * Checks update author term when author term does not exist for passed coauthor.
 	 *
-	 * @covers ::update_author_term()
+	 * @covers CoAuthors_Plus::update_author_term()
 	 */
 	public function test_update_author_term_when_author_term_not_exist() {
 
