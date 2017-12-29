@@ -6,6 +6,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		parent::setUp();
 
+		$this->admin1  = $this->factory->user->create_and_get( array( 'role' => 'administrator', 'user_login' => 'admin1' ) );
 		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
 		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
 
@@ -285,5 +286,389 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author    = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 
 		$this->assertInstanceOf( stdClass::class, $guest_author );
+	}
+
+	/**
+	 * Checks delete guest author action when $_POST args are not set.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_when_post_args_not_as_expected() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Checks when nothing is set.
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		// Checks when action is set but not expected.
+		$_POST['action'] = 'test';
+
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Checks when _wpnonce and id not set.
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['reassign'] = 'test';
+
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Checks when id not set.
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['reassign'] = 'test';
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author-1' );
+
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Checks when all args set for $_POST but action is not as expected.
+		$_POST['action']   = 'test';
+		$_POST['reassign'] = 'test';
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author-1' );
+		$_POST['id']       = '0';
+
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
+	}
+
+	/**
+	 * Checks delete guest author action with nonce.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_with_nonce() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		$expected = __( "Doin' something fishy, huh?", 'co-authors-plus' );
+
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['reassign'] = 'test';
+		$_POST['id']       = '0';
+
+		// Checks when nonce is not as expected.
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author-1' );
+
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+
+		// Checks when nonce is as expected.
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
+	}
+
+	/**
+	 * Checks delete guest author action with list_author capability.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_with_list_users_capability() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		$expected = __( "You don't have permission to perform this action.", 'co-authors-plus' );
+
+		// Back up current user.
+		$current_user = get_current_user_id();
+
+		wp_set_current_user( $this->editor1->ID );
+
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['reassign'] = 'test';
+
+		// Checks when current user can not have list_users capability.
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+
+		// Checks when current user has list_users capability.
+		wp_set_current_user( $this->admin1->ID );
+
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
+	}
+
+	/**
+	 * Checks delete guest author action with guest author.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_with_guest_author_existence() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		$expected = sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $guest_author_obj->labels['singular'] );
+
+		// Back up current user.
+		$current_user = get_current_user_id();
+
+		wp_set_current_user( $this->admin1->ID );
+
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['reassign'] = 'test';
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+		$_POST['id']       = $this->admin1->ID;
+
+		// Checks when guest author does not exist.
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+
+		// Checks when guest author exists.
+		$_POST['id'] = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
+	}
+
+	/**
+	 * Checks delete guest author action with reassign not as expected.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_with_reassign_not_as_expected() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		$expected = __( 'Please make sure to pick an option.', 'co-authors-plus' );
+
+		// Back up current user.
+		$current_user = get_current_user_id();
+
+		wp_set_current_user( $this->admin1->ID );
+
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+
+		// Checks when reassign is not as expected.
+		$_POST['reassign'] = 'test';
+
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
+	}
+
+	/**
+	 * Checks delete guest author action when reassign is leave-assigned.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_with_reassign_is_leave_assigned() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		// Back up current user.
+		$current_user = get_current_user_id();
+
+		wp_set_current_user( $this->admin1->ID );
+
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['reassign'] = 'leave-assigned';
+
+		$redirect_to = add_query_arg( array_map( 'rawurlencode', array(
+			'page' => 'view-guest-authors',
+		) ), admin_url( $guest_author_obj->parent_page ) );
+
+		$this->go_to( $redirect_to );
+
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
+	}
+
+	/**
+	 * Checks delete guest author action when reassign is reassign-another.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_with_reassign_is_reassign_another() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		// Back up current user.
+		$current_user = get_current_user_id();
+
+		$expected = __( 'Co-author does not exists. Try again?', 'co-authors-plus' );
+
+		wp_set_current_user( $this->admin1->ID );
+
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['reassign'] = 'reassign-another';
+
+		// When coauthor does not exist.
+		$_POST['leave-assigned-to'] = 'test';
+
+		try {
+			$guest_author_obj->handle_delete_guest_author_action();
+		} catch ( Exception $e ) {
+			$exception = $e;
+		}
+
+		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+
+		// When coauthor exists.
+		$_POST['leave-assigned-to'] = $this->author1->user_nicename;
+
+		$redirect_to = add_query_arg( array_map( 'rawurlencode', array(
+			'page' => 'view-guest-authors',
+		) ), admin_url( $guest_author_obj->parent_page ) );
+
+		$this->go_to( $redirect_to );
+
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
+	}
+
+	/**
+	 * Checks delete guest author action when reassign is remove-byline.
+	 *
+	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
+	 */
+	public function test_handle_delete_guest_author_action_with_reassign_is_remove_byline() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Back up $_POST.
+		$_post_backup = $_POST;
+
+		// Back up current user.
+		$current_user = get_current_user_id();
+
+		wp_set_current_user( $this->admin1->ID );
+
+		$_POST['action']   = 'delete-guest-author';
+		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
+		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['reassign'] = 'remove-byline';
+
+		$redirect_to = add_query_arg( array_map( 'rawurlencode', array(
+			'page' => 'view-guest-authors',
+		) ), admin_url( $guest_author_obj->parent_page ) );
+
+		$this->go_to( $redirect_to );
+
+		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
+
+		// Restore $_POST from back up.
+		$_POST = $_post_backup;
 	}
 }
