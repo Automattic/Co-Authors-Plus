@@ -27,15 +27,17 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
 		// Fetch guest author without forcefully.
-		$this->assertFalse( $coauthors_plus->guest_authors->get_guest_author_by( '', '' ) );
-		$this->assertFalse( $coauthors_plus->guest_authors->get_guest_author_by( 'ID', '' ) );
-		$this->assertFalse( $coauthors_plus->guest_authors->get_guest_author_by( '', $this->author1->ID ) );
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( '', '' ) );
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', '' ) );
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( '', $this->author1->ID ) );
 
 		// Fetch guest author forcefully.
-		$this->assertFalse( $coauthors_plus->guest_authors->get_guest_author_by( '', '', true ) );
-		$this->assertFalse( $coauthors_plus->guest_authors->get_guest_author_by( 'ID', '', true ) );
-		$this->assertFalse( $coauthors_plus->guest_authors->get_guest_author_by( '', $this->author1->ID, true ) );
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( '', '', true ) );
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', '', true ) );
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( '', $this->author1->ID, true ) );
 	}
 
 	/**
@@ -259,5 +261,29 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$linked_accounts_cache = wp_cache_get( $cache_key, $guest_author_obj::$cache_group );
 
 		$this->assertEquals( $linked_accounts, $linked_accounts_cache );
+	}
+
+	/**
+	 * Checks guest author from an existing WordPress user.
+	 *
+	 * @covers CoAuthors_Guest_Authors::create_guest_author_from_user_id()
+	 */
+	public function test_create_guest_author_from_user_id() {
+
+		global $coauthors_plus;
+
+		$guest_author_obj = $coauthors_plus->guest_authors;
+
+		// Checks create guest author when user don't exist.
+		$response = $guest_author_obj->create_guest_author_from_user_id( 0 );
+
+		$this->assertInstanceOf( 'WP_Error', $response );
+		$this->assertEquals( 'invalid-user', $response->get_error_code() );
+
+		// Checks create guest author when user exist.
+		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+		$guest_author    = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
+
+		$this->assertInstanceOf( stdClass::class, $guest_author );
 	}
 }
