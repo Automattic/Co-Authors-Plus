@@ -29,9 +29,13 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$this->assertTrue( $coauthors_plus->is_guest_authors_enabled() );
 
-		tests_add_filter( 'coauthors_guest_authors_enabled', '__return_false' );
+		add_filter( 'coauthors_guest_authors_enabled', '__return_false' );
 
 		$this->assertFalse( $coauthors_plus->is_guest_authors_enabled() );
+
+		remove_filter( 'coauthors_guest_authors_enabled', '__return_false' );
+
+		$this->assertTrue( $coauthors_plus->is_guest_authors_enabled() );
 	}
 
 	/**
@@ -50,7 +54,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $guest_author_id );
 
-		$this->assertInternalType( 'object', $coauthor );
 		$this->assertInstanceOf( stdClass::class, $coauthor );
 		$this->assertObjectHasAttribute( 'ID', $coauthor );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
@@ -66,11 +69,13 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
+		// This test is only for wp_user so disabling guest authors.
+		add_filter( 'coauthors_guest_authors_enabled', '__return_false' );
+
 		$this->assertFalse( $coauthors_plus->get_coauthor_by( '', '' ) );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->author1->ID );
 
-		$this->assertInternalType( 'object', $coauthor );
 		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasAttribute( 'ID', $coauthor );
 		$this->assertEquals( $this->author1->ID, $coauthor->ID );
@@ -78,21 +83,18 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $this->author1->user_login );
 
-		$this->assertInternalType( 'object', $coauthor );
 		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasAttribute( 'user_login', $coauthor->data );
 		$this->assertEquals( $this->author1->user_login, $coauthor->user_login );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $this->author1->user_nicename );
 
-		$this->assertInternalType( 'object', $coauthor );
 		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasAttribute( 'user_nicename', $coauthor->data );
 		$this->assertEquals( $this->author1->user_nicename, $coauthor->user_nicename );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_email', $this->author1->user_email );
 
-		$this->assertInternalType( 'object', $coauthor );
 		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasAttribute( 'user_email', $coauthor->data );
 		$this->assertEquals( $this->author1->user_email, $coauthor->user_email );
@@ -101,10 +103,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->editor1->ID );
 
-		$this->assertInternalType( 'object', $coauthor );
 		$this->assertInstanceOf( stdClass::class, $coauthor );
 		$this->assertObjectHasAttribute( 'linked_account', $coauthor );
 		$this->assertEquals( $this->editor1->user_login, $coauthor->linked_account );
+
+		remove_filter( 'coauthors_guest_authors_enabled', '__return_false' );
 	}
 
 	/**
@@ -162,6 +165,58 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
+
+		$screen = get_current_screen();
+
+		// Set the edit post current screen.
+		set_current_screen( 'edit-post' );
+
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
+
+		$GLOBALS['current_screen'] = $screen;
+
+		// Backing up current user.
+		$current_user = get_current_user_id();
+
+		// Checks when current user is author.
+		wp_set_current_user( $this->author1->ID );
+
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
+
+		set_current_screen( 'edit-post' );
+
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
+
+		$GLOBALS['current_screen'] = $screen;
+
+		// Checks when current user is editor.
+		wp_set_current_user( $this->editor1->ID );
+
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
+
+		set_current_screen( 'edit-post' );
+
+		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
+
+		$GLOBALS['current_screen'] = $screen;
+
+		// Checks when current user is admin.
+		$admin1 = $this->factory->user->create_and_get( array(
+			'role' => 'administrator',
+		) );
+
+		wp_set_current_user( $admin1->ID );
+
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
+
+		set_current_screen( 'edit-post' );
+
+		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
+
+		$GLOBALS['current_screen'] = $screen;
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
 	}
 
 	/**
@@ -243,6 +298,46 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( $admin1->ID );
 
 		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+
+		// Restore current user from backup.
+		wp_set_current_user( $current_user );
+	}
+
+	/**
+	 * Checks if the current user can set co-authors or not using coauthors_plus_edit_authors filter.
+	 *
+	 * @covers CoAuthors_Plus::current_user_can_set_authors()
+	 */
+	public function test_current_user_can_set_authors_using_coauthors_plus_edit_authors_filter() {
+
+		global $coauthors_plus;
+
+		// Backing up current user.
+		$current_user = get_current_user_id();
+
+		// Checking when current user is subscriber and filter is true/false.
+		$subscriber1 = $this->factory->user->create_and_get( array(
+			'role' => 'subscriber',
+		) );
+
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+
+		add_filter( 'coauthors_plus_edit_authors', '__return_true' );
+
+		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+
+		remove_filter( 'coauthors_plus_edit_authors', '__return_true' );
+
+		// Checks when current user is editor.
+		wp_set_current_user( $this->editor1->ID );
+
+		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+
+		add_filter( 'coauthors_plus_edit_authors', '__return_false' );
+
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+
+		remove_filter( 'coauthors_plus_edit_authors', '__return_false' );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -433,7 +528,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$author_term        = $coauthors_plus->get_author_term( $this->author1 );
 		$author_term_cached = wp_cache_get( $cache_key, 'co-authors-plus' );
 
-		$this->assertInternalType( 'object', $author_term );
 		$this->assertInstanceOf( WP_Term::class, $author_term );
 		$this->assertEquals( $author_term, $author_term_cached );
 	}
@@ -453,7 +547,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
 
-		$this->assertInternalType( 'object', $author_term );
 		$this->assertInstanceOf( WP_Term::class, $author_term );
 
 		// Checks when term does not exist or deleted somehow.
@@ -480,7 +573,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
 
-		$this->assertInternalType( 'object', $author_term );
 		$this->assertInstanceOf( WP_Term::class, $author_term );
 
 		// Checks when term does not exist or deleted somehow.
@@ -515,6 +607,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Checks term description.
 		$author_term = $coauthors_plus->update_author_term( $this->author1 );
 
+		// In "update_author_term()", only description is being updated, so asserting that only ( here and everywhere ).
 		$this->assertEquals( $this->author1->display_name . ' ' . $this->author1->first_name . ' ' . $this->author1->last_name . ' ' . $this->author1->user_login . ' ' . $this->author1->ID . ' ' . $this->author1->user_email, $author_term->description );
 
 		// Checks term description after updating user.
