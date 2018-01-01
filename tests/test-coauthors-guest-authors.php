@@ -570,13 +570,20 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
 		$_POST['reassign'] = 'leave-assigned';
 
-		$redirect_to = add_query_arg( array_map( 'rawurlencode', array(
-			'page' => 'view-guest-authors',
-		) ), admin_url( $guest_author_obj->parent_page ) );
+		add_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99, 2 );
 
-		$this->go_to( $redirect_to );
+		try {
 
-		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+			$guest_author_obj->handle_delete_guest_author_action();
+
+		} catch( Exception $e ) {
+
+			$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
+			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
+			$this->assertContains( 'message=guest-author-deleted', $e->getMessage() );
+		}
+
+		remove_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99 );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -626,13 +633,20 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		// When coauthor exists.
 		$_POST['leave-assigned-to'] = $this->author1->user_nicename;
 
-		$redirect_to = add_query_arg( array_map( 'rawurlencode', array(
-			'page' => 'view-guest-authors',
-		) ), admin_url( $guest_author_obj->parent_page ) );
+		add_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99, 2 );
 
-		$this->go_to( $redirect_to );
+		try {
 
-		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+			$guest_author_obj->handle_delete_guest_author_action();
+
+		} catch ( Exception $e ) {
+
+			//$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
+			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
+			$this->assertContains( 'message=guest-author-deleted', $e->getMessage() );
+		}
+
+		remove_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99 );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -665,19 +679,44 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
 		$_POST['reassign'] = 'remove-byline';
 
-		$redirect_to = add_query_arg( array_map( 'rawurlencode', array(
-			'page' => 'view-guest-authors',
-		) ), admin_url( $guest_author_obj->parent_page ) );
+		add_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99, 2 );
 
-		$this->go_to( $redirect_to );
+		try {
 
-		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+			$guest_author_obj->handle_delete_guest_author_action();
+
+		} catch ( Exception $e ) {
+
+			$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
+			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
+			$this->assertContains( 'message=guest-author-deleted', $e->getMessage() );
+		}
+
+		remove_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99 );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
 
 		// Restore $_POST from back up.
 		$_POST = $_post_backup;
+	}
+
+	/**
+	 * To catch any redirection and throw location and status in Exception.
+	 *
+	 * Note : Destination location can be get from Exception Message and
+	 * status can be get from Exception code.
+	 *
+	 * @param string $location Redirected location.
+	 * @param int    $status   Status.
+	 *
+	 * @throws \Exception Redirection data.
+	 *
+	 * @return void
+	 **/
+	public function catch_redirect_destination( $location, $status ) {
+
+		throw new Exception( $location, $status );
 	}
 
 	/**
