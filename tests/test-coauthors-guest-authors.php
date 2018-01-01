@@ -63,7 +63,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author        = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 		$guest_author_cached = wp_cache_get( $cache_key, $guest_author_obj::$cache_group );
 
-		$this->assertInternalType( 'object', $guest_author );
+		$this->assertInstanceOf( stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author, $guest_author_cached );
 	}
 
@@ -82,25 +82,25 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', $this->author1->ID ) );
 		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', $this->author1->ID, true ) );
 
-		// Checks guest author using ID.
 		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
 
+		// Checks guest author using ID.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 
-		$this->assertInternalType( 'object', $guest_author );
+		$this->assertInstanceOf( stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author_id, $guest_author->ID );
 		$this->assertEquals( $guest_author_obj->post_type, $guest_author->type );
 
 		// Checks guest author using user_nicename.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'user_nicename', $this->editor1->user_nicename );
 
-		$this->assertInternalType( 'object', $guest_author );
+		$this->assertInstanceOf( stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author_obj->post_type, $guest_author->type );
 
 		// Checks guest author using linked_account.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'linked_account', $this->editor1->user_login );
 
-		$this->assertInternalType( 'object', $guest_author );
+		$this->assertInstanceOf( stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author_obj->post_type, $guest_author->type );
 	}
 
@@ -307,8 +307,14 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		// Checks when action is set but not expected.
 		$_POST['action'] = 'test';
+		$_POST['id']     = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
 
 		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Get guest author and check that is should not be removed.
+		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $_POST['id'] );
+
+		$this->assertNotEmpty( $guest_author );
 
 		// Checks when _wpnonce and id not set.
 		$_POST['action']   = 'delete-guest-author';
@@ -316,20 +322,22 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
 
-		// Checks when id not set.
-		$_POST['action']   = 'delete-guest-author';
-		$_POST['reassign'] = 'test';
-		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author-1' );
+		// Get guest author and check that is should not be removed.
+		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $_POST['id'] );
 
-		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+		$this->assertNotEmpty( $guest_author );
 
 		// Checks when all args set for $_POST but action is not as expected.
 		$_POST['action']   = 'test';
 		$_POST['reassign'] = 'test';
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author-1' );
-		$_POST['id']       = '0';
 
 		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
+
+		// Get guest author and check that is should not be removed.
+		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $_POST['id'] );
+
+		$this->assertNotEmpty( $guest_author );
 
 		// Restore $_POST from back up.
 		$_POST = $_post_backup;
@@ -734,11 +742,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Checks delete guest author with reassign author and linked account and author is the same user.
+	 * Checks delete guest author with reassign author when linked account and author are same user.
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_with_reassign_with_linked_account_and_author_is_same_user() {
+	public function test_delete_with_reassign_when_linked_account_and_author_are_same_user() {
 
 		global $coauthors_plus;
 
@@ -757,11 +765,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Checks delete guest author with reassign author and linked account and author is other user.
+	 * Checks delete guest author with reassign author when linked account and author are different user.
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_with_reassign_with_linked_account_and_author_is_other_user() {
+	public function test_delete_with_reassign_when_linked_account_and_author_are_different_user() {
 
 		global $coauthors_plus;
 
@@ -775,8 +783,14 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author2      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id2 );
 		$guest_author_term2 = $coauthors_plus->get_author_term( $guest_author2 );
 
+		$post = $this->factory->post->create_and_get( array(
+			'post_author' => $author2->ID,
+		) );
+
 		$response = $guest_author_obj->delete( $guest_author_id2, $guest_admin->linked_account );
 
+		// Checks post author, it should be reassigned to new author.
+		$this->assertEquals( array( $guest_admin->linked_account ), wp_list_pluck( get_coauthors( $post->ID ), 'linked_account' ) );
 		$this->assertTrue( $response );
 		$this->assertFalse( get_term_by( 'id', $guest_author_term2->term_id, $coauthors_plus->coauthor_taxonomy ) );
 		$this->assertNull( get_post( $guest_author_id2 ) );
