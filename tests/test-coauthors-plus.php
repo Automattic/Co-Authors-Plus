@@ -65,11 +65,10 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_coauthor_by()
 	 */
-	public function test_get_coauthor_by_when_wp_user() {
+	public function test_get_coauthor_by_when_guest_authors_not_enabled() {
 
 		global $coauthors_plus;
 
-		// This test is only for wp_user so disabling guest authors.
 		add_filter( 'coauthors_guest_authors_enabled', '__return_false' );
 
 		$this->assertFalse( $coauthors_plus->get_coauthor_by( '', '' ) );
@@ -99,6 +98,8 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertObjectHasAttribute( 'user_email', $coauthor->data );
 		$this->assertEquals( $this->author1->user_email, $coauthor->user_email );
 
+		remove_filter( 'coauthors_guest_authors_enabled', '__return_false' );
+
 		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->editor1->ID );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->editor1->ID );
@@ -106,8 +107,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertInstanceOf( stdClass::class, $coauthor );
 		$this->assertObjectHasAttribute( 'linked_account', $coauthor );
 		$this->assertEquals( $this->editor1->user_login, $coauthor->linked_account );
-
-		remove_filter( 'coauthors_guest_authors_enabled', '__return_false' );
 	}
 
 	/**
