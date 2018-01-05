@@ -735,7 +735,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		if ( ! class_exists( 'WXR_Parser' ) ) {
-			require_once( WP_CONTENT_DIR . '/admin-plugins/wordpress-importer/parsers.php' );
+			require_once( WP_CONTENT_DIR . '/plugins/wordpress-importer/parsers.php' );
 		}
 
 		$parser = new WXR_Parser();
