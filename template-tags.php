@@ -239,7 +239,9 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 
 	global $coauthors_plus_template_filters;
 
-	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+	$modify_filter = ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters;
+
+	if ( $modify_filter ) {
 
 		/**
 		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
@@ -256,7 +258,7 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 		'after'       => $after,
 	), null, $echo );
 
-	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+	if ( $modify_filter ) {
 		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
 	}
 
@@ -367,7 +369,9 @@ function coauthors_links( $between = null, $betweenLast = null, $before = null, 
 
 	global $coauthors_plus_template_filters;
 
-	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+	$modify_filter = ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters;
+
+	if ( $modify_filter ) {
 
 		/**
 		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
@@ -384,7 +388,7 @@ function coauthors_links( $between = null, $betweenLast = null, $before = null, 
 		'after'       => $after,
 	), null, $echo );
 
-	if ( ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters ) {
+	if ( $modify_filter ) {
 		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
 	}
 
