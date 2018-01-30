@@ -703,9 +703,18 @@ class CoAuthors_Plus {
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
 
-				$id = is_author() ? get_queried_object_id() : '\d';
+				$id = is_author() ? get_queried_object_id() : '\d+';
 
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				// When WordPress generates query as 'post_author IN (id)'.
+				if ( false !== strpos( $where, "{$wpdb->posts}.post_author IN " ) ) {
+
+					$maybe_both_query = $maybe_both ? '$0 OR' : '';
+
+					$where = preg_replace( '/\s\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*(.*' . $id . '.)/', ' (' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+
+				} else {
+					$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				}
 
 				// the block targets the private posts clause (if it exists)
 				if (
