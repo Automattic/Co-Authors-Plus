@@ -417,15 +417,37 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
 	), null, $echo );
 }
 
+/**
+ * Outputs the co-authors Meta Data
+ *
+ * @param string $field Required The user field to retrieve.[login, email, nicename, display_name, url, type]
+ */
 function get_the_coauthor_meta( $field ) {
 	global $wp_query, $post;
 
 	$coauthors = get_coauthors();
 	$meta = array();
-
+        
 	foreach ( $coauthors as $coauthor ) {
 		$user_id = $coauthor->ID;
-		$meta[ $user_id ] = get_the_author_meta( $field, $user_id );
+                if (isset( $coauthor->data) ){
+                    $coauthor_data = $coauthor->data;
+                } else {
+                    $coauthor_data = $coauthor;
+                }
+                
+                $coauthor_meta['login'] = $coauthor_data->user_login;
+                $coauthor_meta['email'] = $coauthor_data->user_email;
+                $coauthor_meta['nicename'] = $coauthor_data->user_nicename;
+                $coauthor_meta['display_name'] = $coauthor_data->display_name;  
+                if ( $coauthor_data->type == 'wpuser' ) {
+                    $coauthor_meta['url'] = $coauthor_data->user_url;
+                } else {
+                    $coauthor_meta['url'] = $coauthor_data->website;
+                }                
+                $coauthor_meta['type'] = $coauthor_data->type;   
+                
+                $meta[ $user_id ] = $coauthor_meta[$field];		
 	}
 	return $meta;
 }
