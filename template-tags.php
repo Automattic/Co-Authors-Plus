@@ -422,35 +422,39 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
  *
  * @param string $field Required The user field to retrieve.[login, email, nicename, display_name, url, type]
  */
-function get_the_coauthor_meta( $field ) {
+function get_the_coauthor_meta( $field ) { 
 	global $wp_query, $post;
 
 	$coauthors = get_coauthors();
 	$meta = array();
         
 	foreach ( $coauthors as $coauthor ) {
+                
 		$user_id = $coauthor->ID;
-                if (isset( $coauthor->data) ){
-                    $coauthor_data = $coauthor->data;
-                } else {
-                    $coauthor_data = $coauthor;
+                if ( isset($coauthor->data) ){
+                     $coauthor = $coauthor->data;
                 }
                 
-                $coauthor_meta['login'] = $coauthor_data->user_login;
-                $coauthor_meta['email'] = $coauthor_data->user_email;
-                $coauthor_meta['nicename'] = $coauthor_data->user_nicename;
-                $coauthor_meta['display_name'] = $coauthor_data->display_name;  
-                if ( $coauthor_data->type == 'wpuser' ) {
-                    $coauthor_meta['url'] = $coauthor_data->user_url;
-                } else {
-                    $coauthor_meta['url'] = $coauthor_data->website;
-                }                
-                $coauthor_meta['type'] = $coauthor_data->type;   
+                if( $field == 'url' && isset ($coauthor->website) )
+                    $field = 'website';
                 
-                $meta[ $user_id ] = $coauthor_meta[$field];		
+                if( $field == 'website' && isset ($coauthor->user_url) )
+                    $field = 'user_url';
+                
+                if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) )
+                    $field = 'user_' . $field;
+
+                if ( isset( $coauthor->$field ) ){
+                    $meta[ $user_id ] = $coauthor->$field;
+                } else {
+                    $meta[ $user_id ] = '';
+                }
+                                
 	}
+        
 	return $meta;
 }
+
 
 function the_coauthor_meta( $field, $user_id = 0 ) {
 	// TODO: need before after options
