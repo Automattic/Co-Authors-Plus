@@ -903,7 +903,7 @@ class CoAuthors_Plus {
 	function delete_user_action( $delete_id ) {
 		global $wpdb;
 
-		$reassign_id = isset( $_POST['reassign_user'] ) ? absint( $_POST['reassign_user'] ) : false;
+		$reassign_id = isset( $_POST['reassign_user'] ) && $_POST['delete_option'] === 'reassign'  ? absint( $_POST['reassign_user'] ) : false;
 
 		// If reassign posts, do that -- use coauthors_update_post
 		if ( $reassign_id ) {
