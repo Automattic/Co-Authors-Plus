@@ -428,30 +428,26 @@ function get_the_coauthor_meta( $field ) {
 	$coauthors = get_coauthors();
 	$meta = array();
         
-	foreach ( $coauthors as $coauthor ) {
-                
-		$user_id = $coauthor->ID;
-                if ( isset($coauthor->data) ){
-                     $coauthor = $coauthor->data;
-                }
-                
-                if( $field == 'url' && isset ($coauthor->website) )
-                    $field = 'website';
-                
-                if( $field == 'website' && isset ($coauthor->user_url) )
-                    $field = 'user_url';
-                
-                if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) )
-                    $field = 'user_' . $field;
-
-                if ( isset( $coauthor->$field ) ){
-                    $meta[ $user_id ] = $coauthor->$field;
-                } else {
-                    $meta[ $user_id ] = '';
-                }
-                                
-	}
+        if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) )
+                $field = 'user_' . $field;
         
+	foreach ( $coauthors as $coauthor ) {                
+		$user_id = $coauthor->ID;
+                
+                if ( isset( $coauthor->type )  && 'user_url' === $field ) {
+                        if ( 'guest-author' === $coauthor->type) {
+                                $field = 'website';
+                        } 
+                } else if ( 'website' === $field ) {
+                        $field = 'user_url';
+                }
+                
+                if ( isset( $coauthor->$field ) ) {
+                        $meta[ $user_id ] = $coauthor->$field;
+                } else {
+                        $meta[ $user_id ] = '';
+                }                                
+	}        
 	return $meta;
 }
 
