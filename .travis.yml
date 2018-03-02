@@ -3,6 +3,9 @@ language: php
 matrix:
     include:
         # aliased to a recent 5.6.x version
+        - php: "5.6"
+          env: WP_VERSION=4.6
+
         - php: '5.6'
           env:
             - WP_VERSION=latest
@@ -17,7 +20,13 @@ matrix:
 
         # aliased to a recent 7.x version
         - php: '7.0'
+          env: WP_VERSION=4.6
+
+        - php: '7.0'
           env: WP_VERSION=latest
+
+        - php: '7.1'
+          env: WP_VERSION=4.6
 
         - php: '7.1'
           env: WP_VERSION=latest
@@ -39,7 +48,20 @@ before_script:
     - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
     # Set up unit tests
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-    - phpunit --version
+    # Properly handle PHPUnit versions
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - |
+        if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then
+          composer global require "phpunit/phpunit=4.8.*"
+        elif [[ ${TRAVIS_PHP_VERSION:0:2} == "7." && ${WP_VERSION} == "4.6" ]]; then
+          composer global require "phpunit/phpunit=5.7.*"
+        fi
+    - |
+        if [[ -n $COMPOSER_BIN_DIR && -x $COMPOSER_BIN_DIR/phpunit ]]; then
+          $COMPOSER_BIN_DIR/phpunit --version
+        else
+          phpunit --version
+        fi
 
 script:
     # Search for PHP syntax errors.
@@ -55,4 +77,9 @@ script:
     # --extensions: Only sniff PHP files.
     - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/scripts/phpcs -p -s -v -n . --standard="WordPress-VIP" --extensions=php; fi
     # Run unit tests
-    - phpunit
+    - |
+        if [[ -n $COMPOSER_BIN_DIR && -x $COMPOSER_BIN_DIR/phpunit ]]; then
+          $COMPOSER_BIN_DIR/phpunit
+        else
+          phpunit
+        fi
