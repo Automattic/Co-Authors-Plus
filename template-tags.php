@@ -424,7 +424,7 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
  * @param string $user_id Optional The user ID for meta
  */
 function get_the_coauthor_meta( $field, $user_id = false ) { 
-	global $wp_query, $post, $coauthors_plus;
+	global $coauthors_plus;
 
 	if ( ! $user_id ) {
 		$coauthors = get_coauthors();
