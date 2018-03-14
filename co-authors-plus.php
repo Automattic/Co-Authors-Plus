@@ -703,9 +703,18 @@ class CoAuthors_Plus {
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
 
-				$id = is_author() ? get_queried_object_id() : '\d';
+				$id = is_author() ? get_queried_object_id() : '\d+';
 
-				$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				// When WordPress generates query as 'post_author IN (id)'.
+				if ( false !== strpos( $where, "{$wpdb->posts}.post_author IN " ) ) {
+
+					$maybe_both_query = $maybe_both ? '$0 OR' : '';
+
+					$where = preg_replace( '/\s\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*(.*' . $id . '.)/', ' (' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+
+				} else {
+					$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				}
 
 				// the block targets the private posts clause (if it exists)
 				if (
@@ -766,7 +775,10 @@ class CoAuthors_Plus {
 
 		// This action happens when a post is saved while editing a post
 		if ( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
-			$author = sanitize_text_field( $_POST['coauthors'][0] );
+
+			// rawurlencode() is for encoding coauthor name with special characters to compare names when getting coauthor.
+			$author = rawurlencode( sanitize_text_field( $_POST['coauthors'][0] ) );
+
 			if ( $author ) {
 				$author_data = $this->get_coauthor_by( 'user_nicename', $author );
 				// If it's a guest author and has a linked account, store that information in post_author
@@ -812,7 +824,7 @@ class CoAuthors_Plus {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
 
 				$coauthors = (array) $_POST['coauthors'];
-				$coauthors = array_map( 'sanitize_text_field', $coauthors );
+				$coauthors = array_map( 'sanitize_title', $coauthors );
 				$this->add_coauthors( $post_id, $coauthors );
 			}
 		} else {
@@ -1011,7 +1023,8 @@ class CoAuthors_Plus {
 			$post = get_post();
 			if ( ! $post ) {
 				// if user is on pages, you need to grab post type another way
-				$post_type = get_current_screen()->post_type;
+				$current_screen = get_current_screen();
+				$post_type      = ( ! empty( $current_screen->post_type ) ) ? $current_screen->post_type : '';
 			}
 			else {
 				$post_type = $post->post_type;
@@ -1134,7 +1147,7 @@ class CoAuthors_Plus {
 		if( empty( $authors ) ) echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.');
 
 		foreach ( $authors as $author ) {
-			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . $author->user_nicename ) . "\n";
+			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . rawurldecode( $author->user_nicename ) ) . "\n";
 		}
 
 		die();
