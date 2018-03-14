@@ -422,43 +422,46 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
  *
  * @param string $field Required The user field to retrieve.[login, email, nicename, display_name, url, type]
  * @param string $user_id Optional The user ID for meta
+ *
+ * @return array $meta Value of the user field
  */
-function get_the_coauthor_meta( $field, $user_id = false ) { 
+function get_the_coauthor_meta( $field, $user_id = false ) {
 	global $coauthors_plus;
 
 	if ( ! $user_id ) {
 		$coauthors = get_coauthors();
-        } else {
-                $coauthor_data = $coauthors_plus->get_coauthor_by( 'id', $user_id );
-                $coauthors = array();
-                if ( ! empty( $coauthor_data ) ) {
-			$coauthors[] = $coauthor_data;
-		}
+    } else {
+        $coauthor_data = $coauthors_plus->get_coauthor_by( 'id', $user_id );
+        $coauthors = array();
+        if ( ! empty( $coauthor_data ) ) {
+            $coauthors[] = $coauthor_data;
         }
+    }
 
 	$meta = array();
-        
-        if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) )
-                $field = 'user_' . $field;
-        
-	foreach ( $coauthors as $coauthor ) {                
-		$user_id = $coauthor->ID;      
-                
-                if ( isset( $coauthor->type )  && 'user_url' === $field ) {
-                        if ( 'guest-author' === $coauthor->type) {
-                                $field = 'website';
-                        } 
-                } else if ( 'website' === $field ) {
-                        $field = 'user_url';
-                }
-                
-                if ( isset( $coauthor->$field ) ) {
-                        $meta[ $user_id ] = $coauthor->$field;
-                } else {
-                        $meta[ $user_id ] = '';
-                }                                
-	}        
-        
+
+    if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) ) {
+        $field = 'user_' . $field;
+    }
+
+	foreach ( $coauthors as $coauthor ) {
+		$user_id = $coauthor->ID;
+
+        if ( isset( $coauthor->type )  && 'user_url' === $field ) {
+            if ( 'guest-author' === $coauthor->type) {
+                $field = 'website';
+            }
+        } else if ( 'website' === $field ) {
+            $field = 'user_url';
+        }
+
+        if ( isset( $coauthor->$field ) ) {
+            $meta[ $user_id ] = $coauthor->$field;
+        } else {
+            $meta[ $user_id ] = '';
+        }
+	}
+
 	return $meta;
 }
 
@@ -466,9 +469,9 @@ function get_the_coauthor_meta( $field, $user_id = false ) {
 function the_coauthor_meta( $field, $user_id = 0 ) {
 	// TODO: need before after options
 	$coauthor_meta = get_the_coauthor_meta( $field, $user_id );
-        foreach ( $coauthor_meta as $meta ) {     
-                echo $meta; 
-        }
+    foreach ( $coauthor_meta as $meta ) {
+        echo $meta;
+    }
 }
 
 /**
