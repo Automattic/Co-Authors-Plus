@@ -1358,6 +1358,19 @@ class CoAuthors_Plus {
 		$user_id = isset( $args[1] ) ? $args[1] : 0;
 		$post_id = isset( $args[2] ) ? $args[2] : 0;
 
+		// Before we attempt to check the post type, we need to filter out caps
+		// that we know are totally irrelevant. Otherwise we end up passing non post
+		// ids to get_post_type()
+		$skipped_caps = array(
+			'delete_user',
+			'edit_users',
+			'edit_user',
+		);
+
+		if ( in_array( $cap, $skipped_caps, true ) ) {
+			return $allcaps;
+		}
+
 		$obj = get_post_type_object( get_post_type( $post_id ) );
 		if ( ! $obj || 'revision' == $obj->name ) {
 			return $allcaps;
@@ -1409,7 +1422,7 @@ class CoAuthors_Plus {
 		if ( false !== ( $term = wp_cache_get( $cache_key, 'co-authors-plus' ) ) ) {
 			return $term;
 		}
-		
+
 		// use linked user for accurate post count
 		if ( ! empty ( $coauthor->linked_account ) ) {
 			$term = get_term_by( 'slug', 'cap-' . $coauthor->linked_account, $this->coauthor_taxonomy );
