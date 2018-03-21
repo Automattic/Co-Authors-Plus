@@ -426,11 +426,12 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
  * @return array $meta Value of the user field
  */
 function get_the_coauthor_meta( $field, $user_id = false ) {
-	global $coauthors_plus;
+    global $coauthors_plus;
 
-	if ( ! $user_id ) {
-		$coauthors = get_coauthors();
-    } else {
+    if ( ! $user_id ) {
+        $coauthors = get_coauthors();
+    }
+    else {
         $coauthor_data = $coauthors_plus->get_coauthor_by( 'id', $user_id );
         $coauthors = array();
         if ( ! empty( $coauthor_data ) ) {
@@ -438,39 +439,41 @@ function get_the_coauthor_meta( $field, $user_id = false ) {
         }
     }
 
-	$meta = array();
+    $meta = array();
 
     if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) ) {
         $field = 'user_' . $field;
     }
 
-	foreach ( $coauthors as $coauthor ) {
-		$user_id = $coauthor->ID;
+    foreach ( $coauthors as $coauthor ) {
+        $user_id = $coauthor->ID;
 
-        if ( isset( $coauthor->type )  && 'user_url' === $field ) {
-            if ( 'guest-author' === $coauthor->type) {
+        if ( isset( $coauthor->type ) && 'user_url' === $field ) {
+            if ( 'guest-author' === $coauthor->type ) {
                 $field = 'website';
             }
-        } else if ( 'website' === $field ) {
+        }
+        else if ( 'website' === $field ) {
             $field = 'user_url';
         }
 
         if ( isset( $coauthor->$field ) ) {
             $meta[ $user_id ] = $coauthor->$field;
-        } else {
+        }
+        else {
             $meta[ $user_id ] = '';
         }
-	}
+    }
 
-	return $meta;
+    return $meta;
 }
 
 
 function the_coauthor_meta( $field, $user_id = 0 ) {
-	// TODO: need before after options
-	$coauthor_meta = get_the_coauthor_meta( $field, $user_id );
+    // TODO: need before after options
+    $coauthor_meta = get_the_coauthor_meta( $field, $user_id );
     foreach ( $coauthor_meta as $meta ) {
-        echo $meta;
+        echo esc_html( $meta );
     }
 }
 
