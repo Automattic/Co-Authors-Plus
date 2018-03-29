@@ -527,6 +527,7 @@ function the_coauthor_meta( $field, $user_id = 0 ) {
  * feed (string) (''): If isn't empty, show links to author's feeds.
  * feed_image (string) (''): If isn't empty, use this image to link to feeds.
  * echo (boolean) (true): Set to false to return the output, instead of echoing.
+ * authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
  * @param array $args The argument array.
  * @return null|string The output, if echo is set to false.
  */
@@ -544,7 +545,8 @@ function coauthors_wp_list_authors( $args = array() ) {
 		'style'              => 'list',
 		'html'               => true,
 		'number'           	 => 20, // A sane limit to start to avoid breaking all the things
-		'guest_authors_only' => false
+		'guest_authors_only' => false,
+		'authors_with_posts_only' => false,
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -552,8 +554,12 @@ function coauthors_wp_list_authors( $args = array() ) {
 
 	$term_args = array(
 			'orderby'      => 'name',
-			'hide_empty'   => 0,
 			'number'       => (int) $args['number'],
+			/*
+			 * Historically, this was set to always be `0` ignoring `$args['hide_empty']` value
+			 * To avoid any backwards incompatibility, inventing `authors_with_posts_only` that defaults to false
+			 */
+			'hide_empty'   => (boolean) $args['authors_with_posts_only'],
 		);
 	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
 
