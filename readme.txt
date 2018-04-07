@@ -57,6 +57,43 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= 3.3.0 ("Rebecca") =
+* Fix private post viewing on front-end
+* Reduce amount of sleep
+* Author search UX issues
+* Remove associated guest user when mapped user id deleted.
+* Removed double left join on posts_join_filter
+* Fixed WP CLI create-terms-for-posts if no co-authors found
+* Pages archive now displays coauthors and quick edit works
+* Terminology updated throughout
+* Replace hardcoded 'author' with $this->$coauthor_taxonomy
+* Move parenthesis to fix esc_html and sprintf
+* Added progress to create-guest-authors so users have an idea of how long it will take
+* Deleting guest authors is less confusing
+* Guest author's featured image is avatar now
+* Removed extra image sizing
+* Remove duplicated byline
+* coauthors_wp_list_authors() has option to list only guest authors now
+* remove duplicates from linked accounts on coauthors_wp_list_authors()
+* Accurate Guest Author post count on linked accounts
+* New README.md
+* Filter author archive
+* Fix coauthors_links_single()
+* Added guest author hooks for create/delete
+* Fixes logic for DOING_AUTOSAVE check
+* user_login spaces problem when using add_coauthors
+* Adding details of filter for slow performance
+* Remove redundant test for 404 on Author Archive
+* Guest Author Counts are more accurate
+* Set $coauthors_loading
+* Fix the issue where guest authors with non-ASCII characters can't be used as co-authors
+* Fix the issue where incompatibility when `coauthors_auto_apply_template_tags` set to true
+* Unit tests/Fix warnings for template tags
+* Review and improve test coverage
+* Update class-wp-cli.php
+* Update .travis.yml file for PHPUnit tests
+* Changes to resolve issue #332 about missing coauthor meta
+
 = 3.2.2 =
 * Fix broken author ordering in 4.7+ (props mslinnea)
 * Fix no moderation e-mail bug (props RobjS)
