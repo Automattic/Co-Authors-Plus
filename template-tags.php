@@ -236,12 +236,33 @@ function coauthors( $between = null, $betweenLast = null, $before = null, $after
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_posts_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo('coauthors_posts_links_single', 'callback', array(
-		'between' => $between,
+
+	global $coauthors_plus_template_filters;
+
+	$modify_filter = ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters;
+
+	if ( $modify_filter ) {
+
+		/**
+		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
+		 *
+		 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
+		 */
+		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	$coauthors_posts_links = coauthors__echo( 'coauthors_posts_links_single', 'callback', array(
+		'between'     => $between,
 		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
+		'before'      => $before,
+		'after'       => $after,
 	), null, $echo );
+
+	if ( $modify_filter ) {
+		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	return $coauthors_posts_links;
 }
 
 /**
@@ -345,12 +366,33 @@ function coauthors_nicknames( $between = null, $betweenLast = null, $before = nu
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo( 'coauthors_links_single', 'callback', array(
-		'between' => $between,
+
+	global $coauthors_plus_template_filters;
+
+	$modify_filter = ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters;
+
+	if ( $modify_filter ) {
+
+		/**
+		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
+		 *
+		 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
+		 */
+		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	$coauthors_links = coauthors__echo( 'coauthors_links_single', 'callback', array(
+		'between'     => $between,
 		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
+		'before'      => $before,
+		'after'       => $after,
 	), null, $echo );
+
+	if ( $modify_filter ) {
+		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	return $coauthors_links;
 }
 
 /**
