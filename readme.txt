@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 4.8
+Tested up to: 4.9.5
 Requires at least: 4.1
-Stable tag: 3.2.2
+Stable tag: 3.3.0
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
