@@ -1224,7 +1224,7 @@ class CoAuthors_Plus {
 	/**
 	 * Modify get_users() to search display_name instead of user_nicename
 	 */
-	function action_pre_user_query( &$user_query ) {
+	function action_pre_user_query( $user_query ) {
 
 		if ( is_object( $user_query ) ) {
 			$user_query->query_where = str_replace( 'user_nicename LIKE', 'display_name LIKE', $user_query->query_where );
