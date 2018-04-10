@@ -352,6 +352,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_posts_links_single() {
 
+		global $post;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post = $this->post;
+
 		$author_link = coauthors_posts_links_single( $this->author1 );
 
 		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
@@ -360,6 +367,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Here we are checking author name should not be more then one time.
 		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $author_link, ">{$this->author1->display_name}<" ) );
+
+		// Restore global post from backup.
+		$post = $post_backup;
 	}
 
 	/**
@@ -571,7 +581,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_links_single_when_guest_author() {
 
-		global $authordata;
+		global $post, $authordata;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post = $this->post;
 
 		// Backing up global author data.
 		$authordata_backup = $authordata;
@@ -596,6 +611,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Restore global author data from backup.
 		$authordata = $authordata_backup;
+
+		// Restore global post from backup.
+		$post = $post_backup;
 	}
 
 	/**
@@ -605,7 +623,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_links_single_author_url_is_set() {
 
-		global $authordata;
+		global $post, $authordata;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post = $this->post;
 
 		// Backing up global author data.
 		$authordata_backup = $authordata;
@@ -627,6 +650,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Restore global author data from backup.
 		$authordata = $authordata_backup;
+
+		// Restore global post from backup.
+		$post = $post_backup;
 	}
 
 	/**
@@ -636,12 +662,19 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_links_single_when_url_not_exist() {
 
-		global $authordata;
+		global $post, $authordata;
+
+		// Backing up global post.
+		$post_backup = $post;
+
+		$post = $this->post;
 
 		// Backing up global author data.
 		$authordata_backup = $authordata;
 
-		$author_link = coauthors_links_single( $this->author1 );
+		$this->editor1->type = 'guest-author';
+
+		$author_link = coauthors_links_single( $this->editor1 );
 
 		$this->assertEmpty( $author_link );
 
@@ -652,6 +685,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Restore global author data from backup.
 		$authordata = $authordata_backup;
+
+		// Restore global post from backup.
+		$post = $post_backup;
 	}
 
 	/**
