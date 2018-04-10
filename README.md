@@ -2,13 +2,13 @@
 
 * Contributors: batmoo, danielbachhuber, automattic
 * Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-* Tested up to: 4.8
+* Tested up to: 4.9.5
 * Requires at least: 4.1
-* Stable tag: 3.2.2
+* Stable tag: 3.3.0
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
-## Description 
+## Description
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box. Co-authored posts appear on a co-author's archive page and in their feed. Co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
 
@@ -18,7 +18,7 @@ On the frontend, use the [Co-Authors Plus template tags](http://vip.wordpress.co
 
 This plugin is an almost complete rewrite of the Co-Authors plugin originally developed at [Shepherd Interactive](http://www.shepherd-interactive.com/) (2007). The original plugin was inspired by the 'Multiple Authors' plugin by Mark Jaquith (2005).
 
-## Frequently Asked Questions 
+## Frequently Asked Questions
 
 * How do I add Co-Authors Plus support to my theme?
 
@@ -28,17 +28,17 @@ If you've just installed Co-Authors Plus, you might notice that the bylines are 
 
 When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
-* Can I use Co-Authors Plus with WordPress multisite? 
+* Can I use Co-Authors Plus with WordPress multisite?
 
 Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
 
-* Who needs permission to do what? 
+* Who needs permission to do what?
 
 To assign co-authors to posts, a WordPress user will need the `edit_others_posts` capability. This is typically granted to the Editor role, but can be altered with the `coauthors_plus_edit_authors` filter.
 
 To create new guest author profiles, a WordPress will need the `list_users` capability. This is typically granted to the Administrator role, but can be altered with the `coauthors_guest_author_manage_cap` filter.
 
-* Can I easily create a list of all co-authors? 
+* Can I easily create a list of all co-authors?
 
 Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
 
@@ -59,6 +59,45 @@ $ wp --url=example.com co-authors-plus create-terms-for-posts
 ```
 
 ## Changelog ##
+
+**3.3.0 ("Rebecca")**
+* Fix private post viewing on front-end #386
+* Reduce amount of sleep #400
+* Author search UX issues #407
+* Remove associated guest user when mapped user id deleted. #414
+* Removed double left join on posts_join_filter #419
+* Fixed WP CLI create-terms-for-posts if no co-authors found #420
+* Pages archive now displays coauthors and quick edit works #422
+* Terminology updated throughout #423
+* Replace hardcoded 'author' with $this->$coauthor_taxonomy #426
+* Move parenthesis to fix esc_html and sprintf #430
+* Added progress to create-guest-authors so users have an idea of how long it will take #431
+* Deleting guest authors is less confusing #432
+* Guest author's featured image is avatar now #433
+* Removed extra image sizing #434
+* Remove duplicated byline #435
+* coauthors_wp_list_authors() has option to list only guest authors now #436
+* remove duplicates from linked accounts on coauthors_wp_list_authors() #437
+* Accurate Guest Author post count on linked accounts #438
+* New README.md #439
+* Filter author archive #441
+* Fix coauthors_links_single() #444
+* Added guest author hooks for create/delete #446
+* Fixes logic for DOING_AUTOSAVE check #450
+* user_login spaces problem when using add_coauthors #453
+* Adding details of filter for slow performance #456
+* Remove redundant test for 404 on Author Archive #457
+* Guest Author Counts are more accurate #461
+* Set $coauthors_loading #468
+* Fix the issue where guest authors with non-ASCII characters can't be used as co-authors #473
+* Fix the issue where incompatibility when `coauthors_auto_apply_template_tags` set to true #474
+* Unit tests/Fix warnings for template tags #475
+* Review and improve test coverage #476
+* Update class-wp-cli.php #480
+* Update .travis.yml file for PHPUnit tests #482
+* Changes to resolve issue #332 about missing coauthor meta #484
+
+Props to the many people who helped make this release possible: [catchmyfame](https://github.com/catchmyfame), [danielbachhuber](https://github.com/danielbachhuber), [david-binda](https://github.com/david-binda), [douglas-johnson](https://github.com/douglas-johnson), [castlehouse](https://github.com/castlehouse), [frankar](https://github.com/frankar), [haleeben](https://github.com/haleeben), [jjeaton](https://github.com/jjeaton), [johnbillion](https://github.com/johnbillion), [kevinlisota](https://github.com/kevinlisota), [mattoperry](https://github.com/mattoperry), [mdbitz](https://github.com/mdbitz), [mdchiragpatel](https://github.com/mdchiragpatel), [megfh](https://github.com/megfh), [mjangda](https://github.com/mjangda), [mslinnea](https://github.com/mslinnea), [natebot](https://github.com/natebot), [nickdaugherty](https://github.com/nickdaugherty), [nilzari](https://github.com/nilzari), [philipjohn](https://github.com/philipjohn), [pkevan](https://github.com/pkevan), [rebeccahum](https://github.com/rebeccahum), [ryanmarkel](https://github.com/ryanmarkel), [sanketio](https://github.com/sanketio), [sboisvert](https://github.com/sboisvert), [Spongsta](https://github.com/Spongsta), [srguglielmo](https://github.com/srguglielmo), [timburden](https://github.com/timburden), [trepmal](https://github.com/trepmal), [TylerDurdon](https://github.com/TylerDurdon)
 
 **3.2.2**
 * Fix broken author ordering in 4.7+ (props mslinnea)
