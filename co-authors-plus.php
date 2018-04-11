@@ -562,14 +562,24 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Unset the post count column because it's going to be inaccurate and provide our own
+	 * Create 2 custom columns in the Users table:
+	 * - A custom table listing linked guest authors.
+	 * - A custom post count columm to replace the existing one.
+	 *
+	 * @since 2.6.1
+	 * @since 3.4.0 Added column to display the linked guest author.
+	 *
+	 * @param array $columns An array of column name ⇒ label.
 	 */
 	function _filter_manage_users_columns( $columns ) {
 
 		$new_columns = array();
-		// Unset and add our column while retaining the order of the columns
+		// Unset the default post count columns and add our own while retaining the order of the columns.
 		foreach ( $columns as $column_name => $column_title ) {
-			if ( 'posts' == $column_name ) {
+			if ( 'posts' === $column_name ) {
+				// Add new guest author column.
+				$new_columns['coauthors_linked_author'] = __( 'Linked Guest Author', 'co-authors-plus' );
+				// Add our custom post count columm.
 				$new_columns['coauthors_post_count'] = __( 'Posts', 'co-authors-plus' );
 			} else {
 				$new_columns[ $column_name ] = $column_title;
@@ -579,22 +589,54 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Provide an accurate count when looking up the number of published posts for a user
+	 * Add 2 custom columns to the Users table:
+	 * - 1st column replaces default posts count and displays an accurate count when looking up the number of published posts for a user.
+	 * - 2nd column displays the name of the linked guest author if one is set.
+	 *
+	 * @since 2.6.1
+	 * @since 3.4.0 Added column to display the linked guest author.
+	 *
+	 * @param string $value       Custom column output. Default empty.
+	 * @param string $column_name Column name.
+	 * @param int    $user_id     ID of the currently-listed user.
 	 */
 	function _filter_manage_users_custom_column( $value, $column_name, $user_id ) {
-		if ( 'coauthors_post_count' != $column_name ) {
-			return $value;
+		/*
+		 * Display the number of posts per user, with custom link to filtered posts page.
+		 */
+		if ( 'coauthors_post_count' === $column_name ) {
+			// We filter count_user_posts() so it provides an accurate number
+			$numposts = count_user_posts( $user_id );
+			$user     = get_user_by( 'id', $user_id );
+			if ( $numposts > 0 ) {
+				$value .= sprintf(
+					'<a href="edit.php?author_name=%1$s" title="%2$s" class="edit">%3$d</a>',
+					esc_attr( $user->user_nicename ),
+					esc_attr__( 'View posts by this author', 'co-authors-plus' ),
+					absint( $numposts )
+				);
+			} else {
+				$value .= 0;
+			}
+		} elseif ( 'coauthors_linked_author' === $column_name ) {
+			/**
+			 * Display the name of the linked guest author if one is set.
+			 */
+			$author_info = $this->get_coauthor_by( 'id', $user_id, false );
+			if (
+				$author_info
+				&& 'guest-author' === $author_info->type
+			) {
+				$value .= sprintf(
+					'<a href="post.php?post=%1$d&action=edit" title="%2$s" class="edit">%3$s</a>',
+					absint( $author_info->ID ),
+					esc_attr__( 'Edit Guest Author', 'co-authors-plus' ),
+					esc_html( $author_info->display_name )
+				);
+			}
 		}
-		// We filter count_user_posts() so it provides an accurate number
-		$numposts = count_user_posts( $user_id ); // phpcs:ignore
-		$user     = get_user_by( 'id', $user_id );
-		if ( $numposts > 0 ) {
-			$value .= "<a href='edit.php?author_name=$user->user_nicename' title='" . esc_attr__( 'View posts by this author', 'co-authors-plus' ) . "' class='edit'>";
-			$value .= $numposts;
-			$value .= '</a>';
-		} else {
-			$value .= 0;
-		}
+
+		// Fallback.
 		return $value;
 	}
 
