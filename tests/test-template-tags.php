@@ -593,11 +593,11 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->author1->type = 'guest-author';
 
-		$this->assertNull( coauthors_links_single( $this->author1 ) );
+		$this->assertEquals( get_the_author(), coauthors_links_single( $this->author1 ) );		
 
 		update_user_meta( $this->author1->ID, 'website', 'example.org' );
 
-		$this->assertNull( coauthors_links_single( $this->author1 ) );
+		$this->assertEquals( get_the_author(), coauthors_links_single( $this->author1 ) );
 
 		$authordata  = $this->author1;
 		$author_link = coauthors_links_single( $this->author1 );
@@ -676,7 +676,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$author_link = coauthors_links_single( $this->editor1 );
 
-		$this->assertEmpty( $author_link );
+		$this->assertEquals( get_the_author(), $author_link );
 
 		$authordata  = $this->author1;
 		$author_link = coauthors_links_single( $this->author1 );

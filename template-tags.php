@@ -420,14 +420,12 @@ function coauthors_emails( $between = null, $betweenLast = null, $before = null,
  * @return string
  */
 function coauthors_links_single( $author ) {
-	if ( 'guest-author' === $author->type ) {
-		if ( get_the_author_meta( 'website' ) ) {
-			return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
-				esc_url( get_the_author_meta( 'website' ) ),
-				esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
-				esc_html( get_the_author() )
-			);
-		} 
+	if ( 'guest-author' === $author->type && get_the_author_meta( 'website' ) ) {
+		return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
+			esc_url( get_the_author_meta( 'website' ) ),
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
+			esc_html( get_the_author() )
+		);
 	}
 	elseif ( get_the_author_meta( 'url' ) ) {
 		return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
