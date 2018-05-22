@@ -1410,19 +1410,10 @@ class CoAuthors_Plus {
 			return $term;
 		}
 
-		// use linked user for accurate post count
-		if ( ! empty ( $coauthor->linked_account ) ) {
-			$term = get_term_by( 'slug', 'cap-' . $coauthor->linked_account, $this->coauthor_taxonomy );
-			if ( ! $term ) {
-				$term = get_term_by( 'slug', $coauthor->linked_account, $this->coauthor_taxonomy );
-			}
-		}
-		else {
-			// See if the prefixed term is available, otherwise default to just the nicename
-			$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
-			if ( ! $term ) {
-				$term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy );
-			}
+		// See if the prefixed term is available, otherwise default to just the nicename
+		$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, $this->coauthor_taxonomy );
+		if ( ! $term ) {
+			$term = get_term_by( 'slug', $coauthor->user_nicename, $this->coauthor_taxonomy );
 		}
 		wp_cache_set( $cache_key, $term, 'co-authors-plus' );
 		return $term;
