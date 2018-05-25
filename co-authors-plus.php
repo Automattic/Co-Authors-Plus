@@ -1612,7 +1612,7 @@ class CoAuthors_Plus {
 	public function filter_author_archive_title() {
 		if ( is_author() ) {
 			$author = sanitize_user( get_query_var( 'author_name' ) );
-			return "Author: ". $author;
+			return sprintf( __( 'Author: %s'), $author);
 		}
 	}
 }
