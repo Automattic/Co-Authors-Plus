@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpCSValidationInspection */
+<?php
 /*
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
