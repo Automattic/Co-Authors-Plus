@@ -1611,8 +1611,9 @@ class CoAuthors_Plus {
 	 */
 	public function filter_author_archive_title() {
 		if ( is_author() ) {
-			$author = sanitize_user( get_query_var( 'author_name' ) );
-			return "Author: ". $author;
+			$author_slug = sanitize_user( get_query_var( 'author_name' ) );
+			$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
+			return sprintf( __( 'Author: %s' ), $author->display_name );
 		}
 	}
 }
