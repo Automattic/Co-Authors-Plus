@@ -1168,7 +1168,7 @@ class CoAuthors_Plus {
 		$args = array(
 				'count_total' => false,
 				'search' => sprintf( '*%s*', $search ),
-				'search_fields' => array(
+				'search_columns' => array(
 					'ID',
 					'display_name',
 					'user_email',
