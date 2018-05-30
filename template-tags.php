@@ -14,8 +14,7 @@ function get_coauthors( $post_id = 0 ) {
 	}
 
 	if ( $post_id ) {
-		$coauthor_terms = get_the_terms( $post_id, $coauthors_plus->coauthor_taxonomy );
-
+		$coauthor_terms = cap_get_coauthor_terms_for_post( $post_id );
 		if ( is_array( $coauthor_terms ) && ! empty( $coauthor_terms ) ) {
 			foreach ( $coauthor_terms as $coauthor ) {
 				$coauthor_slug = preg_replace( '#^cap\-#', '', $coauthor->slug );
@@ -36,6 +35,8 @@ function get_coauthors( $post_id = 0 ) {
 			}
 		} // the empty else case is because if we force guest authors, we don't ever care what value wp_posts.post_author has.
 	}
+	// remove duplicate $coauthors objects from mapping user accounts to guest authors accounts
+	$coauthors = array_unique( $coauthors, SORT_REGULAR );
 	return $coauthors;
 }
 
@@ -235,12 +236,33 @@ function coauthors( $between = null, $betweenLast = null, $before = null, $after
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_posts_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo('coauthors_posts_links_single', 'callback', array(
-		'between' => $between,
+
+	global $coauthors_plus_template_filters;
+
+	$modify_filter = ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters;
+
+	if ( $modify_filter ) {
+
+		/**
+		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
+		 *
+		 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
+		 */
+		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	$coauthors_posts_links = coauthors__echo( 'coauthors_posts_links_single', 'callback', array(
+		'between'     => $between,
 		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
+		'before'      => $before,
+		'after'       => $after,
 	), null, $echo );
+
+	if ( $modify_filter ) {
+		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	return $coauthors_posts_links;
 }
 
 /**
@@ -344,12 +366,33 @@ function coauthors_nicknames( $between = null, $betweenLast = null, $before = nu
  * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo( 'coauthors_links_single', 'callback', array(
-		'between' => $between,
+
+	global $coauthors_plus_template_filters;
+
+	$modify_filter = ! empty( $coauthors_plus_template_filters ) && $coauthors_plus_template_filters instanceof CoAuthors_Template_Filters;
+
+	if ( $modify_filter ) {
+
+		/**
+		 * Removing "the_author" filter so that it won't get called in loop and append names for each author.
+		 *
+		 * Ref : https://github.com/Automattic/Co-Authors-Plus/issues/279
+		 */
+		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	$coauthors_links = coauthors__echo( 'coauthors_links_single', 'callback', array(
+		'between'     => $between,
 		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
+		'before'      => $before,
+		'after'       => $after,
 	), null, $echo );
+
+	if ( $modify_filter ) {
+		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
+	}
+
+	return $coauthors_links;
 }
 
 /**
@@ -377,14 +420,22 @@ function coauthors_emails( $between = null, $betweenLast = null, $before = null,
  * @return string
  */
 function coauthors_links_single( $author ) {
-	if ( get_the_author_meta( 'url' ) ) {
-		return sprintf( '<a href="%s" title="%s" rel="external">%s</a>',
-			get_the_author_meta( 'url' ),
-			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), get_the_author() ) ),
-			get_the_author()
+	if ( 'guest-author' === $author->type && get_the_author_meta( 'website' ) ) {
+		return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
+			esc_url( get_the_author_meta( 'website' ) ),
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
+			esc_html( get_the_author() )
 		);
-	} else {
-		return get_the_author();
+	}
+	elseif ( get_the_author_meta( 'url' ) ) {
+		return sprintf( '<a href="%s" title="%s" rel="external" target="_blank">%s</a>',
+			esc_url( get_the_author_meta( 'url' ) ),
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
+			esc_html( get_the_author() )
+		);
+	} 
+	else {
+		return esc_html( get_the_author() );
 	}
 }
 
@@ -406,22 +457,64 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
 	), null, $echo );
 }
 
-function get_the_coauthor_meta( $field ) {
-	global $wp_query, $post;
+/**
+ * Outputs the co-authors Meta Data
+ *
+ * @param string $field Required The user field to retrieve.[login, email, nicename, display_name, url, type]
+ * @param string $user_id Optional The user ID for meta
+ *
+ * @return array $meta Value of the user field
+ */
+function get_the_coauthor_meta( $field, $user_id = false ) {
+    global $coauthors_plus;
 
-	$coauthors = get_coauthors();
-	$meta = array();
+    if ( ! $user_id ) {
+        $coauthors = get_coauthors();
+    }
+    else {
+        $coauthor_data = $coauthors_plus->get_coauthor_by( 'id', $user_id );
+        $coauthors = array();
+        if ( ! empty( $coauthor_data ) ) {
+            $coauthors[] = $coauthor_data;
+        }
+    }
 
-	foreach ( $coauthors as $coauthor ) {
-		$user_id = $coauthor->ID;
-		$meta[ $user_id ] = get_the_author_meta( $field, $user_id );
-	}
-	return $meta;
+    $meta = array();
+
+    if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) ) {
+        $field = 'user_' . $field;
+    }
+
+    foreach ( $coauthors as $coauthor ) {
+        $user_id = $coauthor->ID;
+
+        if ( isset( $coauthor->type ) && 'user_url' === $field ) {
+            if ( 'guest-author' === $coauthor->type ) {
+                $field = 'website';
+            }
+        }
+        else if ( 'website' === $field ) {
+            $field = 'user_url';
+        }
+
+        if ( isset( $coauthor->$field ) ) {
+            $meta[ $user_id ] = $coauthor->$field;
+        }
+        else {
+            $meta[ $user_id ] = '';
+        }
+    }
+
+    return $meta;
 }
 
+
 function the_coauthor_meta( $field, $user_id = 0 ) {
-	// TODO: need before after options
-	echo get_the_coauthor_meta( $field, $user_id );
+    // TODO: need before after options
+    $coauthor_meta = get_the_coauthor_meta( $field, $user_id );
+    foreach ( $coauthor_meta as $meta ) {
+        echo esc_html( $meta );
+    }
 }
 
 /**
@@ -439,16 +532,17 @@ function coauthors_wp_list_authors( $args = array() ) {
 	global $coauthors_plus;
 
 	$defaults = array(
-		'optioncount'      => false,
-		'show_fullname'    => false,
-		'hide_empty'       => true,
-		'feed'             => '',
-		'feed_image'       => '',
-		'feed_type'        => '',
-		'echo'             => true,
-		'style'            => 'list',
-		'html'             => true,
-		'number'           => 20, // A sane limit to start to avoid breaking all the things
+		'optioncount'        => false,
+		'show_fullname'      => false,
+		'hide_empty'         => true,
+		'feed'               => '',
+		'feed_image'         => '',
+		'feed_type'          => '',
+		'echo'               => true,
+		'style'              => 'list',
+		'html'               => true,
+		'number'           	 => 20, // A sane limit to start to avoid breaking all the things
+		'guest_authors_only' => false
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -460,6 +554,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 			'number'       => (int) $args['number'],
 		);
 	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
+
 	$authors = array();
 	foreach ( $author_terms as $author_term ) {
 		// Something's wrong in the state of Denmark
@@ -469,10 +564,22 @@ function coauthors_wp_list_authors( $args = array() ) {
 
 		$authors[ $author_term->name ] = $coauthor;
 
-		$authors[ $author_term->name ]->post_count = $author_term->count;
+		// only show guest authors if the $args is set to true
+		if ( ! $args['guest_authors_only'] ||  $authors[ $author_term->name ]->type === 'guest-author' ) {
+			$authors[ $author_term->name ]->post_count = $author_term->count;
+		}
+		else {
+			unset( $authors[ $author_term->name ] );
+		}
 	}
 
 	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
+
+	// remove duplicates from linked accounts
+	$linked_accounts = array_unique( array_column( $authors, 'linked_account' ) );
+	foreach ( $linked_accounts as $linked_account ) {
+		unset( $authors[$linked_account] );
+	}
 
 	foreach ( (array) $authors as $author ) {
 
@@ -512,12 +619,16 @@ function coauthors_wp_list_authors( $args = array() ) {
 				if ( empty( $args['feed_image'] ) ) {
 					$link .= '(';
 				}
-				$link .= '<a href="' . get_author_feed_link( $author->ID ) . '"';
+				$link .= '<a href="' . esc_url( get_author_feed_link( $author->ID, $args['feed_type'] ) ) . '"';
+
+				$alt   = '';
+				$title = '';
 
 				if ( ! empty( $args['feed'] ) ) {
+
 					$title = ' title="' . esc_attr( $args['feed'] ) . '"';
-					$alt = ' alt="' . esc_attr( $args['feed'] ) . '"';
-					$name = $feed;
+					$alt   = ' alt="' . esc_attr( $args['feed'] ) . '"';
+					$name  = $args['feed'];
 					$link .= $title;
 				}
 

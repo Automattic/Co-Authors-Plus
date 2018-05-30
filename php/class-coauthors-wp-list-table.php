@@ -137,10 +137,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Either there are no guest authors, or the search doesn't match any
+	 * Either there are no co-authors, or the search doesn't match any
 	 */
 	function no_items() {
-		esc_html_e( 'No matching guest authors were found.', 'co-authors-plus' );
+		esc_html_e( 'No matching co-authors were found.', 'co-authors-plus' );
 	}
 
 	/**
@@ -251,7 +251,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function column_posts( $item ) {
 		global $coauthors_plus;
 		$term = $coauthors_plus->get_author_term( $item );
-		if ( $term ) {
+		$guest_term = get_term_by( 'slug', 'cap-' . $item->user_nicename, $coauthors_plus->coauthor_taxonomy );
+		if ( ! empty( $item->linked_account ) && $guest_term->count ) {
+			$count = count_user_posts( get_user_by( 'slug', $item->linked_account )->ID );
+		} elseif ( $term ) {
 			$count = $term->count;
 		} else {
 			$count = 0;
