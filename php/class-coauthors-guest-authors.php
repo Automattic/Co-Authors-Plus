@@ -493,9 +493,9 @@ class CoAuthors_Guest_Authors
 				}
 				$post_count_message .= $note;
 			}
-			$allowed_html = array(  
-				'p' => array( 
-					'class' => array(), 
+			$allowed_html = array(
+				'p' => array(
+					'class' => array(),
 				),
 			);
 			echo wp_kses( $post_count_message, $allowed_html );
