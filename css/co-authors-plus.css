@@ -42,7 +42,7 @@
 				width:200px;
 			}
 			#coauthors-list .ui-sortable-helper .coauthor-tag {
-				cursor: cursor:grabbing;
+				cursor: grabbing;
   				cursor:-moz-grabbing;
   				cursor:-webkit-grabbing;
 			}
@@ -88,6 +88,7 @@
 				}
 	#coauthors-loading {
 		margin: 10px 0px 5px 10px;
+		float: left;
 	}
 
 #coauthors-readonly {

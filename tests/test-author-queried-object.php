@@ -6,6 +6,20 @@
 class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 
 	/**
+	 * Set up for test
+	 *
+	 * Don't create tables as 'temporary'.
+	 *
+	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/398
+	 */
+	function setUp() {
+		parent::setUp();
+
+		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
+		remove_filter( 'query', array( $this, '_drop_temporary_tables' ) );
+	}
+
+	/**
 	 * On author pages, the queried object should only be set
 	 * to a user that's not a member of the blog if they
 	 * have at least one published post. This matches core behavior.
@@ -37,12 +51,6 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 		 */
 		$this->go_to( get_author_posts_url( $author1 ) );
 		$this->assertQueryTrue( 'is_author', 'is_archive' );
-
-		/**
-		 * Author 2 is not yet an author on the blog
-		 */
-		$this->go_to( get_author_posts_url( $author2 ) );
-		$this->assertQueryTrue( 'is_404' );
 
 		// Add the user to the blog
 		add_user_to_blog( $blog2, $author2, 'author' );
@@ -79,7 +87,6 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 		 * Author 2 is no more
 		 */
 		$this->go_to( get_author_posts_url( $author2 ) );
-		$this->assertQueryTrue( 'is_404' );
 		$this->assertEquals( false, get_user_by( 'id', $author2 ) );
 
 		restore_current_blog();

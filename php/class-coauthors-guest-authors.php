@@ -89,9 +89,13 @@ class CoAuthors_Guest_Authors
 			'not_found_in_trash' => __( 'No guest authors found in Trash', 'co-authors-plus' ),
 			'update_item' => __( 'Update Guest Author', 'co-authors-plus' ),
 			'metabox_about' => __( 'About the guest author', 'co-authors-plus' ),
+			'featured_image' => __( 'Avatar', 'co-authors-plus' ),
+			'set_featured_image' => __( 'Set Avatar', 'co-authors-plus' ),
+			'use_featured_image' => __( 'Use Avatar', 'co-authors-plus' ),
+			'remove_featured_image' => __( 'Remove Avatar', 'co-authors-plus' ),
 		) );
 
-		// Register a post type to store our authors that aren't WP.com users
+		// Register a post type to store our guest authors 
 		$args = array(
 				'label' => $this->labels['singular'],
 				'labels' => array(
@@ -106,6 +110,10 @@ class CoAuthors_Guest_Authors
 						'search_items' => $this->labels['search_items'],
 						'not_found' => $this->labels['not_found'],
 						'not_found_in_trash' => $this->labels['not_found_in_trash'],
+						'featured_image' => $this->labels['featured_image'],
+						'set_featured_image' => $this->labels['set_featured_image'],
+						'use_featured_image' => $this->labels['use_featured_image'],
+						'remove_featured_image' => $this->labels['remove_featured_image']
 					),
 				'public' => true,
 				'publicly_queryable' => false,
@@ -123,17 +131,7 @@ class CoAuthors_Guest_Authors
 		register_post_type( $this->post_type, $args );
 
 		// Some of the common sizes used by get_avatar
-		$this->avatar_sizes = array(
-				32,
-				50,
-				64,
-				96,
-				128,
-			);
-		$this->avatar_sizes = apply_filters( 'coauthors_guest_author_avatar_sizes', $this->avatar_sizes );
-		foreach ( $this->avatar_sizes as $size ) {
-			add_image_size( 'guest-author-' . $size, $size, $size, true );
-		}
+		$this->avatar_sizes = array();
 
 		// Hacky way to remove the title and the editor
 		remove_post_type_support( $this->post_type, 'title' );
@@ -177,7 +175,7 @@ class CoAuthors_Guest_Authors
 
 	/**
 	 * Handle the admin action to create a guest author based
-	 * on an existing WordPress user
+	 * on an existing user
 	 *
 	 * @since 3.0
 	 */
@@ -202,6 +200,8 @@ class CoAuthors_Guest_Authors
 		if ( is_wp_error( $post_id ) ) {
 			wp_die( esc_html( $post_id->get_error_message() ) );
 		}
+
+		do_action( 'cap_guest_author_create' );
 
 		// Redirect to the edit Guest Author screen
 		$edit_link = get_edit_post_link( $post_id, 'redirect' );
@@ -273,6 +273,8 @@ class CoAuthors_Guest_Authors
 			$args['message'] = 'delete-error';
 		} else {
 			$args['message'] = 'guest-author-deleted';
+
+			do_action( 'cap_guest_author_del' );
 		}
 
 		// Redirect to safety
@@ -463,36 +465,75 @@ class CoAuthors_Guest_Authors
 				wp_die( esc_html( sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $this->labels['singular'] ) ) );
 			}
 
+			// get post count
+			global $coauthors_plus;
+			$term = $coauthors_plus->get_author_term( $guest_author );
+			if ( $term ) {
+				$count = $term->count;
+			} else {
+				$count = 0;
+			}
+
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
 			echo '<h2>' . esc_html( sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) ) . '</h2>';
 			echo '<p>' . esc_html(  sprintf( __( 'You have specified this %s for deletion:', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';
-			echo '<p>' . esc_html(  sprintf( __( 'What should be done with posts assigned to this %s?', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
-			echo '<p class="description">' . esc_html( sprintf( __( "Note: If you'd like to delete the %s and all of their posts, you should delete their posts first and then come back to delete the %s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
+			// display wording differently per post count
+			if ( 0 === $count ) {
+				$post_count_message = '<p>' . sprintf( __( 'There are no posts associated with this guest author.', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) . '</p>';
+			}
+			else {
+				$note = '<p class="description">' . sprintf( __( "Note: If you'd like to delete the %s and all of their posts, you should delete their posts first and then come back to delete the %s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) . '</p>';
+				if ( 1 === $count ) {
+					$post_count_message = '<p>' . sprintf( __( 'There is %d post associated with this guest author. What should be done with the post assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
+				}
+				else {
+					$post_count_message = '<p>' . sprintf( __( 'There are %d posts associated with this guest author. What should be done with the posts assigned to this %s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
+				}
+				$post_count_message .= $note;
+			}
+			$allowed_html = array(  
+				'p' => array( 
+					'class' => array(), 
+				),
+			);
+			echo wp_kses( $post_count_message, $allowed_html );
 			echo '<form method="POST" action="' . esc_url( add_query_arg( 'page', 'view-guest-authors', admin_url( $this->parent_page ) ) ) . '">';
 			// Hidden stuffs
 			echo '<input type="hidden" name="action" value="delete-guest-author" />';
 			wp_nonce_field( 'delete-guest-author' );
 			echo '<input type="hidden" id="id" name="id" value="' . esc_attr( (int) $_GET['id'] ) . '" />';
 			echo '<fieldset><ul style="list-style-type:none;">';
-			// Reassign to another user
-			echo '<li class="hide-if-no-js"><label for="reassign-another">';
-			echo '<input type="radio" id="reassign-another" name="reassign" class="reassign-option" value="reassign-another" />&nbsp;&nbsp;' . esc_html__( 'Reassign to another co-author:', 'co-authors-plus' ) . '&nbsp;&nbsp;</label>';
-			echo '<input type="hidden" id="leave-assigned-to" name="leave-assigned-to" style="width:200px;" />';
-			echo '</li>';
-			// Leave mapped to a linked account
-			if ( get_user_by( 'login', $guest_author->linked_account ) ) {
-				echo '<li><label for="leave-assigned">';
-				echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ) ), $guest_author->linked_account );
+			// only show delete options if post count > 0
+			if ( $count > 0 ) {
+				// Reassign to another user
+				echo '<li class="hide-if-no-js"><label for="reassign-another">';
+				echo '<input type="radio" id="reassign-another" name="reassign" class="reassign-option" value="reassign-another" />&nbsp;&nbsp;' . esc_html__( 'Reassign to another co-author:', 'co-authors-plus' ) . '&nbsp;&nbsp;</label>';
+				echo '<input type="hidden" id="leave-assigned-to" name="leave-assigned-to" style="width:200px;" />';
+				echo '</li>';
+				// Leave mapped to a linked account
+				if ( get_user_by( 'login', $guest_author->linked_account ) ) {
+					echo '<li><label for="leave-assigned">';
+					echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account ) );
+					echo '</label></li>';
+				}
+				// Remove bylines from the posts
+				echo '<li><label for="remove-byline">';
+				echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" />&nbsp;&nbsp;' . esc_html__( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
 				echo '</label></li>';
 			}
-			// Remove bylines from the posts
-			echo '<li><label for="remove-byline">';
-			echo '<input type="radio" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" />&nbsp;&nbsp;' . esc_html__( 'Remove byline from posts (but leave each post in its current status).', 'co-authors-plus' );
-			echo '</label></li>';
+			else {
+				echo '<input type="hidden" id="remove-byline" class="reassign-option" name="reassign" value="remove-byline" checked="checked" />';
+			}
 			echo '</ul></fieldset>';
-			submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true, array( 'disabled' => 'disabled' ) );
+			// disable disabled submit button for 0 post count
+			if ( 0 === $count ) {
+				submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true );
+			}
+			else {
+				submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true, array( 'disabled' => 'disabled' ) );
+			}
 			echo '</form>';
 			echo '</div>';
 		} else {
@@ -592,7 +633,7 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
-	 * Metabox to display all of the pertient names for a Guest Author without a user account
+	 * Metabox to display all of the pertient names for a Guest Author not linked to user account
 	 *
 	 * @since 3.0
 	 */
@@ -627,7 +668,8 @@ class CoAuthors_Guest_Authors
 	}
 
 	/**
-	 * Metabox to display all of the pertient contact details for a Guest Author without a user account
+	 * Metabox to display all of the pertient contact details for a Guest Author not linked to
+	 * user account
 	 *
 	 * @since 3.0
 	 */
@@ -931,11 +973,8 @@ class CoAuthors_Guest_Authors
 		$args = array(
 				'class' => "avatar avatar-{$size} photo",
 			);
-		if ( in_array( $size, $this->avatar_sizes ) ) {
-			$size = 'guest-author-' . $size;
-		} else {
-			$size = array( $size, $size );
-		}
+
+		$size = array( $size, $size );
 
 		$thumbnail = get_the_post_thumbnail( $guest_author->ID, $size, $args );
 
