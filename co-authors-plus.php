@@ -1358,30 +1358,18 @@ class CoAuthors_Plus {
 		$user_id = isset( $args[1] ) ? $args[1] : 0;
 		$post_id = isset( $args[2] ) ? $args[2] : 0;
 
-		// Before we attempt to check the post type, we need to filter out caps
-		// that we know are totally irrelevant. Otherwise we end up passing non post
-		// ids to get_post_type()
-		$skipped_caps = array(
-			'delete_user',
-			'edit_users',
-			'edit_user',
+		//Bail on irrelevant caps
+		$caps_to_modify = array(
+			$obj->cap->edit_post,
+			'edit_post', // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
+			$obj->cap->edit_others_posts, // This as well: http://core.trac.wordpress.org/ticket/22417
 		);
-
-		if ( in_array( $cap, $skipped_caps, true ) ) {
+		if ( ! in_array( $cap, $caps_to_modify ) ) {
 			return $allcaps;
 		}
 
 		$obj = get_post_type_object( get_post_type( $post_id ) );
 		if ( ! $obj || 'revision' == $obj->name ) {
-			return $allcaps;
-		}
-
-		$caps_to_modify = array(
-				$obj->cap->edit_post,
-				'edit_post', // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
-				$obj->cap->edit_others_posts, // This as well: http://core.trac.wordpress.org/ticket/22417
-			);
-		if ( ! in_array( $cap, $caps_to_modify ) ) {
 			return $allcaps;
 		}
 
