@@ -590,20 +590,23 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Backing up global author data.
 		$authordata_backup = $authordata;
+		$authordata = $this->author1;
 
+		// Shows that it's necessary to set $authordata to $this->author1
+		$this->assertEquals( $authordata, $this->author1, 'Global $authordata not matching expected $this->author1.' );
+		
 		$this->author1->type = 'guest-author';
 
-		$this->assertEquals( get_the_author(), coauthors_links_single( $this->author1 ) );		
+		$this->assertEquals( get_the_author_link(), coauthors_links_single( $this->author1 ), 'Co-Author link generation differs from Core author link one (without user_url)' );
+		
+		wp_update_user( array( 'ID' => $this->author1->ID, 'user_url' => 'example.org' ) );
+		$authordata = get_userdata( $this->author1->ID ); // Because wp_update_user flushes cache, but does not update global var
+		
+		$this->assertEquals( get_the_author_link(), coauthors_links_single( $this->author1 ), 'Co-Author link generation differs from Core author link one (with user_url)' );
 
-		update_user_meta( $this->author1->ID, 'website', 'example.org' );
-
-		$this->assertEquals( get_the_author(), coauthors_links_single( $this->author1 ) );
-
-		$authordata  = $this->author1;
 		$author_link = coauthors_links_single( $this->author1 );
-
-		$this->assertContains( get_the_author_meta( 'website' ), $author_link, 'Author link not found.' );
-		$this->assertContains( get_the_author(), $author_link, 'Author name not found.' );
+		$this->assertContains( get_the_author_meta( 'url' ), $author_link, 'Author url not found in link.' );
+		$this->assertContains( get_the_author(), $author_link, 'Author name not found in link.' );
 
 		// Here we are checking author name should not be more then one time.
 		// Asserting ">get_the_author()<" because "get_the_author()" can be multiple times like in href, title, etc.
