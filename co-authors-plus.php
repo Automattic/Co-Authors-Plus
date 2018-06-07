@@ -40,6 +40,7 @@ require_once( dirname( __FILE__ ) . '/deprecated.php' );
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 require_once( dirname( __FILE__ ) . '/php/coauthors-users-screen.php' );
 require_once( dirname( __FILE__ ) . '/php/coauthors-edit-screen.php' );
+require_once( dirname( __FILE__ ) . '/php/coauthors-meta-box.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/edit-flow.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/jetpack.php' );
@@ -102,8 +103,8 @@ class CoAuthors_Plus {
 		add_filter( 'user_has_cap', array( $this, 'filter_user_has_cap' ), 10, 3 );
 
 		// Handle the custom co-author meta box
-		add_action( 'add_meta_boxes', array( $this, 'add_coauthors_box' ) );
-		add_action( 'add_meta_boxes', array( $this, 'remove_authors_box' ) );
+		add_action( 'add_meta_boxes', 'cap_add_coauthors_box' );
+		add_action( 'add_meta_boxes', 'cap_remove_authors_box' );
 
 		// Removes the co-author dropdown from the post quick edit
 		add_action( 'admin_head', 'cap_remove_quick_edit_authors_box' );
@@ -318,98 +319,30 @@ class CoAuthors_Plus {
 	}
 
 	/**
+	 * DEPRECATED - Use cap_remove_authors_box() instead!
 	 * Removes the standard WordPress 'Author' box.
 	 * We don't need it because the Co-Authors Plus one is way cooler.
 	 */
 	public function remove_authors_box() {
-
-		if ( $this->is_post_type_enabled() ) {
-			remove_meta_box( $this->coreauthors_meta_box_name, get_post_type(), 'normal' );
-		}
+		cap_remove_authors_box();
 	}
 
 	/**
+	 * DEPRECATED - Use cap_add_coauthors_box() instead!
+	 * 
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-
-		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
-			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
-		}
+		cap_add_coauthors_box();
 	}
 
 	/**
+	 * DEPRECATED - Use cap_coauthors_meta_box() instead!
+	 * 
 	 * Callback for adding the custom 'Authors' box
 	 */
 	public function coauthors_meta_box( $post ) {
-		global $post, $coauthors_plus, $current_screen;
-
-		$post_id = $post->ID;
-
-		$default_user = apply_filters( 'coauthors_default_author', wp_get_current_user() );
-
-		// @daniel, $post_id and $post->post_author are always set when a new post is created due to auto draft,
-		// and the else case below was always able to properly assign users based on wp_posts.post_author,
-		// but that's not possible with force_guest_authors = true.
-		if ( ! $post_id || 0 === $post_id || ( ! $post->post_author && ! $coauthors_plus->force_guest_authors ) || ( 'post' === $current_screen->base && 'add' === $current_screen->action ) ) {
-			$coauthors = array();
-			// If guest authors is enabled, try to find a guest author attached to this user ID
-			if ( $this->is_guest_authors_enabled() ) {
-				$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'linked_account', $default_user->user_login );
-				if ( $coauthor ) {
-					$coauthors[] = $coauthor;
-				}
-			}
-			// If the above block was skipped, or if it failed to find a guest author, use the current
-			// logged in user, so long as force_guest_authors is false. If force_guest_authors = true, we are
-			// OK with having an empty authoring box.
-			if ( ! $coauthors_plus->force_guest_authors && empty( $coauthors ) ) {
-				if ( is_array( $default_user ) ) {
-					$coauthors = $default_user;
-				} else {
-					$coauthors[] = $default_user;
-				}
-			}
-		} else {
-			$coauthors = get_coauthors();
-		}
-
-		$count = 0;
-		if ( ! empty( $coauthors ) ) :
-			?>
-			<div id="coauthors-readonly" class="hide-if-js">
-				<ul>
-				<?php
-				foreach ( $coauthors as $coauthor ) :
-					$count++;
-					?>
-					<li>
-						<?php echo get_avatar( $coauthor->user_email, $this->gravatar_size ); ?>
-						<span id="<?php echo esc_attr( 'coauthor-readonly-' . $count ); ?>" class="coauthor-tag">
-							<input type="text" name="coauthorsinput[]" readonly="readonly" value="<?php echo esc_attr( $coauthor->display_name ); ?>" />
-							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
-							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
-							<input type="text" name="coauthorsnicenames[]" value="<?php echo esc_attr( $coauthor->user_nicename ); ?>" />
-						</span>
-					</li>
-					<?php
-				endforeach;
-				?>
-				</ul>
-				<div class="clear"></div>
-				<p><?php echo wp_kses( __( '<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
-			</div>
-			<?php
-		endif;
-		?>
-
-		<div id="coauthors-edit" class="hide-if-no-js">
-			<p><?php echo wp_kses( __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
-		</div>
-
-		<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
-
-		<?php
+		cap_coauthors_meta_box( $post );
 	}
 
 	/**
