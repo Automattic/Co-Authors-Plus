@@ -38,7 +38,7 @@ require_once( dirname( __FILE__ ) . '/template-tags.php' );
 require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
-require_once( dirname( __FILE__ ) . '/php/class-coauthors-users-screen.php' );
+require_once( dirname( __FILE__ ) . '/php/coauthors-users-screen.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/edit-flow.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/jetpack.php' );
