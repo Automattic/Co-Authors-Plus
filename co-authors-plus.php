@@ -40,6 +40,7 @@ require_once( dirname( __FILE__ ) . '/deprecated.php' );
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/edit-flow.php' );
+require_once( dirname( __FILE__ ) . '/php/integrations/jetpack.php' );
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once( dirname( __FILE__ ) . '/php/class-wp-cli.php' );
@@ -117,7 +118,7 @@ class CoAuthors_Plus {
 		add_filter( 'ef_story_budget_term_column_value', 'cap_filter_ef_story_budget_term_column_value', 10, 3 );
 
 		// Support Jetpack Open Graph Tags
-		add_filter( 'jetpack_open_graph_tags', array( $this, 'filter_jetpack_open_graph_tags' ), 10, 2 );
+		add_filter( 'jetpack_open_graph_tags', 'cap_filter_jetpack_open_graph_tags', 10, 2 );
 
 		// Filter to send comment moderation notification e-mail to multiple co-authors
 		add_filter( 'comment_moderation_recipients', 'cap_filter_comment_moderation_email_recipients', 10, 2 );
@@ -1456,41 +1457,6 @@ class CoAuthors_Plus {
 		}
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 		return $this->get_author_term( $coauthor );
-	}
-
-	/**
-	 * Filter non-native users added by Co-Author-Plus in Jetpack
-	 *
-	 * @since 3.1
-	 *
-	 * @param array $og_tags Required. Array of Open Graph Tags.
-	 * @param array $image_dimensions Required. Dimensions for images used.
-	 * @return array Open Graph Tags either as they were passed or updated.
-	 */
-	public function filter_jetpack_open_graph_tags( $og_tags, $image_dimensions ) {
-
-		if ( is_author() ) {
-			$author = get_queried_object();
-			$og_tags['og:title']           = $author->display_name;
-			$og_tags['og:url']             = get_author_posts_url( $author->ID, $author->user_nicename );
-			$og_tags['og:description']     = $author->description;
-			$og_tags['profile:first_name'] = $author->first_name;
-			$og_tags['profile:last_name']  = $author->last_name;
-			if ( isset( $og_tags['article:author'] ) ) {
-				$og_tags['article:author'] = get_author_posts_url( $author->ID, $author->user_nicename );
-			}
-		} else if ( is_singular() && $this->is_post_type_enabled() ) {
-			$authors = get_coauthors();
-			if ( ! empty( $authors ) ) {
-				$author = array_shift( $authors );
-				if ( isset( $og_tags['article:author'] ) ) {
-					$og_tags['article:author'] = get_author_posts_url( $author->ID, $author->user_nicename );
-				}
-			}
-		}
-
-		// Send back the updated Open Graph Tags
-		return apply_filters( 'coauthors_open_graph_tags', $og_tags );
 	}
 
 	/**
