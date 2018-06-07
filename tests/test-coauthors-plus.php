@@ -721,4 +721,24 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$this->assertEquals( $expected_fields, $filtered_fields);
 	}
+
+	/**
+	 * Checks Edit Flow story budget column value is correct when more than one coauthor is present.
+	 *
+	 * @covers CoAuthorsPlus::filter_ef_story_budget_term_column_value()
+	 */ 
+	public function test_ef_story_budget_term_column_value() {
+		global $coauthors_plus;
+
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->author1->user_nicename, $this->editor1->user_nicename ) );
+
+		$column_name = $coauthors_plus->coauthor_taxonomy;
+		$parent_term = $this->factory->term->create_and_get();
+		
+		$filtered_value = $coauthors_plus->filter_ef_story_budget_term_column_value( $column_name, $this->post, $parent_term );
+		
+		$expected_value = $this->author1->user_nicename.', '.$this->editor1->user_nicename;
+		
+		$this->assertEquals( $expected_value, $filtered_value );
+	}
 }
