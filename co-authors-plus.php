@@ -39,6 +39,7 @@ require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 require_once( dirname( __FILE__ ) . '/php/coauthors-users-screen.php' );
+require_once( dirname( __FILE__ ) . '/php/coauthors-edit-screen.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/edit-flow.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/jetpack.php' );
@@ -105,7 +106,7 @@ class CoAuthors_Plus {
 		add_action( 'add_meta_boxes', array( $this, 'remove_authors_box' ) );
 
 		// Removes the co-author dropdown from the post quick edit
-		add_action( 'admin_head', array( $this, 'remove_quick_edit_authors_box' ) );
+		add_action( 'admin_head', 'cap_remove_quick_edit_authors_box' );
 
 		// Restricts WordPress from blowing away term order on bulk edit
 		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
@@ -208,20 +209,20 @@ class CoAuthors_Plus {
 		add_action( 'admin_head', array( $this, 'js_vars' ) );
 
 		// Hooks to add additional co-authors to 'authors' column to edit page
-		add_filter( 'manage_posts_columns', array( $this, '_filter_manage_posts_columns' ) );
-		add_filter( 'manage_pages_columns', array( $this, '_filter_manage_posts_columns' ) );
-		add_action( 'manage_posts_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
-		add_action( 'manage_pages_custom_column', array( $this, '_filter_manage_posts_custom_column' ) );
+		add_filter( 'manage_posts_columns', 'cap_filter_manage_posts_columns' );
+		add_filter( 'manage_pages_columns', 'cap_filter_manage_posts_columns' );
+		add_action( 'manage_posts_custom_column', 'cap_filter_manage_posts_custom_column' );
+		add_action( 'manage_pages_custom_column', 'cap_filter_manage_posts_custom_column' );
 
 		// Add quick-edit co-author select field
-		add_action( 'quick_edit_custom_box', array( $this, '_action_quick_edit_custom_box' ), 10, 2 );
+		add_action( 'quick_edit_custom_box', 'cap_action_quick_edit_custom_box', 10, 2 );
 
 		// Hooks to modify the published post number count on the Users WP List Table
 		add_filter( 'manage_users_columns', 'cap_filter_manage_users_columns' );
 		add_filter( 'manage_users_custom_column', 'cap_filter_manage_users_custom_column', 10, 3 );
 
 		// Apply some targeted filters
-		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
+		add_action( 'load-edit.php', 'cap_load_edit' );
 
 	}
 
@@ -408,92 +409,6 @@ class CoAuthors_Plus {
 
 		<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 
-		<?php
-	}
-
-	/**
-	 * Removes the default 'author' dropdown from quick edit
-	 */
-	function remove_quick_edit_authors_box() {
-		global $pagenow;
-
-		if ( 'edit.php' == $pagenow && $this->is_post_type_enabled() ) {
-			remove_post_type_support( get_post_type(), $this->coauthor_taxonomy );
-		}
-	}
-
-	/**
-	 * Add co-authors to 'authors' column on edit pages
-	 *
-	 * @param array $post_columns
-	 */
-	function _filter_manage_posts_columns( $posts_columns ) {
-
-		$new_columns = array();
-		if ( ! $this->is_post_type_enabled() ) {
-			return $posts_columns;
-		}
-
-		foreach ( $posts_columns as $key => $value ) {
-			$new_columns[ $key ] = $value;
-			if ( 'title' === $key ) {
-				$new_columns['coauthors'] = __( 'Authors', 'co-authors-plus' );
-			}
-
-			if ( $this->coauthor_taxonomy === $key ) {
-				unset( $new_columns[ $key ] );
-			}
-		}
-		return $new_columns;
-	}
-
-	/**
-	 * Insert co-authors into post rows on Edit Page
-	 *
-	 * @param string $column_name
-	 */
-	function _filter_manage_posts_custom_column( $column_name ) {
-		if ( 'coauthors' === $column_name ) {
-			global $post;
-			$authors = get_coauthors( $post->ID );
-
-			$count = 1;
-			foreach ( $authors as $author ) :
-				$args = array(
-						'author_name' => $author->user_nicename,
-					);
-				if ( 'post' != $post->post_type ) {
-					$args['post_type'] = $post->post_type;
-				}
-				$author_filter_url = add_query_arg( array_map( 'rawurlencode', $args ), admin_url( 'edit.php' ) );
-				?>
-				<a href="<?php echo esc_url( $author_filter_url ); ?>"
-				data-user_nicename="<?php echo esc_attr( $author->user_nicename ) ?>"
-				data-user_email="<?php echo esc_attr( $author->user_email ) ?>"
-				data-display_name="<?php echo esc_attr( $author->display_name ) ?>"
-				data-user_login="<?php echo esc_attr( $author->user_login ) ?>"
-				><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
-				<?php
-				$count++;
-			endforeach;
-		}
-	}
-
-	/**
-	 * Quick Edit co-authors box.
-	 */
-	function _action_quick_edit_custom_box( $column_name, $post_type ) {
-		if ( 'coauthors' != $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
-			return;
-		}
-		?>
-		<label class="inline-edit-group inline-edit-coauthors">
-			<span class="title"><?php esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
-			<div id="coauthors-edit" class="hide-if-no-js">
-				<p><?php echo wp_kses( __( 'Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
-			</div>
-			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
-		</label>
 		<?php
 	}
 
@@ -1234,49 +1149,6 @@ class CoAuthors_Plus {
 			);
 		wp_localize_script( 'co-authors-plus-js', 'coAuthorsPlusStrings', $js_strings );
 
-	}
-
-	/**
-	 * load-edit.php is when the screen has been set up
-	 */
-	function load_edit() {
-
-		$screen = get_current_screen();
-		if ( in_array( $screen->post_type, $this->supported_post_types ) ) {
-			add_filter( 'views_' . $screen->id, array( $this, 'filter_views' ) );
-		}
-	}
-
-	/**
-	 * Filter the view links that appear at the top of the Manage Posts view
-	 *
-	 * @since 3.0
-	 */
-	function filter_views( $views ) {
-
-		if ( array_key_exists( 'mine', $views ) ) {
-			return $views;
-		}
-
-		$views = array_reverse( $views );
-		$all_view = array_pop( $views );
-		$mine_args = array(
-				'author_name'           => wp_get_current_user()->user_nicename,
-			);
-		if ( 'post' != get_post_type() ) {
-			$mine_args['post_type'] = get_post_type();
-		}
-		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] ) {
-			$class = ' class="current"';
-		} else {
-			$class = '';
-		}
-		$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
-
-		$views['all'] = str_replace( $class, '', $all_view );
-		$views = array_reverse( $views );
-
-		return $views;
 	}
 
 	/**
