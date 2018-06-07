@@ -676,4 +676,49 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Restore coauthor taxonomy from backup.
 		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
 	}
+
+	/**
+	 * Checks Edit Flow calendar item information fields are correct when more than one coauthor is present.
+	 *
+	 * @covers CoAuthors_Plus::filter_ef_calendar_item_information_fields()
+	 */
+	public function test_ef_calendar_item_information_fields() {
+		global $coauthors_plus;
+
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_nicename ), true );
+
+		$EF_information_fields = array (
+			'author' => array(
+				'label' => 'Author',
+				'value' => $this->author1->display_name,
+				'type' => 'author'
+			)
+		);
+
+		$filtered_fields = $coauthors_plus->filter_ef_calendar_item_information_fields( $EF_information_fields, $this->post->ID );
+
+		$expected_fields = $EF_information_fields;
+		$expected_fields['author']['value'] = $this->author1->display_name.', '.$this->editor1->display_name;
+
+		$this->assertEquals( $expected_fields['author']['value'], $filtered_fields['author']['value'] );
+	}
+
+	/**
+	 * Checks Edit Flow calendar item information fields are correct when more than one coauthor is present.
+	 *
+	 * @covers CoAuthors_Plus::filter_ef_calendar_item_information_fields()
+	 */
+	public function test_ef_calendar_item_information_fields_when_no_author_field() {
+		global $coauthors_plus;
+
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_nicename ), true );
+
+		$EF_information_fields = array ();
+
+		$filtered_fields = $coauthors_plus->filter_ef_calendar_item_information_fields( $EF_information_fields, $this->post->ID );
+
+		$expected_fields = $EF_information_fields;
+
+		$this->assertEquals( $expected_fields, $filtered_fields);
+	}
 }
