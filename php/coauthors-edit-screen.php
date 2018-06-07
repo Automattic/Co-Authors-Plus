@@ -55,8 +55,8 @@ function cap_filter_manage_posts_custom_column( $column_name ) {
 		$count = 1;
 		foreach ( $authors as $author ) :
 			$args = array(
-					'author_name' => $author->user_nicename,
-				);
+				'author_name' => $author->user_nicename,
+			);
 			if ( 'post' !== $post->post_type ) {
 				$args['post_type'] = $post->post_type;
 			}
