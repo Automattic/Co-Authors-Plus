@@ -104,7 +104,8 @@ function cap_load_edit() {
 	global $coauthors_plus;
 	
 	$screen = get_current_screen();
-	if ( is_array( $screen ) && in_array( $screen->post_type, $coauthors_plus->supported_post_types, true ) ) {
+	
+	if ( isset( $screen->post_type ) && in_array( $screen->post_type, $coauthors_plus->supported_post_types, true ) ) {
 		add_filter( 'views_' . $screen->id, 'cap_filter_views' );
 	}
 }
