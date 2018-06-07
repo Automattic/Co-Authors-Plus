@@ -38,6 +38,7 @@ require_once( dirname( __FILE__ ) . '/template-tags.php' );
 require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
+require_once( dirname( __FILE__ ) . '/php/class-coauthors-users-screen.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/edit-flow.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/jetpack.php' );
@@ -216,8 +217,8 @@ class CoAuthors_Plus {
 		add_action( 'quick_edit_custom_box', array( $this, '_action_quick_edit_custom_box' ), 10, 2 );
 
 		// Hooks to modify the published post number count on the Users WP List Table
-		add_filter( 'manage_users_columns', array( $this, '_filter_manage_users_columns' ) );
-		add_filter( 'manage_users_custom_column', array( $this, '_filter_manage_users_custom_column' ), 10, 3 );
+		add_filter( 'manage_users_columns', 'cap_filter_manage_users_columns' );
+		add_filter( 'manage_users_custom_column', 'cap_filter_manage_users_custom_column', 10, 3 );
 
 		// Apply some targeted filters
 		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
@@ -476,43 +477,6 @@ class CoAuthors_Plus {
 				$count++;
 			endforeach;
 		}
-	}
-
-	/**
-	 * Unset the post count column because it's going to be inaccurate and provide our own
-	 */
-	function _filter_manage_users_columns( $columns ) {
-
-		$new_columns = array();
-		// Unset and add our column while retaining the order of the columns
-		foreach ( $columns as $column_name => $column_title ) {
-			if ( 'posts' == $column_name ) {
-				$new_columns['coauthors_post_count'] = __( 'Posts', 'co-authors-plus' );
-			} else {
-				$new_columns[ $column_name ] = $column_title;
-			}
-		}
-		return $new_columns;
-	}
-
-	/**
-	 * Provide an accurate count when looking up the number of published posts for a user
-	 */
-	function _filter_manage_users_custom_column( $value, $column_name, $user_id ) {
-		if ( 'coauthors_post_count' != $column_name ) {
-			return $value;
-		}
-		// We filter count_user_posts() so it provides an accurate number
-		$numposts = count_user_posts( $user_id );
-		$user = get_user_by( 'id', $user_id );
-		if ( $numposts > 0 ) {
-			$value .= "<a href='edit.php?author_name=$user->user_nicename' title='" . esc_attr__( 'View posts by this author', 'co-authors-plus' ) . "' class='edit'>";
-			$value .= $numposts;
-			$value .= '</a>';
-		} else {
-			$value .= 0;
-		}
-		return $value;
 	}
 
 	/**
