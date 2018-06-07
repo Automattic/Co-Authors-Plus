@@ -39,6 +39,7 @@ require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
+require_once( dirname( __FILE__ ) . '/php/integrations/edit-flow.php' );
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once( dirname( __FILE__ ) . '/php/class-wp-cli.php' );
@@ -112,8 +113,8 @@ class CoAuthors_Plus {
 		add_action( 'the_post', array( $this, 'fix_author_page' ) );
 
 		// Support for Edit Flow's calendar and story budget
-		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
-		add_filter( 'ef_story_budget_term_column_value', array( $this, 'filter_ef_story_budget_term_column_value' ), 10, 3 );
+		add_filter( 'ef_calendar_item_information_fields', 'cap_filter_ef_calendar_item_information_fields', 10, 2 );
+		add_filter( 'ef_story_budget_term_column_value', 'cap_filter_ef_story_budget_term_column_value', 10, 3 );
 
 		// Support Jetpack Open Graph Tags
 		add_filter( 'jetpack_open_graph_tags', array( $this, 'filter_jetpack_open_graph_tags' ), 10, 2 );
@@ -1455,59 +1456,6 @@ class CoAuthors_Plus {
 		}
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 		return $this->get_author_term( $coauthor );
-	}
-
-	/**
-	 * Filter Edit Flow's 'ef_calendar_item_information_fields' to add co-authors
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
-	 *
-	 * @param array $information_fields
-	 * @param int $post_id
-	 * @return array
-	 */
-	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
-
-		// Don't add the author row again if another plugin has removed
-		if ( ! array_key_exists( $this->coauthor_taxonomy, $information_fields ) ) {
-			return $information_fields;
-		}
-
-		$co_authors = get_coauthors( $post_id );
-		if ( count( $co_authors ) > 1 ) {
-			$information_fields[$this->coauthor_taxonomy]['label'] = __( 'Authors', 'co-authors-plus' );
-		}
-		$co_authors_names = '';
-		foreach ( $co_authors as $co_author ) {
-			$co_authors_names .= $co_author->display_name . ', ';
-		}
-		$information_fields[$this->coauthor_taxonomy]['value'] = rtrim( $co_authors_names, ', ' );
-		return $information_fields;
-	}
-
-	/**
-	 * Filter Edit Flow's 'ef_story_budget_term_column_value' to add co-authors to the story budget
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/2
-	 *
-	 * @param string $column_name
-	 * @param object $post
-	 * @param object $parent_term
-	 * @return string
-	 */
-	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
-
-		// We only want to modify the 'author' column
-		if ( $this->coauthor_taxonomy != $column_name ) {
-			return $column_name;
-		}
-
-		$co_authors = get_coauthors( $post->ID );
-		$co_authors_names = '';
-		foreach ( $co_authors as $co_author ) {
-			$co_authors_names .= $co_author->display_name . ', ';
-		}
-		return rtrim( $co_authors_names, ', ' );
 	}
 
 	/**
