@@ -685,9 +685,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	public function test_ef_calendar_item_information_fields() {
 		global $coauthors_plus;
 
-		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_nicename ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->author1->user_nicename, $this->editor1->user_nicename ) );
 
-		$EF_information_fields = array (
+		$EF_information_fields = array(
 			'author' => array(
 				'label' => 'Author',
 				'value' => $this->author1->display_name,
@@ -711,9 +711,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	public function test_ef_calendar_item_information_fields_when_no_author_field() {
 		global $coauthors_plus;
 
-		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_nicename ), true );
+		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->author1->user_nicename, $this->editor1->user_nicename ) );
 
-		$EF_information_fields = array ();
+		$EF_information_fields = array();
 
 		$filtered_fields = $coauthors_plus->filter_ef_calendar_item_information_fields( $EF_information_fields, $this->post->ID );
 
