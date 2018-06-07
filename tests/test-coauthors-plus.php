@@ -782,4 +782,73 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$this->assertContains( '>'.( $posts_count+1 ).'<', $filtered_value ); //author1 is added as coauthor of one post in construct
 	}
+
+	/**
+	 * Checks coauthors column is correctly added to edit.php.
+	 *
+	 * @covers CoAuthors_Plus::_filter_manage_posts_columns()
+	 */
+	public function test_edit_screen_columns() {
+		global $coauthors_plus;
+
+		set_current_screen( 'edit-post' ); //need so that $coauthors_plus->is_post_type_enabled() is true
+
+		$sample_columns = array(
+			'UDP_joke' => 'But will you get it?',
+			'title' => 'An ordinary and boring column.',
+			'author' => 'Another ordinary and boring column, albeit this should vanish.',
+			'barber_paradox' => 'Ever heard of the Barber Paradox? Ask your local Barber!'
+		);
+
+		$filtered_columns = $coauthors_plus->_filter_manage_posts_columns( $sample_columns );
+
+		$this->assertArrayHasKey( 'coauthors', $filtered_columns );
+		$this->assertArrayNotHasKey( 'author', $filtered_columns );
+	}
+
+	/**
+	 * Checks coauthor field is correct in edit.php screen.
+	 *
+	 * @covers CoAuthors_plus::_filter_manage_posts_custom_column()
+	 */
+	public function test_edit_screen_column_value() {
+		global $coauthors_plus, $post;
+
+		$post = $this->post;
+		$coauthors_plus->add_coauthors( $post->ID, array( $this->author1->user_nicename ) );
+
+		ob_start();
+		$coauthors_plus->_filter_manage_posts_custom_column( 'coauthors' );
+		$filtered_value = ob_get_clean();
+
+		$this->assertContains( 'author_name='.$this->author1->user_nicename, $filtered_value );
+	}
+
+	/**
+	 * Checks edit.php filter views are correctly set up.
+	 *
+	 * @covers CoAuthors_Plus::filter_views()
+	 */
+	public function test_edit_screen_filter_views() {
+		global $coauthors_plus;
+
+		$views = array(
+			'all' => 'All (9,934)',
+			'mine' => 'Mine (9,924)',
+			'publish' => 'Published (9,932)',
+			'private' => 'Private (1)',
+			'trash' => 'Trash (1)',
+			'draft' => 'Draft (1)'
+		);
+
+		$filtered_views = $coauthors_plus->filter_views( $views );
+
+		//'mine' already present, should not do anything
+		$this->assertEquals( $views, $filtered_views );
+
+		unset( $views['mine'] );
+		$filtered_views = $coauthors_plus->filter_views( $views );
+
+		$this->assertArrayHasKey( 'mine', $filtered_views );
+	}
 }
