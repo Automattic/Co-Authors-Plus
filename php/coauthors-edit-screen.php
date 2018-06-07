@@ -10,7 +10,7 @@
 function cap_remove_quick_edit_authors_box() {
 	global $pagenow, $coauthors_plus;
 
-	if ( 'edit.php' == $pagenow && $coauthors_plus->is_post_type_enabled() ) {
+	if ( 'edit.php' === $pagenow && $coauthors_plus->is_post_type_enabled() ) {
 		remove_post_type_support( get_post_type(), $coauthors_plus->coauthor_taxonomy );
 	}
 }
@@ -57,7 +57,7 @@ function cap_filter_manage_posts_custom_column( $column_name ) {
 			$args = array(
 					'author_name' => $author->user_nicename,
 				);
-			if ( 'post' != $post->post_type ) {
+			if ( 'post' !== $post->post_type ) {
 				$args['post_type'] = $post->post_type;
 			}
 			$author_filter_url = add_query_arg( array_map( 'rawurlencode', $args ), admin_url( 'edit.php' ) );
@@ -76,11 +76,14 @@ function cap_filter_manage_posts_custom_column( $column_name ) {
 
 /**
  * Quick Edit co-authors box.
+ *
+ * @param string $column_name
+ * @param string $post_type
  */
 function cap_action_quick_edit_custom_box( $column_name, $post_type ) {
 	global $coauthors_plus;
 	
-	if ( 'coauthors' != $column_name || ! $coauthors_plus->is_post_type_enabled( $post_type ) || ! $coauthors_plus->current_user_can_set_authors() ) {
+	if ( 'coauthors' !== $column_name || ! $coauthors_plus->is_post_type_enabled( $post_type ) || ! $coauthors_plus->current_user_can_set_authors() ) {
 		return;
 	}
 	?>
@@ -101,13 +104,13 @@ function cap_load_edit() {
 	global $coauthors_plus;
 	
 	$screen = get_current_screen();
-	if ( in_array( $screen->post_type, $coauthors_plus->supported_post_types ) ) {
+	if ( is_array( $screen ) && in_array( $screen->post_type, $coauthors_plus->supported_post_types, true ) ) {
 		add_filter( 'views_' . $screen->id, 'cap_filter_views' );
 	}
 }
 
 /**
- * Filter the view links that appear at the top of the Manage Posts view
+ * Filter the view links that appear at the top of the Manage Posts view.
  *
  * @param array $views
  * @return array
@@ -123,17 +126,17 @@ function cap_filter_views( $views ) {
 	$views = array_reverse( $views );
 	$all_view = array_pop( $views );
 	$mine_args = array(
-			'author_name'           => wp_get_current_user()->user_nicename,
-		);
-	if ( 'post' != get_post_type() ) {
+		'author_name' => wp_get_current_user()->user_nicename,
+	);
+	if ( 'post' !== get_post_type() ) {
 		$mine_args['post_type'] = get_post_type();
 	}
-	if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] ) {
+	if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename === $_REQUEST['author_name'] ) {
 		$class = ' class="current"';
 	} else {
 		$class = '';
 	}
-	$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
+	$views['mine'] = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
 
 	$views['all'] = str_replace( $class, '', $all_view );
 	$views = array_reverse( $views );
