@@ -741,4 +741,45 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		
 		$this->assertEquals( $expected_value, $filtered_value );
 	}
+
+	/**
+	 * Checks coauthors post count column is correctly added to users.php.
+	 *
+	 * @covers CoAuthors_Plus::_filter_manage_users_columns()
+	 */
+	public function test_users_screen_columns() {
+		global $coauthors_plus;
+
+		$sample_columns = array(
+			'beautiful_squirrel' => 'A furry tail indeed!',
+			'posts' => 'An ordinary and boring column.',
+			'galloping_lama' => 'Faster than the wind!'
+		);
+
+		$filtered_columns = $coauthors_plus->_filter_manage_users_columns( $sample_columns );
+
+		$this->assertArrayHasKey( 'coauthors_post_count', $filtered_columns );
+	}
+
+	/**
+	 * Checks coauthors post count value in users.php rows is correct.
+	 *
+	 * @covers CoAUthorsPlus::_filter_manage_users_custom_column()
+	 */
+	public function test_users_screen_posts_count_value() {
+		global $coauthors_plus;
+
+		$posts_count = 5;
+		$test_posts = $this->factory->post->create_many( $posts_count );
+
+		foreach( $test_posts as $post_id ) {
+			$coauthors_plus->add_coauthors( $post_id, array( $this->author1->user_nicename ) );
+		}
+
+		$column_name = 'coauthors_post_count';
+
+		$filtered_value = $coauthors_plus->_filter_manage_users_custom_column( '', $column_name, $this->author1->ID );
+
+		$this->assertContains( '>'.( $posts_count+1 ).'<', $filtered_value ); //author1 is added as coauthor of one post in construct
+	}
 }
