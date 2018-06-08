@@ -95,25 +95,25 @@ class CoAuthors_Guest_Authors
 			'remove_featured_image' => __( 'Remove Avatar', 'co-authors-plus' ),
 		) );
 
-		// Register a post type to store our guest authors 
+		// Register a post type to store our guest authors
 		$args = array(
 				'label' => $this->labels['singular'],
 				'labels' => array(
-						'name' => $this->labels['plural'],
-						'singular_name' => $this->labels['singular'],
-						'add_new' => _x( 'Add New', 'guest author', 'co-authors-plus' ),
-						'all_items' => $this->labels['all_items'],
-						'add_new_item' => $this->labels['add_new_item'],
-						'edit_item' => $this->labels['edit_item'],
-						'new_item' => $this->labels['new_item'],
-						'view_item' => $this->labels['view_item'],
-						'search_items' => $this->labels['search_items'],
-						'not_found' => $this->labels['not_found'],
-						'not_found_in_trash' => $this->labels['not_found_in_trash'],
-						'featured_image' => $this->labels['featured_image'],
-						'set_featured_image' => $this->labels['set_featured_image'],
-						'use_featured_image' => $this->labels['use_featured_image'],
-						'remove_featured_image' => $this->labels['remove_featured_image']
+						'name'                  => isset( $this->labels['plural'] ) ? $this->labels['plural'] : '',
+						'singular_name'         => isset( $this->labels['singular'] ) ? $this->labels['singular'] : '',
+						'add_new'               => _x( 'Add New', 'guest author', 'co-authors-plus' ),
+						'all_items'             => isset( $this->labels['all_items'] ) ? $this->labels['all_items'] : '',
+						'add_new_item'          => isset( $this->labels['add_new_item'] ) ? $this->labels['add_new_item'] : '',
+						'edit_item'             => isset( $this->labels['edit_item'] ) ? $this->labels['edit_item'] : '',
+						'new_item'              => isset( $this->labels['new_item'] ) ? $this->labels['new_item'] : '',
+						'view_item'             => isset( $this->labels['view_item'] ) ? $this->labels['view_item'] : '',
+						'search_items'          => isset( $this->labels['search_items'] ) ? $this->labels['search_items'] : '',
+						'not_found'             => isset( $this->labels['not_found'] ) ? $this->labels['not_found'] : '',
+						'not_found_in_trash'    => isset( $this->labels['not_found_in_trash'] ) ? $this->labels['not_found_in_trash'] : '',
+						'featured_image'        => isset( $this->labels['featured_image'] ) ? $this->labels['featured_image'] : '',
+						'set_featured_image'    => isset( $this->labels['set_featured_image'] ) ? $this->labels['set_featured_image'] : '',
+						'use_featured_image'    => isset( $this->labels['use_featured_image'] ) ? $this->labels['use_featured_image'] : '',
+						'remove_featured_image' => isset( $this->labels['remove_featured_image'] ) ? $this->labels['remove_featured_image'] : '',
 					),
 				'public' => true,
 				'publicly_queryable' => false,
@@ -493,9 +493,9 @@ class CoAuthors_Guest_Authors
 				}
 				$post_count_message .= $note;
 			}
-			$allowed_html = array(  
-				'p' => array( 
-					'class' => array(), 
+			$allowed_html = array(
+				'p' => array(
+					'class' => array(),
 				),
 			);
 			echo wp_kses( $post_count_message, $allowed_html );
