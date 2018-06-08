@@ -64,6 +64,8 @@ class CoAuthors_Plus {
 
 	var $having_terms = '';
 
+	var $to_be_filtered_caps = array();
+
 	/**
 	 * __construct()
 	 */
@@ -1350,6 +1352,31 @@ class CoAuthors_Plus {
 	}
 
 	/**
+	 * Builds list of capabilities that CAP should filter.
+	 *
+	 * Will only work after $this->supported_post_types has been populated.
+	 * Will only run once per request, and then cache the result.
+	 *
+	 * @return array caps that CAP should filter
+	 */
+	public function get_to_be_filtered_caps() {
+		if( ! empty( $this->supported_post_types ) && empty( $this->to_be_filtered_caps ) ) {
+			$this->to_be_filtered_caps[] = 'edit_post'; // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
+
+			foreach( $this->supported_post_types as $single ) {
+				$obj = get_post_type_object( $single );
+
+				$this->to_be_filtered_caps[] = $obj->cap->edit_post;
+				$this->to_be_filtered_caps[] = $obj->cap->edit_others_posts; // This as well: http://core.trac.wordpress.org/ticket/22417
+			}
+
+			$this->to_be_filtered_caps = array_unique( $this->to_be_filtered_caps );
+		}
+
+		return $this->to_be_filtered_caps;
+	}
+
+	/**
 	 * Allows guest authors to edit the post they're co-authors of
 	 */
 	function filter_user_has_cap( $allcaps, $caps, $args ) {
@@ -1358,11 +1385,16 @@ class CoAuthors_Plus {
 		$user_id = isset( $args[1] ) ? $args[1] : 0;
 		$post_id = isset( $args[2] ) ? $args[2] : 0;
 
+		if( ! in_array( $cap, $this->get_to_be_filtered_caps(), true ) ) {
+			return $allcaps;
+		}
+
 		$obj = get_post_type_object( get_post_type( $post_id ) );
 		if ( ! $obj || 'revision' == $obj->name ) {
 			return $allcaps;
 		}
 
+		//Even though we bail if cap is not among the to_be_filtered ones, there is a time in early request processing in which that list is not yet available, so the following block is needed
 		$caps_to_modify = array(
 				$obj->cap->edit_post,
 				'edit_post', // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
