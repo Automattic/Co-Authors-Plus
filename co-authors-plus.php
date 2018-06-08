@@ -727,10 +727,12 @@ class CoAuthors_Plus {
 					$current_coauthor      = $this->get_coauthor_by( 'user_nicename', wp_get_current_user()->user_nicename );
 					$current_coauthor_term = $this->get_author_term( $current_coauthor );
 
-					$current_user_query  = $wpdb->term_taxonomy . '.taxonomy = \''. $this->coauthor_taxonomy.'\' AND '. $wpdb->term_taxonomy .'.term_id = \''. $current_coauthor_term->term_id .'\'';
-					$this->having_terms .= ' ' . $wpdb->term_taxonomy .'.term_id = \''. $current_coauthor_term->term_id .'\' OR ';
+					if ( is_a( $current_coauthor_term, 'WP_Term' ) ) {
+						$current_user_query = $wpdb->term_taxonomy . '.taxonomy = \'' . $this->coauthor_taxonomy . '\' AND ' . $wpdb->term_taxonomy . '.term_id = \'' . $current_coauthor_term->term_id . '\'';
+						$this->having_terms .= ' ' . $wpdb->term_taxonomy . '.term_id = \'' . $current_coauthor_term->term_id . '\' OR ';
 
-					$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . get_current_user_id() . '))/', $current_user_query, $where, -1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+						$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . get_current_user_id() . '))/', $current_user_query, $where, - 1 ); #' . $wpdb->postmeta . '.meta_id IS NOT NULL AND}
+					}
 				}
 
 				$this->having_terms = rtrim( $this->having_terms, ' OR' );
@@ -1168,7 +1170,7 @@ class CoAuthors_Plus {
 		$args = array(
 				'count_total' => false,
 				'search' => sprintf( '*%s*', $search ),
-				'search_fields' => array(
+				'search_columns' => array(
 					'ID',
 					'display_name',
 					'user_email',
@@ -1176,9 +1178,7 @@ class CoAuthors_Plus {
 				),
 				'fields' => 'all_with_meta',
 			);
-		add_action( 'pre_user_query', array( $this, 'action_pre_user_query' ) );
 		$found_users = get_users( $args );
-		remove_action( 'pre_user_query', array( $this, 'action_pre_user_query' ) );
 
 		foreach ( $found_users as $found_user ) {
 			$term = $this->get_author_term( $found_user );
@@ -1221,17 +1221,6 @@ class CoAuthors_Plus {
 			}
 		}
 		return (array) $found_users;
-	}
-
-	/**
-	 * Modify get_users() to search display_name instead of user_nicename
-	 */
-	function action_pre_user_query( $user_query ) {
-
-		if ( is_object( $user_query ) ) {
-			$user_query->query_where = str_replace( 'user_nicename LIKE', 'display_name LIKE', $user_query->query_where );
-		}
-
 	}
 
 	/**
@@ -1643,8 +1632,9 @@ class CoAuthors_Plus {
 	 */
 	public function filter_author_archive_title() {
 		if ( is_author() ) {
-			$author = sanitize_user( get_query_var( 'author_name' ) );
-			return "Author: ". $author;
+			$author_slug = sanitize_user( get_query_var( 'author_name' ) );
+			$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
+			return sprintf( __( 'Author: %s' ), $author->display_name );
 		}
 	}
 }

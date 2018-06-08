@@ -41,6 +41,11 @@ To create new guest author profiles, a WordPress will need the 'list_users' capa
 
 Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
 
+= Can I disable Guest Authors?
+
+Yep! Guest authors can be disabled entirely through an apt filter. Having the following line load on `init` will do the trick:
+`add_filter( 'coauthors_guest_authors_enabled', '__return_false' )`
+
 == Upgrade Notice ==
 
 = 3.1 =
