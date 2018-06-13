@@ -1165,13 +1165,12 @@ class CoAuthors_Plus {
 
 	/**
 	 * Get matching co-authors based on a search value
+	 *
+	 * @param string $search
+	 * @param array $ignored_authors array
+	 * @return array found users
 	 */
 	public function search_authors( $search = '', $ignored_authors = array() ) {
-
-		// Since 2.7, we're searching against the term description for the fields
-		// instead of the user details. If the term is missing, we probably need to
-		// backfill with user details. Let's do this first... easier than running
-		// an upgrade script that could break on a lot of users
 		$args = array(
 				'count_total' => false,
 				'search' => sprintf( '*%s*', $search ),
@@ -1193,10 +1192,10 @@ class CoAuthors_Plus {
 		}
 
 		$args = array(
-				'search' => $search,
-				'get' => 'all',
-				'number' => 10,
-			);
+			'search' => $search,
+			'get' => 'all',
+			'number' => 10,
+		);
 		$args = apply_filters( 'coauthors_search_authors_get_terms_args', $args );
 		add_filter( 'terms_clauses', array( $this, 'filter_terms_clauses' ) );
 		$found_terms = get_terms( $this->coauthor_taxonomy, $args );
@@ -1218,16 +1217,17 @@ class CoAuthors_Plus {
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
 		foreach ( $found_users as $key => $found_user ) {
-			// Make sure the user is contributor and above (or a custom cap)
 			if ( in_array( $found_user->user_login, $ignored_authors ) ) {
 				unset( $found_users[ $key ] );
+
+			//If user does not have permission, they should not have a term in the first place
 			} else if ( 'wpuser' === $found_user->type && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) ) {
 				unset( $found_users[ $key ] );
+				wp_delete_term( $term->term_id, $this->coauthor_taxonomy );
 			}
 		}
 		return (array) $found_users;
 	}
-
 
 	/**
 	 * Modify get_terms() to LIKE against the term description instead of the term name

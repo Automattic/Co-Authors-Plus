@@ -3,11 +3,14 @@
 class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 	public function setUp() {
+		global $coauthors_plus;
 
 		parent::setUp();
 
 		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
 		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
+
+		cap_create_user_terms(); //users without terms don't exist for CAP
 
 		$this->post = $this->factory->post->create_and_get( array(
 			'post_author'  => $this->author1->ID,
@@ -363,6 +366,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$subscriber1 = $this->factory->user->create_and_get( array(
 			'role' => 'subscriber',
 		) );
+		cap_create_user_terms();
 
 		$authors = $coauthors_plus->search_authors();
 
@@ -373,6 +377,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$contributor1 = $this->factory->user->create_and_get( array(
 			'role' => 'contributor',
 		) );
+		cap_create_user_terms();
 
 		$authors = $coauthors_plus->search_authors();
 
@@ -428,6 +433,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$subscriber1 = $this->factory->user->create_and_get( array(
 			'role' => 'subscriber',
 		) );
+		cap_create_user_terms();
 
 		$this->assertEmpty( $coauthors_plus->search_authors( $subscriber1->ID ) );
 	}
@@ -453,6 +459,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$author2 = $this->factory->user->create_and_get( array(
 			'role' => 'author',
 		) );
+		cap_create_user_terms();
 
 		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
 
@@ -487,6 +494,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 			'role'       => 'author',
 			'user_login' => 'author2',
 		) );
+		cap_create_user_terms();
 
 		$authors = $coauthors_plus->search_authors( 'author', $ignored_authors );
 
