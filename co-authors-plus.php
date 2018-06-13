@@ -37,6 +37,7 @@ define( 'COAUTHORS_PLUS_VERSION', '3.3.0' );
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
 require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
+require_once( dirname( __FILE__ ) . '/php/coauthors-install.php' );
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 
@@ -68,6 +69,8 @@ class CoAuthors_Plus {
 	 * __construct()
 	 */
 	function __construct() {
+		//Set up on activation
+		register_activation_hook( __FILE__, 'cap_install_setup' );
 
 		// Register our models
 		add_action( 'init', array( $this, 'action_init' ) );
@@ -131,6 +134,10 @@ class CoAuthors_Plus {
 
 		// Filter to correct author on author archive page
 		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 2 );
+
+		// Update author term on user update
+		add_action( 'user_register', array( $this, 'action_user_profile_update' ) );
+		add_action( 'profile_update', array( $this, 'action_user_profile_update' ) );
 	}
 
 	/**
@@ -1221,6 +1228,7 @@ class CoAuthors_Plus {
 		return (array) $found_users;
 	}
 
+
 	/**
 	 * Modify get_terms() to LIKE against the term description instead of the term name
 	 *
@@ -1444,6 +1452,26 @@ class CoAuthors_Plus {
 		}
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 		return $this->get_author_term( $coauthor );
+	}
+
+	/**
+	 * Update author term when user profile is updated.
+	 *
+	 * @param int $userid
+	 */
+	function action_user_profile_update( $userid ) {
+		global $coauthors_plus;
+
+		if( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$user = get_userdata( $userid );
+
+		// Update author term only if user can be added as coauthor
+		if( $user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) ) {
+			$coauthors_plus->update_author_term( $user );
+		}
 	}
 
 	/**
