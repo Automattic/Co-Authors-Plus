@@ -1172,26 +1172,6 @@ class CoAuthors_Plus {
 	 */
 	public function search_authors( $search = '', $ignored_authors = array() ) {
 		$args = array(
-				'count_total' => false,
-				'search' => sprintf( '*%s*', $search ),
-				'search_columns' => array(
-					'ID',
-					'display_name',
-					'user_email',
-					'user_login',
-				),
-				'fields' => 'all_with_meta',
-			);
-		$found_users = get_users( $args );
-
-		foreach ( $found_users as $found_user ) {
-			$term = $this->get_author_term( $found_user );
-			if ( empty( $term ) || empty( $term->description ) ) {
-				$this->update_author_term( $found_user );
-			}
-		}
-
-		$args = array(
 			'search' => $search,
 			'get' => 'all',
 			'number' => 10,
