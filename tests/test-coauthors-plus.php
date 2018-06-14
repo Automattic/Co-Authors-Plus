@@ -367,7 +367,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$authors = $coauthors_plus->search_authors();
 
 		$this->assertNotEmpty( $authors );
-		$this->assertNotContains( $subscriber1->user_login, $authors );
+		$this->assertArrayNotHasKey( $subscriber1->user_login, $authors );
 
 		// Checks when search term is empty and any contributor exists.
 		$contributor1 = $this->factory->user->create_and_get( array(
@@ -397,32 +397,32 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$this->assertNotEmpty( $authors );
 		$this->assertArrayHasKey( $this->author1->user_login, $authors );
-		$this->assertNotContains( $this->editor1->user_login, $authors );
-		$this->assertNotContains( 'admin', $authors );
+		$this->assertArrayNotHasKey( $this->editor1->user_login, $authors );
+		$this->assertArrayNotHasKey( 'admin', $authors );
 
 		// Checks when author searched using display_name.
 		$authors = $coauthors_plus->search_authors( $this->author1->display_name );
 
 		$this->assertNotEmpty( $authors );
 		$this->assertArrayHasKey( $this->author1->user_login, $authors );
-		$this->assertNotContains( $this->editor1->user_login, $authors );
-		$this->assertNotContains( 'admin', $authors );
+		$this->assertArrayNotHasKey( $this->editor1->user_login, $authors );
+		$this->assertArrayNotHasKey( 'admin', $authors );
 
 		// Checks when author searched using user_email.
 		$authors = $coauthors_plus->search_authors( $this->author1->user_email );
 
 		$this->assertNotEmpty( $authors );
 		$this->assertArrayHasKey( $this->author1->user_login, $authors );
-		$this->assertNotContains( $this->editor1->user_login, $authors );
-		$this->assertNotContains( 'admin', $authors );
+		$this->assertArrayNotHasKey( $this->editor1->user_login, $authors );
+		$this->assertArrayNotHasKey( 'admin', $authors );
 
 		// Checks when author searched using user_login.
 		$authors = $coauthors_plus->search_authors( $this->author1->user_login );
 
 		$this->assertNotEmpty( $authors );
 		$this->assertArrayHasKey( $this->author1->user_login, $authors );
-		$this->assertNotContains( $this->editor1->user_login, $authors );
-		$this->assertNotContains( 'admin', $authors );
+		$this->assertArrayNotHasKey( $this->editor1->user_login, $authors );
+		$this->assertArrayNotHasKey( 'admin', $authors );
 
 		// Checks when any subscriber exists using ID but not author.
 		$subscriber1 = $this->factory->user->create_and_get( array(
@@ -447,7 +447,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
 
 		$this->assertNotEmpty( $authors );
-		$this->assertNotContains( $this->author1->user_login, $authors );
+		$this->assertArrayNotHasKey( $this->author1->user_login, $authors );
 
 		// Checks when ignoring author1 but also exists one more author with similar kind of data.
 		$author2 = $this->factory->user->create_and_get( array(
@@ -457,15 +457,15 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
 
 		$this->assertNotEmpty( $authors );
-		$this->assertNotContains( $this->author1->user_login, $authors );
+		$this->assertArrayNotHasKey( $this->author1->user_login, $authors );
 		$this->assertArrayHasKey( $author2->user_login, $authors );
 
 		// Ignoring multiple authors.
 		$authors = $coauthors_plus->search_authors( '', array( $this->author1->user_login, $author2->user_login ) );
 
 		$this->assertNotEmpty( $authors );
-		$this->assertNotContains( $this->author1->user_login, $authors );
-		$this->assertNotContains( $author2->user_login, $authors );
+		$this->assertArrayNotHasKey( $this->author1->user_login, $authors );
+		$this->assertArrayNotHasKey( $author2->user_login, $authors );
 	}
 
 	/**
@@ -491,7 +491,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$authors = $coauthors_plus->search_authors( 'author', $ignored_authors );
 
 		$this->assertNotEmpty( $authors );
-		$this->assertNotContains( $this->author1->user_login, $authors );
+		$this->assertArrayNotHasKey( $this->author1->user_login, $authors );
 		$this->assertArrayHasKey( $author2->user_login, $authors );
 	}
 
