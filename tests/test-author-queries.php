@@ -101,8 +101,6 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 	}
 
 	public function tests__author_name_arg_plus_tax_query__is_coauthor() {
-		return; // TODO: re-enable; fails currently because our posts_join_filter doesn't add an exclusive JOIN on relationships + taxonomy to match the query mods we make. We'd need aliased JOINs on relationships + taxonomy on top of the JOIN that the tax query already adds.
-
 		$author1_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
 		$author1 = get_userdata( $author1_id );
 		$author2_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'superman' ) );
