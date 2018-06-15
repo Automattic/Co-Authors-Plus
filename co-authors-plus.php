@@ -1442,10 +1442,6 @@ class CoAuthors_Plus {
 	function action_user_profile_update( $userid ) {
 		global $coauthors_plus;
 
-		if( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
 		$user = get_userdata( $userid );
 
 		// Update author term only if user can be added as coauthor
