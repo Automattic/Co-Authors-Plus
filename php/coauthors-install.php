@@ -29,7 +29,7 @@ function cap_create_author_terms( $imported_count = 0, $number_to_update = 100 )
 	global $coauthors_plus;
 
 	$args = array(
-		'orderby' => 'registered',
+		'orderby' => 'user_nicename',
 		'order' => 'ASC',
 		'offset' => $imported_count,
 		'number' => $number_to_update,
