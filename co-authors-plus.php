@@ -1345,6 +1345,7 @@ class CoAuthors_Plus {
 	 *
 	 * Will only work after $this->supported_post_types has been populated.
 	 * Will only run once per request, and then cache the result.
+	 * The result is cached in $this->to_be_filtered_caps since CoAuthors_Plus is only instantiated once and stored as a global.
 	 *
 	 * @return array caps that CAP should filter
 	 */
