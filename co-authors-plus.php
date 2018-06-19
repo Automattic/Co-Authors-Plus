@@ -89,7 +89,7 @@ class CoAuthors_Plus {
 		// Action to reassign posts when a guest author is deleted
 		add_action( 'delete_user',  array( $this, 'delete_user_action' ) );
 
-		add_filter( 'get_usernumposts', array( $this, 'filter_count_user_posts' ), 10, 2 );
+		add_filter( 'get_usernumposts', array( $this, 'filter_count_user_posts' ), 10, 3 );
 
 		// Action to set up co-author auto-suggest
 		add_action( 'wp_ajax_coauthors_ajax_suggest', array( $this, 'ajax_suggest' ) );
@@ -501,7 +501,7 @@ class CoAuthors_Plus {
 			return $value;
 		}
 		// We filter count_user_posts() so it provides an accurate number
-		$numposts = count_user_posts( $user_id );
+		$numposts = count_user_posts( $user_id, get_current_screen()->post_type );
 		$user = get_user_by( 'id', $user_id );
 		if ( $numposts > 0 ) {
 			$value .= "<a href='edit.php?author_name=$user->user_nicename' title='" . esc_attr__( 'View posts by this author', 'co-authors-plus' ) . "' class='edit'>";
@@ -994,24 +994,40 @@ class CoAuthors_Plus {
 	/**
 	 * Filter the count_users_posts() core function to include our correct count
 	 */
-	function filter_count_user_posts( $count, $user_id ) {
+	function filter_count_user_posts( $count = NULL, $user_id, $post_type = NULL ) {
 		$user = get_userdata( $user_id );
 
 		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
 		$term = $this->get_author_term( $user );
 		$guest_term = get_term_by( 'slug', 'cap-' . $user->user_nicename, $this->coauthor_taxonomy );
-		// Only modify the count if it has a linked account with posts or the author exists as a term
-		if ( $user->linked_account && $guest_term->count ) {
-			if ( $term && ! is_wp_error( $term )) {
-				$count = $guest_term->count + $term->count;
-			} else {
-				$count = $guest_term->count;
-			}
-		} elseif ( $term && ! is_wp_error( $term ) ) {
-			$count = $term->count;
-		}
 
+		if ($post_type == 'post' || empty($post_type)) {
+			// Only modify the count if it has a linked account with posts or the author exists as a term
+			if ( $user->linked_account && $guest_term->count ) {
+				if ( $term && ! is_wp_error( $term )) {
+					$count = $guest_term->count + $term->count;
+				} else {
+					$count = $guest_term->count;
+				}
+			} elseif ( $term && ! is_wp_error( $term ) ) {
+				$count = $term->count;
+			}
+		}
+		else {
+			// these statuses are visible in the Mine view
+			$statuses_visible = array('pending', 'publish', 'draft');
+			$statuses_sql = implode('\',\'', $visible_statuses);
+			global $wpdb;
+			$querystr = $wpdb->prepare("SELECT COUNT(*)
+				FROM {$wpdb->posts} p INNER JOIN {$wpdb->term_relationships} r
+				ON p.ID = r.object_id
+				WHERE p.post_type = %s
+				AND p.post_status in ($statuses)
+				AND r.term_taxonomy_id = %d
+				", $post_type, $term->term_id);
+			$count = $wpdb->get_var( $querystr );
+		}
 		return $count;
 	}
 
@@ -1277,10 +1293,6 @@ class CoAuthors_Plus {
 	 */
 	function filter_views( $views ) {
 
-		if ( array_key_exists( 'mine', $views ) ) {
-			return $views;
-		}
-
 		$views = array_reverse( $views );
 		$all_view = array_pop( $views );
 		$mine_args = array(
@@ -1294,8 +1306,11 @@ class CoAuthors_Plus {
 		} else {
 			$class = '';
 		}
-		$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
-
+		$numposts = count_user_posts( wp_get_current_user()->ID, get_current_screen()->post_type);
+		if ($numposts) {
+			$count = sprintf(' <span class="count">(%s)</span>', number_format_i18n( $numposts ));
+			$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . $count . '</a>';
+		}
 		$views['all'] = str_replace( $class, '', $all_view );
 		$views = array_reverse( $views );
 
