@@ -1017,13 +1017,13 @@ class CoAuthors_Plus {
 		else {
 			// these statuses are visible in the Mine view
 			$statuses_visible = array('pending', 'publish', 'draft');
-			$statuses_sql = implode('\',\'', $visible_statuses);
+			$statuses_sql = implode('\',\'', $statuses_visible);
 			global $wpdb;
 			$querystr = $wpdb->prepare("SELECT COUNT(*)
 				FROM {$wpdb->posts} p INNER JOIN {$wpdb->term_relationships} r
 				ON p.ID = r.object_id
 				WHERE p.post_type = %s
-				AND p.post_status in ($statuses)
+				AND p.post_status in ('$statuses_sql')
 				AND r.term_taxonomy_id = %d
 				", $post_type, $term->term_id);
 			$count = $wpdb->get_var( $querystr );
