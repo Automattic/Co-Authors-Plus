@@ -319,29 +319,35 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * DEPRECATED - Use cap_remove_authors_box() instead!
-	 * Removes the standard WordPress 'Author' box.
-	 * We don't need it because the Co-Authors Plus one is way cooler.
+	 * Legacy function to remove the standard WordPress 'Author' box.
+	 *
+	 * @deprecated 3.3.0 Use cap_remove_authors_box()
+	 * @see cap_remove_authors_box()
 	 */
 	public function remove_authors_box() {
+		_deprecated_function( __FUNCTION__, '3.3.0', 'cap_remove_authors_box()' );
 		cap_remove_authors_box();
 	}
 
 	/**
-	 * DEPRECATED - Use cap_add_coauthors_box() instead!
-	 * 
-	 * Adds a custom 'Authors' box
+	 * Legacy function to add a custom 'Authors' box.
+	 *
+	 * @deprecated 3.3.0 Use cap_add_coauthors_box()
+	 * @see cap_add_coauthors_box()
 	 */
 	public function add_coauthors_box() {
+		_deprecated_function( __FUNCTION__, '3.3.0', 'cap_add_coauthors_box()' );
 		cap_add_coauthors_box();
 	}
 
 	/**
-	 * DEPRECATED - Use cap_coauthors_meta_box() instead!
-	 * 
-	 * Callback for adding the custom 'Authors' box
+	 * Legacy callback for adding the custom 'Authors' box.
+	 *
+	 * @deprecated 3.3.0 Use cap_coauthors_meta_box()
+	 * @see cap_coauthors_meta_box()
 	 */
 	public function coauthors_meta_box( $post ) {
+		_deprecated_function( __FUNCTION__, '3.3.0', 'cap_coauthors_meta_box()' );
 		cap_coauthors_meta_box( $post );
 	}
 
