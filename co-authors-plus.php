@@ -1176,9 +1176,7 @@ class CoAuthors_Plus {
 				),
 				'fields' => 'all_with_meta',
 			);
-		add_action( 'pre_user_query', array( $this, 'action_pre_user_query' ) );
 		$found_users = get_users( $args );
-		remove_action( 'pre_user_query', array( $this, 'action_pre_user_query' ) );
 
 		foreach ( $found_users as $found_user ) {
 			$term = $this->get_author_term( $found_user );
@@ -1221,17 +1219,6 @@ class CoAuthors_Plus {
 			}
 		}
 		return (array) $found_users;
-	}
-
-	/**
-	 * Modify get_users() to search display_name instead of user_nicename
-	 */
-	function action_pre_user_query( $user_query ) {
-
-		if ( is_object( $user_query ) ) {
-			$user_query->query_where = str_replace( 'user_nicename LIKE', 'display_name LIKE', $user_query->query_where );
-		}
-
 	}
 
 	/**
@@ -1300,7 +1287,7 @@ class CoAuthors_Plus {
 				'author_name'           => wp_get_current_user()->user_nicename,
 			);
 		if ( 'post' != get_post_type() ) {
-			$mine_args['post_type'] = get_post_type();
+			$mine_args['post_type'] = get_current_screen()->post_type;
 		}
 		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] ) {
 			$class = ' class="current"';
@@ -1611,9 +1598,9 @@ class CoAuthors_Plus {
 	/**
 	 * Filter of the header of author archive pages to correctly display author.
 	 *
-	 * @param $title
+	 * @param $title string Archive Page Title
 	 *
-	 * @return string
+	 * @return string Archive Page Title
 	 */
 	public function filter_author_archive_title( $title ) {
 		
@@ -1627,6 +1614,7 @@ class CoAuthors_Plus {
 		
 		return sprintf( __( 'Author: %s' ), $author->display_name );
 	}
+
 }
 
 global $coauthors_plus;
