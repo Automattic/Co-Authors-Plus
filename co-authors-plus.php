@@ -65,6 +65,8 @@ class CoAuthors_Plus {
 
 	var $having_terms = '';
 
+	var $to_be_filtered_caps = array();
+
 	/**
 	 * __construct()
 	 */
@@ -1197,7 +1199,9 @@ class CoAuthors_Plus {
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
 		foreach ( $found_users as $key => $found_user ) {
-			if ( in_array( $found_user->user_login, $ignored_authors ) ) {
+
+			// Make sure the user is contributor and above (or a custom cap)
+			if ( in_array( $found_user->user_nicename, $ignored_authors ) ) { //AJAX sends a list of already present *users_nicenames*
 				unset( $found_users[ $key ] );
 
 			//If user does not have permission, they should not have a term in the first place
@@ -1275,7 +1279,7 @@ class CoAuthors_Plus {
 				'author_name'           => wp_get_current_user()->user_nicename,
 			);
 		if ( 'post' != get_post_type() ) {
-			$mine_args['post_type'] = get_post_type();
+			$mine_args['post_type'] = get_current_screen()->post_type;
 		}
 		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] ) {
 			$class = ' class="current"';
@@ -1327,6 +1331,32 @@ class CoAuthors_Plus {
 	}
 
 	/**
+	 * Builds list of capabilities that CAP should filter.
+	 *
+	 * Will only work after $this->supported_post_types has been populated.
+	 * Will only run once per request, and then cache the result.
+	 * The result is cached in $this->to_be_filtered_caps since CoAuthors_Plus is only instantiated once and stored as a global.
+	 *
+	 * @return array caps that CAP should filter
+	 */
+	public function get_to_be_filtered_caps() {
+		if( ! empty( $this->supported_post_types ) && empty( $this->to_be_filtered_caps ) ) {
+			$this->to_be_filtered_caps[] = 'edit_post'; // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
+
+			foreach( $this->supported_post_types as $single ) {
+				$obj = get_post_type_object( $single );
+
+				$this->to_be_filtered_caps[] = $obj->cap->edit_post;
+				$this->to_be_filtered_caps[] = $obj->cap->edit_others_posts; // This as well: http://core.trac.wordpress.org/ticket/22417
+			}
+
+			$this->to_be_filtered_caps = array_unique( $this->to_be_filtered_caps );
+		}
+
+		return $this->to_be_filtered_caps;
+	}
+
+	/**
 	 * Allows guest authors to edit the post they're co-authors of
 	 */
 	function filter_user_has_cap( $allcaps, $caps, $args ) {
@@ -1335,11 +1365,16 @@ class CoAuthors_Plus {
 		$user_id = isset( $args[1] ) ? $args[1] : 0;
 		$post_id = isset( $args[2] ) ? $args[2] : 0;
 
+		if( ! in_array( $cap, $this->get_to_be_filtered_caps(), true ) ) {
+			return $allcaps;
+		}
+
 		$obj = get_post_type_object( get_post_type( $post_id ) );
 		if ( ! $obj || 'revision' == $obj->name ) {
 			return $allcaps;
 		}
 
+		//Even though we bail if cap is not among the to_be_filtered ones, there is a time in early request processing in which that list is not yet available, so the following block is needed
 		$caps_to_modify = array(
 				$obj->cap->edit_post,
 				'edit_post', // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
@@ -1601,14 +1636,24 @@ class CoAuthors_Plus {
 
 	/**
 	 * Filter of the header of author archive pages to correctly display author.
+	 *
+	 * @param $title string Archive Page Title
+	 *
+	 * @return string Archive Page Title
 	 */
-	public function filter_author_archive_title() {
-		if ( is_author() ) {
-			$author_slug = sanitize_user( get_query_var( 'author_name' ) );
-			$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
-			return sprintf( __( 'Author: %s' ), $author->display_name );
+	public function filter_author_archive_title( $title ) {
+		
+		// Bail if not an author archive template
+		if ( ! is_author() ) {
+			return $title;
 		}
+		
+		$author_slug = sanitize_user( get_query_var( 'author_name' ) );
+		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
+		
+		return sprintf( __( 'Author: %s' ), $author->display_name );
 	}
+
 }
 
 global $coauthors_plus;
