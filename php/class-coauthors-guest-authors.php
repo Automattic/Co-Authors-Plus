@@ -69,6 +69,9 @@ class CoAuthors_Guest_Authors
 		// Add support for featured thumbnails that we can use for guest author avatars
 		add_filter( 'get_avatar', array( $this, 'filter_get_avatar' ),10 ,5 );
 
+		// Add a Personal Data Exporter to guest authors
+		add_filter( 'wp_privacy_personal_data_exporters', array( $this, 'filter_personal_data_exporter' ), 1 );
+
 		// Allow users to change where this is placed in the WordPress admin
 		$this->parent_page = apply_filters( 'coauthors_guest_author_parent_page', $this->parent_page );
 
@@ -1502,5 +1505,96 @@ class CoAuthors_Guest_Authors
 		}
 
 		return $link;
+	}
+
+	/**
+	 * Filter Personal Data Exporters to add Guest Author exporter
+	 *
+	 * @since 3.3.1
+	 */
+	public function filter_personal_data_exporter( $exporters ) {
+		$exporters['cap-guest-author'] = array(
+			'exporter_friendly_name' => __( 'Guest Author', 'co-authors-plus' ),
+			'callback'               => array( $this, 'personal_data_exporter' ),
+		);
+
+		return $exporters;
+	}
+
+	/**
+	 * Finds and exports personal data associated with an email address for guest authors
+	 *
+	 * @since 3.3.1
+	 *
+	 * @param string $email_address  The guest author email address.
+ 	 * @return array An array of personal data.
+	 */
+	public function personal_data_exporter( $email_address ) {
+		$email_address = trim( $email_address );
+
+		$data_to_export = array();
+
+		$author = $this->get_guest_author_by( 'user_email', $email_address );
+
+		if ( ! $author ) {
+			return array(
+				'data' => array(),
+				'done' => true,
+			);
+		}
+
+		$author_data = array(
+			'ID'              => __( 'ID', 'co-authors-plus' ),
+			'user_login'      => __( 'Login Name', 'co-authors-plus' ),
+			'display_name'    => __( 'Display Name', 'co-authors-plus' ),
+			'user_email'      => __( 'Email', 'co-authors-plus' ),
+			'first_name'      => __( 'First Name', 'co-authors-plus' ),
+			'last_name'       => __( 'Last Name', 'co-authors-plus' ),
+			'website'         => __( 'Website', 'co-authors-plus' ),
+			'aim'             => __( 'AIM', 'co-authors-plus' ),
+			'yahooim'         => __( 'Yahoo IM', 'co-authors-plus' ),
+			'jabber'          => __( 'Jabber / Google Talk', 'co-authors-plus' ),
+			'description'     => __( 'Biographical Info', 'co-authors-plus' ),
+		);
+
+		$author_data_to_export = array();
+
+		foreach ( $author_data as $key => $name ) {
+			if ( empty( $author->$key ) ) {
+				continue;
+			}
+
+			$author_data_to_export[] = array(
+				'name'  => $name,
+				'value' => $author->$key,
+			);
+		}
+
+		/**
+		 * Filters extra data to allow plugins add data related to guest author
+		 *
+		 * @since 3.3.1
+		 *
+		 * @param array $extra_data A empty array to be populated with extra data
+		 * @param int $author->ID The guest author ID
+		 * @param string $email_address The guest author email address
+		 */
+		$extra_data = apply_filters( 'coauthors_guest_author_personal_export_extra_data', [], $author->ID, $email_address );
+
+		if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
+			$author_data_to_export = array_merge( $author_data_to_export, $extra_data );
+		}
+
+		$data_to_export[] = array(
+			'group_id'    => 'cap-guest-author',
+			'group_label' => __( 'Guest Author', 'co-authors-plus' ),
+			'item_id'     => "cap-guest-author-{$author->ID}",
+			'data'        => $author_data_to_export,
+		);
+
+		return array(
+			'data' => $data_to_export,
+			'done' => true,
+		);
 	}
 }
