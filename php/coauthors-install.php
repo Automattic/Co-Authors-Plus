@@ -15,17 +15,17 @@ function cap_install_setup() {
 
 
 /**
- * Creates author terms for existing users.
+ * Creates guest author profiles for existing users.
  *
  * Since CAP 2.7, we're searching against the term description for the fields instead of the user details.
- * When CAP is first installed, terms are missing for all existing users.
- * This function take care of creating terms for all users who have permission to be added as coauthors.
+ * When CAP is first installed, guest authors are missing for all existing users.
+ * This function take care of creating them for all users who have permission to be added as coauthors.
  * Uses a WP-Cron event that gets rescheduled until all users have been processed.
  *
  * @param int $imported_count number of users already processed (used as `offset` in get_users)
  * @param int $number_to_update number of users to process per each cron event
  */ 
-function cap_create_author_terms( $imported_count = 0, $number_to_update = 100 ) {
+function cap_create_guest_authors( $imported_count = 0, $number_to_update = 100 ) {
 	global $coauthors_plus;
 
 	$args = array(
@@ -47,11 +47,11 @@ function cap_create_author_terms( $imported_count = 0, $number_to_update = 100 )
 			continue;
 		}
 		
-		$coauthors_plus->update_author_term( $found_user );
+		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $found_user->ID );
 	}
 
 	$imported_count += $number_to_update;
 
 	wp_schedule_single_event( time(), 'cap_import_existing_users', array( $imported_count ) );
 }
-add_action( 'cap_import_existing_users', 'cap_create_author_terms' );
+add_action( 'cap_import_existing_users', 'cap_create_guest_authors' );
