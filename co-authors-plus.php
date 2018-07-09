@@ -1303,7 +1303,7 @@ class CoAuthors_Plus {
 		}
 
 		$count = sprintf(' <span class="count">(%s)</span>', number_format_i18n( $numposts ) );
-		$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine' ) . $count . '</a>';
+		$views['mine'] = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine' ) . $count . '</a>';
 
 		$views['all'] = $all_view;
 		$views = array_reverse( $views );
