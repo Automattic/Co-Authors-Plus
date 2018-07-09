@@ -1278,8 +1278,10 @@ class CoAuthors_Plus {
 	 * @since 3.0
 	 */
 	function filter_views( $views ) {
+		$post_type = get_current_screen()->post_type;
+		$numposts = count_user_posts( wp_get_current_user()->ID, $post_type);
 
-		if ( array_key_exists( 'mine', $views ) ) {
+		if ( $numposts === 0 ) {
 			return $views;
 		}
 
@@ -1289,14 +1291,16 @@ class CoAuthors_Plus {
 				'author_name'           => wp_get_current_user()->user_nicename,
 			);
 		if ( 'post' != get_post_type() ) {
-			$mine_args['post_type'] = get_current_screen()->post_type;
+			$mine_args['post_type'] = get_post_type();
 		}
 		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] ) {
 			$class = ' class="current"';
 		} else {
 			$class = '';
 		}
-		$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
+
+		$count = sprintf(' <span class="count">(%s)</span>', number_format_i18n( $numposts ));
+		$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . $count . '</a>';
 
 		$views['all'] = str_replace( $class, '', $all_view );
 		$views = array_reverse( $views );
