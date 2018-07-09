@@ -1273,9 +1273,11 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Filter the view links that appear at the top of the Manage Posts view
+	 * Filter the view links that appear at the top of the Manage Posts view to add Mine view.
 	 *
 	 * @since 3.0
+	 * @param array $views Current views
+	 * @return array Filtered views
 	 */
 	function filter_views( $views ) {
 		$post_type = get_current_screen()->post_type;
@@ -1285,16 +1287,17 @@ class CoAuthors_Plus {
 			return $views;
 		}
 
+		// Create (maybe overwrite) Mine view.
 		$views = array_reverse( $views );
 		$all_view = array_pop( $views );
 		$mine_args = array(
-				'author_name'           => wp_get_current_user()->user_nicename,
-			);
-		if ( 'post' != get_post_type() ) {
-			$mine_args['post_type'] = get_post_type();
-		}
-		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] ) {
+			'author_name' => wp_get_current_user()->user_nicename,
+			'post_type' => $post_type
+		);
+
+		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename === $_REQUEST['author_name'] ) {
 			$class = ' class="current"';
+			$all_view = str_replace( $class, '', $all_view );
 		} else {
 			$class = '';
 		}
@@ -1302,7 +1305,7 @@ class CoAuthors_Plus {
 		$count = sprintf(' <span class="count">(%s)</span>', number_format_i18n( $numposts ) );
 		$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine' ) . $count . '</a>';
 
-		$views['all'] = str_replace( $class, '', $all_view );
+		$views['all'] = $all_view;
 		$views = array_reverse( $views );
 
 		return $views;
