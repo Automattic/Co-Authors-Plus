@@ -6,20 +6,6 @@
 class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 
 	/**
-	 * Set up for test
-	 *
-	 * Don't create tables as 'temporary'.
-	 *
-	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/398
-	 */
-	function setUp() {
-		parent::setUp();
-
-		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
-		remove_filter( 'query', array( $this, '_drop_temporary_tables' ) );
-	}
-
-	/**
 	 * On author pages, the queried object should only be set
 	 * to a user that's not a member of the blog if they
 	 * have at least one published post. This matches core behavior.
