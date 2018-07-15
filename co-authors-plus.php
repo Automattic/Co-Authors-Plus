@@ -110,7 +110,7 @@ class CoAuthors_Plus {
 		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
 
 		// Make sure we've correctly set data on guest author pages
-		add_filter( 'posts_selection', array( $this, 'fix_author_page' ) ); // use posts_selection since it's after WP_Query has built the request and before it's queried any posts
+		add_action( 'posts_selection', array( $this, 'fix_author_page' ) ); // use posts_selection since it's after WP_Query has built the request and before it's queried any posts
 		add_action( 'the_post', array( $this, 'fix_author_page' ) );
 
 		// Support for Edit Flow's calendar and story budget
@@ -1071,8 +1071,11 @@ class CoAuthors_Plus {
 	 * the query_var is changed.
 	 *
 	 * Also, we have to do some hacky WP_Query modification for guest authors
+	 *
+	 * @param string $selection The assembled selection query
+	 * @void
 	 */
-	public function fix_author_page() {
+	public function fix_author_page( $selection ) {
 
 		if ( ! is_author() ) {
 			return;
