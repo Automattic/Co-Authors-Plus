@@ -442,7 +442,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		// Ignoring single author.
-		$ignored_authors = array( $this->author1->user_login );
+		$ignored_authors = array( $this->author1->user_nicename );
 
 		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
 
@@ -461,7 +461,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayHasKey( $author2->user_login, $authors );
 
 		// Ignoring multiple authors.
-		$authors = $coauthors_plus->search_authors( '', array( $this->author1->user_login, $author2->user_login ) );
+		$authors = $coauthors_plus->search_authors( '', array( $this->author1->user_nicename, $author2->user_nicename ) );
 
 		$this->assertNotEmpty( $authors );
 		$this->assertArrayNotHasKey( $this->author1->user_login, $authors );
@@ -478,7 +478,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		// Checks when ignoring author1.
-		$ignored_authors = array( $this->author1->user_login );
+		$ignored_authors = array( $this->author1->user_nicename );
 
 		$this->assertEmpty( $coauthors_plus->search_authors( $this->author1->ID, $ignored_authors ) );
 
