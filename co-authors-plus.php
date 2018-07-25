@@ -1466,7 +1466,7 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Update author term when user profile is updated.
+	 * Create guest author profile when WP user profile is updated.
 	 *
 	 * @param int $userid
 	 */
@@ -1475,10 +1475,17 @@ class CoAuthors_Plus {
 
 		$user = get_userdata( $userid );
 
-		// Update author term only if user can be added as coauthor
-		if( $user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) ) {
-			$coauthors_plus->update_author_term( $user );
+		// Continue only if user can be added as coauthor
+		if ( $user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) === false ) {
+			return;
 		}
+
+
+		if ( ( $guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'login', $user->user_login ) ) === false ) {
+			$coauthors_plus->guest_authors->create_guest_author_from_user_id( $userid );
+		}
+
+		$coauthors_plus->update_author_term( $user ); // when user is updated, we want to update its term so that the search results show up-to-date info
 	}
 
 	/**
