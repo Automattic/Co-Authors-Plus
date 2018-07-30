@@ -12,6 +12,8 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		) );
 		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
 
+		wp_set_current_user( $author_id );
+
 		$query = new WP_Query( array(
 			'author' => $author_id,
 		) );
