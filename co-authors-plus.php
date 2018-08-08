@@ -875,26 +875,37 @@ class CoAuthors_Plus {
 		// Set the co-authors
 		$coauthors = array_unique( array_merge( $existing_coauthors, $coauthors ) );
 		$coauthor_objects = array();
-		foreach ( $coauthors as &$author_name ) {
-
+		foreach ( $coauthors as $author_name ) {
 			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
-			$author_name = $term->slug;
+			$coauthors_slugs[] = $term->slug;
 		}
-		wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, false );
+		wp_set_post_terms( $post_id, $coauthors_slugs, $this->coauthor_taxonomy, false );
 
 		// If the original post_author is no longer assigned,
 		// update to the first WP_User $coauthor
 		$post_author_user = get_user_by( 'id', get_post( $post_id )->post_author );
+
 		if ( empty( $post_author_user )
 			|| ! in_array( $post_author_user->user_login, $coauthors ) ) {
 			foreach ( $coauthor_objects as $coauthor_object ) {
+				// Assign to a wpuser if available
 				if ( 'wpuser' == $coauthor_object->type ) {
 					$new_author = $coauthor_object;
 					break;
 				}
+
+				// Assign to WP user linked to a Guest Author coauthor
+				if ( ! empty( $coauthor_object->linked_account ) ) {
+					$new_author = get_user_by( 'login', $coauthor_object->linked_account );
+					if ( ! is_a( $new_author, 'WP_User' ) ) {
+						unset( $new_author );
+					}
+					break;
+				}
 			}
+
 			// Uh oh, no WP_Users assigned to the post
 			if ( empty( $new_author ) ) {
 				return false;
@@ -903,8 +914,8 @@ class CoAuthors_Plus {
 			$wpdb->update( $wpdb->posts, array( 'post_author' => $new_author->ID ), array( 'ID' => $post_id ) );
 			clean_post_cache( $post_id );
 		}
-		return true;
 
+		return true;
 	}
 
 	/**
