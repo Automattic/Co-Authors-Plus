@@ -612,7 +612,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Update the post count and description for each author and guest author
+	 * Update the post count and description for each author and guest author.
 	 *
 	 * @since 3.0
 	 *
@@ -623,13 +623,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
 		WP_CLI::line( 'Now updating ' . count( $author_terms ) . ' terms' );
 		foreach ( $author_terms as $author_term ) {
-			$old_count = $author_term->count;
 			$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $author_term->slug );
 			$coauthors_plus->update_author_term( $coauthor );
-			$coauthors_plus->update_author_term_post_count( $author_term );
 			wp_cache_delete( $author_term->term_id, $coauthors_plus->coauthor_taxonomy );
-			$new_count = get_term_by( 'id', $author_term->term_id, $coauthors_plus->coauthor_taxonomy )->count;
-			WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) changed from {$old_count} to {$new_count} and the description was refreshed" );
+			WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) had its description refreshed" );
 		}
 		// Create author terms for any users that don't have them
 		$users = get_users();
