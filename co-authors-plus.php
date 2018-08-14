@@ -91,7 +91,7 @@ class CoAuthors_Plus {
 		// Action to reassign posts when a guest author is deleted
 		add_action( 'delete_user',  array( $this, 'delete_user_action' ) );
 
-		add_filter( 'get_usernumposts', array( $this, 'filter_count_user_posts' ), 10, 2 );
+		add_filter( 'get_usernumposts', array( $this, 'filter_count_user_posts' ), 10, 4 );
 
 		// Action to set up co-author auto-suggest
 		add_action( 'wp_ajax_coauthors_ajax_suggest', array( $this, 'ajax_suggest' ) );
@@ -178,12 +178,7 @@ class CoAuthors_Plus {
 			'show_ui' => false,
 		);
 
-		// If we use the nasty SQL query, we need our custom callback. Otherwise, we still need to flush cache.
-		if ( apply_filters( 'coauthors_plus_should_query_post_author', true ) ) {
-			$args['update_count_callback'] = array( $this, '_update_users_posts_count' );
-		} else {
-			add_action( 'edited_term_taxonomy', array( $this, 'action_edited_term_taxonomy_flush_cache' ), 10, 2 );
-		}
+		add_action( 'edited_term_taxonomy', array( $this, 'action_edited_term_taxonomy_flush_cache' ), 10, 2 );
 
 		$post_types_with_authors = array_values( get_post_types() );
 		foreach ( $post_types_with_authors as $key => $name ) {
@@ -534,24 +529,6 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * When we update the terms at all, we should update the published post count for each user
-	 */
-	function _update_users_posts_count( $tt_ids, $taxonomy ) {
-		global $wpdb;
-
-		$tt_ids = implode( ', ', array_map( 'intval', $tt_ids ) );
-		$term_ids = $wpdb->get_results( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN ($tt_ids)" );
-
-		foreach ( (array) $term_ids as $term_id_result ) {
-			$term = get_term_by( 'id', $term_id_result->term_id, $this->coauthor_taxonomy );
-			$this->update_author_term_post_count( $term );
-		}
-		$tt_ids = explode( ', ', $tt_ids );
-		clean_term_cache( $tt_ids, '', false );
-
-	}
-
-	/**
 	 * If we're forcing Co-Authors Plus to just do taxonomy queries, we still
 	 * need to flush our special cache after a taxonomy term has been updated
 	 *
@@ -578,40 +555,15 @@ class CoAuthors_Plus {
 	/**
 	 * Update the post count associated with an author term
 	 *
+	 * @deprecated 3.3.0 Calling this function is no longer needed, counts are updated and cached on request.
+	 * @see filter_count_user_posts()
+	 *
 	 * @since 3.0
 	 *
 	 * @param object $term The co-author term
 	 */
 	public function update_author_term_post_count( $term ) {
-		global $wpdb;
-
-		$coauthor = $this->get_coauthor_by( 'user_nicename', $term->slug );
-		if ( ! $coauthor ) {
-			return new WP_Error( 'missing-coauthor', __( 'No co-author exists for that term', 'co-authors-plus' ) );
-		}
-
-		$query = "SELECT COUNT({$wpdb->posts}.ID) FROM {$wpdb->posts}";
-
-		$query .= " LEFT JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
-		$query .= " LEFT JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
-
-		$having_terms_and_authors = $having_terms = $wpdb->prepare( "{$wpdb->term_taxonomy}.term_id = %d", $term->term_id );
-		if ( 'wpuser' == $coauthor->type ) {
-			$having_terms_and_authors .= $wpdb->prepare( " OR {$wpdb->posts}.post_author = %d", $coauthor->ID );
-		}
-
-		$post_types = apply_filters( 'coauthors_count_published_post_types', array( 'post' ) );
-		$post_types = array_map( 'sanitize_key', $post_types );
-		$post_types = "'" . implode( "','", $post_types ) . "'";
-
-		$query .= " WHERE ({$having_terms_and_authors}) AND {$wpdb->posts}.post_type IN ({$post_types}) AND {$wpdb->posts}.post_status = 'publish'";
-
-		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF ( {$wpdb->term_taxonomy}.taxonomy = '%s', IF ( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy );
-
-		$count = $wpdb->query( $query );
-		$wpdb->update( $wpdb->term_taxonomy, array( 'count' => $count ), array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
-
-		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
+		_deprecated_function( __FUNCTION__, '3.3.0' );
 	}
 
 	/**
@@ -995,20 +947,53 @@ class CoAuthors_Plus {
 
 	/**
 	 * Filter the count_users_posts() core function to include our correct count.
+	 * Counts are cached.
 	 *
 	 * @param int $count Post count
 	 * @param int $user_id WP user ID
+	 * @param string|array $post_type Post type(s) to include
+	 * @param bool $public_only Whether to restrict to public content only
 	 * @return int Post count
 	 */
-	function filter_count_user_posts( $count, $user_id ) {
-		$user = get_userdata( $user_id );
-		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+	function filter_count_user_posts( $count, $user_id, $post_types, $public_only ) {
+		global $wpdb;
 
-		$term = $this->get_author_term( $user );
-		
-		if ( $term && ! is_wp_error( $term ) ) {
-			$count = $term->count;
+		if ( false !== ( $cache = wp_cache_get( 'cap-post-count-author-' . $user_id . '-' . md5( serialize( $post_types ) . serialize( $public_only ) ) ) ) ) {
+			return $cache;
 		}
+
+		$user = get_userdata( $user_id );
+		if ( ! is_a( $user, 'WP_User' ) ) {
+			return $count;
+		}
+
+		$coauthor = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+		if ( ! is_object( $coauthor ) ) {
+			return $count;
+		}
+
+		$term = $this->get_author_term( $coauthor );
+		if ( ! is_a( $term, 'WP_Term' ) ) {
+			return $count;
+		}
+
+		$query = "SELECT COUNT({$wpdb->posts}.ID) FROM {$wpdb->posts}";
+
+		$query .= " LEFT JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
+		$query .= " LEFT JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id ) ";
+
+		$having_terms = $wpdb->prepare( "{$wpdb->term_taxonomy}.term_id = %d", $term->term_id );
+		//$having_terms_and_authors .= $wpdb->prepare( " OR {$wpdb->posts}.post_author = %d", $user_id ); //let's switch to terms only
+
+		$where = get_posts_by_author_sql( $post_types, true, null, $public_only );
+		$where .= " AND ({$having_terms})";
+		$query .= $where;
+
+		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF ( {$wpdb->term_taxonomy}.taxonomy = '%s', IF ( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy );
+
+		$count = $wpdb->query( $query );
+
+		wp_cache_set( 'cap-post-count-author-' . $user_id . '-' . md5( serialize( $post_types ) . serialize( $public_only ) ), $count );
 
 		return $count;
 	}
