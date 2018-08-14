@@ -37,6 +37,7 @@ define( 'COAUTHORS_PLUS_VERSION', '3.3.0' );
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
 require_once( dirname( __FILE__ ) . '/deprecated.php' );
 
+require_once( dirname( __FILE__ ) . '/php/coauthors-install.php' );
 require_once( dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php' );
 require_once( dirname( __FILE__ ) . '/php/integrations/amp.php' );
 
@@ -70,6 +71,8 @@ class CoAuthors_Plus {
 	 * __construct()
 	 */
 	function __construct() {
+		//Set up on activation
+		register_activation_hook( __FILE__, 'cap_install_setup' );
 
 		// Register our models
 		add_action( 'init', array( $this, 'action_init' ) );
@@ -133,6 +136,10 @@ class CoAuthors_Plus {
 
 		// Filter to correct author on author archive page
 		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 2 );
+
+		// Update author term on user update
+		add_action( 'user_register', array( $this, 'action_user_profile_update' ) );
+		add_action( 'profile_update', array( $this, 'action_user_profile_update' ) );
 	}
 
 	/**
@@ -1141,38 +1148,17 @@ class CoAuthors_Plus {
 
 	/**
 	 * Get matching co-authors based on a search value
+	 *
+	 * @param string $search
+	 * @param array $ignored_authors array
+	 * @return array found users
 	 */
 	public function search_authors( $search = '', $ignored_authors = array() ) {
-
-		// Since 2.7, we're searching against the term description for the fields
-		// instead of the user details. If the term is missing, we probably need to
-		// backfill with user details. Let's do this first... easier than running
-		// an upgrade script that could break on a lot of users
 		$args = array(
-				'count_total' => false,
-				'search' => sprintf( '*%s*', $search ),
-				'search_columns' => array(
-					'ID',
-					'display_name',
-					'user_email',
-					'user_login',
-				),
-				'fields' => 'all_with_meta',
-			);
-		$found_users = get_users( $args );
-
-		foreach ( $found_users as $found_user ) {
-			$term = $this->get_author_term( $found_user );
-			if ( empty( $term ) || empty( $term->description ) ) {
-				$this->update_author_term( $found_user );
-			}
-		}
-
-		$args = array(
-				'search' => $search,
-				'get' => 'all',
-				'number' => 10,
-			);
+			'search' => $search,
+			'get' => 'all',
+			'number' => 10,
+		);
 		$args = apply_filters( 'coauthors_search_authors_get_terms_args', $args );
 		add_filter( 'terms_clauses', array( $this, 'filter_terms_clauses' ) );
 		$found_terms = get_terms( $this->coauthor_taxonomy, $args );
@@ -1194,11 +1180,15 @@ class CoAuthors_Plus {
 		// Allow users to always filter out certain users if needed (e.g. administrators)
 		$ignored_authors = apply_filters( 'coauthors_edit_ignored_authors', $ignored_authors );
 		foreach ( $found_users as $key => $found_user ) {
+
 			// Make sure the user is contributor and above (or a custom cap)
 			if ( in_array( $found_user->user_nicename, $ignored_authors ) ) { //AJAX sends a list of already present *users_nicenames*
 				unset( $found_users[ $key ] );
+
+			//If user does not have permission, they should not have a term in the first place
 			} else if ( 'wpuser' === $found_user->type && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) ) {
 				unset( $found_users[ $key ] );
+				wp_delete_term( $term->term_id, $this->coauthor_taxonomy );
 			}
 		}
 		return (array) $found_users;
@@ -1458,6 +1448,29 @@ class CoAuthors_Plus {
 		}
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
 		return $this->get_author_term( $coauthor );
+	}
+
+	/**
+	 * Create guest author profile when WP user profile is updated.
+	 *
+	 * @param int $userid
+	 */
+	function action_user_profile_update( $userid ) {
+		global $coauthors_plus;
+
+		$user = get_userdata( $userid );
+
+		// Continue only if user can be added as coauthor
+		if ( $user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) === false ) {
+			return;
+		}
+
+
+		if ( ( $guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'login', $user->user_login ) ) === false ) {
+			$coauthors_plus->guest_authors->create_guest_author_from_user_id( $userid );
+		}
+
+		$coauthors_plus->update_author_term( $user ); // when user is updated, we want to update its term so that the search results show up-to-date info
 	}
 
 	/**
