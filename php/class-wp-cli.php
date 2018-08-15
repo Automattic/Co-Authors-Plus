@@ -106,13 +106,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$args['paged']++;
 			$posts = new WP_Query( $args );
 		}
-		WP_CLI::line( 'Updating author terms with new counts' );
-		foreach ( $authors as $author ) {
-			$coauthors_plus->update_author_term( $author );
-		}
 
 		WP_CLI::success( "Done! Of {$total_posts} posts, {$affected} now have author terms." );
-
 	}
 
 	/**
