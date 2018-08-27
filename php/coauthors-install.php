@@ -52,6 +52,6 @@ function cap_create_guest_authors( $imported_count = 0, $number_to_update = 100 
 
 	$imported_count += $number_to_update;
 
-	wp_schedule_single_event( time(), 'cap_import_existing_users', array( $imported_count ) );
+	wp_schedule_single_event( time() + 15, 'cap_import_existing_users', array( $imported_count ) );
 }
 add_action( 'cap_import_existing_users', 'cap_create_guest_authors' );
