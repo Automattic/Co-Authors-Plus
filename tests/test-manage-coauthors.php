@@ -63,16 +63,21 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( 1, count( $coauthors ) );
 
-		// append = true, should preserve order
 		$editor1 = get_user_by( 'id', $this->editor1 );
+		$author1 = get_user_by( 'id', $this->author1 );
+		
+		$guest_editor1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $editor1->user_login )->ID;
+		$guest_author1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $author1->user_login )->ID;
+
+		// append = true, should preserve order
 		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ), true );
 		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $guest_author1_id, $guest_editor1_id ), wp_list_pluck( $coauthors, 'ID' ) );
 
 		// append = false, overrides existing authors
 		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ), false );
 		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( array( $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $guest_editor1_id ), wp_list_pluck( $coauthors, 'ID' ) );
 
 	}
 
@@ -377,6 +382,9 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$admin1  = get_user_by( 'id', $this->admin1 );
 		$author1 = get_user_by( 'id', $this->author1 );
 
+		$guest_admin1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $admin1->user_login )->ID;
+		$guest_author1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $author1->user_login )->ID;
+
 		$post_id = $this->factory->post->create( array(
 			'post_author' => $this->admin1,
 		) );
@@ -397,7 +405,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		$coauthors = get_coauthors( $post_id );
 
-		$this->assertEquals( array( $this->admin1, $this->author1 ), wp_list_pluck( $coauthors, 'ID' ) );
+		$this->assertEquals( array( $guest_admin1_id, $guest_author1_id ), wp_list_pluck( $coauthors, 'ID' ) );
 
 		// Store global variables from backup.
 		$_POST    = $post_backup;

@@ -34,12 +34,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_posts_links() {
 
-		global $coauthors_plus, $coauthors_plus_template_filters;
+		global $coauthors_plus, $coauthors_plus_template_filters, $post;
 
 		// Backing up global post.
-		$post_backup = $GLOBALS['post'];
+		$post_backup = $post;
 
-		$GLOBALS['post'] = $this->post;
+		$post = $this->post;
 
 		// Checks for single post author.
 		$single_cpl = coauthors_posts_links( null, null, null, null, false );
@@ -143,14 +143,17 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
+		$guest_author1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->author1->user_login )->ID;
+		$guest_editor1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->editor1->user_login )->ID;
+
 		// Compare single author.
-		$this->assertEquals( array( $this->author1->ID ), wp_list_pluck( get_coauthors( $this->post->ID ), 'ID' ) );
+		$this->assertEquals( array( $guest_author1_id ), wp_list_pluck( get_coauthors( $this->post->ID ), 'ID' ) );
 
 		// Compare multiple authors.
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 		$this->assertEquals( array(
-			$this->author1->ID,
-			$this->editor1->ID,
+			$guest_author1_id,
+			$guest_editor1_id,
 		), wp_list_pluck( get_coauthors( $this->post->ID ), 'ID' ) );
 	}
 
@@ -710,48 +713,23 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$ids = coauthors_ids( null, null, null, null, false );
 
-		$this->assertEquals( $this->author1->ID, $ids );
+		$guest_author1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->author1->user_login )->ID;
+		$this->assertEquals( $guest_author1_id, $ids );
 
 		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $this->author1->ID . '</span>', $ids );
+		$this->assertEquals( '<span>' . $guest_author1_id . '</span>', $ids );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
+		$guest_editor1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->editor1->user_login )->ID;
 
 		$ids = coauthors_ids( null, null, null, null, false );
 
-		$this->assertEquals( $this->author1->ID . ' and ' . $this->editor1->ID, $ids );
+		$this->assertEquals( $guest_author1_id . ' and ' . $guest_editor1_id, $ids );
 
 		$ids = coauthors_ids( '</span><span>', '</span><span>', '<span>', '</span>', false );
 
-		$this->assertEquals( '<span>' . $this->author1->ID . '</span><span>' . $this->editor1->ID . '</span>', $ids );
-
-		// Restore global post from backup.
-		$post = $post_backup;
-	}
-
-	/**
-	 * Checks co-authors meta.
-	 *
-	 * @covers ::get_the_coauthor_meta()
-	 */
-	public function test_get_the_coauthor_meta() {
-
-		global $post;
-
-		// Backing up global post.
-		$post_backup = $post;
-
-		$this->assertEmpty( get_the_coauthor_meta( '' ) );
-
-		update_user_meta( $this->author1->ID, 'meta_key', 'meta_value' );
-
-		$this->assertEmpty( get_the_coauthor_meta( 'meta_key' ) );
-
-		$post = $this->post;
-		$meta = get_the_coauthor_meta( 'meta_key' );
-
-		$this->assertEquals( 'meta_value', $meta[ $this->author1->ID ] );
+		$this->assertEquals( '<span>' . $guest_author1_id . '</span><span>' . $guest_editor1_id . '</span>', $ids );
 
 		// Restore global post from backup.
 		$post = $post_backup;
@@ -866,13 +844,17 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_wp_list_authors_for_feed() {
 
+		global $coauthors_plus;
+
 		$feed_text = 'link to feed';
 		$coauthors = coauthors_wp_list_authors( array(
 			'echo' => false,
 			'feed' => $feed_text,
 		) );
 
-		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
+		$guest_author1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->author1->user_login )->ID;
+
+		$this->assertContains( esc_url( get_author_feed_link( $guest_author1_id ) ), $coauthors );
 		$this->assertContains( $feed_text, $coauthors );
 	}
 
@@ -883,13 +865,17 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_wp_list_authors_for_feed_image() {
 
+		global $coauthors_plus;
+
 		$feed_image = WP_TESTS_DOMAIN . '/path/to/a/graphic.png';
 		$coauthors  = coauthors_wp_list_authors( array(
 			'echo'       => false,
 			'feed_image' => $feed_image,
 		) );
 
-		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
+		$guest_author1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->author1->user_login )->ID;
+
+		$this->assertContains( esc_url( get_author_feed_link( $guest_author1_id ) ), $coauthors );
 		$this->assertContains( $feed_image, $coauthors );
 	}
 
@@ -900,6 +886,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_wp_list_authors_for_feed_type() {
 
+		global $coauthors_plus;
+
 		$feed_type = 'atom';
 		$feed_text = 'link to feed';
 		$coauthors = coauthors_wp_list_authors( array(
@@ -908,7 +896,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'feed'      => $feed_text,
 		) );
 
-		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID, $feed_type ) ), $coauthors );
+		$guest_author1_id = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->author1->user_login )->ID;
+
+		$this->assertContains( esc_url( get_author_feed_link( $guest_author1_id, $feed_type ) ), $coauthors );
 		$this->assertContains( $feed_type, $coauthors );
 		$this->assertContains( $feed_text, $coauthors );
 	}
@@ -964,14 +954,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'guest_authors_only' => true,
 		);
 
-		$this->assertEmpty( coauthors_wp_list_authors( $args ) );
-
 		$guest_author_id = $coauthors_plus->guest_authors->create( array(
 			'user_login'   => 'author2',
 			'display_name' => 'author2',
 		) );
 
-		$this->assertEmpty( coauthors_wp_list_authors( $args ) );
+		$this->assertNotContains( 'author2', coauthors_wp_list_authors( $args ) );
 
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
 

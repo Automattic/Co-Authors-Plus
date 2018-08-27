@@ -10,8 +10,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
 		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
 
-		cap_create_author_terms(); //users without terms don't exist for CAP
-
 		$this->post = $this->factory->post->create_and_get( array(
 			'post_author'  => $this->author1->ID,
 			'post_status'  => 'publish',
@@ -366,7 +364,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$subscriber1 = $this->factory->user->create_and_get( array(
 			'role' => 'subscriber',
 		) );
-		cap_create_author_terms();
 
 		$authors = $coauthors_plus->search_authors();
 
@@ -377,7 +374,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$contributor1 = $this->factory->user->create_and_get( array(
 			'role' => 'contributor',
 		) );
-		cap_create_author_terms();
 
 		$authors = $coauthors_plus->search_authors();
 
@@ -396,14 +392,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		// Checks when author does not exist with searched term.
 		$this->assertEmpty( $coauthors_plus->search_authors( 'test' ) );
-
-		// Checks when author searched using ID.
-		$authors = $coauthors_plus->search_authors( $this->author1->ID );
-
-		$this->assertNotEmpty( $authors );
-		$this->assertArrayHasKey( $this->author1->user_login, $authors );
-		$this->assertArrayNotHasKey( $this->editor1->user_login, $authors );
-		$this->assertArrayNotHasKey( 'admin', $authors );
 
 		// Checks when author searched using display_name.
 		$authors = $coauthors_plus->search_authors( $this->author1->display_name );
@@ -429,13 +417,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey( $this->editor1->user_login, $authors );
 		$this->assertArrayNotHasKey( 'admin', $authors );
 
-		// Checks when any subscriber exists using ID but not author.
+		// Checks when any subscriber exists but not author.
 		$subscriber1 = $this->factory->user->create_and_get( array(
 			'role' => 'subscriber',
 		) );
-		cap_create_author_terms();
 
-		$this->assertEmpty( $coauthors_plus->search_authors( $subscriber1->ID ) );
+		$this->assertEmpty( $coauthors_plus->search_authors( $subscriber1->user_login ) );
 	}
 
 	/**
@@ -459,7 +446,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$author2 = $this->factory->user->create_and_get( array(
 			'role' => 'author',
 		) );
-		cap_create_author_terms();
 
 		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
 
@@ -494,7 +480,6 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 			'role'       => 'author',
 			'user_login' => 'author2',
 		) );
-		cap_create_author_terms();
 
 		$authors = $coauthors_plus->search_authors( 'author', $ignored_authors );
 
@@ -549,8 +534,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		// Checks when term exists using linked account.
-		$coauthor_id = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->editor1->ID );
-		$coauthor    = $coauthors_plus->get_coauthor_by( 'id', $coauthor_id );
+		$coauthor = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $this->editor1->user_login );
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
 

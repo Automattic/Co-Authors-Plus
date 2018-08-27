@@ -52,7 +52,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+		$guest_author_id = $guest_author_obj->get_guest_author_by( 'user_login', $this->editor1->user_login )->ID;
 
 		$cache_key = $guest_author_obj->get_cache_key( 'ID', $guest_author_id );
 
@@ -78,11 +78,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		// Checks when user is not a guest author.
-		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', $this->author1->ID ) );
-		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', $this->author1->ID, true ) );
-
-		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+		$guest_author_id = $guest_author_obj->get_guest_author_by( 'user_login', $this->editor1->user_login )->ID;
 
 		// Checks guest author using ID.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
@@ -102,6 +98,13 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertInstanceOf( stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author_obj->post_type, $guest_author->type );
+
+		// Checks when user is not a guest author (by default every WP user has a linked account, so delete it first).
+		$guest_author1_id = $guest_author_obj->get_guest_author_by( 'user_login', $this->author1->user_login )->ID;
+		$coauthors_plus->guest_authors->delete( $guest_author1_id );
+
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', $this->author1->ID ) );
+		$this->assertFalse( $guest_author_obj->get_guest_author_by( 'ID', $this->author1->ID, true ) );
 	}
 
 	/**
@@ -218,20 +221,18 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$this->assertEmpty( $guest_author_obj->get_all_linked_accounts() );
-
 		// Checks when guest author ( not linked account ) exists.
 		$guest_author_obj->create( array(
 			'user_login'   => 'author2',
 			'display_name' => 'author2',
 		) );
 
-		$this->assertEmpty( $guest_author_obj->get_all_linked_accounts() );
+		$linked_accounts = $guest_author_obj->get_all_linked_accounts();
+		foreach( $linked_accounts as $single ) {
+			$this->assertFalse( $single['user_login'] === 'author2' );
+		}
 
-		// Create guest author from existing user and check.
-		$guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
-
-		$linked_accounts    = $guest_author_obj->get_all_linked_accounts();
+		// Check that sample existing user has linked account.
 		$linked_account_ids = wp_list_pluck( $linked_accounts, 'ID' );
 
 		$this->assertNotEmpty( $linked_accounts );
@@ -255,8 +256,8 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		// Checks when guest author does not exist in cache.
 		$this->assertFalse( wp_cache_get( $cache_key, $guest_author_obj::$cache_group ) );
 
-		// Checks when guest author exists in cache.
-		$guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+		// Checks when guest author exists in cache (call get_guest_author_by just to trigger caching).
+		$guest_author_id = $guest_author_obj->get_guest_author_by( 'user_login', $this->editor1->user_login )->ID;
 
 		$linked_accounts       = $guest_author_obj->get_all_linked_accounts();
 		$linked_accounts_cache = wp_cache_get( $cache_key, $guest_author_obj::$cache_group );
@@ -280,12 +281,6 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertInstanceOf( 'WP_Error', $response );
 		$this->assertEquals( 'invalid-user', $response->get_error_code() );
-
-		// Checks create guest author when user exist.
-		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
-		$guest_author    = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
-
-		$this->assertInstanceOf( stdClass::class, $guest_author );
 	}
 
 	/**
@@ -307,7 +302,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		// Checks when action is set but not expected.
 		$_POST['action'] = 'test';
-		$_POST['id']     = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+		$_POST['id']     = $guest_author_obj->get_guest_author_by( 'user_login', $this->editor1->user_login )->ID;
 
 		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
 
@@ -416,7 +411,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		// Checks when current user can not have list_users capability.
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
-		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
+		$_POST['id']       = $guest_author_obj->get_guest_author_by( 'user_login', $this->editor1->user_login )->ID;
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
@@ -431,7 +426,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( $this->admin1->ID );
 
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
-		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['id']       = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login )->ID;;
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
@@ -485,7 +480,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
 
 		// Checks when guest author exists.
-		$_POST['id'] = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['id'] = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login )->ID;
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
@@ -525,7 +520,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$_POST['action']   = 'delete-guest-author';
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
-		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['id']       = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login )->ID;
 
 		// Checks when reassign is not as expected.
 		$_POST['reassign'] = 'test';
@@ -567,7 +562,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$_POST['action']   = 'delete-guest-author';
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
-		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['id']       = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login )->ID;
 		$_POST['reassign'] = 'leave-assigned';
 
 		add_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99, 2 );
@@ -615,7 +610,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$_POST['action']   = 'delete-guest-author';
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
-		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['id']       = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login )->ID;
 		$_POST['reassign'] = 'reassign-another';
 
 		// When coauthor does not exist.
@@ -676,7 +671,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$_POST['action']   = 'delete-guest-author';
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
-		$_POST['id']       = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
+		$_POST['id']       = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login )->ID;
 		$_POST['reassign'] = 'remove-byline';
 
 		add_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99, 2 );
@@ -747,16 +742,15 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$author2           = $this->factory->user->create_and_get();
-		$guest_author_id   = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
-		$guest_author      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
-		$guest_author_term = $coauthors_plus->get_author_term( $guest_author );
+		$author2           = $this->factory->user->create_and_get( array( 'role' => 'contributor' ) );
+		$guest_author2      = $guest_author_obj->get_guest_author_by( 'user_login', $author2->user_login );
+		$guest_author2_term = $coauthors_plus->get_author_term( $guest_author2 );
 
-		$response = $guest_author_obj->delete( $guest_author_id );
+		$response = $guest_author_obj->delete( $guest_author2->ID );
 
 		$this->assertTrue( $response );
-		$this->assertFalse( get_term_by( 'id', $guest_author_term->term_id, $coauthors_plus->coauthor_taxonomy ) );
-		$this->assertNull( get_post( $guest_author_id ) );
+		$this->assertFalse( get_term_by( 'id', $guest_author2_term->term_id, $coauthors_plus->coauthor_taxonomy ) );
+		$this->assertNull( get_post( $guest_author2->ID ) );
 	}
 
 	/**
@@ -771,10 +765,10 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
 		// Checks when reassign author is not exist.
-		$author2         = $this->factory->user->create_and_get();
-		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
+		$author2         = $this->factory->user->create_and_get( array( 'role' => 'contributor' ) );
+		$guest_author2_id = $guest_author_obj->get_guest_author_by( 'user_login', $author2->user_login )->ID;
 
-		$response = $guest_author_obj->delete( $guest_author_id, 'test' );
+		$response = $guest_author_obj->delete( $guest_author2_id, 'test' );
 
 		$this->assertInstanceOf( 'WP_Error', $response );
 		$this->assertEquals( 'reassign-to-missing', $response->get_error_code() );
@@ -791,16 +785,15 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$author2            = $this->factory->user->create_and_get();
-		$guest_author2_id   = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
-		$guest_author2      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author2_id );
+		$author2            = $this->factory->user->create_and_get( array( 'role' => 'contributor' ) );
+		$guest_author2      = $guest_author_obj->get_guest_author_by( 'user_login', $author2->user_login );
 		$guest_author2_term = $coauthors_plus->get_author_term( $guest_author2 );
 
-		$response = $guest_author_obj->delete( $guest_author2_id, $guest_author2->linked_account );
+		$response = $guest_author_obj->delete( $guest_author2->ID, $guest_author2->linked_account );
 
 		$this->assertTrue( $response );
 		$this->assertNotEmpty( get_term_by( 'id', $guest_author2_term->term_id, $coauthors_plus->coauthor_taxonomy ) );
-		$this->assertNull( get_post( $guest_author2_id ) );
+		$this->assertNull( get_post( $guest_author2->ID ) );
 	}
 
 	/**
@@ -814,25 +807,23 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$guest_admin_id = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
-		$guest_admin    = $guest_author_obj->get_guest_author_by( 'ID', $guest_admin_id );
+		$guest_admin = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login );
 
-		$author2            = $this->factory->user->create_and_get();
-		$guest_author_id2   = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
-		$guest_author2      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id2 );
+		$author2            = $this->factory->user->create_and_get( array( 'role' => 'contributor' ) );
+		$guest_author2      = $guest_author_obj->get_guest_author_by( 'user_login', $author2->user_login );
 		$guest_author_term2 = $coauthors_plus->get_author_term( $guest_author2 );
 
 		$post = $this->factory->post->create_and_get( array(
 			'post_author' => $author2->ID,
 		) );
 
-		$response = $guest_author_obj->delete( $guest_author_id2, $guest_admin->linked_account );
+		$response = $guest_author_obj->delete( $guest_author2->ID, $guest_admin->linked_account );
 
 		// Checks post author, it should be reassigned to new author.
 		$this->assertEquals( array( $guest_admin->linked_account ), wp_list_pluck( get_coauthors( $post->ID ), 'linked_account' ) );
 		$this->assertTrue( $response );
 		$this->assertFalse( get_term_by( 'id', $guest_author_term2->term_id, $coauthors_plus->coauthor_taxonomy ) );
-		$this->assertNull( get_post( $guest_author_id2 ) );
+		$this->assertNull( get_post( $guest_author2->ID ) );
 	}
 
 	/**
@@ -871,8 +862,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$guest_admin_id = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
-		$guest_admin    = $guest_author_obj->get_guest_author_by( 'ID', $guest_admin_id );
+		$guest_admin = $guest_author_obj->get_guest_author_by( 'user_login', $this->admin1->user_login );
 
 		$guest_author_id   = $guest_author_obj->create( array(
 			'user_login'   => 'guest_author',
