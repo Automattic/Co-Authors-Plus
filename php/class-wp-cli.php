@@ -121,7 +121,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @since 3.0
 	 *
 	 * @subcommand assign-coauthors
-	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>]
+	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>] [--append_coauthors]
 	 */
 	public function assign_coauthors( $args, $assoc_args ) {
 		global $coauthors_plus;
