@@ -469,13 +469,7 @@ class CoAuthors_Guest_Authors
 			}
 
 			// get post count
-			global $coauthors_plus;
-			$term = $coauthors_plus->get_author_term( $guest_author );
-			if ( $term ) {
-				$count = $term->count;
-			} else {
-				$count = 0;
-			}
+			$count = $this->get_guest_author_post_count( $guest_author );
 
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
@@ -556,6 +550,21 @@ class CoAuthors_Guest_Authors
 			echo '</div>';
 		}
 
+	}
+
+	/**
+	 * Fetch the post count for a guest author
+	 *
+	 * @param object $guest_author guest-author object.
+	 * @return int post count.
+	 */
+	function get_guest_author_post_count( $guest_author ) {
+		if ( ! is_object( $guest_author ) ) {
+			return;
+		} else {
+			$cap_list_table = new CoAuthors_WP_List_Table();
+			return $cap_list_table->get_post_count( $guest_author );
+		}
 	}
 
 	/**
