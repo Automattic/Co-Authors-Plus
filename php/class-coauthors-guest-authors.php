@@ -470,12 +470,7 @@ class CoAuthors_Guest_Authors
 
 			// get post count
 			global $coauthors_plus;
-			$term = $coauthors_plus->get_author_term( $guest_author );
-			if ( $term ) {
-				$count = $term->count;
-			} else {
-				$count = 0;
-			}
+			$count = $coauthors_plus->get_guest_author_post_count( $guest_author );
 
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
