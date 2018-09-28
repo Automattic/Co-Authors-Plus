@@ -1657,14 +1657,12 @@ class CoAuthors_Plus {
 			return;
 		}
 
-		$term = $this->get_author_term( $guest_author );
+		$term       = $this->get_author_term( $guest_author );
 		$guest_term = get_term_by( 'slug', 'cap-' . $guest_author->user_nicename, $this->coauthor_taxonomy );
 
-		if ( ! $term || ! $guest_term ) {
-			return false;
-		}
-
-		if ( ! empty( $guest_author->linked_account ) && $guest_term->count ) {
+		if ( is_object( $guest_term )
+			&& ! empty( $guest_author->linked_account )
+			&& $guest_term->count ) {
 			return count_user_posts( get_user_by( 'login', $guest_author->linked_account )->ID );
 		} elseif ( $term ) {
 			return $term->count;
