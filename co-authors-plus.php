@@ -1644,6 +1644,31 @@ class CoAuthors_Plus {
 		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
 		
 		return sprintf( __( 'Author: %s' ), $author->display_name );
+	}	
+
+	/**
+	 * Get the post count for the guest author
+	 *
+	 * @param object $guest_author guest-author object.
+	 * @return int post count for the guest author
+	 */
+	public function get_guest_author_post_count( $guest_author ) {
+		if ( ! is_object( $guest_author ) ) {
+			return;
+		}
+
+		$term       = $this->get_author_term( $guest_author );
+		$guest_term = get_term_by( 'slug', 'cap-' . $guest_author->user_nicename, $this->coauthor_taxonomy );
+
+		if ( is_object( $guest_term )
+			&& ! empty( $guest_author->linked_account )
+			&& $guest_term->count ) {
+			return count_user_posts( get_user_by( 'login', $guest_author->linked_account )->ID );
+		} elseif ( $term ) {
+			return $term->count;
+		} else {
+			return 0;
+		}
 	}
 
 }
