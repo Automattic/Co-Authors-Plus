@@ -685,7 +685,7 @@ function coauthors_wp_list_authors( $args = array() ) {
  *                                 or 'gravatar_default' (the Gravatar logo). Default is the value of the
  *                                 'avatar_default' option, with a fallback of 'mystery'.
  * @param  string        $alt      Optional. Alternative text to use in &lt;img&gt; tag. Default false.
- * @param  array|string  $class    Array or string of additional classes to add to the &lt;img&gt; element. Default null.
+ * @param  array|string  $class    Optional. Array or string of additional classes to add to the &lt;img&gt; element. Default null.
  * @return string                  The image tag for the avatar, or an empty string if none could be determined.
  */
 function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = false, $class = null ) {
@@ -693,10 +693,6 @@ function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = fals
 
 	if ( ! is_object( $coauthor ) ) {
 		return '';
-	}
-
-	if ( ! empty( $class ) && is_array( $class ) ) {
-			$class = implode( ' ', $class );
 	}
 
 	if ( isset( $coauthor->type ) && 'guest-author' == $coauthor->type ) {
