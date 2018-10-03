@@ -958,10 +958,10 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Get an thumbnail for a Guest Author object
 	 *
-	 * @param 	object 	The Guest Author object for which to retrieve the thumbnail.
-	 * @param 	int 	The desired image size.
-	 * @param   string  String of additional classes. Default null.
-	 * @return 	string 	The thumbnail image tag, or null if one doesn't exist.
+	 * @param 	object 	      The Guest Author object for which to retrieve the thumbnail.
+	 * @param 	int 	      The desired image size.
+	 * @param	array|string  Optional. An array or string of additional classes. Default null.
+	 * @return 	string 	      The thumbnail image tag, or null if one doesn't exist.
 	 */
 	function get_guest_author_thumbnail( $guest_author, $size, $class = null ) {
 		// See if the guest author has an avatar
@@ -973,6 +973,9 @@ class CoAuthors_Guest_Authors
 				'class' => "avatar avatar-{$size} photo",
 			);
 		if ( ! empty( $class ) ) {
+			if ( is_array( $class ) ) {
+				$class = implode( ' ', $class );
+			}
 			$args['class'] += " $class";
 		}
 
