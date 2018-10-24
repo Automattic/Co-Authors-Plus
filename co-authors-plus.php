@@ -868,8 +868,13 @@ class CoAuthors_Plus {
 		}
 
 		// A co-author is always required
+		// If no coauthor is provided AND no coauthors are currently set, assign to current user - retain old ones otherwise.
 		if ( empty( $coauthors ) ) {
-			$coauthors = array( $current_user->user_login );
+			if( empty( $existing_coauthors ) ) {
+				$coauthors = array( $current_user->user_login );
+			} else {
+				$coauthors = $existing_coauthors;
+			}
 		}
 
 		// Set the co-authors
