@@ -621,8 +621,12 @@ class CoAuthors_Plus {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
+			$post_type = $query->query_vars['post_type'];
+      		if ( 'any' === $post_type ) {
+      			$post_type = get_post_types( array( 'exclude_from_search' => false ) );
+      		}
 
-			if ( ! empty( $query->query_vars['post_type'] ) && ! is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) ) {
+			if ( ! empty( $post_type ) && ! is_object_in_taxonomy( $post_type, $this->coauthor_taxonomy ) ) {
 				return $join;
 			}
 
@@ -657,8 +661,12 @@ class CoAuthors_Plus {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
+			$post_type = $query->query_vars['post_type'];
+			if ( 'any' === $post_type ) { 
+				$post_type = get_post_types( array( 'exclude_from_search' => false ) );
+			}
 
-			if ( ! empty( $query->query_vars['post_type'] ) && ! is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) ) {
+			if ( ! empty( $post_type ) && ! is_object_in_taxonomy( $post_type, $this->coauthor_taxonomy ) ) {
 				return $where;
 			}
 
@@ -749,8 +757,11 @@ class CoAuthors_Plus {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
-
-			if ( ! empty( $query->query_vars['post_type'] ) && ! is_object_in_taxonomy( $query->query_vars['post_type'], $this->coauthor_taxonomy ) ) {
+			$post_type = $query->query_vars['post_type'];
+			if ( 'any' === $post_type ) {
+				$post_type = get_post_types( array( 'exclude_from_search' => false ) );
+			}
+			if ( ! empty( $post_type ) && ! is_object_in_taxonomy( $post_type, $this->coauthor_taxonomy ) ) {
 				return $groupby;
 			}
 
