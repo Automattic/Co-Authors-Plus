@@ -1263,6 +1263,11 @@ class CoAuthors_Guest_Authors
 			update_post_meta( $post_id, $pm_key, $args[ $key ] );
 		}
 
+		// Attach the avatar / featured image.
+		if ( ! empty( $args[ 'avatar' ] ) ) {
+			set_post_thumbnail( $post_id, $args[ 'avatar' ] );
+		}
+
 		// Make sure the author term exists and that we're assigning it to this post type
 		$author_term = $coauthors_plus->update_author_term( $this->get_guest_author_by( 'ID', $post_id ) );
 		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy, false );
