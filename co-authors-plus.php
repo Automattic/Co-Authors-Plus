@@ -380,6 +380,10 @@ class CoAuthors_Plus {
 				<?php
 				foreach ( $coauthors as $coauthor ) :
 					$count++;
+					$avatar_url = '';
+					if ( has_post_thumbnail( $coauthor->ID ) ) {
+						$avatar_url = get_the_post_thumbnail_url( $coauthor->ID, $this->gravatar_size );
+					}
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->user_email, $this->gravatar_size ); ?>
@@ -388,6 +392,7 @@ class CoAuthors_Plus {
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
 							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
 							<input type="text" name="coauthorsnicenames[]" value="<?php echo esc_attr( $coauthor->user_nicename ); ?>" />
+							<input type="text" name="coauthorsavaters[]" value="<?php echo esc_attr( $avatar_url ); ?>" />
 						</span>
 					</li>
 					<?php
@@ -1168,7 +1173,11 @@ class CoAuthors_Plus {
 		if( empty( $authors ) ) echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.');
 
 		foreach ( $authors as $author ) {
-			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . rawurldecode( $author->user_nicename ) ) . "\n";
+			$avatar_url = '';
+			if ( has_post_thumbnail( $author->ID ) ) {
+				$avatar_url = get_the_post_thumbnail_url($author->ID, $this->gravatar_size );
+			}
+			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . rawurldecode( $author->user_nicename ) ) . ' | ' . esc_url( $avatar_url ) . "\n";
 		}
 
 		die();
