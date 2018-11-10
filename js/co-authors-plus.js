@@ -200,6 +200,9 @@ jQuery( document ).ready(function () {
 		author.login = jQuery.trim( vals[1] );
 		author.name = jQuery.trim( vals[2] );
 		author.email = jQuery.trim( vals[3] );
+		if( author.avatar !== '' ){
+			author.avatar = jQuery.trim( vals[5] );
+		}
 
 		// Decode user-nicename if it has special characters in it.
 		author.nicename = decodeURIComponent( jQuery.trim( vals[4] ) );
@@ -252,8 +255,12 @@ jQuery( document ).ready(function () {
 	}
 
 	function coauthors_create_author_gravatar( author, size ) {
-
-		var gravatar_link = get_gravatar_link( author.email, size );
+		if( author.avatar ) {
+			var gravatar_link = author.avatar;
+		} else {
+			var gravatar_link = get_gravatar_link( author.email, size );
+		}
+		
 
 		var $gravatar = jQuery( '<img/>' )
 							.attr( 'alt', author.name )
@@ -389,6 +396,7 @@ jQuery( document ).ready(function () {
 		var $post_coauthor_names = jQuery( 'input[name="coauthorsinput[]"]' );
 		var $post_coauthor_emails = jQuery( 'input[name="coauthorsemails[]"]' );
 		var $post_coauthor_nicenames = jQuery( 'input[name="coauthorsnicenames[]"]' );
+		var $post_coauthoravatar = jQuery( 'input[name="coauthorsavaters[]"]' );
 
 		var post_coauthors = [];
 
@@ -397,7 +405,8 @@ jQuery( document ).ready(function () {
 				login: $post_coauthor_logins[i].value,
 				name: $post_coauthor_names[i].value,
 				email: $post_coauthor_emails[i].value,
-				nicename: $post_coauthor_nicenames[i].value
+				nicename: $post_coauthor_nicenames[i].value,
+				avatar: $post_coauthoravatar[i].value,
 			});
 		}
 
