@@ -715,6 +715,12 @@ class CoAuthors_Plus {
 
 				$id = is_author() ? get_queried_object_id() : '\d+';
 
+				//If we have an ID but it's not a "real" ID that means that this isn't the first time the filter has fired and the object_id has already been replaced by a previous run of this filter. We therefore need to replace the 0
+				// This happens when wp_query::get_posts() is run multiple times.
+				if ( false === get_user_by( 'id', $id ) ){
+					$id = 0;
+				}
+				
 				// When WordPress generates query as 'post_author IN (id)'.
 				if ( false !== strpos( $where, "{$wpdb->posts}.post_author IN " ) ) {
 
