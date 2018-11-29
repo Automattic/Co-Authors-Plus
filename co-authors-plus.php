@@ -660,13 +660,14 @@ class CoAuthors_Plus {
      * @param string $where
      * @param WP_Query $query
      *
-     * @return string|string[]|null
+     * @return string
      */
 	function posts_where_filter( $where, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
 			$post_type = $query->query_vars['post_type'];
+			if ( 'any' === $post_type ) {
 				$post_type = get_post_types( array( 'exclude_from_search' => false ) );
 			}
 
@@ -717,14 +718,16 @@ class CoAuthors_Plus {
 				}
 				$terms_implode = rtrim( $terms_implode, ' OR' );
 
-				$id = is_author() && $query->is_main_query() ? get_queried_object_id() : '\d+';
+				// We need to check the query is the main query as a new query object would result in the wrong ID
+				$id = $query->is_main_query() && is_author() ? get_queried_object_id() : '\d+';
 
 				//If we have an ID but it's not a "real" ID that means that this isn't the first time the filter has fired and the object_id has already been replaced by a previous run of this filter. We therefore need to replace the 0
 				// This happens when wp_query::get_posts() is run multiple times.
+				// If previous condition resulted in this being a string there's no point wasting a db query looking for a user.
 				if ( $id !== '\d+' && false === get_user_by( 'id', $id ) ){
 					$id = '\d+';
 				}
-				
+
 				// When WordPress generates query as 'post_author IN (id)'.
 				if ( false !== strpos( $where, "{$wpdb->posts}.post_author IN " ) ) {
 
@@ -969,7 +972,7 @@ class CoAuthors_Plus {
 		if ( $this->is_guest_authors_enabled() ) {
 			// Get the deleted user data by user id.
 			$user_data = get_user_by( 'id', $delete_id );
-		
+
 			// Get the associated user.
 			$associated_user = $this->guest_authors->get_guest_author_by( 'linked_account', $user_data->data->user_login );
 
@@ -1033,7 +1036,7 @@ class CoAuthors_Plus {
 		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
 		$term = $this->get_author_term( $user );
-		
+
 		if ( $term && ! is_wp_error( $term ) ) {
 			$count = $term->count;
 		}
@@ -1663,17 +1666,17 @@ class CoAuthors_Plus {
 	 * @return string Archive Page Title
 	 */
 	public function filter_author_archive_title( $title ) {
-		
+
 		// Bail if not an author archive template
 		if ( ! is_author() ) {
 			return $title;
 		}
-		
+
 		$author_slug = sanitize_user( get_query_var( 'author_name' ) );
 		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
-		
+
 		return sprintf( __( 'Author: %s' ), $author->display_name );
-	}	
+	}
 
 	/**
 	 * Get the post count for the guest author
