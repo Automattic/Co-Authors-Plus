@@ -719,7 +719,7 @@ class CoAuthors_Plus {
 				$terms_implode = rtrim( $terms_implode, ' OR' );
 
 				// We need to check the query is the main query as a new query object would result in the wrong ID
-				$id = $query->is_main_query() && is_author() ? get_queried_object_id() : '\d+';
+				$id = is_author() && $query->is_main_query() ? get_queried_object_id() : '\d+';
 
 				//If we have an ID but it's not a "real" ID that means that this isn't the first time the filter has fired and the object_id has already been replaced by a previous run of this filter. We therefore need to replace the 0
 				// This happens when wp_query::get_posts() is run multiple times.
