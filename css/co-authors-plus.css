@@ -109,3 +109,9 @@
 			margin-left: 30px;
 			font-size: 13px;
 		}
+
+/** Block Editor Hack for 5.0: Hide the core author input **/
+.block-editor label[for^="post-author-selector-"],
+.block-editor select[id^="post-author-selector-"] {
+	display: none;
+}
