@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 5.0
 Requires at least: 4.1
-Stable tag: 3.3.0
+Stable tag: 3.3.1
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -61,6 +61,9 @@ Bug fixes and the ability to automatically add co-authors to your feeds.
 Bug fixes and minor enhancements
 
 == Changelog ==
+
+= 3.3.1 ("Gutentag") =
+* 5.0 Compat: Hide core author inputs when using the Block Editor to limit confusion (h/t jonathanstegall).
 
 = 3.3.0 ("Rebecca") =
 * Fix private post viewing on front-end
