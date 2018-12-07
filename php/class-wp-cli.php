@@ -121,7 +121,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @since 3.0
 	 *
 	 * @subcommand assign-coauthors
-	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>]
+	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>] [--append_coauthors]
 	 */
 	public function assign_coauthors( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -823,6 +823,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'display_name' => sanitize_text_field( $author['display_name'] ),
 				'user_login' => sanitize_user( $author['user_login'] ),
 				'user_email' => sanitize_email( $author['user_email'] ),
+				'website' => esc_url_raw( $author['website'] ),
+				'description' => wp_filter_post_kses( $author['description'] ),
+				'avatar' => absint( $author['avatar'] ),
 			);
 
 			$display_name_space_pos = strpos( $author['display_name'], ' ' );
@@ -861,6 +864,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'user_email' => $author['user_email'],
 				'first_name' => $author['first_name'],
 				'last_name' => $author['last_name'],
+				'website' => $author['website'],
+				'description' => $author['description'],
+				'avatar' => $author['avatar'],
 			) );
 
 			if ( $guest_author_id ) {
