@@ -470,12 +470,7 @@ class CoAuthors_Guest_Authors
 
 			// get post count
 			global $coauthors_plus;
-			$term = $coauthors_plus->get_author_term( $guest_author );
-			if ( $term ) {
-				$count = $term->count;
-			} else {
-				$count = 0;
-			}
+			$count = $coauthors_plus->get_guest_author_post_count( $guest_author );
 
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
@@ -963,11 +958,12 @@ class CoAuthors_Guest_Authors
 	/**
 	 * Get an thumbnail for a Guest Author object
 	 *
-	 * @param 	object 	The Guest Author object for which to retrieve the thumbnail
-	 * @param 	int 	The desired image size
-	 * @return 	string 	The thumbnail image tag, or null if one doesn't exist
+	 * @param 	object 	      The Guest Author object for which to retrieve the thumbnail.
+	 * @param 	int 	      The desired image size.
+	 * @param	array|string  Optional. An array or string of additional classes. Default null.
+	 * @return 	string 	      The thumbnail image tag, or null if one doesn't exist.
 	 */
-	function get_guest_author_thumbnail( $guest_author, $size ) {
+	function get_guest_author_thumbnail( $guest_author, $size, $class = null ) {
 		// See if the guest author has an avatar
 		if ( ! has_post_thumbnail( $guest_author->ID ) ) {
 			return null;
@@ -976,6 +972,12 @@ class CoAuthors_Guest_Authors
 		$args = array(
 				'class' => "avatar avatar-{$size} photo",
 			);
+		if ( ! empty( $class ) ) {
+			if ( is_array( $class ) ) {
+				$class = implode( ' ', $class );
+			}
+			$args['class'] += " $class";
+		}
 
 		$size = array( $size, $size );
 
@@ -1259,6 +1261,11 @@ class CoAuthors_Guest_Authors
 			}
 			$pm_key = $this->get_post_meta_key( $key );
 			update_post_meta( $post_id, $pm_key, $args[ $key ] );
+		}
+
+		// Attach the avatar / featured image.
+		if ( ! empty( $args[ 'avatar' ] ) ) {
+			set_post_thumbnail( $post_id, $args[ 'avatar' ] );
 		}
 
 		// Make sure the author term exists and that we're assigning it to this post type

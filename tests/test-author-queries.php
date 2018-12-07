@@ -2,6 +2,26 @@
 
 class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 
+	public function test__author_arg__user_is_post_author_query_as_post_author() {
+		$author_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author = get_userdata( $author_id );
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author_id,
+			'post_status'     => 'publish',
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
+
+		wp_set_current_user( $author_id );
+
+		$query = new WP_Query( array(
+			'author' => $author_id,
+		) );
+
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
+	}
+
 	public function test__author_arg__user_is_post_author() {
 		$author_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
 		$author = get_userdata( $author_id );

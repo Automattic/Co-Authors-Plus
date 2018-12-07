@@ -525,6 +525,7 @@ function the_coauthor_meta( $field, $user_id = 0 ) {
  * feed (string) (''): If isn't empty, show links to author's feeds.
  * feed_image (string) (''): If isn't empty, use this image to link to feeds.
  * echo (boolean) (true): Set to false to return the output, instead of echoing.
+ * authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
  * @param array $args The argument array.
  * @return null|string The output, if echo is set to false.
  */
@@ -542,7 +543,8 @@ function coauthors_wp_list_authors( $args = array() ) {
 		'style'              => 'list',
 		'html'               => true,
 		'number'           	 => 20, // A sane limit to start to avoid breaking all the things
-		'guest_authors_only' => false
+		'guest_authors_only' => false,
+		'authors_with_posts_only' => false,
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -550,8 +552,12 @@ function coauthors_wp_list_authors( $args = array() ) {
 
 	$term_args = array(
 			'orderby'      => 'name',
-			'hide_empty'   => 0,
 			'number'       => (int) $args['number'],
+			/*
+			 * Historically, this was set to always be `0` ignoring `$args['hide_empty']` value
+			 * To avoid any backwards incompatibility, inventing `authors_with_posts_only` that defaults to false
+			 */
+			'hide_empty'   => (boolean) $args['authors_with_posts_only'],
 		);
 	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
 
@@ -676,11 +682,19 @@ function coauthors_wp_list_authors( $args = array() ) {
  * This is a replacement for using get_avatar(), which only operates on email addresses and cannot differentiate
  * between Guest Authors (who may share an email) and regular user accounts
  *
- * @param  object   $coauthor The Co Author or Guest Author object
- * @param  int      $size     The desired size
- * @return string             The image tag for the avatar, or an empty string if none could be determined
+ * @param  object        $coauthor The Co Author or Guest Author object.
+ * @param  int           $size     The desired size.
+ * @param  string        $default  Optional. URL for the default image or a default type. Accepts '404'
+ *                                 (return a 404 instead of a default image), 'retro' (8bit), 'monsterid'
+ *                                 (monster), 'wavatar' (cartoon face), 'indenticon' (the "quilt"),
+ *                                 'mystery', 'mm', or 'mysteryman' (The Oyster Man), 'blank' (transparent GIF),
+ *                                 or 'gravatar_default' (the Gravatar logo). Default is the value of the
+ *                                 'avatar_default' option, with a fallback of 'mystery'.
+ * @param  string        $alt      Optional. Alternative text to use in &lt;img&gt; tag. Default false.
+ * @param  array|string  $class    Optional. Array or string of additional classes to add to the &lt;img&gt; element. Default null.
+ * @return string                  The image tag for the avatar, or an empty string if none could be determined.
  */
-function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = false ) {
+function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = false, $class = null ) {
 	global $coauthors_plus;
 
 	if ( ! is_object( $coauthor ) ) {
@@ -688,7 +702,7 @@ function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = fals
 	}
 
 	if ( isset( $coauthor->type ) && 'guest-author' == $coauthor->type ) {
-		$guest_author_thumbnail = $coauthors_plus->guest_authors->get_guest_author_thumbnail( $coauthor, $size );
+		$guest_author_thumbnail = $coauthors_plus->guest_authors->get_guest_author_thumbnail( $coauthor, $size, $class );
 
 		if ( $guest_author_thumbnail ) {
 			return $guest_author_thumbnail;
@@ -697,7 +711,7 @@ function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = fals
 
 	// Make sure we're dealing with an object for which we can retrieve an email
 	if ( isset( $coauthor->user_email ) ) {
-		return get_avatar( $coauthor->user_email, $size, $default, $alt );
+		return get_avatar( $coauthor->user_email, $size, $default, $alt, array( 'class' => $class ) );
 	}
 
 	// Nothing matched, an invalid object was passed.
