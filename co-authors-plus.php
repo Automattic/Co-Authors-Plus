@@ -386,7 +386,6 @@ class CoAuthors_Plus {
 					}
 					?>
 					<li>
-						<?php echo get_avatar( $coauthor->user_email, $this->gravatar_size ); ?>
 						<span id="<?php echo esc_attr( 'coauthor-readonly-' . $count ); ?>" class="coauthor-tag">
 							<input type="text" name="coauthorsinput[]" readonly="readonly" value="<?php echo esc_attr( $coauthor->display_name ); ?>" />
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
