@@ -373,7 +373,7 @@ jQuery( document ).ready(function () {
 		var $post_coauthor_names = jQuery( 'input[name="coauthorsinput[]"]' );
 		var $post_coauthor_emails = jQuery( 'input[name="coauthorsemails[]"]' );
 		var $post_coauthor_nicenames = jQuery( 'input[name="coauthorsnicenames[]"]' );
-		var $post_coauthoravatar = jQuery( 'input[name="coauthorsavaters[]"]' );
+		var $post_coauthoravatars = jQuery( 'input[name="coauthorsavatars[]"]' );
 
 		var post_coauthors = [];
 
@@ -383,7 +383,7 @@ jQuery( document ).ready(function () {
 				name: $post_coauthor_names[i].value,
 				email: $post_coauthor_emails[i].value,
 				nicename: $post_coauthor_nicenames[i].value,
-				avatar: $post_coauthoravatar[i].value,
+				avatar: $post_coauthoravatars[i].value,
 			});
 		}
 
