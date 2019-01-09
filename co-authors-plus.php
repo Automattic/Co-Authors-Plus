@@ -224,7 +224,6 @@ class CoAuthors_Plus {
 
 		// Apply some targeted filters
 		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
-		
 	}
 
 	/**
@@ -386,12 +385,13 @@ class CoAuthors_Plus {
 					$avatar_url = get_avatar_url( $coauthor->ID, array( 'default' => 'gravatar_default' ) );
 					?>
 					<li>
+						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
 						<span id="<?php echo esc_attr( 'coauthor-readonly-' . $count ); ?>" class="coauthor-tag">
 							<input type="text" name="coauthorsinput[]" readonly="readonly" value="<?php echo esc_attr( $coauthor->display_name ); ?>" />
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
 							<input type="text" name="coauthorsemails[]" value="<?php echo esc_attr( $coauthor->user_email ); ?>" />
 							<input type="text" name="coauthorsnicenames[]" value="<?php echo esc_attr( $coauthor->user_nicename ); ?>" />
-							<input type="text" name="coauthorsavaters[]" value="<?php echo esc_attr( $avatar_url ); ?>" />
+							<input type="hidden" name="coauthorsavatars[]" value="<?php echo esc_url( $avatar_url ); ?>" />
 						</span>
 					</li>
 					<?php
@@ -1707,7 +1707,7 @@ class CoAuthors_Plus {
 		if ( has_post_thumbnail( $id ) ) {
 			$url = get_the_post_thumbnail_url( $id, $this->gravatar_size );
 		}
-		return esc_url( $url );
+		return $url;
 	}
 }
 
