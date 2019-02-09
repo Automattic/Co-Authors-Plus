@@ -36,6 +36,8 @@ function get_coauthors( $post_id = 0 ) {
 			}
 		} // the empty else case is because if we force guest authors, we don't ever care what value wp_posts.post_author has.
 	}
+	// remove duplicate $coauthors objects from mapping user accounts to guest authors accounts
+	$coauthors = array_unique( $coauthors, SORT_REGULAR );
 	return apply_filters( 'get_coauthors', $coauthors, $post_id );
 }
 
