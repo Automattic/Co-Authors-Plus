@@ -38,7 +38,8 @@ function get_coauthors( $post_id = 0 ) {
 	}
 	// remove duplicate $coauthors objects from mapping user accounts to guest authors accounts
 	$coauthors = array_unique( $coauthors, SORT_REGULAR );
-	return apply_filters( 'get_coauthors', $coauthors, $post_id );
+	$coauthors = apply_filters( 'get_coauthors', $coauthors, $post_id );
+	return $coauthors;
 }
 
 /**
