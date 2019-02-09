@@ -64,6 +64,8 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'order'          => 'ASC',
 			);
 
+		$args = apply_filters( 'coauthors_guest_author_query_args', $args );
+
 		if ( isset( $_REQUEST['orderby'] ) ) {
 			switch ( $_REQUEST['orderby'] ) {
 				case 'display_name':
@@ -135,10 +137,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Either there are no guest authors, or the search doesn't match any
+	 * Either there are no co-authors, or the search doesn't match any
 	 */
 	function no_items() {
-		esc_html_e( 'No matching guest authors were found.', 'co-authors-plus' );
+		esc_html_e( 'No matching co-authors were found.', 'co-authors-plus' );
 	}
 
 	/**
@@ -248,12 +250,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	 */
 	function column_posts( $item ) {
 		global $coauthors_plus;
-		$term = $coauthors_plus->get_author_term( $item );
-		if ( $term ) {
-			$count = $term->count;
-		} else {
-			$count = 0;
-		}
+		$count = $coauthors_plus->get_guest_author_post_count( $item );
 		return '<a href="' . esc_url( add_query_arg( 'author_name', rawurlencode( $item->user_login ), admin_url( 'edit.php' ) ) ) . '">' . $count . '</a>';
 	}
 
