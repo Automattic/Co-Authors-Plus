@@ -1,88 +1,145 @@
 <?php
-/**
- * Test Co-Authors Plus' modifications of author queries
- */
 
 class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 
-	/**
-	 * On author pages, the queried object should only be set
-	 * to a user that's not a member of the blog if they
-	 * have at least one published post. This matches core behavior.
-	 *
-	 * @see https://core.trac.wordpress.org/changeset/27290
-	 */
-	function test_author_queried_object_fix() {
-		global $wp_rewrite, $coauthors_plus;
-
-		/**
-		 * Set up
-		 */
-		$author1 = $this->factory->user->create( array( 'user_login' => 'msauthor1' ) );
-		$author2 = $this->factory->user->create( array( 'user_login' => 'msauthor2' ) );
-		$blog2 = $this->factory->blog->create( array( 'user_id' => $author1 ) );
-
-		switch_to_blog( $blog2 );
-		$wp_rewrite->init();
-
-		$blog2_post1 = $this->factory->post->create( array(
+	public function test__author_arg__user_is_post_author_query_as_post_author() {
+		$author_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author = get_userdata( $author_id );
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author_id,
 			'post_status'     => 'publish',
-			'post_content'    => rand_str(),
-			'post_title'      => rand_str(),
-			'post_author'     => $author1,
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
+
+		wp_set_current_user( $author_id );
+
+		$query = new WP_Query( array(
+			'author' => $author_id,
 		) );
 
-		/**
-		 * Author 1 is an author on the blog
-		 */
-		$this->go_to( get_author_posts_url( $author1 ) );
-		$this->assertQueryTrue( 'is_author', 'is_archive' );
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
+	}
 
-		/**
-		 * Author 2 is not yet an author on the blog
-		 */
-		$this->go_to( get_author_posts_url( $author2 ) );
-		$this->assertQueryTrue( 'is_404' );
+	public function test__author_arg__user_is_post_author() {
+		$author_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author = get_userdata( $author_id );
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author_id,
+			'post_status'     => 'publish',
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
 
-		// Add the user to the blog
-		add_user_to_blog( $blog2, $author2, 'author' );
+		$query = new WP_Query( array(
+			'author' => $author_id,
+		) );
 
-		/**
-		 * Author 2 is now on the blog, but not yet published
-		 */
-		$this->go_to( get_author_posts_url( $author2 ) );
-		$this->assertQueryTrue( 'is_author', 'is_archive' );
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
+	}
 
-		// Add the user as an author on the original post
-		$author2_obj = get_user_by( 'id', $author2 );
-		$coauthors_plus->add_coauthors( $blog2_post1, array( $author2_obj->user_login ), true );
+	public function test__author_name_arg__user_is_post_author() {
+		$author_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author = get_userdata( $author_id );
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author_id,
+			'post_status'     => 'publish',
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
 
-		/**
-		 * Author 2 is now on the blog, and published
-		 */
-		$this->go_to( get_author_posts_url( $author2 ) );
-		$this->assertQueryTrue( 'is_author', 'is_archive' );
+		$query = new WP_Query( array(
+			'author_name' => $author->user_login,
+		) );
 
-		// Remove the user from the blog
-		remove_user_from_blog( $author2, $blog2 );
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
+	}
 
-		/**
-		 * Author 2 was removed from the blog, but still a published author
-		 */
-		$this->go_to( get_author_posts_url( $author2 ) );
-		$this->assertQueryTrue( 'is_author', 'is_archive' );
+	public function test__author_name_arg__user_is_coauthor() {
+		$author1_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author1 = get_userdata( $author1_id );
+		$author2_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'superman' ) );
+		$author2 = get_userdata( $author2_id );
 
-		// Delete the user from the network
-		wpmu_delete_user( $author2 );
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author1_id,
+			'post_status'     => 'publish',
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
 
-		/**
-		 * Author 2 is no more
-		 */
-		$this->go_to( get_author_posts_url( $author2 ) );
-		$this->assertQueryTrue( 'is_404' );
-		$this->assertEquals( false, get_user_by( 'id', $author2 ) );
+		$query = new WP_Query( array(
+			'author_name' => $author2->user_login,
+		) );
 
-		restore_current_blog();
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
+	}
 
+	public function test__author_arg__user_is_coauthor__author_arg() {
+		$author1_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author1 = get_userdata( $author1_id );
+		$author2_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'superman' ) );
+		$author2 = get_userdata( $author2_id );
+
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author1_id,
+			'post_status'     => 'publish',
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
+
+		$query = new WP_Query( array(
+			'author' => $author2_id,
+		) );
+
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
+	}
+
+	public function test__author_name_arg_plus_tax_query__user_is_post_author() {
+		$author_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author = get_userdata( $author_id );
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author_id,
+			'post_status'     => 'publish',
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
+		wp_set_post_terms( $post_id, 'test', 'post_tag' );
+
+		$query = new WP_Query( array(
+			'author_name' => $author->user_login,
+			'tag' => 'test',
+		) );
+
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
+	}
+
+	public function tests__author_name_arg_plus_tax_query__is_coauthor() {
+		$author1_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'batman' ) );
+		$author1 = get_userdata( $author1_id );
+		$author2_id = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'superman' ) );
+		$author2 = get_userdata( $author2_id );
+
+		$post_id = $this->factory->post->create( array(
+			'post_author'     => $author1_id,
+			'post_status'     => 'publish',
+			'post_type'       => 'post',
+		) );
+		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
+		wp_set_post_terms( $post_id, 'test', 'post_tag' );
+
+		$query = new WP_Query( array(
+			'author_name' => $author2->user_login,
+			'tag' => 'test',
+		) );
+
+		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertEquals( $post_id, $query->posts[ 0 ]->ID );
 	}
 }

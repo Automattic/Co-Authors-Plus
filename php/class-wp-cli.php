@@ -28,6 +28,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$users = get_users();
 		$created = 0;
 		$skipped = 0;
+		$progress = \WP_CLI\Utils\make_progress_bar( 'Processing guest authors...', count ( $users ) );
 		foreach ( $users as $user ) {
 
 			$result = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $user->ID );
@@ -36,12 +37,12 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			} else {
 				$created++;
 			}
+			$progress->tick();
 		}
-
+		$progress->finish();
 		WP_CLI::line( 'All done! Here are your results:' );
 		WP_CLI::line( "- {$created} guest author profiles were created" );
 		WP_CLI::line( "- {$skipped} users already had guest author profiles" );
-
 	}
 
 	/**
@@ -76,9 +77,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 				$count++;
 
-				$terms = wp_get_post_terms( $single_post->ID, $coauthors_plus->coauthor_taxonomy );
-				if ( is_wp_error( $terms ) ) {
-					WP_CLI::error( $terms->get_error_message() );
+				$terms = cap_get_coauthor_terms_for_post( $single_post->ID );
+				if ( empty( $terms ) ) {
+					WP_CLI::line( sprintf( 'No co-authors found for post #%d.', $single_post->ID ) );
 				}
 
 				if ( ! empty( $terms ) ) {
@@ -115,12 +116,12 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Subcommand to assign coauthors to a post based on a given meta key
+	 * Subcommand to assign co-authors to a post based on a given meta key
 	 *
 	 * @since 3.0
 	 *
 	 * @subcommand assign-coauthors
-	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>]
+	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>] [--append_coauthors]
 	 */
 	public function assign_coauthors( $args, $assoc_args ) {
 		global $coauthors_plus;
@@ -235,16 +236,21 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
 		$affected = 0;
 		foreach ( $posts as $post_id ) {
-			if ( $coauthors = wp_get_post_terms( $post_id, $coauthors_plus->coauthor_taxonomy ) ) {
-				WP_CLI::line( sprintf( __( 'Skipping - Post #%d already has co-authors assigned: %s', 'co-authors-plus' ), $post_id, implode( ', ', wp_list_pluck( $coauthors, 'slug' ) ) ) );
+			$coauthors = cap_get_coauthor_terms_for_post( $post_id );
+			if ( ! empty( $coauthors ) ) {
+				WP_CLI::line( sprintf(
+					__( 'Skipping - Post #%d already has co-authors assigned: %s', 'co-authors-plus' ),
+					$post_id,
+					implode( ', ', wp_list_pluck( $coauthors, 'slug' ) )
+				) );
 				continue;
 			}
 
 			$coauthors_plus->add_coauthors( $post_id, array( $coauthor->user_login ) );
 			WP_CLI::line( sprintf( __( "Updating - Adding %s's byline to post #%d", 'co-authors-plus' ), $coauthor->user_login, $post_id ) );
 			$affected++;
-			if ( $affected && 0 === $affected % 20 ) {
-				sleep( 5 );
+			if ( $affected && 0 === $affected % 100 ) {
+				sleep( 2 );
 			}
 		}
 		WP_CLI::success( sprintf( __( 'All done! %d posts were affected.', 'co-authors-plus' ), $affected ) );
@@ -403,8 +409,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Swap one Co Author with another on all posts for which they are an author. Unlike rename-coauthor,
-	 * this leaves the original Co Author term intact and works when the 'to' user already has a co-author term.
+	 * Swap one co-author with another on all posts for which they are a co-author. Unlike rename-coauthor,
+	 * this leaves the original co-author term intact and works when the 'to' user already has a co-author term.
 	 *
 	 * @subcommand swap-coauthors
 	 * @synopsis --from=<user-login> --to=<user-login> [--post_type=<ptype>] [--dry=<dry>]
@@ -545,7 +551,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			foreach ( $posts->posts as $single_post ) {
 
-				$terms = wp_get_post_terms( $single_post->ID, $coauthors_plus->coauthor_taxonomy );
+				$terms = cap_get_coauthor_terms_for_post( $single_post->ID );
 				if ( empty( $terms ) ) {
 					$saved = array(
 							$single_post->ID,
@@ -606,7 +612,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Update the post count and description for each author
+	 * Update the post count and description for each author and guest author
 	 *
 	 * @since 3.0
 	 *
@@ -698,8 +704,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$affected = 0;
 		foreach ( $ids as $post_id ) {
 
-			$terms = wp_get_post_terms( $post_id, 'author' );
-			if ( ! $terms ) {
+			$terms = cap_get_coauthor_terms_for_post( $post_id );
+			if ( empty( $terms ) ) {
 				continue;
 			}
 
@@ -729,7 +735,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		if ( ! class_exists( 'WXR_Parser' ) ) {
-			require_once( WP_CONTENT_DIR . '/admin-plugins/wordpress-importer/parsers.php' );
+			require_once( WP_CONTENT_DIR . '/plugins/wordpress-importer/parsers.php' );
 		}
 
 		$parser = new WXR_Parser();
@@ -817,6 +823,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'display_name' => sanitize_text_field( $author['display_name'] ),
 				'user_login' => sanitize_user( $author['user_login'] ),
 				'user_email' => sanitize_email( $author['user_email'] ),
+				'website' => esc_url_raw( $author['website'] ),
+				'description' => wp_filter_post_kses( $author['description'] ),
+				'avatar' => absint( $author['avatar'] ),
 			);
 
 			$display_name_space_pos = strpos( $author['display_name'], ' ' );
@@ -855,6 +864,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'user_email' => $author['user_email'],
 				'first_name' => $author['first_name'],
 				'last_name' => $author['last_name'],
+				'website' => $author['website'],
+				'description' => $author['description'],
+				'avatar' => $author['avatar'],
 			) );
 
 			if ( $guest_author_id ) {
