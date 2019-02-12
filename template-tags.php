@@ -37,6 +37,7 @@ function get_coauthors( $post_id = 0 ) {
 	}
 	// remove duplicate $coauthors objects from mapping user accounts to guest authors accounts
 	$coauthors = array_unique( $coauthors, SORT_REGULAR );
+	$coauthors = apply_filters( 'get_coauthors', $coauthors, $post_id );
 	return $coauthors;
 }
 
@@ -433,7 +434,7 @@ function coauthors_links_single( $author ) {
 			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
 			esc_html( get_the_author() )
 		);
-	} 
+	}
 	else {
 		return esc_html( get_the_author() );
 	}
