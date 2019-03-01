@@ -890,7 +890,7 @@ class CoAuthors_Plus {
 
 		// Best way to persist order
 		if ( $append ) {
-			$existing_coauthors = wp_list_pluck( get_coauthors( $post_id ), 'user_login' );
+			$existing_coauthors = wp_list_pluck( get_coauthors( $post_id ), 'user_nicename' );
 		} else {
 			$existing_coauthors = array();
 		}
@@ -899,7 +899,7 @@ class CoAuthors_Plus {
 		// If no coauthor is provided AND no coauthors are currently set, assign to current user - retain old ones otherwise.
 		if ( empty( $coauthors ) ) {
 			if( empty( $existing_coauthors ) ) {
-				$coauthors = array( $current_user->user_login );
+				$coauthors = array( $current_user->user_nicename );
 			} else {
 				$coauthors = $existing_coauthors;
 			}
