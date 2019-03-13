@@ -1,7 +1,7 @@
 ﻿# Co-Authors Plus
 
 * Contributors: batmoo, danielbachhuber, automattic
-* Tags: authors, users, multiple authors, coauthors, multi-author, publishing
+* Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 5.0
 * Requires at least: 4.1
 * Stable tag: 3.3.1
@@ -10,7 +10,7 @@ Assign multiple bylines to posts, pages, and custom post types via a search-as-y
 
 ## Description
 
-Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box. Co-authored posts appear on a co-author's archive page and in their feed. Co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
+Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box. Co-authored posts appear on a co-author's archive page and in their feed. Co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behaviour).
 
 Add writers as bylines without creating WordPress user accounts. Simply [create a guest author profile](http://vip.wordpress.com/documentation/add-guest-bylines-to-your-content-with-co-authors-plus/) for the writer and assign the byline as you normally would.
 
@@ -70,7 +70,7 @@ $ wp --url=example.com co-authors-plus create-terms-for-posts
 * Remove associated guest user when mapped user id deleted. #414
 * Removed double left join on posts_join_filter #419
 * Fixed WP CLI create-terms-for-posts if no co-authors found #420
-* Pages archive now displays coauthors and quick edit works #422
+* Pages archive now displays co-authors and quick edit works #422
 * Terminology updated throughout #423
 * Replace hardcoded 'author' with $this->$coauthor_taxonomy #426
 * Move parenthesis to fix esc_html and sprintf #430
@@ -239,7 +239,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 * Thanks to everyone who submitted bugs, fixes, and suggestions! And for your patience!
 
 **2.1.1 (Oct. 16, 2009)**
-* Fix for coauthors not being added if their username is different from display name
+* Fix for co-authors not being added if their username is different from display name
 * Fixes to readme.txt (fixes for textual and punctuation errors, language clarification, minor formatting changes) courtesy of [Waldo Jaquith](http://www.vqronline.org)
 
 **2.1 (Oct. 11, 2009)**
@@ -252,7 +252,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 * All authors of a post are now notified on a new comment
 * Various javascript enhancements
 * New option to allow subscribers to be added as authors
-* All Authors can edit they posts of which they are coauthors
+* All Authors can edit they posts of which they are co-authors
 * FIX: Issues with `wp_coauthors_list` function
 * FIX: Issues with coauthored posts not showing up on author archives
 
