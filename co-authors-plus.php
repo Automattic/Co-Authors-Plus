@@ -132,7 +132,7 @@ class CoAuthors_Plus {
 		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
 
 		// Filter to correct author on author archive page
-		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 1 );
+		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 12, 1 );
 
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'get_avatar_url', array( $this, 'filter_get_avatar_url' ), 10, 2 );
@@ -1679,7 +1679,7 @@ class CoAuthors_Plus {
 
 		$author_slug = sanitize_user( get_query_var( 'author_name' ) );
 		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
-
+		/* translators: Author archive title. 1: Author name */
 		return sprintf( __( 'Author: %s' ), $author->display_name );
 	}
 
