@@ -134,6 +134,9 @@ class CoAuthors_Plus {
 		// Filter to correct author on author archive page
 		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 12, 1 );
 
+		// Filter to correct author archive description
+		add_filter( 'get_the_archive_description', array( $this, 'filter_author_archive_description'), 12, 1 );
+
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'get_avatar_url', array( $this, 'filter_get_avatar_url' ), 10, 2 );
 	}
@@ -1681,6 +1684,26 @@ class CoAuthors_Plus {
 		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
 		/* translators: Author archive title. 1: Author name */
 		return sprintf( __( 'Author: %s' ), $author->display_name );
+	}
+
+	/**
+	 * Filter of the author archive description
+	 *
+	 * @param $description string Archive Description
+	 *
+	 * @return string Archive Description
+	 */
+	public function filter_author_archive_description( $description ) {
+
+		// Bail if not an author archive page
+		if ( ! is_author() ) {
+			return $description;
+		}
+
+		$author_slug = sanitize_user( get_query_var( 'author_name' ) );
+		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
+
+		return $author->description;
 	}
 
 	/**
