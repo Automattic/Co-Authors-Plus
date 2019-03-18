@@ -132,7 +132,7 @@ class CoAuthors_Plus {
 		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
 
 		// Filter to correct author on author archive page
-		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 2 );
+		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 1 );
 
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'get_avatar_url', array( $this, 'filter_get_avatar_url' ), 10, 2 );
