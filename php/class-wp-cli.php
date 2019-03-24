@@ -809,7 +809,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					if ( $col_num === 2 ) {
 						if ( $val === '' ) {
 						WP_CLI::error( 'Please verify that all row entries have email addresses assigned.' );
-						} else {c
+						} else {
 							filter_var($val, FILTER_VALIDATE_EMAIL) ? ($author_data[ $field_keys[ $col_num ] ] = $val) :
 							WP_CLI::error( 'Please verify that all entries have valid email addresses assigned.' );
 						}
