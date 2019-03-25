@@ -800,13 +800,14 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			} else {
 				$row_data = array_map( 'trim', $data );
 				$author_data = array();
+				$col_email = array_search( 'user_email' , $field_keys );
 				foreach ( (array) $row_data as $col_num => $val ) {
 						// Don't use the value of the field key isn't set
 					if ( empty( $field_keys[ $col_num ] ) ) {
 						continue;
 					}
 					//Verify if there is a valid email entry in the CSV, which is required for correct import.
-					if ( $col_num === 2 ) {
+					if ( $col_num === $col_email ) {
 						if ( $val === '' ) {
 						WP_CLI::error( 'Please verify that all row entries have email addresses assigned.' );
 						} else {
