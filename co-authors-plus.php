@@ -1037,14 +1037,15 @@ class CoAuthors_Plus {
 	 */
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
-		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+		if ( $user ) {
+			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
-		$term = $this->get_author_term( $user );
+			$term = $this->get_author_term( $user );
 
-		if ( $term && ! is_wp_error( $term ) ) {
-			$count = $term->count;
+			if ( $term && ! is_wp_error( $term ) ) {
+				$count = $term->count;
+			}
 		}
-
 		return $count;
 	}
 
