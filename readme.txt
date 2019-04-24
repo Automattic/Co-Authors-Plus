@@ -1,5 +1,5 @@
 === Co-Authors Plus ===
-Contributors: batmoo, danielbachhuber, automattic
+Contributors: batmoo, danielbachhuber, automattic, Tyler
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 5.0
 Requires at least: 4.1
