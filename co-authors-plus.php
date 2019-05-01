@@ -1042,7 +1042,12 @@ class CoAuthors_Plus {
 		$term = $this->get_author_term( $user );
 
 		if ( $term && ! is_wp_error( $term ) ) {
-			$count = $term->count;
+			if ( 'guest-author' === $user->type ) {
+				// If using guest author term count, add on linked user count. 
+				$count = (int) $count + $term->count;
+			} else {
+				$count = $term->count;
+			}
 		}
 
 		return $count;
