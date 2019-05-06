@@ -256,7 +256,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			global $coauthors_plus;
 			// Add user term count to guest author term count.
 			$term = get_term_by( 'slug', 'cap-' . $item->linked_account, $coauthors_plus->coauthor_taxonomy );
-			$count = $count + $term->count;
+			if ( is_object( $term ) ) {
+				$count = $count + $term->count;
+			}	
 		}
 		return '<a href="' . esc_url( add_query_arg( 'author_name', rawurlencode( $item->user_login ), admin_url( 'edit.php' ) ) ) . '">' . $count . '</a>';
 	}
