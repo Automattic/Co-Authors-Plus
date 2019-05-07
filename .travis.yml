@@ -4,7 +4,7 @@ matrix:
     include:
         # aliased to a recent 5.6.x version
         - php: "5.6"
-          env: WP_VERSION=4.8
+          env: WP_VERSION=5.1.1
 
         - php: '5.6'
           env:
@@ -20,13 +20,13 @@ matrix:
 
         # aliased to a recent 7.x version
         - php: '7.0'
-          env: WP_VERSION=4.8
+          env: WP_VERSION=5.1.1
 
         - php: '7.0'
           env: WP_VERSION=latest
 
         - php: '7.1'
-          env: WP_VERSION=4.8
+          env: WP_VERSION=5.1.1
 
         - php: '7.1'
           env: WP_VERSION=latest
@@ -53,7 +53,7 @@ before_script:
     - |
         if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then
           composer global require "phpunit/phpunit=4.8.*"
-        elif [[ ${TRAVIS_PHP_VERSION:0:2} == "7." && ${WP_VERSION} == "4.8" ]]; then
+        elif [[ ${TRAVIS_PHP_VERSION:0:2} == "7." && ${WP_VERSION} == "5.1.1" ]]; then
           composer global require "phpunit/phpunit=5.7.*"
         fi
     - |

@@ -63,38 +63,38 @@ Bug fixes and minor enhancements
 == Changelog ==
 
 = 3.4 =
-* New filter get_coauthors for modifying coauthor data returned in get_coauthors() #646
-* New filter coauthors_guest_authors_exported_extra_data to allow guest author to export data as regular author #528
-* New filter get_avatar_url() to show avatar in JS selection #621
-* New parameter in coauthors_wp_list_authors() to only query authors with posts #496
-* Add internationalization support to title and name in author archives #516
-* Add safelist to skip irrelevant capabilities during permission checks #543
-* Add helper function get_guest_author_post_count() #605
-* Add parameter for outputting HTML classes in coauthors_get_avatar() template tag #610
-* Add --append_coauthors flag to synopsis of CLI assign-coauthors #600
-* Adjust CLI command create-guest-authors-from-csv to import website, avatar and description (#603 and #619)
-* Post type of "any" can be used in filters #617
-* Remove unnecessary is_array() check #471
-* Remove unnecessary action_pre_user_query() #531
-* Use correct args in search_authors() #519
-* Have filter_author_archive_title() run on author archives only #535
-* Improve tests coverage (#529, #538, #540, #546, #576 and #569)
-* Change posts_selection to action from filter #563
-* Fix number of args expected for get_the_archive_title callback #657 
-* Fix spelling, update FAQ for disabling guest authors and credits in readme (#656, #523 and #501)
-* Output coauthors_links_single() template tag correctly when guest author has no website #504
-* Number by "Mine" link shows correct listing of posts #663
-* Linked guest authors show accurate post counts #674
-* Can no longer add co-author more than once #532
-* No more overwriting posts with current user in `add_coauthors()` #545
-* Accurate post count for user when using different login #558
-* No more double post count for users with linked accounts #567
-* Fix SQL error (#593 and #628)
-* Fix "Mine" link href for Pages #547
-* Can delete users when guest authors functionality disabled #602
-* Fix incompatibility issue with Yoast of missing posts in author pages #624 
-* Resolve undefined index warnings on author archives #521
-* Resolve warnings when current user has no term assigned #517
+* New filter get_coauthors for modifying coauthor data returned in get_coauthors()
+* New filter coauthors_guest_authors_exported_extra_data to allow guest author to export data as regular author
+* New filter get_avatar_url() to show avatar in JS selection
+* New parameter in coauthors_wp_list_authors() to only query authors with posts
+* Add internationalization support to title and name in author archives
+* Add safelist to skip irrelevant capabilities during permission checks
+* Add helper function get_guest_author_post_count()
+* Add parameter for outputting HTML classes in coauthors_get_avatar() template tag
+* Add --append_coauthors flag to synopsis of CLI assign-coauthors
+* Adjust CLI command create-guest-authors-from-csv to import website, avatar and description
+* Post type of "any" can be used in filters
+* Remove unnecessary is_array() check
+* Remove unnecessary action_pre_user_query()
+* Use correct args in search_authors()
+* Have filter_author_archive_title() run on author archives only
+* Improve tests coverage
+* Change posts_selection to action from filter
+* Fix number of args expected for get_the_archive_title callback
+* Fix spelling, update FAQ for disabling guest authors and credits in readme
+* Output coauthors_links_single() template tag correctly when guest author has no website
+* Number by "Mine" link shows correct listing of posts
+* Linked guest authors show accurate post counts
+* Can no longer add co-author more than once
+* No more overwriting posts with current user in `add_coauthors()`
+* Accurate post count for user when using different login
+* No more double post count for users with linked accounts
+* Fix SQL error
+* Fix "Mine" link href for Pages
+* Can delete users when guest authors functionality disabled
+* Fix incompatibility issue with Yoast of missing posts in author pages
+* Resolve undefined index warnings on author archives
+* Resolve warnings when current user has no term assigned
 
 = 3.3.1 ("Gutentag") =
 * 5.0 Compat: Hide core author inputs when using the Block Editor to limit confusion (h/t jonathanstegall).
