@@ -1722,9 +1722,17 @@ class CoAuthors_Plus {
 	 * @return string Avatar URL
 	 */
 	public function filter_get_avatar_url( $url, $id ) {
-		if ( has_post_thumbnail( $id ) ) {
+
+		$guest_author = true;
+
+		if ( isset( $this->guest_authors ) ) {
+			$guest_author = $this->guest_authors->get_guest_author_by( 'id', $id );
+		}
+
+		if ( $guest_author && has_post_thumbnail( $id ) ) {
 			$url = get_the_post_thumbnail_url( $id, $this->gravatar_size );
 		}
+
 		return $url;
 	}
 }
