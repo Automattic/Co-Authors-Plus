@@ -17,9 +17,9 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		}
 
 		parent::__construct( array(
-				'plural' => __( 'Co-Authors', 'co-authors-plus' ),
-				'singular' => __( 'Co-Author', 'co-authors-plus' ),
-			) );
+			'plural' => __( 'Co-Authors', 'co-authors-plus' ),
+			'singular' => __( 'Co-Author', 'co-authors-plus' ),
+		) );
 	}
 
 	/**
@@ -63,6 +63,8 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 				'orderby'        => 'title',
 				'order'          => 'ASC',
 			);
+
+		$args = apply_filters( 'coauthors_guest_author_query_args', $args );
 
 		if ( isset( $_REQUEST['orderby'] ) ) {
 			switch ( $_REQUEST['orderby'] ) {
@@ -124,7 +126,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$this->set_pagination_args( array(
 			'total_items' => $author_posts->found_posts,
 			'per_page' => $per_page,
-			) );
+		) );
 	}
 
 	function filter_query_for_search( $where ) {
@@ -135,10 +137,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Either there are no guest authors, or the search doesn't match any
+	 * Either there are no co-authors, or the search doesn't match any
 	 */
 	function no_items() {
-		esc_html_e( 'No matching guest authors were found.', 'co-authors-plus' );
+		esc_html_e( 'No matching co-authors were found.', 'co-authors-plus' );
 	}
 
 	/**
@@ -164,10 +166,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	function single_row( $item ) {
 		static $alternate_class = '';
 		$alternate_class = ( '' === $alternate_class ? ' alternate' : '' );
-		$row_class = ' class="guest-author-static' . $alternate_class . '"';
+		$row_class = 'guest-author-static' . $alternate_class . '"';
 
-		echo '<tr id="guest-author-' . $item->ID . '"' . $row_class . '>';
-		echo $this->single_row_columns( $item );
+		echo '<tr id="' . esc_attr( 'guest-author-' . $item->ID ) . '" class="' . esc_attr( $row_class ) . '">';
+		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
 
@@ -248,11 +250,15 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	 */
 	function column_posts( $item ) {
 		global $coauthors_plus;
-		$term = $coauthors_plus->get_author_term( $item );
-		if ( $term ) {
-			$count = $term->count;
-		} else {
-			$count = 0;
+		$count = $coauthors_plus->get_guest_author_post_count( $item );
+
+		if ( ! empty( $item->linked_account ) ) {
+			global $coauthors_plus;
+			// Add user term count to guest author term count.
+			$term = get_term_by( 'slug', 'cap-' . $item->linked_account, $coauthors_plus->coauthor_taxonomy );
+			if ( is_object( $term ) ) {
+				$count = $count + $term->count;
+			}	
 		}
 		return '<a href="' . esc_url( add_query_arg( 'author_name', rawurlencode( $item->user_login ), admin_url( 'edit.php' ) ) ) . '">' . $count . '</a>';
 	}

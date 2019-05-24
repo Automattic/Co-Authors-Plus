@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 4.1
-Requires at least: 3.7
-Stable tag: 3.1.1
+Tested up to: 5.1.1
+Requires at least: 4.1
+Stable tag: 3.4
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -15,7 +15,7 @@ Add writers as bylines without creating WordPress user accounts. Simply [create 
 
 On the frontend, use the [Co-Authors Plus template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) to list co-authors anywhere you'd normally list the author.
 
-This plugin is an almost complete rewrite of the Co-Authors plugin originally developed at [Shepherd Interactive](http://www.shepherd-interactive.com/) (2007). The original plugin was inspired by the 'Multiple Authors' plugin by Mark Jaquith (2005).
+This plugin is an almost complete rewrite of the [Co-Authors](https://wordpress.org/plugins/co-authors/) plugin originally developed by Weston Ruter (2007). The original plugin was inspired by the '[Multiple Authors](https://txfx.net/2005/08/16/new-plugin-multiple-authors/)' plugin by Mark Jaquith (2005).
 
 == Frequently Asked Questions ==
 
@@ -41,6 +41,11 @@ To create new guest author profiles, a WordPress will need the 'list_users' capa
 
 Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
 
+= Can I disable Guest Authors?
+
+Yep! Guest authors can be disabled entirely through an apt filter. Having the following line load on `init` will do the trick:
+`add_filter( 'coauthors_guest_authors_enabled', '__return_false' )`
+
 == Upgrade Notice ==
 
 = 3.1 =
@@ -57,11 +62,96 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+= 3.4 =
+* New filter get_coauthors for modifying coauthor data returned in get_coauthors()
+* New filter coauthors_guest_authors_exported_extra_data to allow guest author to export data as regular author
+* New filter get_avatar_url() to show avatar in JS selection
+* New parameter in coauthors_wp_list_authors() to only query authors with posts
+* Add internationalization support to title and name in author archives
+* Add safelist to skip irrelevant capabilities during permission checks
+* Add helper function get_guest_author_post_count()
+* Add parameter for outputting HTML classes in coauthors_get_avatar() template tag
+* Add --append_coauthors flag to synopsis of CLI assign-coauthors
+* Adjust CLI command create-guest-authors-from-csv to import website, avatar and description
+* Post type of "any" can be used in filters
+* Remove unnecessary is_array() check
+* Remove unnecessary action_pre_user_query()
+* Use correct args in search_authors()
+* Have filter_author_archive_title() run on author archives only
+* Improve tests coverage
+* Change posts_selection to action from filter
+* Fix number of args expected for get_the_archive_title callback
+* Fix spelling, update FAQ for disabling guest authors and credits in readme
+* Output coauthors_links_single() template tag correctly when guest author has no website
+* Number by "Mine" link shows correct listing of posts
+* Linked guest authors show accurate post counts
+* Can no longer add co-author more than once
+* No more overwriting posts with current user in `add_coauthors()`
+* Accurate post count for user when using different login
+* No more double post count for users with linked accounts
+* Fix SQL error
+* Fix "Mine" link href for Pages
+* Can delete users when guest authors functionality disabled
+* Fix incompatibility issue with Yoast of missing posts in author pages
+* Resolve undefined index warnings on author archives
+* Resolve warnings when current user has no term assigned
+
+= 3.3.1 ("Gutentag") =
+* 5.0 Compat: Hide core author inputs when using the Block Editor to limit confusion (h/t jonathanstegall).
+
+= 3.3.0 ("Rebecca") =
+* Fix private post viewing on front-end
+* Reduce amount of sleep
+* Author search UX issues
+* Remove associated guest user when mapped user id deleted.
+* Removed double left join on posts_join_filter
+* Fixed WP CLI create-terms-for-posts if no co-authors found
+* Pages archive now displays coauthors and quick edit works
+* Terminology updated throughout
+* Replace hardcoded 'author' with $this->$coauthor_taxonomy
+* Move parenthesis to fix esc_html and sprintf
+* Added progress to create-guest-authors so users have an idea of how long it will take
+* Deleting guest authors is less confusing
+* Guest author's featured image is avatar now
+* Removed extra image sizing
+* Remove duplicated byline
+* coauthors_wp_list_authors() has option to list only guest authors now
+* remove duplicates from linked accounts on coauthors_wp_list_authors()
+* Accurate Guest Author post count on linked accounts
+* New README.md
+* Filter author archive
+* Fix coauthors_links_single()
+* Added guest author hooks for create/delete
+* Fixes logic for DOING_AUTOSAVE check
+* user_login spaces problem when using add_coauthors
+* Adding details of filter for slow performance
+* Remove redundant test for 404 on Author Archive
+* Guest Author Counts are more accurate
+* Set $coauthors_loading
+* Fix the issue where guest authors with non-ASCII characters can't be used as co-authors
+* Fix the issue where incompatibility when `coauthors_auto_apply_template_tags` set to true
+* Unit tests/Fix warnings for template tags
+* Review and improve test coverage
+* Update class-wp-cli.php
+* Update .travis.yml file for PHPUnit tests
+* Changes to resolve issue #332 about missing coauthor meta
+
+= 3.2.2 =
+* Fix broken author ordering in 4.7+ (props mslinnea)
+* Fix no moderation e-mail bug (props RobjS)
+* Cached functions in CLI commands (props jasonbahl)
+* Fix missing echos (props trepmal)
+* Add `coauthors_guest_author_query_args` filter (props trepmal)
+
+= 3.2.1 (May 16, 2016) =
+* Hotfix for broken Guest Author bio metabox (props JS Morisset)
+
+= 3.2 (May 12, 2016) =
+Various minor bug and security fixes
+
 = 3.1.2 (Aug. 31, 2015) =
 * Minor bug fixes and coding standards changes.
 * The author's display name is now filtered through the_author in coauthors_posts_links_single()
-
-= ??? (??? ?? ????) =
 * New Russian and Ukrainian translations, courtesy of [Jurko Chervony](http://skinik.name/).
 
 = 3.1.1 (Mar. 20, 2014) =
