@@ -1043,7 +1043,7 @@ class CoAuthors_Plus {
 
 		if ( $term && ! is_wp_error( $term ) ) {
 			if ( 'guest-author' === $user->type ) {
-				// If using guest author term count, add on linked user count. 
+				// If using guest author term count, add on linked user count.
 				$count = (int) $count + $term->count;
 			} else {
 				$count = $term->count;
@@ -1712,9 +1712,9 @@ class CoAuthors_Plus {
 			return 0;
 		}
 	}
-	
+
 	/**
-	 * Filter to display author image if exists instead of avatar. 
+	 * Filter to display author image if exists instead of avatar.
 	 *
 	 * @param $url string Avatar URL
 	 * @param $id  int Author ID
