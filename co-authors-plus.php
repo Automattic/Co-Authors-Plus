@@ -881,8 +881,9 @@ class CoAuthors_Plus {
 	 * @param int
 	 * @param array
 	 * @param bool
+	 * @param string
 	 */
-	public function add_coauthors( $post_id, $coauthors, $append = false ) {
+	public function add_coauthors( $post_id, $coauthors, $append = false, $query_type = 'user_nicename' ) {
 		global $current_user, $wpdb;
 
 		$post_id = (int) $post_id;
@@ -910,7 +911,7 @@ class CoAuthors_Plus {
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
 
-			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
+			$author = $this->get_coauthor_by( $query_type, $author_name );
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
 			$author_name = $term->slug;
