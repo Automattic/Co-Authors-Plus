@@ -1586,7 +1586,7 @@ class CoAuthors_Guest_Authors
 		 * @param int $author->ID The guest author ID
 		 * @param string $email_address The guest author email address
 		 */
-		$extra_data = apply_filters( 'coauthors_guest_author_personal_export_extra_data', [], $author->ID, $email_address );
+		$extra_data = apply_filters( 'coauthors_guest_author_personal_export_extra_data', array(), $author->ID, $email_address );
 
 		if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
 			$author_data_to_export = array_merge( $author_data_to_export, $extra_data );
