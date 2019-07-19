@@ -911,7 +911,7 @@ class CoAuthors_Plus {
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
 
-			$field  = apply_filters( 'coauthors_post_get_coauthor_by_field', 'user_nicename' );
+			$field  = apply_filters( 'coauthors_post_get_coauthor_by_field', 'user_nicename', $author_name );
 			$author = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
