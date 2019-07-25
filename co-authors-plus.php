@@ -1689,7 +1689,7 @@ class CoAuthors_Plus {
 
 		$author_slug = sanitize_user( get_query_var( 'author_name' ) );
 		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
-		
+
 		/* translators: %s Author name */
 		return sprintf( __( 'Author: %s' ), $author->display_name );
 	}
