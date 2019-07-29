@@ -8,6 +8,8 @@
  */
 WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
 
+use WP_CLI\Utils;
+
 class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 	/**
@@ -28,7 +30,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$users = get_users();
 		$created = 0;
 		$skipped = 0;
-		$progress = \WP_CLI\Utils\make_progress_bar( 'Processing guest authors...', count ( $users ) );
+		$progress = Utils\make_progress_bar( 'Processing guest authors...', count ( $users ) );
 		foreach ( $users as $user ) {
 
 			$result = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $user->ID );
@@ -904,6 +906,112 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		if ( is_callable( $wp_object_cache, '__remoteset' ) ) {
 			$wp_object_cache->__remoteset(); // important
+		}
+	}
+
+	/**
+	 * Delete Guest Author.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <user>...
+	 * : Guest Author ID, Unique slug of the user(s) to delete.
+	 *
+	 * [--assign-to=<guest-author-id>]
+	 * : ID to reassign the posts to.
+	 *
+	 * [--force]
+	 * : Force Guest Author deletion, Remove byline from posts. (but leave each post in its current status)
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Delete Guest Author 295 and reassign posts to user 281
+	 *     $ wp co-authors-plus delete 295 --assign-to=281
+	 *     Success: Guest Author John Doe deleted, posts assigned to Jane Doe.
+	 *
+	 *     # Delete Guest Author 281 and remove Byline
+	 *     $ wp co-authors-plus delete 281
+	 *     -assign-to parameter not passed, posts will be assigned to Linked account if found, else Byline from posts will be removed. Proceed? [y/n] y
+	 *     Success: Guest Author Jane Doe deleted.
+	 *
+	 *     # Try deleting a non existing user
+	 *     $ wp co-authors-plus delete 299
+	 *     --assign-to parameter not passed, posts will be assigned to Linked account if found, else Byline from posts will be removed. Proceed? [y/n] y
+	 *     Warning: Guest Author 299 doesn't exist.
+	 *
+	 *     # Try reassigning to a non existing user
+	 *     $ wp co-authors-plus delete 298 --assign-to=111
+	 *     Error: Can't reassign to 111, user doesn't exist.
+	 */
+	public function delete( $args, $assoc_args ) {
+		global $coauthors_plus;
+
+		$reassign = Utils\get_flag_value( $assoc_args, 'assign-to' );
+		$force    = Utils\get_flag_value( $assoc_args, 'force', false );
+
+		// Show a prompt if '--assign-to' arg is not passed.
+		if ( empty( $reassign ) && ! $force ) {
+			WP_CLI::confirm( '--assign-to parameter not passed, posts will be assigned to Linked account if found, else Byline from posts will be removed. Proceed?', $assoc_args );
+		}
+
+		foreach ( $args as $arg ) {
+			$user = $this->get_co_author( $arg );
+
+			if ( $user ) {
+				$post_count     = $coauthors_plus->get_guest_author_post_count( $user );
+				$linked_account = $user->linked_account;
+
+				if ( $force || ! $post_count || ( empty( $reassign ) && empty( $linked_account ) ) ) {
+					$this->delete_user( $user, false );
+				} elseif ( empty( $reassign ) && ! empty( $linked_account ) ) {
+					$this->delete_user( $user, $linked_account );
+				} else {
+					$reassign_author = $this->get_co_author( $reassign );
+					if ( ! $reassign_author ) {
+						WP_CLI::error( "Can't reassign to {$reassign}, user doesn't exist." );
+					} elseif ( $reassign_author->ID === $user->ID ) {
+						WP_CLI::error( "Can't reassign to {$reassign_author->display_name}, same user." );
+					}
+					$this->delete_user( $user, $reassign_author );
+				}
+			} else {
+				WP_CLI::warning( "Guest Author {$arg} doesn't exist." );
+			}
+		}
+	}
+
+	/**
+	 * Get Guest Author based on passed arg.
+	 *
+	 * @param string $arg User ID or Slug passed via argument.
+	 *
+	 * @return object|false The guest author on success, false on failure
+	 */
+	private function get_co_author( $arg ) {
+		global $coauthors_plus;
+
+		if ( is_numeric( $arg ) ) {
+			return $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $arg );
+		} else {
+			return $coauthors_plus->guest_authors->get_guest_author_by( 'login', $arg );
+		}
+	}
+
+	/**
+	 * Delete Guest Author and reassign post to another Guest Author.
+	 *
+	 * @param object $user        Guest Author Object.
+	 * @param object $reassign_to Guest Author Object.
+	 */
+	private function delete_user( $user, $reassign_to ) {
+		global $coauthors_plus;
+
+		if ( true === $coauthors_plus->guest_authors->delete( $user->ID, $reassign_to->user_login ) ) {
+			if ( false === $reassign_to ) {
+				WP_CLI::success( "Guest Author {$user->display_name} deleted." );
+			} else {
+				WP_CLI::success( "Guest Author {$user->display_name} deleted, posts assigned to {$reassign_to->display_name}." );
+			}
 		}
 	}
 }
