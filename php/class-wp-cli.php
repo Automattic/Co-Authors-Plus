@@ -222,7 +222,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			);
 		$assoc_args = wp_parse_args( $assoc_args, $defaults );
 
-		$user_id = $assoc_args['user_login'];
+		$user_id = $assoc_args['user_id'];
 		if ( $assoc_args['user_login'] ) {
 			$user = get_user_by( 'login', $assoc_args['user_login'] );
 			$user_id = $user->ID;
