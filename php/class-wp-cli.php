@@ -225,7 +225,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$user_id = $assoc_args['user_id'];
 		if ( $assoc_args['user_login'] ) {
 			$user = get_user_by( 'login', $assoc_args['user_login'] );
-			$user_id = $user->ID;
+			if ($user) {
+				$user_id = $user->ID;
+			}
 		}
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'login', $assoc_args['coauthor'] );
