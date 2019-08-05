@@ -210,22 +210,28 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @since 3.0
 	 *
 	 * @subcommand assign-user-to-coauthor
-	 * @synopsis --user_login=<user-login> --coauthor=<coauthor>
+	 * @synopsis --user_login=<user-login> --user_id=<user-id> --coauthor=<coauthor>
 	 */
 	public function assign_user_to_coauthor( $args, $assoc_args ) {
 		global $coauthors_plus, $wpdb;
 
 		$defaults = array(
-				'user_login'        => '',
+				'user_login'        => NULL,
+				'user_id'           => NULL,
 				'coauthor'          => '',
 			);
 		$assoc_args = wp_parse_args( $assoc_args, $defaults );
 
-		$user = get_user_by( 'login', $assoc_args['user_login'] );
+		$user_id = $assoc_args['user_login'];
+		if ( $assoc_args['user_login'] ) {
+			$user = get_user_by( 'login', $assoc_args['user_login'] );
+			$user_id = $user->ID;
+		}
+
 		$coauthor = $coauthors_plus->get_coauthor_by( 'login', $assoc_args['coauthor'] );
 
-		if ( ! $user ) {
-			WP_CLI::error( __( 'Please specify a valid user_login', 'co-authors-plus' ) );
+		if ( ! $user_id ) {
+			WP_CLI::error( __( 'Please specify a valid user_login or user_id', 'co-authors-plus' ) );
 		}
 
 		if ( ! $coauthor ) {
@@ -233,7 +239,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		$post_types = implode( "','", $coauthors_plus->supported_post_types );
-		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
+		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user_id ) );
 		$affected = 0;
 		foreach ( $posts as $post_id ) {
 			$coauthors = cap_get_coauthor_terms_for_post( $post_id );
