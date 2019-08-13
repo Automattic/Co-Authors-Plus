@@ -1,4 +1,6 @@
 <?php
+die(__FILE__);
+
 /*
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
@@ -1015,6 +1017,9 @@ class CoAuthors_Plus {
 						break;
 					case 'tt_ids' :
 						$terms[] = $author->term_taxonomy_id;
+						break;
+					case 'ids':
+						$terms[] = (int) $author->term_id;
 						break;
 					case 'all' :
 					default :
