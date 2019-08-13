@@ -1,6 +1,4 @@
 <?php
-die(__FILE__);
-
 /*
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
