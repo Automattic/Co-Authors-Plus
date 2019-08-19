@@ -1016,6 +1016,9 @@ class CoAuthors_Plus {
 					case 'tt_ids' :
 						$terms[] = $author->term_taxonomy_id;
 						break;
+					case 'ids':
+						$terms[] = (int) $author->term_id;
+						break;
 					case 'all' :
 					default :
 						$terms[] = get_term( $author->term_id, $this->coauthor_taxonomy );
