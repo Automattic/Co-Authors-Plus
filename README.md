@@ -2,9 +2,9 @@
 
 * Contributors: batmoo, danielbachhuber, automattic
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-* Tested up to: 5.1.1
+* Tested up to: 5.2.2
 * Requires at least: 4.1
-* Stable tag: 3.4
+* Stable tag: 3.4.1
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -60,6 +60,9 @@ $ wp --url=example.com co-authors-plus create-terms-for-posts
 
 ## Changelog ##
 
+**3.4.1**
+* Fix an issue that may arise in bulk edit #700
+
 **3.4**
 * New filter `get_coauthors` for modifying coauthor data returned in `get_coauthors()` #646
 * New filter `coauthors_guest_authors_exported_extra_data` to allow guest author to export data as regular author #528
@@ -78,7 +81,7 @@ $ wp --url=example.com co-authors-plus create-terms-for-posts
 * Have `filter_author_archive_title()` run on author archives only #535
 * Improve tests coverage (#529, #540, #546, #576 and #569)
 * Change `posts_selection` to action from filter #563
-* Fix number of args expected for `get_the_archive_title` callback #657 
+* Fix number of args expected for `get_the_archive_title` callback #657
 * Fix spelling, update FAQ for disabling guest authors and credits in readme (#656, #523 and #501)
 * Output `coauthors_links_single()` template tag correctly when guest author has no website #504
 * Number by "Mine" link shows correct listing of posts #663
@@ -90,7 +93,7 @@ $ wp --url=example.com co-authors-plus create-terms-for-posts
 * Fix SQL error (#593 and #628)
 * Fix "Mine" link href for Pages #547
 * Can delete users when guest authors functionality disabled #602
-* Fix incompatibility issue with Yoast of missing posts in author pages #624 
+* Fix incompatibility issue with Yoast of missing posts in author pages #624
 * Resolve undefined index warnings on author archives #521
 * Resolve warnings when current user has no term assigned #517
 
