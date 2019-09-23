@@ -881,8 +881,9 @@ class CoAuthors_Plus {
 	 * @param int
 	 * @param array
 	 * @param bool
+	 * @param string
 	 */
-	public function add_coauthors( $post_id, $coauthors, $append = false ) {
+	public function add_coauthors( $post_id, $coauthors, $append = false, $query_type = 'user_nicename' ) {
 		global $current_user, $wpdb;
 
 		$post_id = (int) $post_id;
@@ -910,8 +911,7 @@ class CoAuthors_Plus {
 		$coauthors = array_unique( array_merge( $existing_coauthors, $coauthors ) );
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
-
-			$field  = apply_filters( 'coauthors_post_get_coauthor_by_field', 'user_nicename', $author_name );
+			$field  = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
 			$author = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
@@ -1048,7 +1048,7 @@ class CoAuthors_Plus {
 
 		if ( $term && ! is_wp_error( $term ) ) {
 			if ( 'guest-author' === $user->type ) {
-				// If using guest author term count, add on linked user count. 
+				// If using guest author term count, add on linked user count.
 				$count = (int) $count + $term->count;
 			} else {
 				$count = $term->count;
@@ -1717,9 +1717,9 @@ class CoAuthors_Plus {
 			return 0;
 		}
 	}
-	
+
 	/**
-	 * Filter to display author image if exists instead of avatar. 
+	 * Filter to display author image if exists instead of avatar.
 	 *
 	 * @param $url string Avatar URL
 	 * @param $id  int Author ID
