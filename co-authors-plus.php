@@ -915,7 +915,9 @@ class CoAuthors_Plus {
 			$author = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
-			$author_name = $term->slug;
+			if ( is_object( $term ) ) {
+				$author_name = $term->slug;
+			}
 		}
 		wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, false );
 
