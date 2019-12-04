@@ -1044,16 +1044,19 @@ class CoAuthors_Plus {
 	 */
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
-		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
-		$term = $this->get_author_term( $user );
+		if ( is_object( $user ) ) {
+			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
-		if ( $term && ! is_wp_error( $term ) ) {
-			if ( 'guest-author' === $user->type ) {
-				// If using guest author term count, add on linked user count.
-				$count = (int) $count + $term->count;
-			} else {
-				$count = $term->count;
+			$term = $this->get_author_term( $user );
+
+			if ( $term && ! is_wp_error( $term ) ) {
+				if ( 'guest-author' === $user->type ) {
+					// If using guest author term count, add on linked user count.
+					$count = (int) $count + $term->count;
+				} else {
+					$count = $term->count;
+				}
 			}
 		}
 
@@ -1703,7 +1706,7 @@ class CoAuthors_Plus {
 	 */
 	public function get_guest_author_post_count( $guest_author ) {
 		if ( ! is_object( $guest_author ) ) {
-			return;
+			return 0;
 		}
 
 		$term       = $this->get_author_term( $guest_author );
@@ -1712,12 +1715,15 @@ class CoAuthors_Plus {
 		if ( is_object( $guest_term )
 			&& ! empty( $guest_author->linked_account )
 			&& $guest_term->count ) {
-			return count_user_posts( get_user_by( 'login', $guest_author->linked_account )->ID );
+			$user = get_user_by( 'login', $guest_author->linked_account );
+			if ( is_object( $user ) ) {
+				return count_user_posts( $user->ID );
+			}
 		} elseif ( $term ) {
 			return $term->count;
-		} else {
-			return 0;
 		}
+
+		return 0;
 	}
 
 	/**
