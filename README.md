@@ -46,7 +46,7 @@ Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts ma
 
 If the site has a large database, you may run into issues with heavier than usual queries. You can work around this by disabling compat mode and force it to use simpler, tax-only queries by adding the following to your theme:
 
-```
+```php
 // Use simple tax queries for CAP to improve performance
 add_filter( 'coauthors_plus_should_query_post_author', '__return_false' );
 ```
@@ -56,6 +56,16 @@ Note that this requires the site(s) to have proper terms set up for all users. Y
 ```
 # This is pretty long-running and can be expensive; be careful!
 $ wp --url=example.com co-authors-plus create-terms-for-posts
+```
+
+* How do I use custom post types?
+
+To ensure posts with CPTs are counted, use the `coauthors_count_published_post_types` filter.
+```php
+add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
+   $post_types[] = 'my_cpt_slug';
+   return $post_types;
+} );
 ```
 
 ## Changelog ##
