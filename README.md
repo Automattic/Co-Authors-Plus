@@ -2,9 +2,9 @@
 
 * Contributors: batmoo, danielbachhuber, automattic
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-* Tested up to: 5.2.2
+* Tested up to: 5.3.1
 * Requires at least: 4.1
-* Stable tag: 3.4.1
+* Stable tag: 3.4.2
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -59,6 +59,12 @@ $ wp --url=example.com co-authors-plus create-terms-for-posts
 ```
 
 ## Changelog ##
+
+**3.4.2**
+* Fix incorrect user avatar being displayed from featured post image #706
+* Add check for `filter_get_avatar_url` to ensure valid second parameter #707
+* `add_coauthors()` accepts ID parameter now #685 and ensures valid term slug used #708
+* `filter_count_user_posts` checks that user ID returns valid user object #714
 
 **3.4.1**
 * Fix an issue that may arise in bulk edit #700
