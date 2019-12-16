@@ -75,6 +75,7 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 * Add check for `filter_get_avatar_url` to ensure valid second parameter #707
 * `add_coauthors()` accepts ID parameter now #685 and ensures valid term slug used #708
 * `filter_count_user_posts` checks that user ID returns valid user object #714
+* Added post count instructions in readme FAQ for CPTs #713
 
 **3.4.1**
 * Fix an issue that may arise in bulk edit #700

@@ -67,6 +67,7 @@ Bug fixes and minor enhancements
 * Add check for `filter_get_avatar_url` to ensure valid second parameter
 * `add_coauthors()` accepts ID parameter now and ensures valid term slug used
 * `filter_count_user_posts` checks that user ID returns valid user object
+* Added post count instructions in readme FAQ for CPTs
 
 = 3.4.1 =
 * Fix an issue that may arise in bulk edit
