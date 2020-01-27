@@ -60,13 +60,14 @@ $ wp --url=example.com co-authors-plus create-terms-for-posts
 
 * How do I use custom post types?
 
-To ensure posts with CPTs are counted, use the `coauthors_count_published_post_types` filter.
+1. To ensure posts with your CPT are counted, use the `coauthors_count_published_post_types` filter.
 ```php
 add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
    $post_types[] = 'my_cpt_slug';
    return $post_types;
 } );
 ```
+2. To display the metabox on your CPT, either call `register_post_type()` with `$args['supports']` containing `'author'`, or call `add_post_type_support( 'my_cpt_slug', 'author' );`
 
 ## Changelog ##
 
