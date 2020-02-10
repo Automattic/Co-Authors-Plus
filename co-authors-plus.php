@@ -816,7 +816,10 @@ class CoAuthors_Plus {
 				// If it's a guest author and has a linked account, store that information in post_author
 				// because it'll be the valid user ID
 				if ( 'guest-author' == $author_data->type && ! empty( $author_data->linked_account ) ) {
-					$data['post_author'] = get_user_by( 'login', $author_data->linked_account )->ID;
+					$user = get_user_by( 'login', $author_data->linked_account );
+					if ( is_object( $user ) ) {
+						$data['post_author'] = $user->ID;
+					}
 				} else if ( 'wpuser' === $author_data->type ) {
 					$data['post_author'] = $author_data->ID;
 				}
