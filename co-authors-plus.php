@@ -1738,7 +1738,7 @@ class CoAuthors_Plus {
 	 * @return string Avatar URL
 	 */
 	public function filter_pre_get_avatar_data_url( $args, $id ) {
-		if ( ! $id || ! $this->is_guest_authors_enabled() || ! is_numeric( $id ) ) {
+		if ( ! $id || ! $this->is_guest_authors_enabled() || ! is_numeric( $id ) || isset( $args['url'] ) ) {
 			return $args;
 		}
 		$coauthor = $this->get_coauthor_by( 'id', $id );
