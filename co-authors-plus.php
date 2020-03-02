@@ -135,7 +135,7 @@ class CoAuthors_Plus {
 		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 1 );
 
 		// Filter to display author image if exists instead of avatar
-		add_filter( 'get_avatar_url', array( $this, 'filter_get_avatar_url' ), 10, 2 );
+		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
 	}
 
 	/**
@@ -382,7 +382,7 @@ class CoAuthors_Plus {
 				<?php
 				foreach ( $coauthors as $coauthor ) :
 					$count++;
-					$avatar_url = get_avatar_url( $coauthor->ID, array( 'default' => 'gravatar_default' ) );
+					$avatar_url = get_avatar_url( $coauthor->ID, [ 'default' => 'gravatar_default' ] );
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
@@ -1203,7 +1203,7 @@ class CoAuthors_Plus {
 		if( empty( $authors ) ) echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.');
 
 		foreach ( $authors as $author ) {
-			$avatar_url = get_avatar_url( $author->ID, array( 'default' => 'gravatar_default' ) );
+			$avatar_url = get_avatar_url( $author->ID );
 			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . rawurldecode( $author->user_nicename ) ) . ' | ' . esc_url( $avatar_url ) . "\n";
 		}
 
@@ -1737,15 +1737,19 @@ class CoAuthors_Plus {
 	 *
 	 * @return string Avatar URL
 	 */
-	public function filter_get_avatar_url( $url, $id ) {
+	public function filter_pre_get_avatar_data_url( $args, $id ) {
 		if ( ! $id || ! $this->is_guest_authors_enabled() || ! is_numeric( $id ) ) {
-			return $url;
+			return $args;
 		}
 		$coauthor = $this->get_coauthor_by( 'id', $id );
-		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type && has_post_thumbnail( $id ) ) {
-			$url = get_the_post_thumbnail_url( $id, $this->gravatar_size );
+		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) { 
+			if ( has_post_thumbnail( $id ) ) {
+				$args['url'] = get_the_post_thumbnail_url( $id, $this->gravatar_size );
+			} else {
+				$args['url'] = get_avatar_url( '' ); // Fallback to default.
+			}
 		}
-		return $url;
+		return $args;
 	}
 }
 
