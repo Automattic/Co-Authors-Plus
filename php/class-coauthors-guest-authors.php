@@ -970,13 +970,13 @@ class CoAuthors_Guest_Authors
 		}
 
 		$args = array(
-				'class' => "avatar avatar-{$size} photo",
-			);
+			'class' => "avatar avatar-{$size} photo",
+		);
 		if ( ! empty( $class ) ) {
 			if ( is_array( $class ) ) {
 				$class = implode( ' ', $class );
 			}
-			$args['class'] += " $class";
+			$args['class'] .= " $class";
 		}
 
 		$size = array( $size, $size );
