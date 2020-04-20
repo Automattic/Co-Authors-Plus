@@ -2,9 +2,9 @@
 
 * Contributors: batmoo, danielbachhuber, automattic
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-* Tested up to: 5.3.1
+* Tested up to: 5.4
 * Requires at least: 4.1
-* Stable tag: 3.4.2
+* Stable tag: 3.4.3
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -70,6 +70,13 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 2. To display the metabox on your CPT, either call `register_post_type()` with `$args['supports']` containing `'author'`, or call `add_post_type_support( 'my_cpt_slug', 'author' );`
 
 ## Changelog ##
+
+**3.4.3**
+* Added author support to CPT instructions in readme FAQ #720
+* Added object check for user in `coauthors_set_post_author_field()` #721
+* Fix inefficient user query in avatar url hook #724
+* Fix operand typo in `get_guest_author_thumbnail()` for adding custom classes #725
+* Remove hardcoded default avatar and use default option #728
 
 **3.4.2**
 * Fix incorrect user avatar being displayed from featured post image #706
