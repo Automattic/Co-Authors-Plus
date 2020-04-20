@@ -382,7 +382,7 @@ class CoAuthors_Plus {
 				<?php
 				foreach ( $coauthors as $coauthor ) :
 					$count++;
-					$avatar_url = get_avatar_url( $coauthor->ID, [ 'default' => 'gravatar_default' ] );
+					$avatar_url = get_avatar_url( $coauthor->ID );
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
@@ -475,7 +475,7 @@ class CoAuthors_Plus {
 				data-user_email="<?php echo esc_attr( $author->user_email ) ?>"
 				data-display_name="<?php echo esc_attr( $author->display_name ) ?>"
 				data-user_login="<?php echo esc_attr( $author->user_login ) ?>"
-				data-avatar="<?php echo esc_attr( get_avatar_url( $author->ID, [ 'default' => 'gravatar_default' ] ) ) ?>"
+				data-avatar="<?php echo esc_attr( get_avatar_url( $author->ID ) ) ?>"
 				><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
