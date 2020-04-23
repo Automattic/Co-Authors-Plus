@@ -1270,7 +1270,7 @@ class CoAuthors_Plus {
 			// Make sure the user is contributor and above (or a custom cap)
 			if ( in_array( $found_user->user_nicename, $ignored_authors, true ) ) { // AJAX sends a list of already present *users_nicenames*
 				unset( $found_users[ $key ] );
-			} else if ( 'wpuser' === $found_user->type && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ) ) {
+			} else if ( 'wpuser' === $found_user->type && false === $found_user->has_cap( apply_filters( 'coauthors_edit_author_cap', 'read' ) ) ) {
 				unset( $found_users[ $key ] );
 			}
 		}
