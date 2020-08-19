@@ -1126,8 +1126,8 @@ class CoAuthors_Plus {
 	 * @void
 	 */
 	public function fix_author_page( $selection ) {
-
-		if ( ! is_author() ) {
+		global $wp_query;
+		if( ! $wp_query instanceof WP_Query ) {
 			return;
 		}
 
@@ -1138,7 +1138,7 @@ class CoAuthors_Plus {
 
 		$author = $this->get_coauthor_by( 'user_nicename', $author_name );
 
-		global $wp_query, $authordata;
+		global $authordata;
 
 		if ( is_object( $author ) ) {
 			$authordata = $author;
@@ -1743,7 +1743,7 @@ class CoAuthors_Plus {
 			return $args;
 		}
 		$coauthor = $this->get_coauthor_by( 'id', $id );
-		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) { 
+		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
 				$args['url'] = get_the_post_thumbnail_url( $id, $this->gravatar_size );
 			} else {
