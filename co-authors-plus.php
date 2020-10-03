@@ -106,6 +106,10 @@ class CoAuthors_Plus {
 		// Removes the co-author dropdown from the post quick edit
 		add_action( 'admin_head', array( $this, 'remove_quick_edit_authors_box' ) );
 
+		// Add co-author select field to Bulk Edit actions form
+		add_action( 'bulk_edit_custom_box', array( $this, '_action_bulk_edit_custom_box' ), 10, 2 );
+		add_action( 'wp_insert_post_data', array( $this, 'action_bulk_edit_update_coauthors' ), 10, 2 );
+
 		// Restricts WordPress from blowing away term order on bulk edit
 		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
 
@@ -536,6 +540,50 @@ class CoAuthors_Plus {
 			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 		</label>
 		<?php
+	}
+
+	/**
+	 * Bulk Edit co-authors box.
+	 */
+	function _action_bulk_edit_custom_box( $column_name, $post_type ) {
+		if ( 'coauthors' != $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
+			return;
+		}
+		?>
+		<label class="bulk-edit-group bulk-edit-coauthors">
+			<span class="title"><?php esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
+			<div id="coauthors-edit" class="hide-if-no-js">
+				<p><?php echo wp_kses( __( 'Leave the field below blank to keep the authors unchanged. Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+			</div>
+			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
+		</label>
+		<?php
+	}
+
+	/**
+	 * Set coauthors from bulk edit.
+	 */
+	function action_bulk_edit_update_coauthors( $post_data, $postarr ) {
+
+		if ( ! $this->is_post_type_enabled( $post_data['post_type'] ) )
+			return;
+
+		foreach( $postarr['post'] as $post_id ) {
+			$post = get_post( $post_id );
+
+			if ( $this->current_user_can_set_authors( $post ) && isset( $postarr['coauthors'] ) ) {
+					$coauthors = array_map( 'sanitize_title', (array) $postarr['coauthors'] );
+					$this->add_coauthors( $post_id, $coauthors );
+			} else {
+				// If the user can't set authors and a co-author isn't currently set, we need to explicity set one
+				if ( ! $this->has_author_terms( $post_id ) ) {
+					$user = get_userdata( $post->post_author );
+					if ( $user ) {
+						$this->add_coauthors( $post_id, array( $user->user_nicename ) );
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -1743,7 +1791,7 @@ class CoAuthors_Plus {
 			return $args;
 		}
 		$coauthor = $this->get_coauthor_by( 'id', $id );
-		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) { 
+		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
 				$args['url'] = get_the_post_thumbnail_url( $id, $this->gravatar_size );
 			} else {
