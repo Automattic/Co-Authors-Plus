@@ -783,7 +783,7 @@ class CoAuthors_Guest_Authors
 			if ( $_POST['cap-linked_account'] > 0 && ( (int)$_POST['cap-linked_account'] !== (int)$user->ID ) ) {
 				wp_die( esc_html__( 'Please map the guest author to the user with the same username', 'co-authors-plus' ) );
 			}
-			wp_die( esc_html__( 'Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user on the Manage Users listing instead.', 'co-authors-plus' ) );
+			wp_die( esc_html__( 'There is a WordPress user with the same username as this guest author, please go back and link them in order to update.', 'co-authors-plus' ) );
 		}
 
 		// Guest authors can't have the same post_name value
