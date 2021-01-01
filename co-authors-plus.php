@@ -91,6 +91,8 @@ class CoAuthors_Plus {
 		// Action to reassign posts when a guest author is deleted
 		add_action( 'delete_user',  array( $this, 'delete_user_action' ) );
 
+		//Filter to return our correct post count
+		add_filter( 'count_user_posts', array( $this, 'filter_count_user_posts' ), 10, 2 );
 		add_filter( 'get_usernumposts', array( $this, 'filter_count_user_posts' ), 10, 2 );
 
 		// Action to set up co-author auto-suggest
