@@ -2,9 +2,9 @@
 
 * Contributors: batmoo, danielbachhuber, automattic
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-* Tested up to: 5.2.2
+* Tested up to: 5.4
 * Requires at least: 4.1
-* Stable tag: 3.4.1
+* Stable tag: 3.4.3
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -46,7 +46,7 @@ Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts ma
 
 If the site has a large database, you may run into issues with heavier than usual queries. You can work around this by disabling compat mode and force it to use simpler, tax-only queries by adding the following to your theme:
 
-```
+```php
 // Use simple tax queries for CAP to improve performance
 add_filter( 'coauthors_plus_should_query_post_author', '__return_false' );
 ```
@@ -58,7 +58,32 @@ Note that this requires the site(s) to have proper terms set up for all users. Y
 $ wp --url=example.com co-authors-plus create-terms-for-posts
 ```
 
+* How do I use custom post types?
+
+1. To ensure posts with your CPT are counted, use the `coauthors_count_published_post_types` filter.
+```php
+add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
+   $post_types[] = 'my_cpt_slug';
+   return $post_types;
+} );
+```
+2. To display the metabox on your CPT, either call `register_post_type()` with `$args['supports']` containing `'author'`, or call `add_post_type_support( 'my_cpt_slug', 'author' );`
+
 ## Changelog ##
+
+**3.4.3**
+* Added author support to CPT instructions in readme FAQ #720
+* Added object check for user in `coauthors_set_post_author_field()` #721
+* Fix inefficient user query in avatar url hook #724
+* Fix operand typo in `get_guest_author_thumbnail()` for adding custom classes #725
+* Remove hardcoded default avatar and use default option #728
+
+**3.4.2**
+* Fix incorrect user avatar being displayed from featured post image #706
+* Add check for `filter_get_avatar_url` to ensure valid second parameter #707
+* `add_coauthors()` accepts ID parameter now #685 and ensures valid term slug used #708
+* `filter_count_user_posts` checks that user ID returns valid user object #714
+* Added post count instructions in readme FAQ for CPTs #713
 
 **3.4.1**
 * Fix an issue that may arise in bulk edit #700

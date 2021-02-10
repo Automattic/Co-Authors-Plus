@@ -3,7 +3,7 @@
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 3.4.1
+Version: 3.4.3
 Author: Mohammad Jangda, Daniel Bachhuber, Automattic
 Copyright: 2008-2015 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
 
@@ -32,7 +32,7 @@ Co-author - in the context of a single post, a guest author or user assigned to 
 Author - user with the role of author
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '3.4.1' );
+define( 'COAUTHORS_PLUS_VERSION', '3.4.3' );
 
 require_once( dirname( __FILE__ ) . '/template-tags.php' );
 require_once( dirname( __FILE__ ) . '/deprecated.php' );
@@ -135,7 +135,7 @@ class CoAuthors_Plus {
 		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title'), 10, 1 );
 
 		// Filter to display author image if exists instead of avatar
-		add_filter( 'get_avatar_url', array( $this, 'filter_get_avatar_url' ), 10, 2 );
+		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
 	}
 
 	/**
@@ -382,7 +382,7 @@ class CoAuthors_Plus {
 				<?php
 				foreach ( $coauthors as $coauthor ) :
 					$count++;
-					$avatar_url = get_avatar_url( $coauthor->ID, array( 'default' => 'gravatar_default' ) );
+					$avatar_url = get_avatar_url( $coauthor->ID );
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
@@ -475,6 +475,7 @@ class CoAuthors_Plus {
 				data-user_email="<?php echo esc_attr( $author->user_email ) ?>"
 				data-display_name="<?php echo esc_attr( $author->display_name ) ?>"
 				data-user_login="<?php echo esc_attr( $author->user_login ) ?>"
+				data-avatar="<?php echo esc_attr( get_avatar_url( $author->ID ) ) ?>"
 				><?php echo esc_html( $author->display_name ); ?></a><?php echo ( $count < count( $authors ) ) ? ',' : ''; ?>
 				<?php
 				$count++;
@@ -816,7 +817,10 @@ class CoAuthors_Plus {
 				// If it's a guest author and has a linked account, store that information in post_author
 				// because it'll be the valid user ID
 				if ( 'guest-author' == $author_data->type && ! empty( $author_data->linked_account ) ) {
-					$data['post_author'] = get_user_by( 'login', $author_data->linked_account )->ID;
+					$user = get_user_by( 'login', $author_data->linked_account );
+					if ( is_object( $user ) ) {
+						$data['post_author'] = $user->ID;
+					}
 				} else if ( 'wpuser' === $author_data->type ) {
 					$data['post_author'] = $author_data->ID;
 				}
@@ -881,8 +885,9 @@ class CoAuthors_Plus {
 	 * @param int
 	 * @param array
 	 * @param bool
+	 * @param string
 	 */
-	public function add_coauthors( $post_id, $coauthors, $append = false ) {
+	public function add_coauthors( $post_id, $coauthors, $append = false, $query_type = 'user_nicename' ) {
 		global $current_user, $wpdb;
 
 		$post_id = (int) $post_id;
@@ -910,12 +915,13 @@ class CoAuthors_Plus {
 		$coauthors = array_unique( array_merge( $existing_coauthors, $coauthors ) );
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
-
-			$field  = apply_filters( 'coauthors_post_get_coauthor_by_field', 'user_nicename', $author_name );
+			$field  = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
 			$author = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
 			$term = $this->update_author_term( $author );
-			$author_name = $term->slug;
+			if ( is_object( $term ) ) {
+				$author_name = $term->slug;
+			}
 		}
 		wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, false );
 
@@ -1042,16 +1048,19 @@ class CoAuthors_Plus {
 	 */
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
-		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
-		$term = $this->get_author_term( $user );
+		if ( is_object( $user ) ) {
+			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
-		if ( $term && ! is_wp_error( $term ) ) {
-			if ( 'guest-author' === $user->type ) {
-				// If using guest author term count, add on linked user count. 
-				$count = (int) $count + $term->count;
-			} else {
-				$count = $term->count;
+			$term = $this->get_author_term( $user );
+
+			if ( $term && ! is_wp_error( $term ) ) {
+				if ( 'guest-author' === $user->type ) {
+					// If using guest author term count, add on linked user count.
+					$count = (int) $count + $term->count;
+				} else {
+					$count = $term->count;
+				}
 			}
 		}
 
@@ -1195,7 +1204,7 @@ class CoAuthors_Plus {
 		if( empty( $authors ) ) echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.');
 
 		foreach ( $authors as $author ) {
-			$avatar_url = get_avatar_url( $author->ID, array( 'default' => 'gravatar_default' ) );
+			$avatar_url = get_avatar_url( $author->ID );
 			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . rawurldecode( $author->user_nicename ) ) . ' | ' . esc_url( $avatar_url ) . "\n";
 		}
 
@@ -1701,7 +1710,7 @@ class CoAuthors_Plus {
 	 */
 	public function get_guest_author_post_count( $guest_author ) {
 		if ( ! is_object( $guest_author ) ) {
-			return;
+			return 0;
 		}
 
 		$term       = $this->get_author_term( $guest_author );
@@ -1710,27 +1719,38 @@ class CoAuthors_Plus {
 		if ( is_object( $guest_term )
 			&& ! empty( $guest_author->linked_account )
 			&& $guest_term->count ) {
-			return count_user_posts( get_user_by( 'login', $guest_author->linked_account )->ID );
+			$user = get_user_by( 'login', $guest_author->linked_account );
+			if ( is_object( $user ) ) {
+				return count_user_posts( $user->ID );
+			}
 		} elseif ( $term ) {
 			return $term->count;
-		} else {
-			return 0;
 		}
+
+		return 0;
 	}
-	
+
 	/**
-	 * Filter to display author image if exists instead of avatar. 
+	 * Filter to display author image if exists instead of avatar.
 	 *
 	 * @param $url string Avatar URL
 	 * @param $id  int Author ID
 	 *
 	 * @return string Avatar URL
 	 */
-	public function filter_get_avatar_url( $url, $id ) {
-		if ( has_post_thumbnail( $id ) ) {
-			$url = get_the_post_thumbnail_url( $id, $this->gravatar_size );
+	public function filter_pre_get_avatar_data_url( $args, $id ) {
+		if ( ! $id || ! $this->is_guest_authors_enabled() || ! is_numeric( $id ) || isset( $args['url'] ) ) {
+			return $args;
 		}
-		return $url;
+		$coauthor = $this->get_coauthor_by( 'id', $id );
+		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) { 
+			if ( has_post_thumbnail( $id ) ) {
+				$args['url'] = get_the_post_thumbnail_url( $id, $this->gravatar_size );
+			} else {
+				$args['url'] = get_avatar_url( '' ); // Fallback to default.
+			}
+		}
+		return $args;
 	}
 }
 

@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 5.1.1
+Tested up to: 5.3.1
 Requires at least: 4.1
-Stable tag: 3.4
+Stable tag: 3.4.3
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -61,6 +61,23 @@ Bug fixes and the ability to automatically add co-authors to your feeds.
 Bug fixes and minor enhancements
 
 == Changelog ==
+
+= 3.4.3 =
+* Added author support to CPT instructions in readme FAQ
+* Added object check for user in `coauthors_set_post_author_field()`
+* Fix inefficient user query in avatar url hook
+* Fix operand typo in `get_guest_author_thumbnail()` for adding custom classes
+* Remove hardcoded default avatar and use default option
+
+= 3.4.2 =
+* Fix incorrect user avatar being displayed from featured post image
+* Add check for `filter_get_avatar_url` to ensure valid second parameter
+* `add_coauthors()` accepts ID parameter now and ensures valid term slug used
+* `filter_count_user_posts` checks that user ID returns valid user object
+* Added post count instructions in readme FAQ for CPTs
+
+= 3.4.1 =
+* Fix an issue that may arise in bulk edit
 
 = 3.4 =
 * New filter get_coauthors for modifying coauthor data returned in get_coauthors()
