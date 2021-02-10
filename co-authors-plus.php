@@ -1258,7 +1258,7 @@ class CoAuthors_Plus {
 		// Get the guest author objects
 		$found_users = array();
 		foreach ( $found_terms as $found_term ) {
-			$found_user = $this->get_coauthor_by( 'user_nicename', $found_term->slug );
+			$found_user = $this->get_coauthor_by( 'user_nicename', $found_term->name );
 			if ( ! empty( $found_user ) ) {
 				$found_users[ $found_user->user_login ] = $found_user;
 			}
