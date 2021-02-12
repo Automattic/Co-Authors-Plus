@@ -361,7 +361,8 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		// Checks when search term is empty and any subscriber exists.
 		$subscriber1 = $this->factory->user->create_and_get( array(
-			'role' => 'subscriber',
+			'role'       => 'subscriber',
+			'user_login' => 'subscriber1'
 		) );
 
 		$authors = $coauthors_plus->search_authors();
@@ -371,7 +372,8 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		// Checks when search term is empty and any contributor exists.
 		$contributor1 = $this->factory->user->create_and_get( array(
-			'role' => 'contributor',
+			'role'       => 'contributor',
+			'user_login' => 'contributor1'
 		) );
 
 		$authors = $coauthors_plus->search_authors();
@@ -451,7 +453,8 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		// Checks when ignoring author1 but also exists one more author with similar kind of data.
 		$author2 = $this->factory->user->create_and_get( array(
-			'role' => 'author',
+			'role'       => 'author',
+			'user_login' => 'author2'
 		) );
 
 		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
