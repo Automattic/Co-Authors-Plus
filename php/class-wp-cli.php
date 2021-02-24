@@ -53,6 +53,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function create_terms_for_posts() {
 		global $coauthors_plus, $wp_post_types;
 
+		add_filter( 'posts_groupby', function( $groupby ) { return ''; } );
+
 		// Cache these to prevent repeated lookups
 		$authors = array();
 		$author_terms = array();
@@ -63,6 +65,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'post_type'         => $coauthors_plus->supported_post_types,
 				'posts_per_page'    => 100,
 				'paged'             => 1,
+				'no_found_rows'	   => true,
 				'update_meta_cache' => false,
 			);
 
@@ -72,6 +75,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$total_posts = $posts->found_posts;
 		WP_CLI::line( "Now inspecting or updating {$posts->found_posts} total posts." );
 		while ( $posts->post_count ) {
+
+			wp_defer_term_counting(true);
 
 			foreach ( $posts->posts as $single_post ) {
 
@@ -103,6 +108,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				sleep( 1 );
 			}
 
+			wp_defer_term_counting(false);
 			$args['paged']++;
 			$posts = new WP_Query( $args );
 		}
