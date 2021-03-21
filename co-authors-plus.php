@@ -1406,12 +1406,14 @@ class CoAuthors_Plus {
 	public function get_to_be_filtered_caps() {
 		if( ! empty( $this->supported_post_types ) && empty( $this->to_be_filtered_caps ) ) {
 			$this->to_be_filtered_caps[] = 'edit_post'; // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
+			$this->to_be_filtered_caps[] = 'read_post';
 
 			foreach( $this->supported_post_types as $single ) {
 				$obj = get_post_type_object( $single );
 
 				$this->to_be_filtered_caps[] = $obj->cap->edit_post;
 				$this->to_be_filtered_caps[] = $obj->cap->edit_others_posts; // This as well: http://core.trac.wordpress.org/ticket/22417
+				$this->to_be_filtered_caps[] = $obj->cap->read_post;
 			}
 
 			$this->to_be_filtered_caps = array_unique( $this->to_be_filtered_caps );
@@ -1443,6 +1445,8 @@ class CoAuthors_Plus {
 				$obj->cap->edit_post,
 				'edit_post', // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
 				$obj->cap->edit_others_posts, // This as well: http://core.trac.wordpress.org/ticket/22417
+				'read_post',
+				$obj->cap->read_post,
 			);
 		if ( ! in_array( $cap, $caps_to_modify ) ) {
 			return $allcaps;
