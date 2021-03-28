@@ -62,6 +62,9 @@ Bug fixes and minor enhancements
 
 == Changelog ==
 
+=3.4.5=
+* Fixed bug where guest authors with spaces in names were not showing when queried in AJAX suggest box.
+
 = 3.4.4 =
 * Fixed bug where author with slug beginning with "cap" does not appear in bylines AJAX suggest box when queried
 * Travis for Xenial build no longer fails
