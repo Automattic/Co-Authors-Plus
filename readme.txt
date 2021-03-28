@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 5.7
 Requires at least: 4.1
-Stable tag: 3.4.4
+Stable tag: 3.4.5
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -61,6 +61,9 @@ Bug fixes and the ability to automatically add co-authors to your feeds.
 Bug fixes and minor enhancements
 
 == Changelog ==
+
+=3.4.5=
+* Fixed bug where guest authors with spaces in names were not showing when queried in AJAX suggest box.
 
 = 3.4.4 =
 * Fixed bug where author with slug beginning with "cap" does not appear in bylines AJAX suggest box when queried

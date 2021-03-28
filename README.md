@@ -4,7 +4,7 @@
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 5.7
 * Requires at least: 4.1
-* Stable tag: 3.4.4
+* Stable tag: 3.4.5
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -70,6 +70,9 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 2. To display the metabox on your CPT, either call `register_post_type()` with `$args['supports']` containing `'author'`, or call `add_post_type_support( 'my_cpt_slug', 'author' );`
 
 ## Changelog ##
+
+**3.4.5**
+* Fixed bug where guest authors with spaces in names were not showing when queried in AJAX suggest box.
 
 **3.4.4**
 * Fixed bug where author with slug beginning with "cap" does not appear in bylines AJAX suggest box when queried #744
