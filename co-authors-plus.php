@@ -382,7 +382,11 @@ class CoAuthors_Plus {
 				<?php
 				foreach ( $coauthors as $coauthor ) :
 					$count++;
-					$avatar_url = get_avatar_url( $coauthor->ID );
+					if ( isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
+					    $avatar_url = get_avatar_url( $coauthor->user_email );
+					} else {
+					    $avatar_url = get_avatar_url( $coauthor->ID );
+					}
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
