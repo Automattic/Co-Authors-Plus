@@ -276,8 +276,8 @@ if ( 'top' == $which ) {
 			echo '<option value="' . esc_attr( $key ) . '" ' . selected( $this->active_filter, $key, false ) . '>' . esc_attr( $value ) . '</option>';
 		}
 		echo '</select>';
+	    submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
 	}
-	submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
 }
 		?></div><?php
 	}
