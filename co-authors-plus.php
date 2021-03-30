@@ -382,11 +382,7 @@ class CoAuthors_Plus {
 				<?php
 				foreach ( $coauthors as $coauthor ) :
 					$count++;
-					if ( isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
-					    $avatar_url = get_avatar_url( $coauthor->user_email );
-					} else {
-					    $avatar_url = get_avatar_url( $coauthor->ID );
-					}
+					$avatar_url = get_avatar_url( $coauthor->ID );
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
@@ -1757,9 +1753,11 @@ class CoAuthors_Plus {
 			return $args;
 		}
 		$coauthor = $this->get_coauthor_by( 'id', $id );
-		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) { 
+		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
 				$args['url'] = get_the_post_thumbnail_url( $id, $this->gravatar_size );
+			} elseif ( isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
+				$args['url'] = get_avatar_url( $coauthor->user_email );
 			} else {
 				$args['url'] = get_avatar_url( '' ); // Fallback to default.
 			}
