@@ -96,39 +96,23 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			$this->active_filter = 'show-all';
 		}
 
-		switch ( $this->active_filter ) {
-			case 'with-linked-account':
-			case 'without-linked-account':
-				$key = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
-				if ( 'with-linked-account' == $this->active_filter ) {
-                    $args['meta_query'] = array(
-                        'relation' => 'AND',
-                        array(
-                            'key'     => $key,
-                            'compare' => 'EXISTS',
-                        ),
-                        array(
-                            'key'     => $key,
-                            'value'   => '',
-                            'compare' => '!=',
-                        ),
-                    );
-				} else {
-                    $args['meta_query'] = array(
-                        'relation' => 'OR',
-                        array(
-                            'key'     => $key,
-                            'compare' => 'NOT EXISTS',
-                        ),
-                        array(
-                            'key'     => $key,
-                            'value'   => '',
-                            'compare' => '=',
-                        ),
-                    );
-				}
+        $key = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
+        switch ( $this->active_filter ) {
+            case 'with-linked-account':
+                $args['meta_query'] = array(
+                    'relation' => 'AND',
+                    array( 'key' => $key, 'compare' => 'EXISTS' ),
+                    array( 'key' => $key, 'compare' => '!=', 'value' => '' ),
+                );
                 break;
-		}
+            case 'without-linked-account':
+                $args['meta_query'] = array(
+                    'relation' => 'OR',
+                    array( 'key' => $key, 'compare' => 'NOT EXISTS' ),
+                    array( 'key' => $key, 'compare' => '=', 'value' => '' ),
+                );
+                break;
+        }
 
 		if ( $this->is_search ) {
 			add_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
