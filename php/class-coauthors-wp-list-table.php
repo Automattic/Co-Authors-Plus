@@ -99,14 +99,35 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		switch ( $this->active_filter ) {
 			case 'with-linked-account':
 			case 'without-linked-account':
-				$args['meta_key'] = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
+				$key = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
 				if ( 'with-linked-account' == $this->active_filter ) {
-					$args['meta_compare'] = '!=';
+                    $args['meta_query'] = array(
+                        'relation' => 'AND',
+                        array(
+                            'key'     => $key,
+                            'compare' => 'EXISTS',
+                        ),
+                        array(
+                            'key'     => $key,
+                            'value'   => '',
+                            'compare' => '!=',
+                        ),
+                    );
 				} else {
-					$args['meta_compare'] = '=';
+                    $args['meta_query'] = array(
+                        'relation' => 'OR',
+                        array(
+                            'key'     => $key,
+                            'compare' => 'NOT EXISTS',
+                        ),
+                        array(
+                            'key'     => $key,
+                            'value'   => '',
+                            'compare' => '=',
+                        ),
+                    );
 				}
-				$args['meta_value'] = '0';
-				break;
+                break;
 		}
 
 		if ( $this->is_search ) {
