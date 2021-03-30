@@ -1756,7 +1756,7 @@ class CoAuthors_Plus {
 		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
 				$args['url'] = get_the_post_thumbnail_url( $id, $this->gravatar_size );
-			} elseif ( isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
+			} elseif ( isset( $coauthor->user_email ) ) {
 				$args['url'] = get_avatar_url( $coauthor->user_email );
 			} else {
 				$args['url'] = get_avatar_url( '' ); // Fallback to default.
