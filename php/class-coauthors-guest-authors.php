@@ -776,7 +776,7 @@ class CoAuthors_Guest_Authors
 			&& is_user_member_of_blog( $user->ID, get_current_blog_id() )
 			&& $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) ) {
 			// if user has selected to link account to matching user we don't have to bail
-			if ( $_POST['cap-linked_account'] > 0 && ( (int)$_POST['cap-linked_account'] === (int)$user->ID ) ) {
+			if ( (int)$_POST['cap-linked_account'] === (int)$user->ID ) {
 				return $post_data;
 			}
 			// if user has selected to link account NOT matching user, bail with custom message
