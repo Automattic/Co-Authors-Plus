@@ -10,6 +10,8 @@ require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 class CoAuthors_WP_List_Table extends WP_List_Table {
 
 	var $is_search = false;
+    var $filters = array();
+    var $active_filter = '';
 
 	function __construct() {
 		if ( ! empty( $_REQUEST['s'] ) ) {
@@ -94,18 +96,21 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			$this->active_filter = 'show-all';
 		}
 
-		switch ( $this->active_filter ) {
-			case 'with-linked-account':
-			case 'without-linked-account':
-				$args['meta_key'] = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
-				if ( 'with-linked-account' == $this->active_filter ) {
-					$args['meta_compare'] = '!=';
-				} else {
-					$args['meta_compare'] = '=';
-				}
-				$args['meta_value'] = '0';
-				break;
-		}
+        $key = $coauthors_plus->guest_authors->get_post_meta_key( 'linked_account' );
+        switch ( $this->active_filter ) {
+            case 'with-linked-account':
+                $args['meta_query'] = array(
+                    array( 'key' => $key, 'compare' => '!=', 'value' => '' ),
+                );
+                break;
+            case 'without-linked-account':
+                $args['meta_query'] = array(
+                    'relation' => 'OR',
+                    array( 'key' => $key, 'compare' => 'NOT EXISTS' ),
+                    array( 'key' => $key, 'compare' => '=', 'value' => '' ),
+                );
+                break;
+        }
 
 		if ( $this->is_search ) {
 			add_filter( 'posts_where', array( $this, 'filter_query_for_search' ) );
@@ -276,8 +281,8 @@ if ( 'top' == $which ) {
 			echo '<option value="' . esc_attr( $key ) . '" ' . selected( $this->active_filter, $key, false ) . '>' . esc_attr( $value ) . '</option>';
 		}
 		echo '</select>';
+	    submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
 	}
-	submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
 }
 		?></div><?php
 	}
