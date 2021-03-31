@@ -100,8 +100,6 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
         switch ( $this->active_filter ) {
             case 'with-linked-account':
                 $args['meta_query'] = array(
-                    'relation' => 'AND',
-                    array( 'key' => $key, 'compare' => 'EXISTS' ),
                     array( 'key' => $key, 'compare' => '!=', 'value' => '' ),
                 );
                 break;
