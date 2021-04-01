@@ -27,7 +27,7 @@ msgid ""
 "a javascript-capable browser"
 msgstr ""
 "<strong>שימו לב:</strong> כדי לערוך את מחברי הפוסט יש לאפשר שימוש "
-"בJavascript בדפדפן."
+"Javascript בדפדפן."
 
 #: co-authors-plus.php:369 co-authors-plus.php:489 co-authors-plus.php:1095
 msgid ""
