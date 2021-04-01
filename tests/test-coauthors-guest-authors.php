@@ -124,22 +124,15 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $guest_author_obj->get_guest_author_thumbnail( $guest_author, 0 ) );
 
-		// Checks when guest author has thumbnail.
-		$filename = rand_str() . '.jpg';
-		$contents = rand_str();
-		$upload   = wp_upload_bits( $filename, null, $contents );
-
-		$this->assertTrue( empty( $upload['error'] ) );
-
-		$attachment_id = $this->_make_attachment( $upload );
+		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/dummy-attachment.png' );
 
 		set_post_thumbnail( $guest_author->ID, $attachment_id );
 
 		$thumbnail = $guest_author_obj->get_guest_author_thumbnail( $guest_author, 0 );
 
 		$this->assertContains( 'avatar-0', $thumbnail );
-		$this->assertContains( $filename, $thumbnail );
-		$this->assertContains( 'src="' . wp_get_attachment_url( $attachment_id ) . '"', $thumbnail );
+		$this->assertContains( 'dummy-attachment', $thumbnail );
+		$this->assertContains( wp_get_attachment_url( $attachment_id ), $thumbnail );
 	}
 
 	/**

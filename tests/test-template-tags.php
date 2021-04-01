@@ -988,6 +988,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	public function test_coauthors_get_avatar_default() {
 
 		$this->assertEmpty( coauthors_get_avatar( $this->author1->ID ) );
+
 		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*'( loading='[^']*')?/>$|", coauthors_get_avatar( $this->author1 ) ), 1 );
 	}
 
@@ -1006,24 +1007,17 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		) );
 
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
+		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/dummy-attachment.png', $guest_author_id );
 
 		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*'( loading='[^']*')?/>$|", coauthors_get_avatar( $guest_author ) ), 1 );
-
-		$filename = rand_str() . '.jpg';
-		$contents = rand_str();
-		$upload   = wp_upload_bits( $filename, null, $contents );
-
-		$this->assertTrue( empty( $upload['error'] ) );
-
-		$attachment_id = $this->_make_attachment( $upload );
 
 		set_post_thumbnail( $guest_author->ID, $attachment_id );
 
 		$avatar         = coauthors_get_avatar( $guest_author );
 		$attachment_url = wp_get_attachment_url( $attachment_id );
 
-		$this->assertContains( $filename, $avatar );
-		$this->assertContains( 'src="' . $attachment_url . '"', $avatar );
+		$this->assertContains( 'dummy-attachment', $avatar );
+		$this->assertContains( $attachment_url, $avatar );
 	}
 
 	/**
