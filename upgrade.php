@@ -15,9 +15,13 @@ function coauthors_plus_upgrade_20() {
 	global $coauthors_plus;
 
 	// Get all posts with meta_key _coauthor
-	$all_posts = get_posts( array( 'numberposts' => '-1', 'meta_key' => '_coauthor' ) );
+	$all_posts = get_posts(
+		array(
+			'numberposts' => '-1',
+			'meta_key'    => '_coauthor',
+		)
+	);
 
-	
 	foreach ( $all_posts as $single_post ) {
 		// reset execution time limit
 		set_time_limit( 60 );
