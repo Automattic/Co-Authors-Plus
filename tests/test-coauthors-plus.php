@@ -6,16 +6,28 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		parent::setUp();
 
-		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
-		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
+		$this->author1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author1',
+			)
+		);
+		$this->editor1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'editor',
+				'user_login' => 'editor1',
+			)
+		);
 
-		$this->post = $this->factory->post->create_and_get( array(
-			'post_author'  => $this->author1->ID,
-			'post_status'  => 'publish',
-			'post_content' => rand_str(),
-			'post_title'   => rand_str(),
-			'post_type'    => 'post',
-		) );
+		$this->post = $this->factory->post->create_and_get(
+			array(
+				'post_author'  => $this->author1->ID,
+				'post_status'  => 'publish',
+				'post_content' => rand_str(),
+				'post_title'   => rand_str(),
+				'post_type'    => 'post',
+			)
+		);
 	}
 
 	/**
@@ -47,10 +59,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$guest_author_id = $coauthors_plus->guest_authors->create( array(
-			'user_login'   => 'author2',
-			'display_name' => 'author2',
-		) );
+		$guest_author_id = $coauthors_plus->guest_authors->create(
+			array(
+				'user_login'   => 'author2',
+				'display_name' => 'author2',
+			)
+		);
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $guest_author_id );
 
@@ -200,9 +214,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$GLOBALS['current_screen'] = $screen;
 
 		// Checks when current user is admin.
-		$admin1 = $this->factory->user->create_and_get( array(
-			'role' => 'administrator',
-		) );
+		$admin1 = $this->factory->user->create_and_get(
+			array(
+				'role' => 'administrator',
+			)
+		);
 
 		wp_set_current_user( $admin1->ID );
 
@@ -248,9 +264,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
 
 		// Checks when current user is super admin.
-		$admin1 = $this->factory->user->create_and_get( array(
-			'role' => 'administrator',
-		) );
+		$admin1 = $this->factory->user->create_and_get(
+			array(
+				'role' => 'administrator',
+			)
+		);
 
 		grant_super_admin( $admin1->ID );
 		wp_set_current_user( $admin1->ID );
@@ -289,9 +307,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
 
 		// Checks when current user is super admin.
-		$admin1 = $this->factory->user->create_and_get( array(
-			'role' => 'administrator',
-		) );
+		$admin1 = $this->factory->user->create_and_get(
+			array(
+				'role' => 'administrator',
+			)
+		);
 
 		grant_super_admin( $admin1->ID );
 		wp_set_current_user( $admin1->ID );
@@ -315,9 +335,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$current_user = get_current_user_id();
 
 		// Checking when current user is subscriber and filter is true/false.
-		$subscriber1 = $this->factory->user->create_and_get( array(
-			'role' => 'subscriber',
-		) );
+		$subscriber1 = $this->factory->user->create_and_get(
+			array(
+				'role' => 'subscriber',
+			)
+		);
 
 		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $this->post ) );
 
@@ -360,10 +382,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayHasKey( $this->editor1->user_login, $authors );
 
 		// Checks when search term is empty and any subscriber exists.
-		$subscriber1 = $this->factory->user->create_and_get( array(
-			'role'       => 'subscriber',
-			'user_login' => 'subscriber1'
-		) );
+		$subscriber1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'subscriber',
+				'user_login' => 'subscriber1',
+			)
+		);
 
 		$authors = $coauthors_plus->search_authors();
 
@@ -371,10 +395,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey( $subscriber1->user_login, $authors );
 
 		// Checks when search term is empty and any contributor exists.
-		$contributor1 = $this->factory->user->create_and_get( array(
-			'role'       => 'contributor',
-			'user_login' => 'contributor1'
-		) );
+		$contributor1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'contributor',
+				'user_login' => 'contributor1',
+			)
+		);
 
 		$authors = $coauthors_plus->search_authors();
 
@@ -427,9 +453,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey( 'admin', $authors );
 
 		// Checks when any subscriber exists using ID but not author.
-		$subscriber1 = $this->factory->user->create_and_get( array(
-			'role' => 'subscriber',
-		) );
+		$subscriber1 = $this->factory->user->create_and_get(
+			array(
+				'role' => 'subscriber',
+			)
+		);
 
 		$this->assertEmpty( $coauthors_plus->search_authors( $subscriber1->ID ) );
 	}
@@ -452,10 +480,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey( $this->author1->user_login, $authors );
 
 		// Checks when ignoring author1 but also exists one more author with similar kind of data.
-		$author2 = $this->factory->user->create_and_get( array(
-			'role'       => 'author',
-			'user_login' => 'author2'
-		) );
+		$author2 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author2',
+			)
+		);
 
 		$authors = $coauthors_plus->search_authors( '', $ignored_authors );
 
@@ -486,10 +516,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertEmpty( $coauthors_plus->search_authors( $this->author1->ID, $ignored_authors ) );
 
 		// Checks when ignoring author1 but also exists one more author with similar kind of data.
-		$author2 = $this->factory->user->create_and_get( array(
-			'role'       => 'author',
-			'user_login' => 'author2',
-		) );
+		$author2 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author2',
+			)
+		);
 
 		$authors = $coauthors_plus->search_authors( 'author', $ignored_authors );
 
@@ -567,10 +599,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		// Checks when term exists without linked account.
-		$coauthor_id = $coauthors_plus->guest_authors->create( array(
-			'display_name' => 'guest',
-			'user_login'   => 'guest',
-		) );
+		$coauthor_id = $coauthors_plus->guest_authors->create(
+			array(
+				'display_name' => 'guest',
+				'user_login'   => 'guest',
+			)
+		);
 		$coauthor    = $coauthors_plus->get_coauthor_by( 'id', $coauthor_id );
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
@@ -613,10 +647,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( $this->author1->display_name . ' ' . $this->author1->first_name . ' ' . $this->author1->last_name . ' ' . $this->author1->user_login . ' ' . $this->author1->ID . ' ' . $this->author1->user_email, $author_term->description );
 
 		// Checks term description after updating user.
-		wp_update_user( array(
-			'ID'         => $this->author1->ID,
-			'first_name' => 'author1',
-		) );
+		wp_update_user(
+			array(
+				'ID'         => $this->author1->ID,
+				'first_name' => 'author1',
+			)
+		);
 
 		$author_term = $coauthors_plus->update_author_term( $this->author1 );
 
@@ -625,10 +661,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Backup coauthor taxonomy.
 		$taxonomy_backup = $coauthors_plus->coauthor_taxonomy;
 
-		wp_update_user( array(
-			'ID'         => $this->author1->ID,
-			'last_name' => 'author1',
-		) );
+		wp_update_user(
+			array(
+				'ID'        => $this->author1->ID,
+				'last_name' => 'author1',
+			)
+		);
 
 		// Checks with different taxonomy.
 		$coauthors_plus->coauthor_taxonomy = 'abcd';
@@ -654,10 +692,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( $this->editor1->display_name . ' ' . $this->editor1->first_name . ' ' . $this->editor1->last_name . ' ' . $this->editor1->user_login . ' ' . $this->editor1->ID . ' ' . $this->editor1->user_email, $author_term->description );
 
 		// Checks term description after updating user.
-		wp_update_user( array(
-			'ID'         => $this->editor1->ID,
-			'first_name' => 'editor1',
-		) );
+		wp_update_user(
+			array(
+				'ID'         => $this->editor1->ID,
+				'first_name' => 'editor1',
+			)
+		);
 
 		$author_term = $coauthors_plus->update_author_term( $this->editor1 );
 
@@ -666,10 +706,12 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Backup coauthor taxonomy.
 		$taxonomy_backup = $coauthors_plus->coauthor_taxonomy;
 
-		wp_update_user( array(
-			'ID'        => $this->editor1->ID,
-			'last_name' => 'editor1',
-		) );
+		wp_update_user(
+			array(
+				'ID'        => $this->editor1->ID,
+				'last_name' => 'editor1',
+			)
+		);
 
 		// Checks with different taxonomy.
 		$coauthors_plus->coauthor_taxonomy = 'abcd';

@@ -6,17 +6,34 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		parent::setUp();
 
-		$this->admin1  = $this->factory->user->create_and_get( array( 'role' => 'administrator', 'user_login' => 'admin1' ) );
-		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
-		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
+		$this->admin1  = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'administrator',
+				'user_login' => 'admin1',
+			)
+		);
+		$this->author1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author1',
+			)
+		);
+		$this->editor1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'editor',
+				'user_login' => 'editor1',
+			)
+		);
 
-		$this->post = $this->factory->post->create_and_get( array(
-			'post_author'  => $this->author1->ID,
-			'post_status'  => 'publish',
-			'post_content' => rand_str(),
-			'post_title'   => rand_str(),
-			'post_type'    => 'post',
-		) );
+		$this->post = $this->factory->post->create_and_get(
+			array(
+				'post_author'  => $this->author1->ID,
+				'post_status'  => 'publish',
+				'post_content' => rand_str(),
+				'post_title'   => rand_str(),
+				'post_type'    => 'post',
+			)
+		);
 	}
 
 	/**
@@ -116,10 +133,12 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
 		// Checks when guest author does not have any thumbnail.
-		$guest_author_id = $guest_author_obj->create( array(
-			'user_login'   => 'author2',
-			'display_name' => 'author2',
-		) );
+		$guest_author_id = $guest_author_obj->create(
+			array(
+				'user_login'   => 'author2',
+				'display_name' => 'author2',
+			)
+		);
 		$guest_author    = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 
 		$this->assertNull( $guest_author_obj->get_guest_author_thumbnail( $guest_author, 0 ) );
@@ -221,10 +240,12 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$this->assertEmpty( $guest_author_obj->get_all_linked_accounts() );
 
 		// Checks when guest author ( not linked account ) exists.
-		$guest_author_obj->create( array(
-			'user_login'   => 'author2',
-			'display_name' => 'author2',
-		) );
+		$guest_author_obj->create(
+			array(
+				'user_login'   => 'author2',
+				'display_name' => 'author2',
+			)
+		);
 
 		$this->assertEmpty( $guest_author_obj->get_all_linked_accounts() );
 
@@ -576,7 +597,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 			$guest_author_obj->handle_delete_guest_author_action();
 
-		} catch( Exception $e ) {
+		} catch ( Exception $e ) {
 
 			$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
 			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
@@ -641,7 +662,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		} catch ( Exception $e ) {
 
-			//$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
+			// $this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
 			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
 			$this->assertContains( 'message=guest-author-deleted', $e->getMessage() );
 		}
@@ -822,9 +843,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author2      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id2 );
 		$guest_author_term2 = $coauthors_plus->get_author_term( $guest_author2 );
 
-		$post = $this->factory->post->create_and_get( array(
-			'post_author' => $author2->ID,
-		) );
+		$post = $this->factory->post->create_and_get(
+			array(
+				'post_author' => $author2->ID,
+			)
+		);
 
 		$response = $guest_author_obj->delete( $guest_author_id2, $guest_admin->linked_account );
 
@@ -846,10 +869,12 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$guest_author_id   = $guest_author_obj->create( array(
-			'user_login'   => 'guest_author',
-			'display_name' => 'guest_author',
-		) );
+		$guest_author_id   = $guest_author_obj->create(
+			array(
+				'user_login'   => 'guest_author',
+				'display_name' => 'guest_author',
+			)
+		);
 		$guest_author      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 		$guest_author_term = $coauthors_plus->get_author_term( $guest_author );
 
@@ -874,10 +899,12 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_admin_id = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
 		$guest_admin    = $guest_author_obj->get_guest_author_by( 'ID', $guest_admin_id );
 
-		$guest_author_id   = $guest_author_obj->create( array(
-			'user_login'   => 'guest_author',
-			'display_name' => 'guest_author',
-		) );
+		$guest_author_id   = $guest_author_obj->create(
+			array(
+				'user_login'   => 'guest_author',
+				'display_name' => 'guest_author',
+			)
+		);
 		$guest_author      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 		$guest_author_term = $coauthors_plus->get_author_term( $guest_author );
 
