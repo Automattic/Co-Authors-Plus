@@ -277,7 +277,7 @@ msgstr "מחבר אורח עודכן בהצלחה."
 #. translators: %s: date and time of the revision
 #: php/class-coauthors-guest-authors.php:161
 msgid "Guest author restored to revision from %s"
-msgstr "מחבר אורח שוחזר לעותק שמור מ-%s"
+msgstr "מחבר אורח שיחזר לעותק שמור מ-%s"
 
 #: php/class-coauthors-guest-authors.php:163
 msgid "Guest author saved."
