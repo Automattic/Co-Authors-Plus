@@ -193,7 +193,7 @@ jQuery( document ).ready(function () {
 	// Callback for when a user selects a co-author
 	function coauthors_autosuggest_select() {
 		$this = jQuery( this );
-		var vals = this.value.split( '|' );
+		var vals = this.value.split( '∣' );
 
 		var author = {}
 		author.id = jQuery.trim( vals[0] );
@@ -424,7 +424,7 @@ jQuery( document ).ready(function () {
 						avatar: jQuery( el ).data( 'avatar' ),
 					}
 				});
-				
+
 				coauthors_initialize( post_coauthors );
 
 			}
