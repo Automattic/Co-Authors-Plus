@@ -1209,6 +1209,8 @@ class CoAuthors_Plus {
 				"%s ∣ %s ∣ %s ∣ %s ∣ %s ∣ %s \n",
 				esc_html( $author->ID ),
 				esc_html( $author->user_login ),
+				// Ensure that author names can contain a pipe character by replacing the pipe character with the
+				// divides character, which will now serve as a delimiter of the author parameters. (#370)
 				esc_html( str_replace( '∣', '|', $author->display_name ) ),
 				esc_html( $author->user_email ),
 				esc_html( rawurldecode( $author->user_nicename ) ),
