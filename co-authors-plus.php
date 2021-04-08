@@ -1205,8 +1205,17 @@ class CoAuthors_Plus {
 		}
 
 		foreach ( $authors as $author ) {
-			$avatar_url = get_avatar_url( $author->ID );
-			echo esc_html( $author->ID . ' | ' . $author->user_login . ' | ' . $author->display_name . ' | ' . $author->user_email . ' | ' . rawurldecode( $author->user_nicename ) ) . ' | ' . esc_url( $avatar_url ) . "\n";
+			printf(
+				"%s ∣ %s ∣ %s ∣ %s ∣ %s ∣ %s \n",
+				esc_html( $author->ID ),
+				esc_html( $author->user_login ),
+				// Ensure that author names can contain a pipe character by replacing the pipe character with the
+				// divides character, which will now serve as a delimiter of the author parameters. (#370)
+				esc_html( str_replace( '∣', '|', $author->display_name ) ),
+				esc_html( $author->user_email ),
+				esc_html( rawurldecode( $author->user_nicename ) ),
+				esc_url( get_avatar_url( $author->ID ) )
+			);
 		}
 
 		die();
@@ -1376,7 +1385,7 @@ class CoAuthors_Plus {
 		?>
 			<script type="text/javascript">
 				// AJAX link used for the autosuggest
-				var coAuthorsPlus_ajax_suggest_link = 
+				var coAuthorsPlus_ajax_suggest_link =
 				<?php
 				echo wp_json_encode(
 					add_query_arg(
