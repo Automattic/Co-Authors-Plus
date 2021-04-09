@@ -1052,20 +1052,57 @@ class CoAuthors_Plus {
 
 		if ( is_object( $user ) ) {
 			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
-
 			$term = $this->get_author_term( $user );
 
-			if ( $term && ! is_wp_error( $term ) ) {
-				if ( 'guest-author' === $user->type ) {
-					// If using guest author term count, add on linked user count.
-					$count = (int) $count + $term->count;
-				} else {
-					$count = $term->count;
-				}
+			if ( ! $user->linked_account ) {
+				$count = $term->count;
+			} else {
+				$count = $this->get_linked_post_count( $user->user_nicename, $user->linked_account );
 			}
 		}
 
 		return $count;
+	}
+
+	/**
+	 * Get the post count of linked accounts.
+	 *
+	 * @param string $user_account The name of the user account.
+	 * @param string $linked_account The name of the linked account.
+	 *
+	 * @return int The post count of linked accounts.
+	 */
+	function get_linked_post_count( $user_account, $linked_account ) {
+		$user_account_ids   = $this->get_post_ids_by_author_name( $user_account );
+		$linked_account_ids = $this->get_post_ids_by_author_name( $linked_account );
+
+		return count( array_unique( array_merge( $user_account_ids, $linked_account_ids ) ) );
+	}
+
+	/**
+	 * Get the post IDs by author name.
+	 *
+	 * @param string $author_name The name of the corresponding user.
+	 *
+	 * @return array The IDs of all matching posts.
+	 */
+	function get_post_ids_by_author_name( $author_name ) {
+		$results = array();
+		$args    = array(
+			'author_name' => $author_name,
+			'post_type'   => 'post',
+		);
+		$query   = new WP_Query( $args );
+
+		if ( ! $query->post_count ) {
+			return $results;
+		}
+
+		foreach ( $query->posts as $post ) {
+			$results[] = $post->ID;
+		}
+
+		return $results;
 	}
 
 	/**
