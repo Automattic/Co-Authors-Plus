@@ -11,18 +11,30 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		 * we need CoAuthors_Template_Filters object to check 'the_author' filter.
 		 */
 		global $coauthors_plus_template_filters;
-		$coauthors_plus_template_filters = new CoAuthors_Template_Filters;
+		$coauthors_plus_template_filters = new CoAuthors_Template_Filters();
 
-		$this->author1 = $this->factory->user->create_and_get( array( 'role' => 'author', 'user_login' => 'author1' ) );
-		$this->editor1 = $this->factory->user->create_and_get( array( 'role' => 'editor', 'user_login' => 'editor1' ) );
+		$this->author1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author1',
+			)
+		);
+		$this->editor1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'editor',
+				'user_login' => 'editor1',
+			)
+		);
 
-		$this->post = $this->factory->post->create_and_get( array(
-			'post_author'  => $this->author1->ID,
-			'post_status'  => 'publish',
-			'post_content' => rand_str(),
-			'post_title'   => rand_str(),
-			'post_type'    => 'post',
-		) );
+		$this->post = $this->factory->post->create_and_get(
+			array(
+				'post_author'  => $this->author1->ID,
+				'post_status'  => 'publish',
+				'post_content' => rand_str(),
+				'post_title'   => rand_str(),
+				'post_type'    => 'post',
+			)
+		);
 	}
 
 	/**
@@ -70,10 +82,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertStringContainsString( ' or ', $multiple_cpl, 'Coauthors name separator is not matched.' );
 
-		$this->assertEquals( 10, has_filter( 'the_author', array(
-			$coauthors_plus_template_filters,
-			'filter_the_author',
-		) ) );
+		$this->assertEquals(
+			10,
+			has_filter(
+				'the_author',
+				array(
+					$coauthors_plus_template_filters,
+					'filter_the_author',
+				)
+			)
+		);
 
 		// Restore backed up post to global.
 		$GLOBALS['post'] = $post_backup;
@@ -115,10 +133,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertStringContainsString( ' or ', $multiple_cpl, 'Coauthors name separator is not matched.' );
 
-		$this->assertEquals( 10, has_filter( 'the_author', array(
-			$coauthors_plus_template_filters,
-			'filter_the_author',
-		) ) );
+		$this->assertEquals(
+			10,
+			has_filter(
+				'the_author',
+				array(
+					$coauthors_plus_template_filters,
+					'filter_the_author',
+				)
+			)
+		);
 
 		// Restore backed up post to global.
 		$GLOBALS['post'] = $post_backup;
@@ -148,10 +172,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Compare multiple authors.
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
-		$this->assertEquals( array(
-			$this->author1->ID,
-			$this->editor1->ID,
-		), wp_list_pluck( get_coauthors( $this->post->ID ), 'ID' ) );
+		$this->assertEquals(
+			array(
+				$this->author1->ID,
+				$this->editor1->ID,
+			),
+			wp_list_pluck( get_coauthors( $this->post->ID ), 'ID' )
+		);
 	}
 
 	/**
@@ -182,9 +209,11 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertEmpty( get_coauthors() );
 
 		$user_id = $this->factory->user->create();
-		$post    = $this->factory->post->create_and_get( array(
-			'post_author' => $user_id,
-		) );
+		$post    = $this->factory->post->create_and_get(
+			array(
+				'post_author' => $user_id,
+			)
+		);
 
 		$this->assertEquals( array( $user_id ), wp_list_pluck( get_coauthors(), 'ID' ) );
 
@@ -408,12 +437,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Checking when first name is set for user.
 		$first_name = 'Test';
-		$user_id    = $this->factory->user->create( array(
-			'first_name' => $first_name,
-		) );
-		$post       = $this->factory->post->create_and_get( array(
-			'post_author' => $user_id,
-		) );
+		$user_id    = $this->factory->user->create(
+			array(
+				'first_name' => $first_name,
+			)
+		);
+		$post       = $this->factory->post->create_and_get(
+			array(
+				'post_author' => $user_id,
+			)
+		);
 
 		$first_names = coauthors_firstnames( null, null, null, null, false );
 
@@ -459,12 +492,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Checking when last name is set for user.
 		$last_name = 'Test';
-		$user_id   = $this->factory->user->create( array(
-			'last_name' => $last_name,
-		) );
-		$post      = $this->factory->post->create_and_get( array(
-			'post_author' => $user_id,
-		) );
+		$user_id   = $this->factory->user->create(
+			array(
+				'last_name' => $last_name,
+			)
+		);
+		$post      = $this->factory->post->create_and_get(
+			array(
+				'post_author' => $user_id,
+			)
+		);
 
 		$last_names = coauthors_lastnames( null, null, null, null, false );
 
@@ -510,12 +547,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Checking when nickname is set for user.
 		$nick_name = 'Test';
-		$user_id   = $this->factory->user->create( array(
-			'nickname' => $nick_name,
-		) );
-		$post      = $this->factory->post->create_and_get( array(
-			'post_author' => $user_id,
-		) );
+		$user_id   = $this->factory->user->create(
+			array(
+				'nickname' => $nick_name,
+			)
+		);
+		$post      = $this->factory->post->create_and_get(
+			array(
+				'post_author' => $user_id,
+			)
+		);
 
 		$nick_names = coauthors_nicknames( null, null, null, null, false );
 
@@ -559,12 +600,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( '<span>' . $this->author1->user_email . '</span><span>' . $this->editor1->user_email . '</span>', $emails );
 
 		$email   = 'test@example.org';
-		$user_id = $this->factory->user->create( array(
-			'user_email' => $email,
-		) );
-		$post    = $this->factory->post->create_and_get( array(
-			'post_author' => $user_id,
-		) );
+		$user_id = $this->factory->user->create(
+			array(
+				'user_email' => $email,
+			)
+		);
+		$post    = $this->factory->post->create_and_get(
+			array(
+				'post_author' => $user_id,
+			)
+		);
 
 		$emails = coauthors_emails( null, null, null, null, false );
 
@@ -590,18 +635,23 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Backing up global author data.
 		$authordata_backup = $authordata;
-		$authordata = $this->author1;
+		$authordata        = $this->author1;
 
 		// Shows that it's necessary to set $authordata to $this->author1
 		$this->assertEquals( $authordata, $this->author1, 'Global $authordata not matching expected $this->author1.' );
-		
+
 		$this->author1->type = 'guest-author';
 
 		$this->assertEquals( get_the_author_link(), coauthors_links_single( $this->author1 ), 'Co-Author link generation differs from Core author link one (without user_url)' );
-		
-		wp_update_user( array( 'ID' => $this->author1->ID, 'user_url' => 'example.org' ) );
+
+		wp_update_user(
+			array(
+				'ID'       => $this->author1->ID,
+				'user_url' => 'example.org',
+			)
+		);
 		$authordata = get_userdata( $this->author1->ID ); // Because wp_update_user flushes cache, but does not update global var
-		
+
 		$this->assertEquals( get_the_author_link(), coauthors_links_single( $this->author1 ), 'Co-Author link generation differs from Core author link one (with user_url)' );
 
 		$author_link = coauthors_links_single( $this->author1 );
@@ -636,9 +686,11 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global author data.
 		$authordata_backup = $authordata;
 
-		$user_id = $this->factory->user->create( array(
-			'user_url' => 'example.org',
-		) );
+		$user_id = $this->factory->user->create(
+			array(
+				'user_url' => 'example.org',
+			)
+		);
 		$user    = get_user_by( 'id', $user_id );
 
 		$authordata  = $user;
@@ -807,10 +859,15 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_wp_list_authors_for_optioncount() {
 
-		$this->assertStringContainsString( '(' . count_user_posts( $this->author1->ID ) . ')', coauthors_wp_list_authors( array(
-			'echo'        => false,
-			'optioncount' => true,
-		) ) );
+		$this->assertStringContainsString(
+			'(' . count_user_posts( $this->author1->ID ) . ')',
+			coauthors_wp_list_authors(
+				array(
+					'echo'        => false,
+					'optioncount' => true,
+				)
+			)
+		);
 	}
 
 	/**
@@ -827,14 +884,18 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertStringContainsString( $this->author1->display_name, coauthors_wp_list_authors( $args ) );
 
-		$user = $this->factory->user->create_and_get( array(
-			'first_name' => 'First',
-			'last_name'  => 'Last',
-		) );
+		$user = $this->factory->user->create_and_get(
+			array(
+				'first_name' => 'First',
+				'last_name'  => 'Last',
+			)
+		);
 
-		$this->factory->post->create( array(
-			'post_author' => $user->ID,
-		) );
+		$this->factory->post->create(
+			array(
+				'post_author' => $user->ID,
+			)
+		);
 
 		$this->assertStringContainsString( "{$user->user_firstname} {$user->user_lastname}", coauthors_wp_list_authors( $args ) );
 	}
@@ -848,15 +909,22 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$coauthors_plus->guest_authors->create( array(
-			'user_login'   => 'author2',
-			'display_name' => 'author2',
-		) );
+		$coauthors_plus->guest_authors->create(
+			array(
+				'user_login'   => 'author2',
+				'display_name' => 'author2',
+			)
+		);
 
-		$this->assertStringContainsString( 'author2', coauthors_wp_list_authors( array(
-			'echo'       => false,
-			'hide_empty' => false,
-		) ) );
+		$this->assertStringContainsString(
+			'author2',
+			coauthors_wp_list_authors(
+				array(
+					'echo'       => false,
+					'hide_empty' => false,
+				)
+			)
+		);
 	}
 
 	/**
@@ -867,10 +935,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	public function test_coauthors_wp_list_authors_for_feed() {
 
 		$feed_text = 'link to feed';
-		$coauthors = coauthors_wp_list_authors( array(
-			'echo' => false,
-			'feed' => $feed_text,
-		) );
+		$coauthors = coauthors_wp_list_authors(
+			array(
+				'echo' => false,
+				'feed' => $feed_text,
+			)
+		);
 
 		$this->assertStringContainsString( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
 		$this->assertStringContainsString( $feed_text, $coauthors );
@@ -884,10 +954,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	public function test_coauthors_wp_list_authors_for_feed_image() {
 
 		$feed_image = WP_TESTS_DOMAIN . '/path/to/a/graphic.png';
-		$coauthors  = coauthors_wp_list_authors( array(
-			'echo'       => false,
-			'feed_image' => $feed_image,
-		) );
+		$coauthors  = coauthors_wp_list_authors(
+			array(
+				'echo'       => false,
+				'feed_image' => $feed_image,
+			)
+		);
 
 		$this->assertStringContainsString( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
 		$this->assertStringContainsString( $feed_image, $coauthors );
@@ -902,11 +974,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$feed_type = 'atom';
 		$feed_text = 'link to feed';
-		$coauthors = coauthors_wp_list_authors( array(
-			'echo'      => false,
-			'feed_type' => $feed_type,
-			'feed'      => $feed_text,
-		) );
+		$coauthors = coauthors_wp_list_authors(
+			array(
+				'echo'      => false,
+				'feed_type' => $feed_type,
+				'feed'      => $feed_text,
+			)
+		);
 
 		$this->assertStringContainsString( esc_url( get_author_feed_link( $this->author1->ID, $feed_type ) ), $coauthors );
 		$this->assertStringContainsString( $feed_type, $coauthors );
@@ -920,10 +994,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_wp_list_authors_for_style() {
 
-		$coauthors = coauthors_wp_list_authors( array(
-			'echo'  => false,
-			'style' => 'none',
-		) );
+		$coauthors = coauthors_wp_list_authors(
+			array(
+				'echo'  => false,
+				'style' => 'none',
+			)
+		);
 
 		$this->assertNotContains( '<li>', $coauthors );
 		$this->assertNotContains( '</li>', $coauthors );
@@ -966,10 +1042,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertEmpty( coauthors_wp_list_authors( $args ) );
 
-		$guest_author_id = $coauthors_plus->guest_authors->create( array(
-			'user_login'   => 'author2',
-			'display_name' => 'author2',
-		) );
+		$guest_author_id = $coauthors_plus->guest_authors->create(
+			array(
+				'user_login'   => 'author2',
+				'display_name' => 'author2',
+			)
+		);
 
 		$this->assertEmpty( coauthors_wp_list_authors( $args ) );
 
@@ -1001,10 +1079,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$guest_author_id = $coauthors_plus->guest_authors->create( array(
-			'user_login'   => 'author2',
-			'display_name' => 'author2',
-		) );
+		$guest_author_id = $coauthors_plus->guest_authors->create(
+			array(
+				'user_login'   => 'author2',
+				'display_name' => 'author2',
+			)
+		);
 
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
 		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/fixtures/dummy-attachment.png', $guest_author_id );
@@ -1031,10 +1111,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$guest_author_id = $coauthors_plus->guest_authors->create( array(
-			'user_login'   => 'author2',
-			'display_name' => 'author2',
-		) );
+		$guest_author_id = $coauthors_plus->guest_authors->create(
+			array(
+				'user_login'   => 'author2',
+				'display_name' => 'author2',
+			)
+		);
 
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
 
