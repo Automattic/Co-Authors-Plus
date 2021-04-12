@@ -272,11 +272,12 @@ class CoAuthors_Plus {
 				if ( 'user_nicename' == $key ) {
 					$key = 'slug';
 				}
-				// Ensure we aren't doing the lookup by the prefixed value
-				if ( 'login' == $key || 'slug' == $key ) {
-					$value = preg_replace( '#^cap\-#', '', $value );
-				}
 				$user = get_user_by( $key, $value );
+				if ( ! $user && ( 'login' == $key || 'slug' == $key ) ) {
+					// Re-try lookup without prefixed value if no results found.
+					$value = preg_replace( '#^cap\-#', '', $value );
+					$user = get_user_by( $key, $value );
+				}
 				if ( ! $user ) {
 					return false;
 				}
