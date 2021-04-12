@@ -44,23 +44,23 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Checks for single post author.
 		$single_cpl = coauthors_posts_links( null, null, null, null, false );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $single_cpl, 'Author link not found.' );
-		$this->assertContains( $this->author1->display_name, $single_cpl, 'Author name not found.' );
+		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $single_cpl, 'Author link not found.' );
+		$this->assertStringContainsString( $this->author1->display_name, $single_cpl, 'Author name not found.' );
 
 		// Checks for multiple post author.
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
 		$multiple_cpl = coauthors_posts_links( null, null, null, null, false );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $multiple_cpl, 'Main author link not found.' );
-		$this->assertContains( $this->author1->display_name, $multiple_cpl, 'Main author name not found.' );
+		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $multiple_cpl, 'Main author link not found.' );
+		$this->assertStringContainsString( $this->author1->display_name, $multiple_cpl, 'Main author name not found.' );
 
 		// Here we are checking author name should not be more then one time.
 		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $multiple_cpl, ">{$this->author1->display_name}<" ) );
-		$this->assertContains( ' and ', $multiple_cpl, 'Coauthors name separator is not matched.' );
-		$this->assertContains( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $multiple_cpl, 'Coauthor link not found.' );
-		$this->assertContains( $this->editor1->display_name, $multiple_cpl, 'Coauthor name not found.' );
+		$this->assertStringContainsString( ' and ', $multiple_cpl, 'Coauthors name separator is not matched.' );
+		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $multiple_cpl, 'Coauthor link not found.' );
+		$this->assertStringContainsString( $this->editor1->display_name, $multiple_cpl, 'Coauthor name not found.' );
 
 		// Here we are checking editor name should not be more then one time.
 		// Asserting ">{$this->editor1->display_name}<" because "$this->editor1->display_name" can be multiple times like in href, title, etc.
@@ -68,7 +68,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$multiple_cpl = coauthors_links( null, ' or ', null, null, false );
 
-		$this->assertContains( ' or ', $multiple_cpl, 'Coauthors name separator is not matched.' );
+		$this->assertStringContainsString( ' or ', $multiple_cpl, 'Coauthors name separator is not matched.' );
 
 		$this->assertEquals( 10, has_filter( 'the_author', array(
 			$coauthors_plus_template_filters,
@@ -105,15 +105,15 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$multiple_cpl = coauthors_links( null, null, null, null, false );
 
-		$this->assertContains( $this->author1->display_name, $multiple_cpl, 'Main author name not found.' );
+		$this->assertStringContainsString( $this->author1->display_name, $multiple_cpl, 'Main author name not found.' );
 		$this->assertEquals( 1, substr_count( $multiple_cpl, $this->author1->display_name ) );
-		$this->assertContains( ' and ', $multiple_cpl, 'Coauthors name separator is not matched.' );
-		$this->assertContains( $this->editor1->display_name, $multiple_cpl, 'Coauthor name not found.' );
+		$this->assertStringContainsString( ' and ', $multiple_cpl, 'Coauthors name separator is not matched.' );
+		$this->assertStringContainsString( $this->editor1->display_name, $multiple_cpl, 'Coauthor name not found.' );
 		$this->assertEquals( 1, substr_count( $multiple_cpl, $this->editor1->display_name ) );
 
 		$multiple_cpl = coauthors_links( null, ' or ', null, null, false );
 
-		$this->assertContains( ' or ', $multiple_cpl, 'Coauthors name separator is not matched.' );
+		$this->assertStringContainsString( ' or ', $multiple_cpl, 'Coauthors name separator is not matched.' );
 
 		$this->assertEquals( 10, has_filter( 'the_author', array(
 			$coauthors_plus_template_filters,
@@ -361,8 +361,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$author_link = coauthors_posts_links_single( $this->author1 );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
-		$this->assertContains( $this->author1->display_name, $author_link, 'Author name not found.' );
+		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
+		$this->assertStringContainsString( $this->author1->display_name, $author_link, 'Author name not found.' );
 
 		// Here we are checking author name should not be more then one time.
 		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
@@ -605,8 +605,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( get_the_author_link(), coauthors_links_single( $this->author1 ), 'Co-Author link generation differs from Core author link one (with user_url)' );
 
 		$author_link = coauthors_links_single( $this->author1 );
-		$this->assertContains( get_the_author_meta( 'url' ), $author_link, 'Author url not found in link.' );
-		$this->assertContains( get_the_author(), $author_link, 'Author name not found in link.' );
+		$this->assertStringContainsString( get_the_author_meta( 'url' ), $author_link, 'Author url not found in link.' );
+		$this->assertStringContainsString( get_the_author(), $author_link, 'Author name not found in link.' );
 
 		// Here we are checking author name should not be more then one time.
 		// Asserting ">get_the_author()<" because "get_the_author()" can be multiple times like in href, title, etc.
@@ -644,8 +644,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$authordata  = $user;
 		$author_link = coauthors_links_single( $user );
 
-		$this->assertContains( get_the_author_meta( 'url' ), $author_link, 'Author link not found.' );
-		$this->assertContains( get_the_author(), $author_link, 'Author name not found.' );
+		$this->assertStringContainsString( get_the_author_meta( 'url' ), $author_link, 'Author link not found.' );
+		$this->assertStringContainsString( get_the_author(), $author_link, 'Author name not found.' );
 
 		// Here we are checking author name should not be more then one time.
 		// Asserting ">get_the_author()<" because "get_the_author()" can be multiple times like in href, title, etc.
@@ -772,8 +772,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$coauthors = coauthors_wp_list_authors( $args );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $coauthors, 'Author link not found.' );
-		$this->assertContains( $this->author1->display_name, $coauthors, 'Author name not found.' );
+		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $coauthors, 'Author link not found.' );
+		$this->assertStringContainsString( $this->author1->display_name, $coauthors, 'Author name not found.' );
 
 		$coauthors = coauthors_wp_list_authors( $args );
 
@@ -784,16 +784,16 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$coauthors = coauthors_wp_list_authors( $args );
 
-		$this->assertContains( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $coauthors, 'Main author link not found.' );
-		$this->assertContains( $this->author1->display_name, $coauthors, 'Main author name not found.' );
+		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $coauthors, 'Main author link not found.' );
+		$this->assertStringContainsString( $this->author1->display_name, $coauthors, 'Main author name not found.' );
 
 		// Here we are checking author name should not be more then one time.
 		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $coauthors, ">{$this->author1->display_name}<" ) );
 
-		$this->assertContains( '</li><li>', $coauthors, 'Coauthors name separator is not matched.' );
-		$this->assertContains( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors, 'Coauthor link not found.' );
-		$this->assertContains( $this->editor1->display_name, $coauthors, 'Coauthor name not found.' );
+		$this->assertStringContainsString( '</li><li>', $coauthors, 'Coauthors name separator is not matched.' );
+		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors, 'Coauthor link not found.' );
+		$this->assertStringContainsString( $this->editor1->display_name, $coauthors, 'Coauthor name not found.' );
 
 		// Here we are checking editor name should not be more then one time.
 		// Asserting ">{$this->editor1->display_name}<" because "$this->editor1->display_name" can be multiple times like in href, title, etc.
@@ -807,7 +807,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_coauthors_wp_list_authors_for_optioncount() {
 
-		$this->assertContains( '(' . count_user_posts( $this->author1->ID ) . ')', coauthors_wp_list_authors( array(
+		$this->assertStringContainsString( '(' . count_user_posts( $this->author1->ID ) . ')', coauthors_wp_list_authors( array(
 			'echo'        => false,
 			'optioncount' => true,
 		) ) );
@@ -825,7 +825,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'show_fullname' => true,
 		);
 
-		$this->assertContains( $this->author1->display_name, coauthors_wp_list_authors( $args ) );
+		$this->assertStringContainsString( $this->author1->display_name, coauthors_wp_list_authors( $args ) );
 
 		$user = $this->factory->user->create_and_get( array(
 			'first_name' => 'First',
@@ -836,7 +836,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'post_author' => $user->ID,
 		) );
 
-		$this->assertContains( "{$user->user_firstname} {$user->user_lastname}", coauthors_wp_list_authors( $args ) );
+		$this->assertStringContainsString( "{$user->user_firstname} {$user->user_lastname}", coauthors_wp_list_authors( $args ) );
 	}
 
 	/**
@@ -853,7 +853,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'display_name' => 'author2',
 		) );
 
-		$this->assertContains( 'author2', coauthors_wp_list_authors( array(
+		$this->assertStringContainsString( 'author2', coauthors_wp_list_authors( array(
 			'echo'       => false,
 			'hide_empty' => false,
 		) ) );
@@ -872,8 +872,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'feed' => $feed_text,
 		) );
 
-		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
-		$this->assertContains( $feed_text, $coauthors );
+		$this->assertStringContainsString( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
+		$this->assertStringContainsString( $feed_text, $coauthors );
 	}
 
 	/**
@@ -889,8 +889,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'feed_image' => $feed_image,
 		) );
 
-		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
-		$this->assertContains( $feed_image, $coauthors );
+		$this->assertStringContainsString( esc_url( get_author_feed_link( $this->author1->ID ) ), $coauthors );
+		$this->assertStringContainsString( $feed_image, $coauthors );
 	}
 
 	/**
@@ -908,9 +908,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			'feed'      => $feed_text,
 		) );
 
-		$this->assertContains( esc_url( get_author_feed_link( $this->author1->ID, $feed_type ) ), $coauthors );
-		$this->assertContains( $feed_type, $coauthors );
-		$this->assertContains( $feed_text, $coauthors );
+		$this->assertStringContainsString( esc_url( get_author_feed_link( $this->author1->ID, $feed_type ) ), $coauthors );
+		$this->assertStringContainsString( $feed_type, $coauthors );
+		$this->assertStringContainsString( $feed_text, $coauthors );
 	}
 
 	/**
@@ -977,7 +977,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $guest_author->user_login ), true );
 
-		$this->assertContains( $guest_author->display_name, coauthors_wp_list_authors( $args ) );
+		$this->assertStringContainsString( $guest_author->display_name, coauthors_wp_list_authors( $args ) );
 	}
 
 	/**
@@ -1016,8 +1016,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$avatar         = coauthors_get_avatar( $guest_author );
 		$attachment_url = wp_get_attachment_url( $attachment_id );
 
-		$this->assertContains( 'dummy-attachment', $avatar );
-		$this->assertContains( $attachment_url, $avatar );
+		$this->assertStringContainsString( 'dummy-attachment', $avatar );
+		$this->assertStringContainsString( $attachment_url, $avatar );
 	}
 
 	/**

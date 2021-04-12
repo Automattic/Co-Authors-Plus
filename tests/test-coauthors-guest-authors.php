@@ -130,9 +130,9 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$thumbnail = $guest_author_obj->get_guest_author_thumbnail( $guest_author, 0 );
 
-		$this->assertContains( 'avatar-0', $thumbnail );
-		$this->assertContains( 'dummy-attachment', $thumbnail );
-		$this->assertContains( wp_get_attachment_url( $attachment_id ), $thumbnail );
+		$this->assertStringContainsString( 'avatar-0', $thumbnail );
+		$this->assertStringContainsString( 'dummy-attachment', $thumbnail );
+		$this->assertStringContainsString( wp_get_attachment_url( $attachment_id ), $thumbnail );
 	}
 
 	/**
@@ -366,7 +366,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		}
 
 		$this->assertInstanceOf( 'WPDieException', $exception );
-		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Checks when nonce is as expected.
 		$_POST['_wpnonce'] = wp_create_nonce( 'delete-guest-author' );
@@ -418,7 +418,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		}
 
 		$this->assertInstanceOf( 'WPDieException', $exception );
-		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Checks when current user has list_users capability.
 		wp_set_current_user( $this->admin1->ID );
@@ -475,7 +475,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		}
 
 		$this->assertInstanceOf( 'WPDieException', $exception );
-		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Checks when guest author exists.
 		$_POST['id'] = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
@@ -530,7 +530,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		}
 
 		$this->assertInstanceOf( 'WPDieException', $exception );
-		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -571,9 +571,9 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		} catch( Exception $e ) {
 
-			$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
-			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
-			$this->assertContains( 'message=guest-author-deleted', $e->getMessage() );
+			$this->assertStringContainsString( $guest_author_obj->parent_page, $e->getMessage() );
+			$this->assertStringContainsString( 'page=view-guest-authors', $e->getMessage() );
+			$this->assertStringContainsString( 'message=guest-author-deleted', $e->getMessage() );
 		}
 
 		remove_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99 );
@@ -621,7 +621,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		}
 
 		$this->assertInstanceOf( 'WPDieException', $exception );
-		$this->assertContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// When coauthor exists.
 		$_POST['leave-assigned-to'] = $this->author1->user_nicename;
@@ -634,9 +634,9 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		} catch ( Exception $e ) {
 
-			//$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
-			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
-			$this->assertContains( 'message=guest-author-deleted', $e->getMessage() );
+			//$this->assertStringContainsString( $guest_author_obj->parent_page, $e->getMessage() );
+			$this->assertStringContainsString( 'page=view-guest-authors', $e->getMessage() );
+			$this->assertStringContainsString( 'message=guest-author-deleted', $e->getMessage() );
 		}
 
 		remove_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99 );
@@ -680,9 +680,9 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		} catch ( Exception $e ) {
 
-			$this->assertContains( $guest_author_obj->parent_page, $e->getMessage() );
-			$this->assertContains( 'page=view-guest-authors', $e->getMessage() );
-			$this->assertContains( 'message=guest-author-deleted', $e->getMessage() );
+			$this->assertStringContainsString( $guest_author_obj->parent_page, $e->getMessage() );
+			$this->assertStringContainsString( 'page=view-guest-authors', $e->getMessage() );
+			$this->assertStringContainsString( 'message=guest-author-deleted', $e->getMessage() );
 		}
 
 		remove_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99 );
