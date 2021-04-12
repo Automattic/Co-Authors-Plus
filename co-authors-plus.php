@@ -1054,6 +1054,10 @@ class CoAuthors_Plus {
 			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 			$term = $this->get_author_term( $user );
 
+			if ( false === $term ) {
+				return $count;
+			}
+
 			if ( ! $user->linked_account ) {
 				$count = $term->count;
 			} else {
