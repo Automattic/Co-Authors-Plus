@@ -124,7 +124,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $guest_author_obj->get_guest_author_thumbnail( $guest_author, 0 ) );
 
-		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/dummy-attachment.png' );
+		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/fixtures/dummy-attachment.png' );
 
 		set_post_thumbnail( $guest_author->ID, $attachment_id );
 
