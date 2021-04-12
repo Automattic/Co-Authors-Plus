@@ -1016,6 +1016,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$avatar         = coauthors_get_avatar( $guest_author );
 		$attachment_url = wp_get_attachment_url( $attachment_id );
 
+		// Checking for dummy-attachment instead of dummy-attachment.png, as filename might change to
+		// dummy-attachment-1.png, dummy-attachment-2.png, etc. when running multiple tests.
 		$this->assertStringContainsString( 'dummy-attachment', $avatar );
 		$this->assertStringContainsString( $attachment_url, $avatar );
 	}

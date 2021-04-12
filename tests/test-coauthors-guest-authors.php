@@ -131,6 +131,8 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$thumbnail = $guest_author_obj->get_guest_author_thumbnail( $guest_author, 0 );
 
 		$this->assertStringContainsString( 'avatar-0', $thumbnail );
+		// Checking for dummy-attachment instead of dummy-attachment.png, as filename might change to
+		// dummy-attachment-1.png, dummy-attachment-2.png, etc. when running multiple tests.
 		$this->assertStringContainsString( 'dummy-attachment', $thumbnail );
 		$this->assertStringContainsString( wp_get_attachment_url( $attachment_id ), $thumbnail );
 	}
