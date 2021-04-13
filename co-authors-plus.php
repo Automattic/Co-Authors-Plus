@@ -1058,7 +1058,7 @@ class CoAuthors_Plus {
 				return $this->get_linked_post_count( $user->user_nicename, $user->linked_account );
 			}
 
-			if ( null !== $term->count ) {
+			if ( isset( $term->count ) && null !== $term->count ) {
 				return $term->count;
 			}
 		}
