@@ -1054,14 +1054,12 @@ class CoAuthors_Plus {
 			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 			$term = $this->get_author_term( $user );
 
-			if ( false === $term ) {
-				return $count;
+			if ( strlen( $user->linked_account ) > 1 ) {
+				return $this->get_linked_post_count( $user->user_nicename, $user->linked_account );
 			}
 
-			if ( ! $user->linked_account ) {
-				$count = $term->count;
-			} else {
-				$count = $this->get_linked_post_count( $user->user_nicename, $user->linked_account );
+			if ( null !== $term->count ) {
+				return $term->count;
 			}
 		}
 
