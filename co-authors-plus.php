@@ -1050,35 +1050,83 @@ class CoAuthors_Plus {
 	function filter_count_user_posts( $count, $user_id ) {
 		$user = get_userdata( $user_id );
 
-		if ( is_object( $user ) ) {
-			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
-			$term = $this->get_author_term( $user );
+		// Return combined post count, if account is linked.
+		if ( $this->has_linked_account( $user ) ) {
+			return $this->get_combined_post_count( $this->get_coauthor_by( 'user_nicename', $user->user_nicename ) );
+		}
 
-			if ( strlen( $user->linked_account ) > 1 ) {
-				return $this->get_linked_post_count( $user->user_nicename, $user->linked_account );
+		// Return term count, if account is not linked and term count is available.
+		if ( $this->has_author_terms( $user ) ) {
+			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+
+			if ( ! is_object( $user ) ) {
+				return $count;
 			}
 
-			if ( isset( $term->count ) && null !== $term->count ) {
+			if ( $this->get_author_term( $user ) ) {
 				return $term->count;
 			}
 		}
 
+		// Return $count as fallback.
 		return $count;
 	}
 
 	/**
-	 * Get the post count of linked accounts.
+	 * Check if user is linked to another account.
 	 *
-	 * @param string $user_account The name of the user account.
-	 * @param string $linked_account The name of the linked account.
+	 * @param WP_User $user The WP_User object.
 	 *
-	 * @return int The post count of linked accounts.
+	 * @return bool True on success, false on failure.
 	 */
-	function get_linked_post_count( $user_account, $linked_account ) {
-		$user_account_ids   = $this->get_post_ids_by_author_name( $user_account );
-		$linked_account_ids = $this->get_post_ids_by_author_name( $linked_account );
+	function has_linked_account( $user ) {
+		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+		return (bool) $user->linked_account;
+	}
 
-		return count( array_unique( array_merge( $user_account_ids, $linked_account_ids ) ) );
+	/**
+	 * Get the combined post count of the user and its linked coauthor account.
+	 *
+	 * @param WP_User $user The WP_User object.
+	 *
+	 * @return int The combined post count.
+	 */
+	function get_combined_post_count( $user ) {
+		global $wpdb;
+
+		$query = $wpdb->prepare( "
+			SELECT
+				COUNT( {$wpdb->prefix}posts.ID ) as post_count
+			FROM
+				{$wpdb->prefix}posts
+			INNER JOIN
+				{$wpdb->prefix}term_relationships
+			ON
+				{$wpdb->prefix}posts.ID = {$wpdb->prefix}term_relationships.object_id
+			INNER JOIN
+				{$wpdb->prefix}terms
+			ON
+				{$wpdb->prefix}term_relationships.term_taxonomy_id = {$wpdb->prefix}terms.term_id
+			INNER JOIN
+				{$wpdb->prefix}users
+			ON
+				{$wpdb->prefix}posts.post_author = {$wpdb->prefix}users.ID
+			WHERE
+				{$wpdb->prefix}posts.post_type = 'post'
+			AND
+				(
+					{$wpdb->prefix}users.user_login = %s
+				OR
+					{$wpdb->prefix}terms.name = %s
+				)
+			GROUP BY
+				{$wpdb->prefix}posts.ID
+			",
+			$user->linked_account,
+			$user->user_nicename,
+		);
+
+		return count( $wpdb->get_results( $query ) );
 	}
 
 	/**
