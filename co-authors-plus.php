@@ -1094,7 +1094,8 @@ class CoAuthors_Plus {
 	function get_combined_post_count( $user ) {
 		global $wpdb;
 
-		$query = $wpdb->prepare( "
+		$query = $wpdb->prepare(
+			"
 			SELECT
 				COUNT( {$wpdb->prefix}posts.ID ) as post_count
 			FROM
