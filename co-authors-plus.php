@@ -1124,7 +1124,7 @@ class CoAuthors_Plus {
 				{$wpdb->prefix}posts.ID
 			",
 			$user->linked_account,
-			$user->user_nicename,
+			$user->user_nicename
 		);
 
 		return count( $wpdb->get_results( $query ) );
