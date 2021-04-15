@@ -1131,32 +1131,6 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Get the post IDs by author name.
-	 *
-	 * @param string $author_name The name of the corresponding user.
-	 *
-	 * @return array The IDs of all matching posts.
-	 */
-	function get_post_ids_by_author_name( $author_name ) {
-		$results = array();
-		$args    = array(
-			'author_name' => $author_name,
-			'post_type'   => 'post',
-		);
-		$query   = new WP_Query( $args );
-
-		if ( ! $query->post_count ) {
-			return $results;
-		}
-
-		foreach ( $query->posts as $post ) {
-			$results[] = $post->ID;
-		}
-
-		return $results;
-	}
-
-	/**
 	 * Checks to see if the current user can set co-authors or not
 	 */
 	function current_user_can_set_authors( $post = null ) {
