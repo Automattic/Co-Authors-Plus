@@ -1056,65 +1056,20 @@ class CoAuthors_Plus {
 			return $count;
 		}
 
+		$term = $this->get_author_term( $coauthor );
+
 		// Return combined post count, if account is linked.
-		if ( strlen( $coauthor->linked_account ) > 2 ) {
-			return $this->get_combined_post_count( $coauthor );
+		if ( is_int( $term->count ) && strlen( $coauthor->linked_account ) > 2 ) {
+			return $count + $term->count;
 		}
 
 		// Return term count, if term count is available.
-		$term = $this->get_author_term( $coauthor );
 		if ( is_int( $term->count ) ) {
 			return $term->count;
 		}
 
 		// Return $count as fallback.
 		return $count;
-	}
-
-	/**
-	 * Get the combined post count of the user and its linked coauthor account.
-	 *
-	 * @param WP_User $user The WP_User object.
-	 *
-	 * @return int The combined post count.
-	 */
-	function get_combined_post_count( $user ) {
-		global $wpdb;
-
-		$query = $wpdb->prepare(
-			"
-			SELECT
-				COUNT( {$wpdb->prefix}posts.ID ) as post_count
-			FROM
-				{$wpdb->prefix}posts
-			INNER JOIN
-				{$wpdb->prefix}term_relationships
-			ON
-				{$wpdb->prefix}posts.ID = {$wpdb->prefix}term_relationships.object_id
-			INNER JOIN
-				{$wpdb->prefix}terms
-			ON
-				{$wpdb->prefix}term_relationships.term_taxonomy_id = {$wpdb->prefix}terms.term_id
-			INNER JOIN
-				{$wpdb->prefix}users
-			ON
-				{$wpdb->prefix}posts.post_author = {$wpdb->prefix}users.ID
-			WHERE
-				{$wpdb->prefix}posts.post_type = 'post'
-			AND
-				(
-					{$wpdb->prefix}users.user_login = %s
-				OR
-					{$wpdb->prefix}terms.name = %s
-				)
-			GROUP BY
-				{$wpdb->prefix}posts.ID
-			",
-			$user->linked_account,
-			$user->user_nicename
-		);
-
-		return count( $wpdb->get_results( $query ) );
 	}
 
 	/**
