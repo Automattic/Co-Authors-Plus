@@ -1048,25 +1048,23 @@ class CoAuthors_Plus {
 	 * @return int Post count
 	 */
 	function filter_count_user_posts( $count, $user_id ) {
-		$user = get_userdata( $user_id );
+		$user     = get_userdata( $user_id );
+		$coauthor = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+
+		// Return $count, if no coauthor exists.
+		if ( ! is_object( $coauthor ) ) {
+			return $count;
+		}
 
 		// Return combined post count, if account is linked.
-		$coauthor = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
-		if ( is_object( $coauthor ) && strlen( $coauthor->linked_account ) > 2 ) {
+		if ( strlen( $coauthor->linked_account ) > 2 ) {
 			return $this->get_combined_post_count( $coauthor );
 		}
 
-		// Return term count, if account is not linked and term count is available.
-		if ( $this->has_author_terms( $user ) ) {
-			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
-
-			if ( ! is_object( $user ) ) {
-				return $count;
-			}
-
-			if ( $this->get_author_term( $user ) ) {
-				return $term->count;
-			}
+		// Return term count, if term count is available.
+		$term = $this->get_author_term( $coauthor );
+		if ( is_int( $term->count ) ) {
+			return $term->count;
 		}
 
 		// Return $count as fallback.
