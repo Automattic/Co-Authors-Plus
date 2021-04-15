@@ -1051,8 +1051,9 @@ class CoAuthors_Plus {
 		$user = get_userdata( $user_id );
 
 		// Return combined post count, if account is linked.
-		if ( $this->has_linked_account( $user ) ) {
-			return $this->get_combined_post_count( $this->get_coauthor_by( 'user_nicename', $user->user_nicename ) );
+		$coauthor = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
+		if ( is_object( $coauthor ) && strlen( $coauthor->linked_account ) > 2 ) {
+			return $this->get_combined_post_count( $coauthor );
 		}
 
 		// Return term count, if account is not linked and term count is available.
@@ -1070,18 +1071,6 @@ class CoAuthors_Plus {
 
 		// Return $count as fallback.
 		return $count;
-	}
-
-	/**
-	 * Check if user is linked to another account.
-	 *
-	 * @param WP_User $user The WP_User object.
-	 *
-	 * @return bool True on success, false on failure.
-	 */
-	function has_linked_account( $user ) {
-		$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
-		return (bool) $user->linked_account;
 	}
 
 	/**
