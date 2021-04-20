@@ -125,6 +125,8 @@ class CoAuthors_Guest_Authors {
 			'publicly_queryable'  => false,
 			'exclude_from_search' => true,
 			'show_in_menu'        => false,
+			'show_in_rest'        => true,
+			'rest_base'           => 'coauthors',
 			'supports'            => array(
 				'thumbnail',
 			),
@@ -133,7 +135,6 @@ class CoAuthors_Guest_Authors {
 			),
 			'rewrite'             => false,
 			'query_var'           => false,
-			'show_in_rest'        => true,
 		);
 		register_post_type( $this->post_type, $args );
 
