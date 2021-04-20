@@ -136,6 +136,25 @@ class CoAuthors_Plus {
 
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
+
+		$asset = include_once plugins_url( 'build/index.asset.php', __FILE__ );
+
+		function sidebar_plugin_register() {
+			wp_register_script(
+				'plugin-sidebar-js',
+				plugins_url( 'build/index.js', __FILE__ ),
+				$asset['dependencies'],
+				$asset['version']
+			);
+		}
+		add_action( 'init', 'sidebar_plugin_register' );
+
+		function sidebar_plugin_script_enqueue() {
+			wp_enqueue_script( 'plugin-sidebar-js' );
+		}
+
+		add_action( 'enqueue_block_editor_assets', 'sidebar_plugin_script_enqueue' );
+
 	}
 
 	/**
@@ -178,6 +197,7 @@ class CoAuthors_Plus {
 			'public'       => false,
 			'sort'         => true,
 			'args'         => array( 'orderby' => 'term_order' ),
+			'show_in_rest' => true,
 			'show_ui'      => false,
 		);
 

@@ -133,6 +133,7 @@ class CoAuthors_Guest_Authors {
 			),
 			'rewrite'             => false,
 			'query_var'           => false,
+			'show_in_rest'        => true,
 		);
 		register_post_type( $this->post_type, $args );
 
