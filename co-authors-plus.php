@@ -1058,13 +1058,13 @@ class CoAuthors_Plus {
 
 		$term = $this->get_author_term( $coauthor );
 
-		// Return combined post count, if account is linked.
-		if ( is_object( $term ) && strlen( $coauthor->linked_account ) > 2 ) {
-			return $count + $term->count;
-		}
-
-		// Return term count, if term count is available.
 		if ( is_object( $term ) ) {
+			// Return combined post count, if account is linked.
+			if ( strlen( $coauthor->linked_account ) > 2 ) {
+				return $count + $term->count;
+			}
+
+			// Otherwise, return the term count.
 			return $term->count;
 		}
 
