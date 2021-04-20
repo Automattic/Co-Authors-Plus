@@ -137,9 +137,10 @@ class CoAuthors_Plus {
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
 
-		$asset = include_once plugins_url( 'build/index.asset.php', __FILE__ );
-
 		function sidebar_plugin_register() {
+
+			$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
+
 			wp_register_script(
 				'plugin-sidebar-js',
 				plugins_url( 'build/index.js', __FILE__ ),

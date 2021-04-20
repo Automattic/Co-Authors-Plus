@@ -126,7 +126,6 @@ class CoAuthors_Guest_Authors {
 			'exclude_from_search' => true,
 			'show_in_menu'        => false,
 			'show_in_rest'        => true,
-			'rest_base'           => 'coauthors',
 			'supports'            => array(
 				'thumbnail',
 			),
