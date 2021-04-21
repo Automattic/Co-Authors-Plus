@@ -1,0 +1,60 @@
+name: Run PHPCS & PHPUnit
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PHPCS_DIR: /tmp/phpcs
+      WPCS_DIR: /tmp/sniffs/WordPress-Coding-Standards
+      VIPCS_DIR: /tmp/sniffs/VIP-Coding-Standards
+      VariableAnalysis: /tmp/sniffs/phpcs-variable-analysis
+      PHPCSUtils: /tmp/sniffs/PHPCSUtils
+      PHPCompatibility: /tmp/sniffs/PHPCompatibility
+      PHPCompatibilityWP: /tmp/sniffs/PHPCompatibilityWP
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0' ]
+        wordpress: [ '5.5', '5.6', '5.7'  ]
+
+    name: WP ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: phpunit:7.5.20
+
+      - name: Start MySQL service
+        run: sudo /etc/init.d/mysql start
+
+      - name: Switch to use mysql_native_password for PHP < 7.4
+        if: ${{ matrix.php < 7.4 }}
+        run: mysql -u root -p"root" -e "ALTER USER 'root'@localhost IDENTIFIED WITH mysql_native_password BY 'root'";
+
+      - name: Install WordPress environment
+        run: bash bin/install-wp-tests.sh wordpress_tests root root localhost ${{ matrix.wordpress }}
+
+      - name: Execute PHPUnit tests
+        if: ${{ matrix.php >= 7.1 && matrix.php < 8.0 }}
+        run: phpunit
+
+      - name: Install PHPCS
+        run: |
+          export PHPCS_DIR=/tmp/phpcs
+          export SNIFFS_DIR=/tmp/sniffs
+          git clone -b master --depth 1 https://github.com/squizlabs/PHP_CodeSniffer.git $PHPCS_DIR
+          git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git $WPCS_DIR
+          git clone -b master --depth 1 https://github.com/Automattic/VIP-Coding-Standards.git $VIPCS_DIR
+          git clone -b master --depth 1 https://github.com/sirbrillig/phpcs-variable-analysis.git $VariableAnalysis
+          git clone -b master --depth 1 https://github.com/PHPCSStandards/PHPCSUtils.git $PHPCSUtils
+          git clone -b master --depth 1 https://github.com/PHPCompatibility/PHPCompatibility.git $PHPCompatibility
+          git clone -b master --depth 1 https://github.com/PHPCompatibility/PHPCompatibilityWP.git $PHPCompatibilityWP
+
+      - name: Check PHPCS
+        run: |
+          $PHPCS_DIR/bin/phpcs --config-set installed_paths $WPCS_DIR,$VIPCS_DIR,$VariableAnalysis,$PHPCSUtils,$PHPCompatibility,$PHPCompatibilityWP
+          $PHPCS_DIR/bin/phpcs -p -s -v -n . --standard="WordPress-VIP-Go" --extensions=php
