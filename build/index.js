@@ -8073,9 +8073,9 @@ var Render = function Render(_ref2) {
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["FlexItem"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])("span", null, name)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["FlexItem"], {
         justify: "flex-end"
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["Flex"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])("div", {
-        className: "cap-action-stack"
+        className: "cap-icon-button-stack"
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["Button"], {
-        icon: "arrow-up-alt2",
+        icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["chevronUp"],
         className: 'cap-icon-button',
         label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__["__"])('Move Up', 'coauthors-plus'),
         disabled: i === 0,
@@ -8083,7 +8083,7 @@ var Render = function Render(_ref2) {
           return Object(_utils__WEBPACK_IMPORTED_MODULE_13__["moveOption"])(option, selectedOptions, 'up', setSelectedOptions);
         }
       }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["Button"], {
-        icon: "arrow-down-alt2",
+        icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["chevronDown"],
         className: 'cap-icon-button',
         label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__["__"])('Move down', 'coauthors-plus'),
         disabled: i === selectedOptions.length - 1,
@@ -8091,7 +8091,8 @@ var Render = function Render(_ref2) {
           return Object(_utils__WEBPACK_IMPORTED_MODULE_13__["moveOption"])(option, selectedOptions, 'down', setSelectedOptions);
         }
       })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["Button"], {
-        icon: "no-alt",
+        icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["close"],
+        iconSize: 20,
         className: 'cap-icon-button',
         label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__["__"])('Remove Author', 'coauthors-plus'),
         onClick: function onClick() {

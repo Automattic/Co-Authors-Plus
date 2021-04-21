@@ -8,7 +8,7 @@ import {
 	Flex,
 	FlexItem,
 } from '@wordpress/components';
-import { chevronUp, chevronDown } from '@wordpress/icons';
+import { chevronUp, chevronDown, close } from '@wordpress/icons';
 import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
@@ -126,9 +126,9 @@ const Render = ( {
 						</FlexItem>
 						<FlexItem justify="flex-end">
 							<Flex>
-								<div className="cap-action-stack">
+								<div className="cap-icon-button-stack">
 									<Button
-										icon="arrow-up-alt2"
+										icon={chevronUp}
 										className={ 'cap-icon-button' }
 										label={ __(
 											'Move Up',
@@ -145,7 +145,7 @@ const Render = ( {
 										}
 									/>
 									<Button
-										icon="arrow-down-alt2"
+										icon={chevronDown}
 										className={ 'cap-icon-button' }
 										label={ __(
 											'Move down',
@@ -165,7 +165,8 @@ const Render = ( {
 									/>
 								</div>
 								<Button
-									icon="no-alt"
+									icon={close}
+									iconSize={20}
 									className={ 'cap-icon-button' }
 									label={ __(
 										'Remove Author',
