@@ -1,3 +1,7 @@
+.cap-combobox {
+	margin-top: 16px;
+}
+
 .cap-icon-button-stack {
 	display: flex;
 	flex-wrap: wrap;

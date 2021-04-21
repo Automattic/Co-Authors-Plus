@@ -3,12 +3,8 @@
  */
 import {
 	ComboboxControl,
-	Spinner,
-	Button,
-	Flex,
-	FlexItem,
+	Spinner
 } from '@wordpress/components';
-import { chevronUp, chevronDown, close } from '@wordpress/icons';
 import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
@@ -21,6 +17,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
  * Internal Dependencies
  */
 import './style.css';
+import { AuthorsSelection } from './components/AuthorsSelection';
 import { getOptionFrom, moveOption } from './utils';
 
 /**
@@ -107,81 +104,10 @@ const Render = ( {
 
 	// Helper function to remove an item.
 	const removeFromSelected = ( value ) => {
-		const newSelectedOptions = selectedOptions.filter(
+		const newSelections = selectedOptions.filter(
 			( option ) => option.value !== value
 		);
-		setSelectedOptions( [ ...newSelectedOptions ] );
-	};
-
-	// The component markup and bindings.
-	const AuthorsList = () => {
-		return selectedOptions.map( ( { name, value }, i ) => {
-			const option = getOptionFrom( value, 'valueStr', selectedOptions );
-
-			return (
-				<p key={ value } className="cap-author">
-					<Flex align="center">
-						<FlexItem>
-							<span>{ name }</span>
-						</FlexItem>
-						<FlexItem justify="flex-end">
-							<Flex>
-								<div className="cap-icon-button-stack">
-									<Button
-										icon={chevronUp}
-										className={ 'cap-icon-button' }
-										label={ __(
-											'Move Up',
-											'coauthors-plus'
-										) }
-										disabled={ i === 0 }
-										onClick={ () =>
-											moveOption(
-												option,
-												selectedOptions,
-												'up',
-												setSelectedOptions
-											)
-										}
-									/>
-									<Button
-										icon={chevronDown}
-										className={ 'cap-icon-button' }
-										label={ __(
-											'Move down',
-											'coauthors-plus'
-										) }
-										disabled={
-											i === selectedOptions.length - 1
-										}
-										onClick={ () =>
-											moveOption(
-												option,
-												selectedOptions,
-												'down',
-												setSelectedOptions
-											)
-										}
-									/>
-								</div>
-								<Button
-									icon={close}
-									iconSize={20}
-									className={ 'cap-icon-button' }
-									label={ __(
-										'Remove Author',
-										'coauthors-plus'
-									) }
-									onClick={ () =>
-										removeFromSelected( value )
-									}
-								/>
-							</Flex>
-						</FlexItem>
-					</Flex>
-				</p>
-			);
-		} );
+		setSelectedOptions( [ ...newSelections ] );
 	};
 
 	const onChange = ( newValue ) => {
@@ -202,10 +128,16 @@ const Render = ( {
 
 	return (
 		<>
-			<AuthorsList />
+			<AuthorsSelection
+				selectedOptions={selectedOptions}
+				removeFromSelected={removeFromSelected}
+				moveOption={moveOption}
+				getOptionFrom={getOptionFrom}
+			 />
 
 			{ !! filteredOptions[ 0 ] ? (
 				<ComboboxControl
+					className="cap-combobox"
 					label="Select An Author"
 					value={ null }
 					options={ filteredOptions }
