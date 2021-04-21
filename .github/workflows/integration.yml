@@ -48,12 +48,12 @@ jobs:
       - name: Setup Problem Matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-      - name: Switch to use mysql_native_password for PHP < 7.4
+      - name: Start MySQL service
+        run: sudo /etc/init.d/mysql start
+
+      - name: Use mysql_native_password for PHP < 7.4
         if: ${{ matrix.php < 7.4 }}
         run: mysql -u root -p"root" -e "ALTER USER 'root'@localhost IDENTIFIED WITH mysql_native_password BY 'root'";
-
-      - name: Start MySQL service
-        run: sudo systemctl start mysql.service
 
       - name: Install WordPress environment
         run: composer prepare ${{ matrix.wordpress }}
