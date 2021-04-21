@@ -1,14 +1,16 @@
-export const getOptionFrom = ( data, type, options = null ) => {
+export const formatOption = ( data, type, options = null ) => {
 	switch ( type ) {
 		case 'termObj':
 			return {
 				value: data.slug,
+				id: data.id,
 				name: data.name,
 				label: data.description,
 			};
 		case 'userObj':
 			return {
 				value: data.slug,
+				id: data.id,
 				name: data.name,
 				label: data.name,
 			};

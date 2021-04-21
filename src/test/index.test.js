@@ -1,10 +1,10 @@
 import { optionsMock } from './fixture';
-import { getOptionFrom, moveOption } from '../utils.js';
+import { formatOption, moveOption } from '../utils.js';
 
 describe( 'Utility', () => {
 	it( 'should retrieve an option by value', () => {
 		expect(
-			getOptionFrom( 'cap-pmcdev', 'valueStr', optionsMock )
+			formatOption( 'cap-pmcdev', 'valueStr', optionsMock )
 		).toStrictEqual( {
 			name: 'pmcdev',
 			value: 'cap-pmcdev',

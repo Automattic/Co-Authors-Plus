@@ -10,12 +10,12 @@ export const AuthorsSelection = ({
 	selectedOptions,
 	moveOption,
 	removeFromSelected,
-	update,
-	getOptionFrom
+	setSelectedOptions,
+	formatOption
 }) => {
 
 	return selectedOptions.map( ( { name, value }, i ) => {
-		const option = getOptionFrom( value, 'valueStr', selectedOptions );
+		const option = formatOption( value, 'valueStr', selectedOptions );
 
 		return (
 			<div key={ value } className="cap-author">
@@ -39,7 +39,7 @@ export const AuthorsSelection = ({
 											option,
 											selectedOptions,
 											'up',
-											update
+											setSelectedOptions
 										)
 									}
 								/>
@@ -58,7 +58,7 @@ export const AuthorsSelection = ({
 											option,
 											selectedOptions,
 											'down',
-											update
+											setSelectedOptions
 										)
 									}
 								/>

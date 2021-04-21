@@ -7932,12 +7932,12 @@ var AuthorsSelection = function AuthorsSelection(_ref) {
   var selectedOptions = _ref.selectedOptions,
       moveOption = _ref.moveOption,
       removeFromSelected = _ref.removeFromSelected,
-      update = _ref.update,
-      getOptionFrom = _ref.getOptionFrom;
+      setSelectedOptions = _ref.setSelectedOptions,
+      formatOption = _ref.formatOption;
   return selectedOptions.map(function (_ref2, i) {
     var name = _ref2.name,
         value = _ref2.value;
-    var option = getOptionFrom(value, 'valueStr', selectedOptions);
+    var option = formatOption(value, 'valueStr', selectedOptions);
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
       key: value,
       className: "cap-author"
@@ -7953,7 +7953,7 @@ var AuthorsSelection = function AuthorsSelection(_ref) {
       label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__["__"])('Move Up', 'coauthors-plus'),
       disabled: i === 0,
       onClick: function onClick() {
-        return moveOption(option, selectedOptions, 'up', update);
+        return moveOption(option, selectedOptions, 'up', setSelectedOptions);
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["Button"], {
       icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["chevronDown"],
@@ -7961,7 +7961,7 @@ var AuthorsSelection = function AuthorsSelection(_ref) {
       label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__["__"])('Move down', 'coauthors-plus'),
       disabled: i === selectedOptions.length - 1,
       onClick: function onClick() {
-        return moveOption(option, selectedOptions, 'down', update);
+        return moveOption(option, selectedOptions, 'down', setSelectedOptions);
       }
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["Button"], {
       icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["close"],
@@ -8058,7 +8058,7 @@ var fetchAndSetOptions = function fetchAndSetOptions(_ref) {
   }).then(function (terms) {
     var currentTermsOptions = [];
     var allOptions = terms.map(function (term) {
-      var optionObj = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["getOptionFrom"])(term, 'termObj');
+      var optionObj = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["formatOption"])(term, 'termObj');
 
       if (currentTermsIds.includes(term.id)) {
         currentTermsOptions.push(optionObj);
@@ -8069,7 +8069,7 @@ var fetchAndSetOptions = function fetchAndSetOptions(_ref) {
     // so assign the user as the currently selected author
 
     if (0 === currentTermsOptions.length) {
-      currentTermsOptions.push(Object(_utils__WEBPACK_IMPORTED_MODULE_13__["getOptionFrom"])(currentUser, 'userObj'));
+      currentTermsOptions.push(Object(_utils__WEBPACK_IMPORTED_MODULE_13__["formatOption"])(currentUser, 'userObj'));
     }
 
     setSelectedOptions(currentTermsOptions);
@@ -8119,7 +8119,11 @@ var Render = function Render(_ref2) {
   // below.
 
   Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(function () {
-    updateTerms([4, 5]);
+    var termIds = selectedOptions.map(function (option) {
+      return option.id;
+    });
+    console.log('ids', termIds);
+    updateTerms(termIds);
   }, [selectedOptions]); // Helper function to remove an item.
 
   var removeFromSelected = function removeFromSelected(value) {
@@ -8130,35 +8134,27 @@ var Render = function Render(_ref2) {
   };
 
   var onChange = function onChange(newValue) {
-    var newOption = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["getOptionFrom"])(newValue, 'valueStr', filteredOptions);
-    console.log(newOption); // Ensure value is not added twice
-    // const newSelectedOptions = selectedOptions.filter( option => option !== newOption );
-    // console.log(newOption);
-    // setSelectedOptions( [ ...newSelectedOptions, newOption ] );
-    // console.log(newValue);
+    var newOption = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["formatOption"])(newValue, 'valueStr', filteredOptions); // Ensure value is not added twice
+
+    var newSelectedOptions = selectedOptions.filter(function (option) {
+      return option !== newOption;
+    });
+    setSelectedOptions([].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(newSelectedOptions), [newOption]));
   };
 
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_components_AuthorsSelection__WEBPACK_IMPORTED_MODULE_12__["AuthorsSelection"], {
     selectedOptions: selectedOptions,
+    setSelectedOptions: setSelectedOptions,
     removeFromSelected: removeFromSelected,
     moveOption: _utils__WEBPACK_IMPORTED_MODULE_13__["moveOption"],
-    getOptionFrom: _utils__WEBPACK_IMPORTED_MODULE_13__["getOptionFrom"]
+    formatOption: _utils__WEBPACK_IMPORTED_MODULE_13__["formatOption"]
   }), !!filteredOptions[0] ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["ComboboxControl"], {
     className: "cap-combobox",
     label: "Select An Author",
     value: null,
     options: filteredOptions,
     onChange: onChange,
-    onFilterValueChange: function onFilterValueChange(inputValue) {// const newOptions = filteredOptions.filter( option =>
-      // 	option.label.toLowerCase().startsWith(
-      // 		inputValue.toLowerCase()
-      // 	) &&
-      // 	! currentTerms.filter( term => term.id === option.id )
-      // );
-      // setDropdownOptions(
-      // 	newOptions
-      // )
-    }
+    onFilterValueChange: function onFilterValueChange() {}
   }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])("span", null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])("p", null, Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__["__"])('Loading authors, this could take a moment...', 'coauthors')), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["Spinner"], null)));
 };
 
@@ -8173,20 +8169,18 @@ var CoAuthors = Object(_wordpress_compose__WEBPACK_IMPORTED_MODULE_7__["compose"
 
   var taxonomy = getTaxonomy('author');
   var postType = getEntity('postType', 'guest-author');
-  var currentTermsIds = getCurrentPost().coauthors;
   var currentUser = getCurrentUser();
+  var taxonomyRestBase = taxonomy === null || taxonomy === void 0 ? void 0 : taxonomy.rest_base;
 
-  if (!taxonomy) {
-    return {
-      allAuthorTerms: [],
-      taxonomyRestBase: null
-    };
-  }
+  var currentTermsIds = function () {
+    var post = getCurrentPost();
+    return post === null || post === void 0 ? void 0 : post[taxonomyRestBase];
+  }();
 
   return {
     currentTermsIds: currentTermsIds,
     currentUser: currentUser,
-    taxonomyRestBase: taxonomy.rest_base,
+    taxonomyRestBase: taxonomyRestBase,
     postTypeRestBase: postType.rest_base
   };
 }), Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_10__["withDispatch"])(function (dispatch, _ref3) {
@@ -8194,6 +8188,8 @@ var CoAuthors = Object(_wordpress_compose__WEBPACK_IMPORTED_MODULE_7__["compose"
       taxonomyRestBase = _ref3.taxonomyRestBase;
   return {
     updateTerms: function updateTerms(newTerms) {
+      console.log('update called');
+
       if (null !== taxonomyRestBase && undefined !== newTerms) {
         dispatch('core/editor').editPost(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()({}, taxonomyRestBase, newTerms));
       }
@@ -8220,23 +8216,24 @@ Object(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])('plugi
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: getOptionFrom, moveOption */
+/*! exports provided: formatOption, moveOption */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOptionFrom", function() { return getOptionFrom; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatOption", function() { return formatOption; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "moveOption", function() { return moveOption; });
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
 
-var getOptionFrom = function getOptionFrom(data, type) {
+var formatOption = function formatOption(data, type) {
   var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
   switch (type) {
     case 'termObj':
       return {
         value: data.slug,
+        id: data.id,
         name: data.name,
         label: data.description
       };
@@ -8244,6 +8241,7 @@ var getOptionFrom = function getOptionFrom(data, type) {
     case 'userObj':
       return {
         value: data.slug,
+        id: data.id,
         name: data.name,
         label: data.name
       };

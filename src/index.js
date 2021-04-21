@@ -18,7 +18,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
  */
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
-import { getOptionFrom, moveOption } from './utils';
+import { formatOption, moveOption } from './utils';
 
 /**
  * Fetch current coauthors and set state.
@@ -43,7 +43,7 @@ const fetchAndSetOptions = ( {
 		const currentTermsOptions = [];
 
 		const allOptions = terms.map( ( term ) => {
-			const optionObj = getOptionFrom( term, 'termObj' );
+			const optionObj = formatOption( term, 'termObj' );
 
 			if ( currentTermsIds.includes( term.id ) ) {
 				currentTermsOptions.push( optionObj );
@@ -55,7 +55,7 @@ const fetchAndSetOptions = ( {
 		// If there are no author terms, this is a new post,
 		// so assign the user as the currently selected author
 		if ( 0 === currentTermsOptions.length ) {
-			currentTermsOptions.push( getOptionFrom( currentUser, 'userObj' ) );
+			currentTermsOptions.push( formatOption( currentUser, 'userObj' ) );
 		}
 
 		setSelectedOptions( currentTermsOptions );
@@ -99,7 +99,9 @@ const Render = ( {
 	// This method is provided via withDispatch below.
 	// below.
 	useEffect( () => {
-		updateTerms( [ 4, 5 ] );
+		const termIds = selectedOptions.map( option => option.id );
+		console.log( 'ids', termIds );
+		updateTerms( termIds );
 	}, [ selectedOptions ] );
 
 	// Helper function to remove an item.
@@ -111,28 +113,26 @@ const Render = ( {
 	};
 
 	const onChange = ( newValue ) => {
-		const newOption = getOptionFrom(
+		const newOption = formatOption(
 			newValue,
 			'valueStr',
 			filteredOptions
 		);
 
-		console.log( newOption );
 		// Ensure value is not added twice
-		// const newSelectedOptions = selectedOptions.filter( option => option !== newOption );
+		const newSelectedOptions = selectedOptions.filter( option => option !== newOption );
 
-		// console.log(newOption);
-		// setSelectedOptions( [ ...newSelectedOptions, newOption ] );
-		// console.log(newValue);
+		setSelectedOptions( [ ...newSelectedOptions, newOption ] );
 	};
 
 	return (
 		<>
 			<AuthorsSelection
 				selectedOptions={selectedOptions}
+				setSelectedOptions={setSelectedOptions}
 				removeFromSelected={removeFromSelected}
 				moveOption={moveOption}
-				getOptionFrom={getOptionFrom}
+				formatOption={formatOption}
 			 />
 
 			{ !! filteredOptions[ 0 ] ? (
@@ -142,17 +142,7 @@ const Render = ( {
 					value={ null }
 					options={ filteredOptions }
 					onChange={ onChange }
-					onFilterValueChange={ ( inputValue ) => {
-						// const newOptions = filteredOptions.filter( option =>
-						// 	option.label.toLowerCase().startsWith(
-						// 		inputValue.toLowerCase()
-						// 	) &&
-						// 	! currentTerms.filter( term => term.id === option.id )
-						// );
-						// setDropdownOptions(
-						// 	newOptions
-						// )
-					} }
+					onFilterValueChange={()=>{}}
 				/>
 			) : (
 				<span>
@@ -176,28 +166,26 @@ const CoAuthors = compose( [
 		const { getCurrentPost } = select( 'core/editor' );
 
 		const taxonomy = getTaxonomy( 'author' );
-
 		const postType = getEntity( 'postType', 'guest-author' );
-		const currentTermsIds = getCurrentPost().coauthors;
 		const currentUser = getCurrentUser();
+		const taxonomyRestBase = taxonomy?.rest_base;
+		const currentTermsIds = ( () => {
+			const post = getCurrentPost();
 
-		if ( ! taxonomy ) {
-			return {
-				allAuthorTerms: [],
-				taxonomyRestBase: null,
-			};
-		}
+			return post?.[ taxonomyRestBase ];
+		})();
 
 		return {
 			currentTermsIds,
 			currentUser,
-			taxonomyRestBase: taxonomy.rest_base,
+			taxonomyRestBase,
 			postTypeRestBase: postType.rest_base,
 		};
 	} ),
 	withDispatch( ( dispatch, { currentTermsIds, taxonomyRestBase } ) => {
 		return {
 			updateTerms: ( newTerms ) => {
+				console.log('update called');
 				if ( null !== taxonomyRestBase && undefined !== newTerms ) {
 					dispatch( 'core/editor' ).editPost( {
 						[ taxonomyRestBase ]: newTerms,
