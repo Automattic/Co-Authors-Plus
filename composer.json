@@ -1,5 +1,5 @@
 {
-	"name"       : "automattic/co-authors-plus",
+    "name"       : "automattic/co-authors-plus",
 	"description": "Multiple bylines and Guest Authors for WordPress",
 	"homepage"   : "http://wordpress.org/plugins/co-authors-plus/",
 	"type"       : "wordpress-plugin",
@@ -22,6 +22,37 @@
 			"forum": "http://wordpress.org/support/plugin/co-authors-plus"
 	},
 	"require": {
-		"composer/installers": "~1.0"
-	}
+		"composer/installers": "~1.0",
+        "php": ">=5.6"
+	},
+    "require-dev": {
+      "automattic/vipwpcs": "^2.2",
+      "dealerdirect/phpcodesniffer-composer-installer": "^0.4.1 || ^0.5 || ^0.6.2 || ^0.7",
+      "php-parallel-lint/php-parallel-lint": "^1.0",
+      "phpcompatibility/phpcompatibility-wp": "^2.1",
+      "phpunit/phpunit": "^4 || ^5 || ^6 || ^7",
+      "squizlabs/php_codesniffer": "^3.5",
+      "wp-coding-standards/wpcs": "^2.3.0"
+    },
+    "scripts": {
+      "cs": [
+        "@php ./vendor/bin/phpcs"
+      ],
+      "lint": [
+        "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git"
+      ],
+      "lint-ci": [
+        "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git --checkstyle"
+      ],
+      "prepare": [
+        "bash bin/install-wp-tests.sh wordpress_test root root localhost"
+      ],
+      "integration": [
+        "@php ./vendor/bin/phpunit --testsuite WP_Tests"
+      ],
+      "integration-ms": [
+        "@putenv WP_MULTISITE=1",
+        "@composer integration"
+      ]
+    }
 }
