@@ -25,6 +25,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/scripts": "^13.0.3"
-  }
+    "@wordpress/scripts": "^13.0.3",
+    "@wordpress/icons": "^2.10.2",
+    "prettier": "npm:wp-prettier@^2.2.1-beta-1"
+  },
+  "dependencies": {}
 }

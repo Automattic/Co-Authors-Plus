@@ -147,11 +147,19 @@ class CoAuthors_Plus {
 				$asset['dependencies'],
 				$asset['version']
 			);
+
+			wp_register_style(
+				'plugin-sidebar-css',
+				plugins_url( 'build/style-index.css', __FILE__ ),
+				'',
+				$asset['version']
+			);
 		}
 		add_action( 'init', 'sidebar_plugin_register' );
 
 		function sidebar_plugin_script_enqueue() {
 			wp_enqueue_script( 'plugin-sidebar-js' );
+			wp_enqueue_style( 'plugin-sidebar-css' );
 		}
 
 		add_action( 'enqueue_block_editor_assets', 'sidebar_plugin_script_enqueue' );
@@ -346,6 +354,8 @@ class CoAuthors_Plus {
 	 */
 	public function remove_authors_box() {
 
+		$post_type = get_post_type();
+
 		if ( $this->is_post_type_enabled() ) {
 			remove_meta_box( $this->coreauthors_meta_box_name, get_post_type(), 'normal' );
 		}
@@ -355,8 +365,10 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
+		$post_type = get_post_type();
+		$is_block_editor = use_block_editor_for_post_type( $post_type );
 
-		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
+		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! $is_block_editor ) {
 			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
 		}
 	}

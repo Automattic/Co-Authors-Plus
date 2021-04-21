@@ -1,0 +1,15 @@
+.cap-author {
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.cap-action-stack {
+	display: flex;
+	flex-wrap: wrap;
+	width: 30px;
+}
+
+.cap-icon-button {
+	font-size: 10px;
+}
+
+/*# sourceMappingURL=style-index.css.map*/

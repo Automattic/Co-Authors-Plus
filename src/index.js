@@ -1,8 +1,15 @@
 /**
  * WordPress dependencies
  */
-import { ComboboxControl, Spinner, IconButton } from "@wordpress/components";
-import { useEffect, useState } from "@wordpress/element";
+import {
+	ComboboxControl,
+	Spinner,
+	Button,
+	Flex,
+	FlexItem,
+} from '@wordpress/components';
+import { chevronUp, chevronDown } from '@wordpress/icons';
+import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { compose, withState } from '@wordpress/compose';
@@ -13,16 +20,22 @@ import { withSelect, withDispatch } from '@wordpress/data';
 /**
  * Internal Dependencies
  */
+import './style.css';
 import { getOptionFrom, moveOption } from './utils';
 
-const fetchAndSetOptions = ({
+/**
+ * Fetch current coauthors and set state.
+ *
+ * @param {Object} props
+ * @returns
+ */
+const fetchAndSetOptions = ( {
 	currentTermsIds,
 	currentUser,
 	taxonomyRestBase,
 	setSelectedOptions,
-	setFilteredOptions
-}) => {
-
+	setDropdownOptions,
+} ) => {
 	if ( ! taxonomyRestBase || undefined === currentUser.name ) {
 		return;
 	}
@@ -30,129 +43,195 @@ const fetchAndSetOptions = ({
 	apiFetch( {
 		path: `/wp/v2/${ taxonomyRestBase }`,
 	} ).then( ( terms ) => {
-
 		const currentTermsOptions = [];
 
 		const allOptions = terms.map( ( term ) => {
-
 			const optionObj = getOptionFrom( term, 'termObj' );
 
-			if( currentTermsIds.includes( term.id ) ) {
+			if ( currentTermsIds.includes( term.id ) ) {
 				currentTermsOptions.push( optionObj );
 			}
 
 			return optionObj;
-		});
+		} );
 
-		// If there are no author temrs, this is a new post,
+		// If there are no author terms, this is a new post,
 		// so assign the user as the currently selected author
 		if ( 0 === currentTermsOptions.length ) {
 			currentTermsOptions.push( getOptionFrom( currentUser, 'userObj' ) );
 		}
 
 		setSelectedOptions( currentTermsOptions );
-		setFilteredOptions( allOptions );
+		setDropdownOptions( allOptions );
 	} );
 };
 
-const Render = ( props ) => {
+/**
+ * The Render component that will be populated with data from
+ * the select and methods from dispatch as composed below.
+ *
+ * @param {Object} props
+ * @returns
+ */
+const Render = ( {
+	currentTermsIds,
+	taxonomyRestBase,
+	currentUser,
+	updateTerms,
+} ) => {
+	// Currently selected options
+	const [ selectedOptions, setSelectedOptions ] = useState( [] );
 
-	const {
-		currentTermsIds,
-		taxonomyRestBase,
-		currentUser,
-	} = props;
+	// Options that are available in the dropdown
+	const [ filteredOptions, setDropdownOptions ] = useState( [] );
 
-	const [selectedOptions, setSelectedOptions] = useState( [] );
-	const [filteredOptions, setFilteredOptions] = useState( [] );
-
-	// Run when taxonomyRestBase changes
-	// This will only be on initial render
+	// Run when taxonomyRestBase changes.
+	// This is a proxy for detecting initial render.
+	// The data is retrieved via the withSelect method below.
 	useEffect( () => {
-		fetchAndSetOptions({
+		fetchAndSetOptions( {
 			currentUser,
 			currentTermsIds,
 			taxonomyRestBase,
 			setSelectedOptions,
-			setFilteredOptions,
-		});
-	}, [ taxonomyRestBase, currentUser, currentTermsIds ]);
+			setDropdownOptions,
+		} );
+	}, [ taxonomyRestBase, currentTermsIds, currentUser ] );
 
+	// When the selected options change, edit the post terms.
+	// This method is provided via withDispatch below.
+	// below.
+	useEffect( () => {
+		updateTerms( [ 4, 5 ] );
+	}, [ selectedOptions ] );
+
+	// Helper function to remove an item.
 	const removeFromSelected = ( value ) => {
-		const newSelectedOptions = selectedOptions.filter( option => option.value !== value );
+		const newSelectedOptions = selectedOptions.filter(
+			( option ) => option.value !== value
+		);
 		setSelectedOptions( [ ...newSelectedOptions ] );
 	};
 
+	// The component markup and bindings.
 	const AuthorsList = () => {
 		return selectedOptions.map( ( { name, value }, i ) => {
-
 			const option = getOptionFrom( value, 'valueStr', selectedOptions );
 
 			return (
-				<p key={value}>
-					<span>{name}</span>
-					<IconButton
-						icon="arrow-up-alt2"
-						label="Move up"
-						disabled={ i === 0 }
-						size="10"
-						onClick={ ( i ) => moveOption( option, selectedOptions, 'up', setSelectedOptions ) }
-					/>
-					<IconButton
-						icon="arrow-down-alt2"
-						label="Move down"
-						size="10"
-						disabled={ i === selectedOptions.length - 1 }
-						onClick={ ( i ) => moveOption( option, selectedOptions, 'down', setSelectedOptions ) }
-					/>
-					<IconButton
-						icon="no-alt"
-						label="Remove author"
-						size="10"
-						onClick={ () => removeFromSelected( value ) }
-					/>
+				<p key={ value } className="cap-author">
+					<Flex align="center">
+						<FlexItem>
+							<span>{ name }</span>
+						</FlexItem>
+						<FlexItem justify="flex-end">
+							<Flex>
+								<div className="cap-action-stack">
+									<Button
+										icon="arrow-up-alt2"
+										className={ 'cap-icon-button' }
+										label={ __(
+											'Move Up',
+											'coauthors-plus'
+										) }
+										disabled={ i === 0 }
+										onClick={ () =>
+											moveOption(
+												option,
+												selectedOptions,
+												'up',
+												setSelectedOptions
+											)
+										}
+									/>
+									<Button
+										icon="arrow-down-alt2"
+										className={ 'cap-icon-button' }
+										label={ __(
+											'Move down',
+											'coauthors-plus'
+										) }
+										disabled={
+											i === selectedOptions.length - 1
+										}
+										onClick={ () =>
+											moveOption(
+												option,
+												selectedOptions,
+												'down',
+												setSelectedOptions
+											)
+										}
+									/>
+								</div>
+								<Button
+									icon="no-alt"
+									className={ 'cap-icon-button' }
+									label={ __(
+										'Remove Author',
+										'coauthors-plus'
+									) }
+									onClick={ () =>
+										removeFromSelected( value )
+									}
+								/>
+							</Flex>
+						</FlexItem>
+					</Flex>
 				</p>
 			);
-		});
+		} );
 	};
 
 	const onChange = ( newValue ) => {
-		const newOption = getOptionFrom( newValue, 'valueStr', filteredOptions );
+		const newOption = getOptionFrom(
+			newValue,
+			'valueStr',
+			filteredOptions
+		);
 
+		console.log( newOption );
 		// Ensure value is not added twice
-		const newSelectedOptions = selectedOptions.filter( option => option !== newOption );
-		setSelectedOptions( [ ...newSelectedOptions, newOption ] );
+		// const newSelectedOptions = selectedOptions.filter( option => option !== newOption );
+
+		// console.log(newOption);
+		// setSelectedOptions( [ ...newSelectedOptions, newOption ] );
+		// console.log(newValue);
 	};
 
 	return (
 		<>
 			<AuthorsList />
 
-			{ !! filteredOptions[0] ?
+			{ !! filteredOptions[ 0 ] ? (
 				<ComboboxControl
 					label="Select An Author"
-					value={null}
-					options={filteredOptions}
-					onChange={onChange}
-					onFilterValueChange={
-						(inputValue) => {
-							// const newOptions = filteredOptions.filter( option =>
-							// 	option.label.toLowerCase().startsWith(
-							// 		inputValue.toLowerCase()
-							// 	) &&
-							// 	! currentTerms.filter( term => term.id === option.id )
-							// );
-							// setFilteredOptions(
-							// 	newOptions
-							// )
-						}
-					}
+					value={ null }
+					options={ filteredOptions }
+					onChange={ onChange }
+					onFilterValueChange={ ( inputValue ) => {
+						// const newOptions = filteredOptions.filter( option =>
+						// 	option.label.toLowerCase().startsWith(
+						// 		inputValue.toLowerCase()
+						// 	) &&
+						// 	! currentTerms.filter( term => term.id === option.id )
+						// );
+						// setDropdownOptions(
+						// 	newOptions
+						// )
+					} }
 				/>
-			: <span>
-				<p>{ __( 'Loading authors, this could take a moment...', 'coauthors' ) }</p>
-				<Spinner />
-			</span>
-			}
+			) : (
+				<span>
+					<p>
+						{ __(
+							'Loading authors, this could take a moment...',
+							'coauthors'
+						) }
+					</p>
+					<Spinner />
+				</span>
+			) }
 		</>
 	);
 };
@@ -164,8 +243,9 @@ const CoAuthors = compose( [
 		const { getCurrentPost } = select( 'core/editor' );
 
 		const taxonomy = getTaxonomy( 'author' );
+
 		const postType = getEntity( 'postType', 'guest-author' );
-		const currentTermsIds = getCurrentPost().author;
+		const currentTermsIds = getCurrentPost().coauthors;
 		const currentUser = getCurrentUser();
 
 		if ( ! taxonomy ) {
@@ -183,22 +263,19 @@ const CoAuthors = compose( [
 		};
 	} ),
 	withDispatch( ( dispatch, { currentTermsIds, taxonomyRestBase } ) => {
-		// return {
-		// 	updateTerms: ( termId ) => {
-		// 		const hasTerm = currentTermsIds.indexOf( termId ) !== -1;
-		// 		const newTerms = hasTerm
-		// 			? without( currentTermsIds, termId )
-		// 			: [ ...currentTermsIds, termId ];
-
-		// 		dispatch( 'core/editor' ).editPost( {
-		// 			[ taxonomyRestBase ]: newTerms,
-		// 		} );
-		// 	},
-		// };
+		return {
+			updateTerms: ( newTerms ) => {
+				if ( null !== taxonomyRestBase && undefined !== newTerms ) {
+					dispatch( 'core/editor' ).editPost( {
+						[ taxonomyRestBase ]: newTerms,
+					} );
+				}
+			},
+		};
 	} ),
 ] )( Render );
 
-const PluginDocumentSettingPanelDemo = () => (
+const PluginDocumentSettingPanelAuthors = () => (
 	<PluginDocumentSettingPanel
 		name="custom-panel"
 		title="Authors"
@@ -209,6 +286,6 @@ const PluginDocumentSettingPanelDemo = () => (
 );
 
 registerPlugin( 'plugin-coauthors-document-setting', {
-	render: PluginDocumentSettingPanelDemo,
-	icon: 'users'
+	render: PluginDocumentSettingPanelAuthors,
+	icon: 'users',
 } );
