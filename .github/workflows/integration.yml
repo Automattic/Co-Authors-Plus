@@ -35,11 +35,6 @@ jobs:
           # https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions
           extensions: curl, dom, exif, fileinfo, hash, json, mbstring, mysqli, libsodium, openssl, pcre, imagick, xml, zip
 
-      - name: Show PHP and PHPUnit version info
-        run: |
-          php --version
-          ./vendor/bin/phpunit --version
-
       - name: Install Composer dependencies (PHP < 8.0 )
         if: ${{ matrix.php < 8.0 }}
         uses: ramsey/composer-install@v1
@@ -52,6 +47,11 @@ jobs:
 
       - name: Setup Problem Matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Show PHP and PHPUnit version info
+        run: |
+          php --version
+          ./vendor/bin/phpunit --version
 
       - name: Start MySQL service
         run: sudo /etc/init.d/mysql start
