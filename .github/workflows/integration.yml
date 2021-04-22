@@ -4,9 +4,8 @@ on: [push]
 
 jobs:
   test:
-    name: PHP ${{ matrix.php }}
-#    name: WP ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
-    runs-on: ubuntu-latest
+    name: WP ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
+    runs-on: ubuntu-16.04
     continue-on-error: ${{ matrix.allowed_failure }}
     
     env:
@@ -16,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         php: [ '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0' ]
-        wordpress: [ '5.7'  ]
+        wordpress: [ '5.5', '5.6', '5.7'  ]
         allowed_failure: [ false ]
         include:
           # PHP nightly.
