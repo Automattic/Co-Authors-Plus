@@ -72,3 +72,6 @@ jobs:
         
       - name: Run integration tests (multisite)
         run: composer integration-ms
+
+      - name: Run PHPCS
+        run: composer cs

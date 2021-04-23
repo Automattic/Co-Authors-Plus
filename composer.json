@@ -37,7 +37,7 @@
     },
     "scripts": {
       "cs": [
-        "@php ./vendor/bin/phpcs"
+        "@php ./vendor/bin/phpcs -p -s -v -n . --standard=\"WordPress-VIP-Go\" --extensions=php --ignore=\"/vendor/*,/node_modules/*\""
       ],
       "lint": [
         "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git"
