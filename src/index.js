@@ -40,7 +40,6 @@ const fetchAndSetOptions = ( {
 		const currentTermsOptions = [];
 
 		const allOptions = terms.map( ( term ) => {
-			console.log('termObj', term);
 			const optionObj = getOptionFromData( term, 'termObj' );
 
 			if ( currentTermsIds.includes( term.id ) ) {
@@ -97,10 +96,8 @@ const Render = ( {
 	// This method is provided via withDispatch below.
 	// below.
 	useEffect( () => {
-		console.log( 'updateTerms called' );
 		const termIds = selectedOptions.map( ( option ) => option.id );
 		updateTerms( termIds );
-		console.log( selectedOptions[ 0 ] );
 	}, [ selectedOptions ] );
 
 	// Helper function to remove an item.
@@ -172,8 +169,6 @@ const CoAuthors = compose( [
 			return post?.[ taxonomyRestBase ];
 		} )();
 
-		console.log('userObj', currentUser);
-
 		return {
 			currentTermsIds,
 			currentUser,
@@ -184,7 +179,6 @@ const CoAuthors = compose( [
 	withDispatch( ( dispatch, { currentTermsIds, taxonomyRestBase } ) => {
 		return {
 			updateTerms: ( newTerms ) => {
-				console.log( newTerms[ 0 ] );
 				if ( null !== taxonomyRestBase && undefined !== newTerms ) {
 					dispatch( 'core/editor' ).editPost( {
 						[ taxonomyRestBase ]: newTerms,
