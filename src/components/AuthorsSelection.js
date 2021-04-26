@@ -8,14 +8,12 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies.
  */
-import { getOptionByValue } from '../utils';
+import { getOptionByValue, moveOption } from '../utils';
 
 export const AuthorsSelection = ( {
 	selectedOptions,
-	moveOption,
 	removeFromSelected,
 	setSelectedOptions,
-	formatOption,
 } ) => {
 	return selectedOptions.map( ( { name, value }, i ) => {
 		const option = getOptionByValue( value, selectedOptions );

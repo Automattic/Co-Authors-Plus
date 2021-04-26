@@ -18,3 +18,24 @@ export const selectedOptionsMock = [
 		order: 2,
 	},
 ];
+
+export const termObj = {
+	count: "0",
+	description: "Some Name tester 9 local@test.com",
+	id: 12,
+	link: "http://wordpress.test/?taxonomy=author&term=cap-tester",
+	meta: [],
+	name: "tester",
+	slug: "cap-tester",
+	taxonomy: "author"
+};
+
+export const userObj = {
+	decription: "",
+	id: 10,
+	link: "http://wordpress.test?author_name=admin",
+	meta: [],
+	name: "tester",
+	slug: "tester",
+	url: "http://wordpres.test"
+};

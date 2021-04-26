@@ -1,5 +1,5 @@
-import { selectedOptionsMock } from '../__mocks__/data';
-import { getOptionByValue, moveOption } from '../utils.js';
+import { selectedOptionsMock, termObj, userObj } from '../__mocks__/data';
+import { getOptionByValue, getOptionFromData, moveOption } from '../utils.js';
 
 describe( 'Utility - getOptionByValue', () => {
 	it( 'should retrieve an option by value', () => {
@@ -21,16 +21,23 @@ describe( 'Utility - getOptionByValue', () => {
 	} );
 } );
 
-describe( 'Utility - getOptionFromData', () => {
+describe.only( 'Utility - getOptionFromData', () => {
+
+	const expected = {
+		label: "Some Name tester 9 local@test.com",
+		name: "tester",
+		value: "cap-tester",
+	};
+
 	it( 'should get an option from a user object', () => {
-		expect( getOptionFromData( 'cap-tester', userObj ) ).toStrictEqual(
-			selectedOptionsMock[ 0 ]
+		expect( getOptionFromData( userObj, 'userObj' ) ).toStrictEqual(
+			expected
 		);
 	} );
 
 	it( 'should get an option from a term object', () => {
-		expect( getOptionByValue( 'cap-tester', termObj ) ).toStrictEqual(
-			selectedOptionsMock[ 0 ]
+		expect( getOptionFromData( termObj, 'termObj' ) ).toStrictEqual(
+			expected
 		);
 	} );
 } );

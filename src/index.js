@@ -1,10 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {
-	ComboboxControl,
-	Spinner
-} from '@wordpress/components';
+import { ComboboxControl, Spinner } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
@@ -18,7 +15,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
  */
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
-import { formatOption, moveOption } from './utils';
+import { getOptionByValue, getOptionFromData, moveOption } from './utils';
 
 /**
  * Fetch current coauthors and set state.
@@ -43,7 +40,8 @@ const fetchAndSetOptions = ( {
 		const currentTermsOptions = [];
 
 		const allOptions = terms.map( ( term ) => {
-			const optionObj = formatOption( term, 'termObj' );
+			console.log('termObj', term);
+			const optionObj = getOptionFromData( term, 'termObj' );
 
 			if ( currentTermsIds.includes( term.id ) ) {
 				currentTermsOptions.push( optionObj );
@@ -55,7 +53,7 @@ const fetchAndSetOptions = ( {
 		// If there are no author terms, this is a new post,
 		// so assign the user as the currently selected author
 		if ( 0 === currentTermsOptions.length ) {
-			currentTermsOptions.push( formatOption( currentUser, 'userObj' ) );
+			currentTermsOptions.push( getOptionFromData( currentUser, 'userObj' ) );
 		}
 
 		setSelectedOptions( currentTermsOptions );
@@ -99,28 +97,29 @@ const Render = ( {
 	// This method is provided via withDispatch below.
 	// below.
 	useEffect( () => {
-		const termIds = selectedOptions.map( option => option.id );
-		console.log( 'ids', termIds );
+		console.log( 'updateTerms called' );
+		const termIds = selectedOptions.map( ( option ) => option.id );
 		updateTerms( termIds );
+		console.log( selectedOptions[ 0 ] );
 	}, [ selectedOptions ] );
 
 	// Helper function to remove an item.
 	const removeFromSelected = ( value ) => {
-		const newSelections = selectedOptions.filter(
-			( option ) => option.value !== value
-		);
+		const newSelections = selectedOptions.map( ( option ) => {
+			if ( option.value !== value ) {
+				return option;
+			}
+		} );
 		setSelectedOptions( [ ...newSelections ] );
 	};
 
 	const onChange = ( newValue ) => {
-		const newOption = formatOption(
-			newValue,
-			'valueStr',
-			filteredOptions
-		);
+		const newOption = getOptionByValue( newValue, filteredOptions );
 
 		// Ensure value is not added twice
-		const newSelectedOptions = selectedOptions.filter( option => option !== newOption );
+		const newSelectedOptions = selectedOptions.map( ( option ) => {
+			if ( option !== newOption ) return option;
+		} );
 
 		setSelectedOptions( [ ...newSelectedOptions, newOption ] );
 	};
@@ -128,12 +127,10 @@ const Render = ( {
 	return (
 		<>
 			<AuthorsSelection
-				selectedOptions={selectedOptions}
-				setSelectedOptions={setSelectedOptions}
-				removeFromSelected={removeFromSelected}
-				moveOption={moveOption}
-				formatOption={formatOption}
-			 />
+				selectedOptions={ selectedOptions }
+				setSelectedOptions={ setSelectedOptions }
+				removeFromSelected={ removeFromSelected }
+			/>
 
 			{ !! filteredOptions[ 0 ] ? (
 				<ComboboxControl
@@ -142,7 +139,7 @@ const Render = ( {
 					value={ null }
 					options={ filteredOptions }
 					onChange={ onChange }
-					onFilterValueChange={()=>{}}
+					onFilterValueChange={ () => {} }
 				/>
 			) : (
 				<span>
@@ -173,7 +170,9 @@ const CoAuthors = compose( [
 			const post = getCurrentPost();
 
 			return post?.[ taxonomyRestBase ];
-		})();
+		} )();
+
+		console.log('userObj', currentUser);
 
 		return {
 			currentTermsIds,
@@ -185,7 +184,7 @@ const CoAuthors = compose( [
 	withDispatch( ( dispatch, { currentTermsIds, taxonomyRestBase } ) => {
 		return {
 			updateTerms: ( newTerms ) => {
-				console.log('update called');
+				console.log( newTerms[ 0 ] );
 				if ( null !== taxonomyRestBase && undefined !== newTerms ) {
 					dispatch( 'core/editor' ).editPost( {
 						[ taxonomyRestBase ]: newTerms,
