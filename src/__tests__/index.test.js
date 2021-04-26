@@ -1,4 +1,4 @@
-import { optionsMock } from './fixture';
+import { optionsMock } from '../__mocks__/data';
 import { formatOption, moveOption } from '../utils.js';
 
 describe( 'Utility', () => {
