@@ -1,21 +1,24 @@
+/**
+ * External dependencies.
+ */
 import { chevronUp, chevronDown, close } from '@wordpress/icons';
-import {
-	Button,
-	Flex,
-	FlexItem,
-} from '@wordpress/components';
+import { Button, Flex, FlexItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export const AuthorsSelection = ({
+/**
+ * Internal dependencies.
+ */
+import { getOptionByValue } from '../utils';
+
+export const AuthorsSelection = ( {
 	selectedOptions,
 	moveOption,
 	removeFromSelected,
 	setSelectedOptions,
-	formatOption
-}) => {
-
+	formatOption,
+} ) => {
 	return selectedOptions.map( ( { name, value }, i ) => {
-		const option = formatOption( value, 'valueStr', selectedOptions );
+		const option = getOptionByValue( value, selectedOptions );
 
 		return (
 			<div key={ value } className="cap-author">
@@ -27,12 +30,9 @@ export const AuthorsSelection = ({
 						<Flex>
 							<div className="cap-icon-button-stack">
 								<Button
-									icon={chevronUp}
+									icon={ chevronUp }
 									className={ 'cap-icon-button' }
-									label={ __(
-										'Move Up',
-										'coauthors-plus'
-									) }
+									label={ __( 'Move Up', 'coauthors-plus' ) }
 									disabled={ i === 0 }
 									onClick={ () =>
 										moveOption(
@@ -44,7 +44,7 @@ export const AuthorsSelection = ({
 									}
 								/>
 								<Button
-									icon={chevronDown}
+									icon={ chevronDown }
 									className={ 'cap-icon-button' }
 									label={ __(
 										'Move down',
@@ -64,16 +64,14 @@ export const AuthorsSelection = ({
 								/>
 							</div>
 							<Button
-								icon={close}
-								iconSize={20}
+								icon={ close }
+								iconSize={ 20 }
 								className={ 'cap-icon-button' }
 								label={ __(
 									'Remove Author',
 									'coauthors-plus'
 								) }
-								onClick={ () =>
-									removeFromSelected( value )
-								}
+								onClick={ () => removeFromSelected( value ) }
 							/>
 						</Flex>
 					</FlexItem>

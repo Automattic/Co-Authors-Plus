@@ -1,20 +1,20 @@
-export const optionsMock = [
+export const selectedOptionsMock = [
 	{
 		name: 'tester',
-		value: 'cap-pmcdev',
-		label: 'tester local@test.com something else',
-		order: 1
+		value: 'cap-tester',
+		label: 'Some Name tester 9 local@test.com',
+		order: 1,
 	},
 	{
 		name: 'guest',
 		value: 'cap-guest',
-		label: 'guest local@test.com something else',
-		order: 0
+		label: 'Guest Name guest 12 me@email.com',
+		order: 0,
 	},
 	{
 		name: 'demo',
 		value: 'cap-demo',
-		label: 'demo local@test.com something else',
-		order: 2
+		label: 'Demo Name demo 2 local@test.com',
+		order: 2,
 	},
 ];
