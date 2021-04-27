@@ -44,7 +44,6 @@ require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once dirname( __FILE__ ) . '/php/class-wp-cli.php';
 }
-$coauthors_endpoint = new CoAuthors_Endpoint();
 
 class CoAuthors_Plus {
 
@@ -1822,6 +1821,7 @@ class CoAuthors_Plus {
 
 global $coauthors_plus;
 $coauthors_plus = new CoAuthors_Plus();
+$coauthors_endpoint = new CoAuthors_Endpoint( $coauthors_plus );
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**

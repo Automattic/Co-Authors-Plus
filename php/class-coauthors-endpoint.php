@@ -16,12 +16,19 @@ class CoAuthors_Endpoint {
 	/**
 	 * Route for authors search endpoint.
 	 */
-	public const ROUTE = 'authors';
+	public const ROUTE = 'search';
+
+	/**
+	 * An instance of the Co_Authors_Plus class.
+	 */
+	private $coauthors;
 
 	/**
 	 * WP_REST_API constructor.
 	 */
-	public function __construct() {
+	public function __construct( $coauthors_instance ) {
+		$this->coauthors = $coauthors_instance;
+
 		add_action( 'rest_api_init', [ $this, 'add_endpoints' ] );
 	}
 
@@ -36,19 +43,27 @@ class CoAuthors_Endpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_coauthors' ],
-					'permission_callback' => [ $this, 'check_endpoint_read_permissions' ],
+					'args'                => [
+						'q' => [
+							'required'          => true,
+							'type'              => 'string',
+						],
+					],
 				]
 			]
 		);
 	}
 
 	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
-		$response = 'coauthors response';
+		$search   = sanitize_text_field( strtolower( $request['q'] ) );
+		$ignore   = array_map( 'sanitize_text_field', explode( ',', $request['existing_authors'] ) );
+		$response = $this->coauthors->search_authors( $search, $ignore );
+
+		// Return message if no authors found
+		if ( empty( $response ) ) {
+			$response = apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
+		}
 
 		return rest_ensure_response( $response );
-	}
-
-	public function check_endpoint_read_permissions(): bool {
-		return true;
 	}
 }
