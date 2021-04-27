@@ -139,7 +139,16 @@ const Render = ( {
 			path: `/coauthors/v1/search/${query}`,
 			method: 'GET',
 		} ).then( response => {
-			console.log(response);
+
+			const formattedOptions = response.map( item => {
+				return {
+					id: item.id,
+					label: `${item.display_name} | ${item.email}`,
+					value: item.nicename,
+				}
+			})
+
+			setDropdownOptions(formattedOptions);
 		} ).catch( e => {
 			console.log( e );
 		} );

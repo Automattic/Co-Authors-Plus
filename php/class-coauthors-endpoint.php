@@ -62,13 +62,26 @@ class CoAuthors_Endpoint {
 	}
 
 	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
-		$search   = sanitize_text_field( strtolower( $request['q'] ) );
-		$ignore   = array_map( 'sanitize_text_field', explode( ',', $request['existing_authors'] ) );
-		$response = $this->coauthors->search_authors( $search, $ignore );
+		$response = [];
+
+		$search  = sanitize_text_field( strtolower( $request['q'] ) );
+		$ignore  = array_map( 'sanitize_text_field', explode( ',', $request['existing_authors'] ) );
+		$authors = $this->coauthors->search_authors( $search, $ignore );
 
 		// Return message if no authors found
-		if ( empty( $response ) ) {
+		if ( empty( $authors ) ) {
 			$response = apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
+		}
+
+		foreach ( $authors as $author ) {
+			$response[] = [
+				'id' => esc_html( $author->ID ),
+				'avatar' => esc_url( get_avatar_url( $author->ID ) ),
+				'nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
+				'login' => esc_html( $author->user_login ),
+				'email' => $author->user_email,
+				'display_name' => esc_html( str_replace( '∣', '|', $author->display_name ) )
+			];
 		}
 
 		return rest_ensure_response( $response );
