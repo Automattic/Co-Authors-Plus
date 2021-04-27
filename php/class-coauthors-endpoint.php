@@ -11,12 +11,18 @@ class CoAuthors_Endpoint {
 	/**
 	 * Namespace for our endpoints.
 	 */
-	public const NAMESPACE = 'coauthors/v1';
+	protected const NAMESPACE = 'coauthors/v1';
 
 	/**
 	 * Route for authors search endpoint.
 	 */
-	public const ROUTE = 'search';
+	protected const ROUTE = 'search';
+
+	/**
+	 * Regex to capture the query in a request.
+	 */
+	// https://regex101.com/r/3HaxlL/1
+	protected const ENDPOINT_QUERY_REGEX = '/(?P<q>[\w]+)';
 
 	/**
 	 * An instance of the Co_Authors_Plus class.
@@ -38,11 +44,12 @@ class CoAuthors_Endpoint {
 	public function add_endpoints(): void {
 		register_rest_route(
 			static::NAMESPACE,
-			static::ROUTE,
+			static::ROUTE . static::ENDPOINT_QUERY_REGEX,
 			[
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_coauthors' ],
+					'permission_callback' => '__return_true',
 					'args'                => [
 						'q' => [
 							'required'          => true,
