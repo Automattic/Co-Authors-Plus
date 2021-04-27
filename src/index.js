@@ -15,7 +15,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
  */
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
-import { getOptionByValue, getOptionFromData, moveOption } from './utils';
+import { getOptionByValue, getOptionFromData } from './utils';
 
 /**
  * Fetch current coauthors and set state.
@@ -56,7 +56,7 @@ const fetchAndSetOptions = ( {
 		}
 
 		setSelectedOptions( currentTermsOptions );
-		setDropdownOptions( allOptions );
+		// setDropdownOptions( allOptions );
 	} );
 };
 
@@ -121,6 +121,30 @@ const Render = ( {
 		setSelectedOptions( [ ...newSelectedOptions, newOption ] );
 	};
 
+	// const searchAuthors = async () => {
+	// 	apiFetch( {
+	// 		path: `/wp/v2/posts/1`,
+	// 		method: 'GET',
+	// 		data: {
+	// 			q: query
+	// 		}
+	// 	} ).then( response => {
+	// 		console.log(response);
+	// 	} ).catch( e => {
+	// 		console.log( e );
+	// 	} );
+	// }
+	const onFilterValueChange = ( query ) => {
+		apiFetch( {
+			path: `/coauthors/v1/search/${query}`,
+			method: 'GET',
+		} ).then( response => {
+			console.log(response);
+		} ).catch( e => {
+			console.log( e );
+		} );
+	};
+
 	return (
 		<>
 			<AuthorsSelection
@@ -129,26 +153,14 @@ const Render = ( {
 				removeFromSelected={ removeFromSelected }
 			/>
 
-			{ !! filteredOptions[ 0 ] ? (
-				<ComboboxControl
-					className="cap-combobox"
-					label="Select An Author"
-					value={ null }
-					options={ filteredOptions }
-					onChange={ onChange }
-					onFilterValueChange={ () => {} }
-				/>
-			) : (
-				<span>
-					<p>
-						{ __(
-							'Loading authors, this could take a moment...',
-							'coauthors'
-						) }
-					</p>
-					<Spinner />
-				</span>
-			) }
+			<ComboboxControl
+				className="cap-combobox"
+				label="Select An Author"
+				value={ null }
+				options={ filteredOptions }
+				onChange={ onChange }
+				onFilterValueChange={ onFilterValueChange }
+			/>
 		</>
 	);
 };
