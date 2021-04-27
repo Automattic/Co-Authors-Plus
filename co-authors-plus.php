@@ -38,11 +38,13 @@ require_once dirname( __FILE__ ) . '/template-tags.php';
 require_once dirname( __FILE__ ) . '/deprecated.php';
 
 require_once dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php';
+require_once dirname( __FILE__ ) . '/php/class-coauthors-endpoint.php';
 require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once dirname( __FILE__ ) . '/php/class-wp-cli.php';
 }
+$coauthors_endpoint = new CoAuthors_Endpoint();
 
 class CoAuthors_Plus {
 
@@ -365,12 +367,12 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-		$post_type = get_post_type();
-		$is_block_editor = use_block_editor_for_post_type( $post_type );
+		// $post_type = get_post_type();
+		// $is_block_editor = use_block_editor_for_post_type( $post_type );
 
-		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! $is_block_editor ) {
+		// if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! $is_block_editor ) {
 			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
-		}
+		// }
 	}
 
 	/**
