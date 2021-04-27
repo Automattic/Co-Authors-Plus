@@ -77,7 +77,7 @@ const Render = ( {
 	const [ selectedOptions, setSelectedOptions ] = useState( [] );
 
 	// Options that are available in the dropdown
-	const [ filteredOptions, setDropdownOptions ] = useState( [] );
+	const [ dropdownOptions, setDropdownOptions ] = useState( [] );
 
 	// Run when taxonomyRestBase changes.
 	// This is a proxy for detecting initial render.
@@ -111,9 +111,10 @@ const Render = ( {
 	};
 
 	const onChange = ( newValue ) => {
-		const newOption = getOptionByValue( newValue, filteredOptions );
+		console.log(newValue);
+		const newOption = getOptionByValue( newValue, dropdownOptions );
 
-		// Ensure value is not added twice
+		// // Ensure value is not added twice
 		const newSelectedOptions = selectedOptions.map( ( option ) => {
 			if ( option !== newOption ) return option;
 		} );
@@ -121,30 +122,18 @@ const Render = ( {
 		setSelectedOptions( [ ...newSelectedOptions, newOption ] );
 	};
 
-	// const searchAuthors = async () => {
-	// 	apiFetch( {
-	// 		path: `/wp/v2/posts/1`,
-	// 		method: 'GET',
-	// 		data: {
-	// 			q: query
-	// 		}
-	// 	} ).then( response => {
-	// 		console.log(response);
-	// 	} ).catch( e => {
-	// 		console.log( e );
-	// 	} );
-	// }
 	const onFilterValueChange = ( query ) => {
 		apiFetch( {
 			path: `/coauthors/v1/search/${query}`,
 			method: 'GET',
 		} ).then( response => {
 
-			const formattedOptions = response.map( item => {
+			const formattedOptions = response?.map( item => {
 				return {
 					id: item.id,
 					label: `${item.display_name} | ${item.email}`,
 					value: item.nicename,
+					name: item.nicename,
 				}
 			})
 
@@ -166,7 +155,7 @@ const Render = ( {
 				className="cap-combobox"
 				label="Select An Author"
 				value={ null }
-				options={ filteredOptions }
+				options={ dropdownOptions }
 				onChange={ onChange }
 				onFilterValueChange={ onFilterValueChange }
 			/>
