@@ -16,13 +16,15 @@ class CoAuthors_Endpoint {
 	/**
 	 * Route for authors search endpoint.
 	 */
-	protected const ROUTE = 'search';
+	protected const SEARCH_ROUTE = 'search';
+	protected const AUTHOR_ROUTE = 'author';
 
 	/**
 	 * Regex to capture the query in a request.
 	 */
 	// https://regex101.com/r/3HaxlL/1
 	protected const ENDPOINT_QUERY_REGEX = '/(?P<q>[\w]+)';
+	protected const ENDPOINT_ID_REGEX = '/(?P<id>[\d]+)';
 
 	/**
 	 * An instance of the Co_Authors_Plus class.
@@ -44,11 +46,11 @@ class CoAuthors_Endpoint {
 	public function add_endpoints(): void {
 		register_rest_route(
 			static::NAMESPACE,
-			static::ROUTE . static::ENDPOINT_QUERY_REGEX,
+			static::SEARCH_ROUTE . static::ENDPOINT_QUERY_REGEX,
 			[
 				[
 					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_coauthors' ],
+					'callback'            => [ $this, 'get_coauthors_search_results' ],
 					'permission_callback' => '__return_true',
 					'args'                => [
 						'q' => [
@@ -59,9 +61,31 @@ class CoAuthors_Endpoint {
 				]
 			]
 		);
+
+		register_rest_route(
+			static::NAMESPACE,
+			static::AUTHOR_ROUTE . static::ENDPOINT_ID_REGEX,
+			[
+				[
+					'methods'             => 'GET',
+					'callback'            => [ $this, 'get_author' ],
+					'permission_callback' => '__return_true',
+					'args'                => [
+						'id' => [
+							'required'          => true,
+							'type'              => 'number',
+							'validate_callback' => [ $this, 'validate_numeric' ],
+						],
+					],
+				]
+			]
+		);
 	}
 
-	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
+	/**
+	 * Search and return authors.
+	 */
+	public function get_coauthors_search_results( WP_REST_Request $request ): WP_REST_Response {
 		$response = [];
 
 		$search  = sanitize_text_field( strtolower( $request['q'] ) );
@@ -74,16 +98,55 @@ class CoAuthors_Endpoint {
 		}
 
 		foreach ( $authors as $author ) {
-			$response[] = [
-				'id' => esc_html( $author->ID ),
-				'avatar' => esc_url( get_avatar_url( $author->ID ) ),
-				'nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
-				'login' => esc_html( $author->user_login ),
-				'email' => $author->user_email,
-				'display_name' => esc_html( str_replace( '∣', '|', $author->display_name ) )
-			];
+			$response[] = $this->_format_author_data( $author );
 		}
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Return a single author.
+	 */
+	public function get_author( WP_REST_Request $request ): WP_REST_Response {
+		$response = [];
+
+		$author = $this->coauthors->get_coauthor_by( 'id', $request['id'] );
+
+		// Return message if no authors found
+		if ( empty( $author ) ) {
+			$response = apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
+		}
+
+		$response = $this->_format_author_data( $author );
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Validate input arguments.
+	 *
+	 * @param mixed $param Value to validate.
+	 * @return bool
+	 */
+	public function validate_numeric( $param ): bool {
+		return is_numeric( $param );
+	}
+
+	/**
+	 * Helper function to consistently format the author data for
+	 * the response.
+	 *
+	 * @param object $author The result from coauthors methods.
+	 * @return array
+	 */
+	public function _format_author_data( object $author ): array {
+		return [
+			'id' => esc_html( $author->ID ),
+			'nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
+			'login' => esc_html( $author->user_login ),
+			'email' => $author->user_email,
+			'display_name' => esc_html( str_replace( '∣', '|', $author->display_name ) ),
+			'avatar' => esc_url( get_avatar_url( $author->ID ) ),
+		];
 	}
 }
