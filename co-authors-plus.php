@@ -1821,7 +1821,7 @@ class CoAuthors_Plus {
 
 global $coauthors_plus;
 $coauthors_plus = new CoAuthors_Plus();
-$coauthors_endpoint = new CoAuthors_Endpoint( $coauthors_plus );
+$coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**

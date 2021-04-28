@@ -1,35 +1,40 @@
 <?php
 
+namespace CoAuthors\API;
+
 require_once ABSPATH . 'wp-includes/rest-api/class-wp-rest-response.php';
 require_once ABSPATH . 'wp-includes/rest-api/class-wp-rest-request.php';
+
 
 /**
  * Class Endpoint.
  */
-class CoAuthors_Endpoint {
+class Endpoints {
 
 	/**
 	 * Namespace for our endpoints.
 	 */
-	protected const NAMESPACE = 'coauthors/v1';
+	public const NAMESPACE = 'coauthors/v1';
 
 	/**
 	 * Route for authors search endpoint.
 	 */
-	protected const SEARCH_ROUTE = 'search';
-	protected const AUTHOR_ROUTE = 'author';
+	public const SEARCH_ROUTE = 'search';
+	public const AUTHORS_ROUTE = 'authors';
 
 	/**
 	 * Regex to capture the query in a request.
 	 */
 	// https://regex101.com/r/3HaxlL/1
 	protected const ENDPOINT_QUERY_REGEX = '/(?P<q>[\w]+)';
-	protected const ENDPOINT_ID_REGEX = '/(?P<id>[\d]+)';
+
+	// Maybe will use later
+	// protected const ENDPOINT_ID_REGEX = '/(?P<id>[\d]+)';
 
 	/**
 	 * An instance of the Co_Authors_Plus class.
 	 */
-	private $coauthors;
+	public $coauthors;
 
 	/**
 	 * WP_REST_API constructor.
@@ -44,6 +49,7 @@ class CoAuthors_Endpoint {
 	 * Register endpoints.
 	 */
 	public function add_endpoints(): void {
+
 		register_rest_route(
 			static::NAMESPACE,
 			static::SEARCH_ROUTE . static::ENDPOINT_QUERY_REGEX,
@@ -64,22 +70,71 @@ class CoAuthors_Endpoint {
 
 		register_rest_route(
 			static::NAMESPACE,
-			static::AUTHOR_ROUTE . static::ENDPOINT_ID_REGEX,
+			// static::AUTHORS_ROUTE . static::ENDPOINT_ID_REGEX,
+			static::AUTHORS_ROUTE,
 			[
 				[
 					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_author' ],
+					'callback'            => [ $this, 'get_authors' ],
 					'permission_callback' => '__return_true',
 					'args'                => [
 						'id' => [
-							'required'          => true,
+							'required'          => false,
 							'type'              => 'number',
-							'validate_callback' => [ $this, 'validate_numeric' ],
+							'validate_callback' => '__return_true',
+						],
+						'nicenames' => [
+							'description' => __( 'Limit result set to specific IDs.' ),
+							'type'        => 'array',
+							'items'       => [
+								'type' => 'string',
+							],
+							'required'    => false,
 						],
 					],
 				]
 			]
 		);
+
+		register_rest_route(
+			static::NAMESPACE,
+			static::AUTHORS_ROUTE,
+			[
+				[
+					'methods'             => 'POST',
+					'callback'            => [ $this, 'update_coauthors' ],
+					// 'permission_callback' => [ $this, 'can_edit_coauthors', $post ],
+					'permission_callback' => '__return_true',
+					'args'                => [
+						'nicenames' => [
+							'description' => __( 'Names of coauthors to save.' ),
+							'type'        => 'array',
+							'items'       => [
+								'type' => 'string',
+							],
+							'required'    => false,
+						],
+					],
+				]
+			]
+		);
+	}
+
+	/**
+	 * Update coauthors.
+	 */
+	public function update_coauthors( WP_REST_Request $request ) {
+
+		global $post;
+
+		$post_id = $post->ID;
+
+		if ( isset( $request['nicenames'] ) ) {
+			$author_names = (array) $request['nicenames'];
+			$coauthors    = array_map( 'sanitize_title', $author_names );
+
+			$this->coauthors->add_coauthors( $post_id, $coauthors );
+		}
 	}
 
 	/**
@@ -95,11 +150,12 @@ class CoAuthors_Endpoint {
 		// Return message if no authors found
 		if ( empty( $authors ) ) {
 			$response = apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
+		} else {
+			foreach ( $authors as $author ) {
+				$response[] = $this->_format_author_data( $author );
+			}
 		}
 
-		foreach ( $authors as $author ) {
-			$response[] = $this->_format_author_data( $author );
-		}
 
 		return rest_ensure_response( $response );
 	}
@@ -107,17 +163,24 @@ class CoAuthors_Endpoint {
 	/**
 	 * Return a single author.
 	 */
-	public function get_author( WP_REST_Request $request ): WP_REST_Response {
+	public function get_authors( WP_REST_Request $request ): WP_REST_Response {
 		$response = [];
 
-		$author = $this->coauthors->get_coauthor_by( 'id', $request['id'] );
+		$author_names = $request['nicenames'];
 
 		// Return message if no authors found
-		if ( empty( $author ) ) {
+		if ( empty( $author_ids ) ) {
 			$response = apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
-		}
+		} else {
+			foreach ( $author_names as $name ) {
+				$coauthor = $this->coauthors->get_coauthor_by( 'user_nicename', $name );
 
-		$response = $this->_format_author_data( $author );
+				if ( ! empty( $coauthor ) ) {
+					$response[] = $this->_format_author_data( $coauthor );
+				}
+
+			}
+		}
 
 		return rest_ensure_response( $response );
 	}
@@ -133,6 +196,17 @@ class CoAuthors_Endpoint {
 	}
 
 	/**
+	 * Permissions for updating coauthors.
+	 */
+	public function can_edit_coauthors( WP_Post $post ): bool {
+		if ( ! $this->is_post_type_enabled( $post->post_type ) ) {
+			return false;
+		}
+
+		return $this->current_user_can_set_authors( $post );
+	}
+
+	/**
 	 * Helper function to consistently format the author data for
 	 * the response.
 	 *
@@ -140,6 +214,7 @@ class CoAuthors_Endpoint {
 	 * @return array
 	 */
 	public function _format_author_data( object $author ): array {
+
 		return [
 			'id' => esc_html( $author->ID ),
 			'nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
