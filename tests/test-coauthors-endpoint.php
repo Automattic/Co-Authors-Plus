@@ -173,10 +173,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$not_found_get_response = $this->_api->get_coauthors_search_results( $not_found_get_request );
 
-		$this->assertContains(
-			"Sorry",
+		$this->assertEmpty(
 			$not_found_get_response->data,
-			'Failed to assert that coauthors search returns a not found message when no results match the query.'
+			'Failed to assert that coauthors search returns an empty array when no coauthors match query.'
 		);
 	}
 

@@ -88,7 +88,6 @@ const Render = ( {
 	};
 
 	const onChange = ( newAuthor ) => {
-		console.log(newAuthor);
 		setSelectedAuthors( [ ...selectedAuthors, newAuthor ] );
 	};
 
@@ -96,27 +95,30 @@ const Render = ( {
 
 		const existingAuthors = selectedAuthors.join(',');
 
-		console.log(existingAuthors);
+		console.log(existingAuthors, query);
+
 		apiFetch( {
-			path: `/coauthors/v1/search/${query}`,
+			path: `/coauthors/v1/search/${query}?existing_authors=${existingAuthors}`,
 			method: 'GET',
-			data: {
-				'existing_authors': existingAuthors,
-			}
 		} ).then( response => {
 
-			const formattedOptions = response?.map( item => {
+			const formatAuthorData = ( { id, label, display_name, user_nicename, email } ) => {
 				return {
-					id: item.id,
-					label: `${item.display_name} | ${item.email}`,
-					value: item.user_nicename,
-					name: item.user_nicename,
+					id,
+					label: `${display_name} | ${email}`,
+					value: user_nicename,
 				}
-			})
+			};
+
+			const formattedOptions = ( items => {
+				if ( items.length > 0 ) {
+					return items.map( item => formatAuthorData( item ) );
+				} else {
+					return [];
+				}
+			})( response );
 
 			setDropdownOptions(formattedOptions);
-		} ).catch( e => {
-			console.log( e );
 		} );
 	};
 

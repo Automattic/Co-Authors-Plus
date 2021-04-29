@@ -135,10 +135,7 @@ class Endpoints {
 		$ignore  = array_map( 'sanitize_text_field', explode( ',', $request['existing_authors'] ) );
 		$authors = $this->coauthors->search_authors( $search, $ignore );
 
-		// Return message if no authors found
-		if ( empty( $authors ) ) {
-			$response = apply_filters( 'coauthors_no_matching_authors_message', __( 'Sorry, no matching authors found.', 'co-authors-plus' ) );
-		} else {
+		if ( ! empty( $authors ) ) {
 			foreach ( $authors as $author ) {
 				$response[] = $this->_format_author_data( $author );
 			}
@@ -155,12 +152,10 @@ class Endpoints {
 		$response = [];
 
 		// Calling the global function of the same name.
-		$authors  = get_coauthors( $request['post_id']);
+		$authors = get_coauthors( $request['post_id']);
 
 		// Return message if no authors found
-		if ( empty( $authors ) ) {
-			$response = apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
-		} else {
+		if ( ! empty( $authors ) ) {
 			foreach ( $authors as $author ) {
 				$response[] = $this->_format_author_data( $author );
 			}
