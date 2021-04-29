@@ -11,15 +11,14 @@ import { __ } from '@wordpress/i18n';
 import { getOptionByValue, moveOption } from '../utils';
 
 export const AuthorsSelection = ( {
-	selectedOptions,
+	selectedAuthors,
 	removeFromSelected,
-	setSelectedOptions,
+	setSelectedAuthors,
 } ) => {
-	return selectedOptions.map( ( { name, value }, i ) => {
-		const option = getOptionByValue( value, selectedOptions );
+	return selectedAuthors.map( ( name, i ) => {
 
 		return (
-			<div key={ value } className="cap-author">
+			<div key={ name } className="cap-author">
 				<Flex align="center">
 					<FlexItem>
 						<span>{ name }</span>
@@ -34,10 +33,10 @@ export const AuthorsSelection = ( {
 									disabled={ i === 0 }
 									onClick={ () =>
 										moveOption(
-											option,
-											selectedOptions,
+											name,
+											selectedAuthors,
 											'up',
-											setSelectedOptions
+											setSelectedAuthors
 										)
 									}
 								/>
@@ -49,14 +48,14 @@ export const AuthorsSelection = ( {
 										'coauthors-plus'
 									) }
 									disabled={
-										i === selectedOptions.length - 1
+										i === selectedAuthors.length - 1
 									}
 									onClick={ () =>
 										moveOption(
-											option,
-											selectedOptions,
+											name,
+											selectedAuthors,
 											'down',
-											setSelectedOptions
+											setSelectedAuthors
 										)
 									}
 								/>
@@ -69,7 +68,7 @@ export const AuthorsSelection = ( {
 									'Remove Author',
 									'coauthors-plus'
 								) }
-								onClick={ () => removeFromSelected( value ) }
+								onClick={ () => removeFromSelected( name ) }
 							/>
 						</Flex>
 					</FlexItem>

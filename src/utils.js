@@ -24,11 +24,11 @@ export const getOptionFromData = ( data, type ) => {
 };
 
 /**
- * Retrieve a particular option from the selectedOptions state
+ * Retrieve a particular option from the selectedAuthors state
  * by value.
  *
- * @param {String} optionValueStr The cap-* prefixed slug of the author, the value of the value property for each items in selectedOptions state.
- * @param {Array} optionsArr The selectedOptions state object.
+ * @param {String} optionValueStr The cap-* prefixed slug of the author, the value of the value property for each items in selectedAuthors state.
+ * @param {Array} optionsArr The selectedAuthors state object.
  * @returns Object with data for the author.
  */
 export const getOptionByValue = ( optionValueStr, optionsArr = [] ) => {

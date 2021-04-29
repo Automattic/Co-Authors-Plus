@@ -24,40 +24,22 @@ import { getOptionByValue, getOptionFromData } from './utils';
  * @returns
  */
 const fetchAndSetOptions = ( {
-	currentTermsIds,
-	currentUser,
-	taxonomyRestBase,
-	setSelectedOptions,
-	setDropdownOptions,
+	postId,
+	selectedAuthors,
+	setSelectedAuthors
 } ) => {
-	if ( ! taxonomyRestBase || undefined === currentUser.name ) {
+	if ( ! postId ) {
 		return;
 	}
 
-	apiFetch( {
-		path: `/wp/v2/${ taxonomyRestBase }`,
-	} ).then( ( terms ) => {
-		const currentTermsOptions = [];
-
-		const allOptions = terms.map( ( term ) => {
-			const optionObj = getOptionFromData( term, 'termObj' );
-
-			if ( currentTermsIds.includes( term.id ) ) {
-				currentTermsOptions.push( optionObj );
-			}
-
-			return optionObj;
-		} );
-
-		// If there are no author terms, this is a new post,
-		// so assign the user as the currently selected author
-		if ( 0 === currentTermsOptions.length ) {
-			currentTermsOptions.push( getOptionFromData( currentUser, 'userObj' ) );
-		}
-
-		setSelectedOptions( currentTermsOptions );
-		// setDropdownOptions( allOptions );
-	} );
+	if ( selectedAuthors.length < 1 ) {
+		apiFetch( {
+			path: `/coauthors/v1/authors/${ postId }`,
+		} ).then( ( result ) => {
+			const authorNames = result.map( author => author.user_nicename );
+			setSelectedAuthors( authorNames );
+		} ).catch( e => console.error( e ) );
+	}
 };
 
 /**
@@ -68,13 +50,10 @@ const fetchAndSetOptions = ( {
  * @returns
  */
 const Render = ( {
-	currentTermsIds,
-	taxonomyRestBase,
-	currentUser,
-	updateTerms,
+	postId,
 } ) => {
 	// Currently selected options
-	const [ selectedOptions, setSelectedOptions ] = useState( [] );
+	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
 
 	// Options that are available in the dropdown
 	const [ dropdownOptions, setDropdownOptions ] = useState( [] );
@@ -84,56 +63,54 @@ const Render = ( {
 	// The data is retrieved via the withSelect method below.
 	useEffect( () => {
 		fetchAndSetOptions( {
-			currentUser,
-			currentTermsIds,
-			taxonomyRestBase,
-			setSelectedOptions,
-			setDropdownOptions,
+			postId,
+			selectedAuthors,
+			setSelectedAuthors,
 		} );
-	}, [ taxonomyRestBase, currentTermsIds, currentUser ] );
+	}, [ postId, selectedAuthors ] );
 
 	// When the selected options change, edit the post terms.
 	// This method is provided via withDispatch below.
 	// below.
-	useEffect( () => {
-		const termIds = selectedOptions.map( ( option ) => option.id );
-		updateTerms( termIds );
-	}, [ selectedOptions ] );
+	// useEffect( () => {
+	// 	const termIds = selectedAuthors.map( ( option ) => option.id );
+	// 	updateTerms( termIds );
+	// }, [ selectedAuthors ] );
 
 	// Helper function to remove an item.
 	const removeFromSelected = ( value ) => {
-		const newSelections = selectedOptions.map( ( option ) => {
+		const newSelections = selectedAuthors.map( ( option ) => {
 			if ( option.value !== value ) {
 				return option;
 			}
 		} );
-		setSelectedOptions( [ ...newSelections ] );
+		setSelectedAuthors( [ ...newSelections ] );
 	};
 
-	const onChange = ( newValue ) => {
-		console.log(newValue);
-		const newOption = getOptionByValue( newValue, dropdownOptions );
-
-		// // Ensure value is not added twice
-		const newSelectedOptions = selectedOptions.map( ( option ) => {
-			if ( option !== newOption ) return option;
-		} );
-
-		setSelectedOptions( [ ...newSelectedOptions, newOption ] );
+	const onChange = ( newAuthor ) => {
+		console.log(newAuthor);
+		setSelectedAuthors( [ ...selectedAuthors, newAuthor ] );
 	};
 
 	const onFilterValueChange = ( query ) => {
+
+		const existingAuthors = selectedAuthors.join(',');
+
+		console.log(existingAuthors);
 		apiFetch( {
 			path: `/coauthors/v1/search/${query}`,
 			method: 'GET',
+			data: {
+				'existing_authors': existingAuthors,
+			}
 		} ).then( response => {
 
 			const formattedOptions = response?.map( item => {
 				return {
 					id: item.id,
 					label: `${item.display_name} | ${item.email}`,
-					value: item.nicename,
-					name: item.nicename,
+					value: item.user_nicename,
+					name: item.user_nicename,
 				}
 			})
 
@@ -146,8 +123,8 @@ const Render = ( {
 	return (
 		<>
 			<AuthorsSelection
-				selectedOptions={ selectedOptions }
-				setSelectedOptions={ setSelectedOptions }
+				selectedAuthors={ selectedAuthors }
+				setSelectedAuthors={ setSelectedAuthors }
 				removeFromSelected={ removeFromSelected }
 			/>
 
@@ -166,35 +143,27 @@ const Render = ( {
 const CoAuthors = compose( [
 	withState(),
 	withSelect( ( select ) => {
-		const { getTaxonomy, getEntity, getCurrentUser } = select( 'core' );
 		const { getCurrentPost } = select( 'core/editor' );
-
-		const taxonomy = getTaxonomy( 'author' );
-		const postType = getEntity( 'postType', 'guest-author' );
-		const currentUser = getCurrentUser();
-		const taxonomyRestBase = taxonomy?.rest_base;
-		const currentTermsIds = ( () => {
-			const post = getCurrentPost();
-
-			return post?.[ taxonomyRestBase ];
-		} )();
+		const post = getCurrentPost();
 
 		return {
-			currentTermsIds,
-			currentUser,
-			taxonomyRestBase,
-			postTypeRestBase: postType.rest_base,
+			postId: post.id
 		};
 	} ),
-	withDispatch( ( dispatch, { currentTermsIds, taxonomyRestBase } ) => {
+	withDispatch( ( dispatch, { postId } ) => {
 		return {
-			updateTerms: ( newTerms ) => {
-				if ( null !== taxonomyRestBase && undefined !== newTerms ) {
-					dispatch( 'core/editor' ).editPost( {
-						[ taxonomyRestBase ]: newTerms,
-					} );
-				}
-			},
+			updateAuthors: ( newAuthors ) => {
+				apiFetch( {
+					path: '/coauthors/v1/authors',
+					method: 'POST',
+					data: {
+						'post_id': postId,
+						'new_authors': newAuthors
+					},
+				} ).then( ( res ) => {
+					console.log( res );
+				} );
+			}
 		};
 	} ),
 ] )( Render );

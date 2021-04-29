@@ -1,4 +1,4 @@
-export const selectedOptionsMock = [
+export const selectedAuthorsMock = [
 	{
 		name: 'tester',
 		value: 'cap-tester',

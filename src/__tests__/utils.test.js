@@ -1,11 +1,11 @@
-import { selectedOptionsMock, termObj, userObj } from '../__mocks__/data';
+import { selectedAuthorsMock, termObj, userObj } from '../__mocks__/data';
 import { getOptionByValue, getOptionFromData, moveOption } from '../utils.js';
 
 describe( 'Utility - getOptionByValue', () => {
 	it( 'should retrieve an option by value', () => {
 		expect(
-			getOptionByValue( 'cap-tester', selectedOptionsMock )
-		).toStrictEqual( selectedOptionsMock[ 0 ] );
+			getOptionByValue( 'cap-tester', selectedAuthorsMock )
+		).toStrictEqual( selectedAuthorsMock[ 0 ] );
 	} );
 
 	it( 'should return null if there are no selected options', () => {
@@ -16,7 +16,7 @@ describe( 'Utility - getOptionByValue', () => {
 
 	it( "should return null if there the author doesn't exist", () => {
 		expect(
-			getOptionByValue( 'cap-nonexistent', selectedOptionsMock )
+			getOptionByValue( 'cap-nonexistent', selectedAuthorsMock )
 		).toStrictEqual( null );
 	} );
 } );
