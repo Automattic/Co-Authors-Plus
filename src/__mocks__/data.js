@@ -20,22 +20,22 @@ export const selectedAuthorsMock = [
 ];
 
 export const termObj = {
-	count: "0",
-	description: "Some Name tester 9 local@test.com",
+	count: '0',
+	description: 'Some Name tester 9 local@test.com',
 	id: 12,
-	link: "http://wordpress.test/?taxonomy=author&term=cap-tester",
+	link: 'http://wordpress.test/?taxonomy=author&term=cap-tester',
 	meta: [],
-	name: "tester",
-	slug: "cap-tester",
-	taxonomy: "author"
+	name: 'tester',
+	slug: 'cap-tester',
+	taxonomy: 'author',
 };
 
 export const userObj = {
-	decription: "",
+	decription: '',
 	id: 10,
-	link: "http://wordpress.test?author_name=admin",
+	link: 'http://wordpress.test?author_name=admin',
 	meta: [],
-	name: "tester",
-	slug: "tester",
-	url: "http://wordpres.test"
+	name: 'tester',
+	slug: 'tester',
+	url: 'http://wordpres.test',
 };

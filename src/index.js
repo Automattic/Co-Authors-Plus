@@ -25,7 +25,7 @@ import { AuthorsSelection } from './components/AuthorsSelection';
 const fetchAndSetOptions = ( {
 	postId,
 	selectedAuthors,
-	setSelectedAuthors
+	setSelectedAuthors,
 } ) => {
 	if ( ! postId ) {
 		return;
@@ -34,10 +34,14 @@ const fetchAndSetOptions = ( {
 	if ( selectedAuthors.length < 1 ) {
 		apiFetch( {
 			path: `/coauthors/v1/authors/${ postId }`,
-		} ).then( ( result ) => {
-			const authorNames = result.map( author => author.user_nicename );
-			setSelectedAuthors( authorNames );
-		} ).catch( e => console.error( e ) );
+		} )
+			.then( ( result ) => {
+				const authorNames = result.map(
+					( author ) => author.user_nicename
+				);
+				setSelectedAuthors( authorNames );
+			} )
+			.catch( ( e ) => console.error( e ) );
 	}
 };
 
@@ -48,10 +52,7 @@ const fetchAndSetOptions = ( {
  * @param {Object} props
  * @returns
  */
-const Render = ( {
-	postId,
-	updateAuthors
-} ) => {
+const Render = ( { postId, updateAuthors } ) => {
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
 
@@ -95,30 +96,33 @@ const Render = ( {
 	};
 
 	const onFilterValueChange = ( query ) => {
-
-		const existingAuthors = selectedAuthors.join(',');
+		const existingAuthors = selectedAuthors.join( ',' );
 
 		apiFetch( {
-			path: `/coauthors/v1/search/?q=${query}&existing_authors=${existingAuthors}`,
+			path: `/coauthors/v1/search/?q=${ query }&existing_authors=${ existingAuthors }`,
 			method: 'GET',
-		} ).then( response => {
-
-			const formatAuthorData = ( { id, display_name, user_nicename, email } ) => {
+		} ).then( ( response ) => {
+			const formatAuthorData = ( {
+				id,
+				display_name,
+				user_nicename,
+				email,
+			} ) => {
 				return {
 					id,
-					label: `${display_name} | ${email}`,
+					label: `${ display_name } | ${ email }`,
 					name: display_name,
 					value: user_nicename,
-				}
+				};
 			};
 
-			const formattedAuthors = ( items => {
+			const formattedAuthors = ( ( items ) => {
 				if ( items.length > 0 ) {
-					return items.map( item => formatAuthorData( item ) );
+					return items.map( ( item ) => formatAuthorData( item ) );
 				} else {
 					return [];
 				}
-			})( response );
+			} )( response );
 
 			setDropdownOptions( formattedAuthors );
 		} );
@@ -126,11 +130,15 @@ const Render = ( {
 
 	return (
 		<>
-			<AuthorsSelection
-				selectedAuthors={ selectedAuthors }
-				setSelectedAuthors={ setSelectedAuthors }
-				removeFromSelected={ removeFromSelected }
-			/>
+			{ selectedAuthors.length ? (
+				<AuthorsSelection
+					selectedAuthors={ selectedAuthors }
+					setSelectedAuthors={ setSelectedAuthors }
+					removeFromSelected={ removeFromSelected }
+				/>
+			) : (
+				<Spinner />
+			) }
 
 			<ComboboxControl
 				className="cap-combobox"
@@ -152,15 +160,16 @@ const CoAuthors = compose( [
 		const postId = post.id;
 
 		const updateAuthors = ( newAuthors ) => {
-
-			const authorsStr = newAuthors.join(',');
+			const authorsStr = newAuthors.join( ',' );
 
 			apiFetch( {
-				path: `/coauthors/v1/authors/${postId}?new_authors=${authorsStr}`,
+				path: `/coauthors/v1/authors/${ postId }?new_authors=${ authorsStr }`,
 				method: 'POST',
-			} ).then( ( res ) => {
-				console.log( res );
-			} ).catch( e => console.error( e ) );
+			} )
+				.then( ( res ) => {
+					console.log( res );
+				} )
+				.catch( ( e ) => console.error( e ) );
 		};
 
 		return {

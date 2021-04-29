@@ -22,11 +22,10 @@ describe( 'Utility - getOptionByValue', () => {
 } );
 
 describe.only( 'Utility - getOptionFromData', () => {
-
 	const expected = {
-		label: "Some Name tester 9 local@test.com",
-		name: "tester",
-		value: "cap-tester",
+		label: 'Some Name tester 9 local@test.com',
+		name: 'tester',
+		value: 'cap-tester',
 	};
 
 	it( 'should get an option from a user object', () => {

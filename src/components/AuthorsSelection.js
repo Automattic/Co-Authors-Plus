@@ -16,7 +16,6 @@ export const AuthorsSelection = ( {
 	setSelectedAuthors,
 } ) => {
 	return selectedAuthors.map( ( value, i ) => {
-
 		return (
 			<div key={ value } className="cap-author">
 				<Flex align="center">
