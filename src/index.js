@@ -15,7 +15,6 @@ import { withSelect, withDispatch } from '@wordpress/data';
  */
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
-import { getOptionByValue, getOptionFromData } from './utils';
 
 /**
  * Fetch current coauthors and set state.
@@ -51,6 +50,7 @@ const fetchAndSetOptions = ( {
  */
 const Render = ( {
 	postId,
+	updateAuthors
 } ) => {
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
@@ -88,29 +88,31 @@ const Render = ( {
 	};
 
 	const onChange = ( newAuthor ) => {
-		setSelectedAuthors( [ ...selectedAuthors, newAuthor ] );
+		const newAuthors = [ ...selectedAuthors, newAuthor ];
+
+		setSelectedAuthors( newAuthors );
+		updateAuthors( newAuthors );
 	};
 
 	const onFilterValueChange = ( query ) => {
 
 		const existingAuthors = selectedAuthors.join(',');
 
-		console.log(existingAuthors, query);
-
 		apiFetch( {
-			path: `/coauthors/v1/search/${query}?existing_authors=${existingAuthors}`,
+			path: `/coauthors/v1/search/?q=${query}&existing_authors=${existingAuthors}`,
 			method: 'GET',
 		} ).then( response => {
 
-			const formatAuthorData = ( { id, label, display_name, user_nicename, email } ) => {
+			const formatAuthorData = ( { id, display_name, user_nicename, email } ) => {
 				return {
 					id,
 					label: `${display_name} | ${email}`,
+					name: display_name,
 					value: user_nicename,
 				}
 			};
 
-			const formattedOptions = ( items => {
+			const formattedAuthors = ( items => {
 				if ( items.length > 0 ) {
 					return items.map( item => formatAuthorData( item ) );
 				} else {
@@ -118,7 +120,7 @@ const Render = ( {
 				}
 			})( response );
 
-			setDropdownOptions(formattedOptions);
+			setDropdownOptions( formattedAuthors );
 		} );
 	};
 
@@ -147,25 +149,23 @@ const CoAuthors = compose( [
 	withSelect( ( select ) => {
 		const { getCurrentPost } = select( 'core/editor' );
 		const post = getCurrentPost();
+		const postId = post.id;
+
+		const updateAuthors = ( newAuthors ) => {
+
+			const authorsStr = newAuthors.join(',');
+
+			apiFetch( {
+				path: `/coauthors/v1/authors/${postId}?new_authors=${authorsStr}`,
+				method: 'POST',
+			} ).then( ( res ) => {
+				console.log( res );
+			} ).catch( e => console.error( e ) );
+		};
 
 		return {
-			postId: post.id
-		};
-	} ),
-	withDispatch( ( dispatch, { postId } ) => {
-		return {
-			updateAuthors: ( newAuthors ) => {
-				apiFetch( {
-					path: '/coauthors/v1/authors',
-					method: 'POST',
-					data: {
-						'post_id': postId,
-						'new_authors': newAuthors
-					},
-				} ).then( ( res ) => {
-					console.log( res );
-				} );
-			}
+			updateAuthors,
+			postId,
 		};
 	} ),
 ] )( Render );

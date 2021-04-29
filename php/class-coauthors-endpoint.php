@@ -26,10 +26,8 @@ class Endpoints {
 	public const AUTHORS_ROUTE = 'authors';
 
 	/**
-	 * Regexes to capture the query in a request.
-	 * @see https://regex101.com/r/3HaxlL/1
+	 * Regex to capture the query in a request.
 	 */
-	protected const ENDPOINT_QUERY_REGEX = '/(?P<q>[\w]+)';
 	protected const ENDPOINT_POST_ID_REGEX = '/(?P<post_id>[\d]+)';
 
 	/**
@@ -53,7 +51,7 @@ class Endpoints {
 
 		register_rest_route(
 			static::NAMESPACE,
-			static::SEARCH_ROUTE . static::ENDPOINT_QUERY_REGEX,
+			static::SEARCH_ROUTE,
 			[
 				[
 					'methods'             => 'GET',
@@ -62,7 +60,7 @@ class Endpoints {
 					'args'                => [
 						'q' => [
 							'description' => __( 'Text to search.' ),
-							'required'    => true,
+							'required'    => false,
 							'type'        => 'string',
 						],
 						'existing_authors' => [
@@ -112,10 +110,7 @@ class Endpoints {
 						],
 						'new_authors' => [
 							'description' => __( 'Names of coauthors to save.' ),
-							'type'        => 'array',
-							'items'       => [
-								'type' => 'string',
-							],
+							'type'        => 'string',
 							'required'    => false,
 							// TODO: valudation of user_nicename?
 						],
@@ -140,7 +135,6 @@ class Endpoints {
 				$response[] = $this->_format_author_data( $author );
 			}
 		}
-
 
 		return rest_ensure_response( $response );
 	}
@@ -167,7 +161,7 @@ class Endpoints {
 	/**
 	 * Update coauthors.
 	 */
-	public function update_coauthors( WP_REST_Request $request ) {
+	public function update_coauthors( WP_REST_Request $request ): void {
 
 		if ( isset( $request['new_authors'] ) ) {
 			$author_names = explode( ',', $request['new_authors'] );
