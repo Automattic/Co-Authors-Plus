@@ -1,8 +1,6 @@
 
 <?php
 
-use WP_REST_Request;
-
 /*
  * @coversDefaultClass \CoAuthors\API\Endpoints
  */
@@ -146,7 +144,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$get_request->set_url_params(
 			[
 				'q'                => 'auth',
-				'existing_authors' => 'author1'
+				'existing_authors' => 'author1,coauthor2'
 			]
 		);
 
@@ -160,9 +158,6 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 				[
 					'display_name' => 'coauthor1',
 				],
-				[
-					'display_name' => 'coauthor2',
-				]
 			],
 			$get_response->data,
 			false,
@@ -187,16 +182,51 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * @covers ::update_coauthors()
-	 */
-	public function test_update_coauthors(): void {
-		// assert updates coauthors for a post with given IDs
-	}
-
-	/**
 	 * @covers ::get_coauthors()
 	 */
-	public function test_get_coauthors(): void {
-		// assert returns first user as author, for post with no coauthors
-		// assert returns multiple coauthors
+	public function test_authors_route_callbacks(): void {
+		$test_post = $this->factory->post->create_and_get(
+			[
+				'post_author'  => $this->author1->ID,
+				'post_status'  => 'publish',
+				'post_content' => rand_str(),
+				'post_title'   => rand_str(),
+				'post_type'    => 'post',
+			]
+		);
+
+		$test_post_id = $test_post->ID;
+
+		$get_request = new WP_REST_Request( 'GET' );
+		$get_request->set_url_params(
+			[
+				'post_id'     => $test_post_id
+			]
+		);
+
+		$get_response = $this->_api->get_coauthors( $get_request );
+
+		$this->assertEquals( 'author1', $get_response->data[0]['user_nicename'] );
+
+		$post_request = new WP_REST_Request( 'POST' );
+		$post_request->set_url_params(
+			[
+				'post_id'     => $test_post_id,
+				'new_authors' => 'author2,coauthor2'
+			]
+		);
+
+		$this->_api->update_coauthors( $post_request );
+
+		$after_update_get_request = new WP_REST_Request( 'GET' );
+		$after_update_get_request->set_url_params(
+			[
+				'post_id'     => $test_post_id
+			]
+		);
+		$after_update_get_response = $this->_api->get_coauthors( $after_update_get_request );
+
+		$this->assertEquals( 2, count( $after_update_get_response->data ) );
 	}
+
 }

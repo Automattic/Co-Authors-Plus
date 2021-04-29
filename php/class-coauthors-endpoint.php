@@ -69,6 +69,7 @@ class Endpoints {
 							'description' => __( 'Names of existing coauthors to exclude from search results.' ),
 							'type'        => 'string',
 							'required'    => false,
+							// TODO: valudation of user_nicename?
 						],
 					],
 				]
@@ -109,35 +110,19 @@ class Endpoints {
 							'type'              => 'number',
 							'validate_callback' => [ $this, 'validate_numeric' ],
 						],
-						'nicenames' => [
+						'new_authors' => [
 							'description' => __( 'Names of coauthors to save.' ),
 							'type'        => 'array',
 							'items'       => [
 								'type' => 'string',
 							],
 							'required'    => false,
+							// TODO: valudation of user_nicename?
 						],
 					],
 				]
 			]
 		);
-	}
-
-	/**
-	 * Update coauthors.
-	 */
-	public function update_coauthors( WP_REST_Request $request ) {
-
-		global $post;
-
-		$post_id = $post->ID;
-
-		if ( isset( $request['nicenames'] ) ) {
-			$author_names = (array) $request['nicenames'];
-			$coauthors    = array_map( 'sanitize_title', $author_names );
-
-			$this->coauthors->add_coauthors( $post_id, $coauthors );
-		}
 	}
 
 	/**
@@ -169,23 +154,32 @@ class Endpoints {
 	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
 		$response = [];
 
-		$author_names = $request['nicenames'];
+		// Calling the global function of the same name.
+		$authors  = get_coauthors( $request['post_id']);
 
 		// Return message if no authors found
-		if ( empty( $author_ids ) ) {
+		if ( empty( $authors ) ) {
 			$response = apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
 		} else {
-			foreach ( $author_names as $name ) {
-				$coauthor = $this->coauthors->get_coauthor_by( 'user_nicename', $name );
-
-				if ( ! empty( $coauthor ) ) {
-					$response[] = $this->_format_author_data( $coauthor );
-				}
-
+			foreach ( $authors as $author ) {
+				$response[] = $this->_format_author_data( $author );
 			}
 		}
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Update coauthors.
+	 */
+	public function update_coauthors( WP_REST_Request $request ) {
+
+		if ( isset( $request['new_authors'] ) ) {
+			$author_names = explode( ',', $request['new_authors'] );
+			$coauthors    = array_map( 'sanitize_title', (array) $author_names );
+
+			$this->coauthors->add_coauthors( $request['post_id'], $coauthors );
+		}
 	}
 
 	/**
@@ -219,12 +213,12 @@ class Endpoints {
 	public function _format_author_data( object $author ): array {
 
 		return [
-			'id' => esc_html( $author->ID ),
-			'nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
-			'login' => esc_html( $author->user_login ),
-			'email' => $author->user_email,
-			'display_name' => esc_html( str_replace( '∣', '|', $author->display_name ) ),
-			'avatar' => esc_url( get_avatar_url( $author->ID ) ),
+			'id'            => esc_html( $author->ID ),
+			'user_nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
+			'login'         => esc_html( $author->user_login ),
+			'email'         => $author->user_email,
+			'display_name'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
+			'avatar'        => esc_url( get_avatar_url( $author->ID ) ),
 		];
 	}
 }
