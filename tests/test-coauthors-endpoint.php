@@ -1,6 +1,8 @@
 
 <?php
 
+use WP_REST_Request;
+
 /*
  * @coversDefaultClass \CoAuthors\API\Endpoints
  */
@@ -10,16 +12,40 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		parent::setUp();
 
+		global $coauthors_plus;
+
 		$this->author1 = $this->factory->user->create_and_get(
 			[
 				'role'       => 'author',
 				'user_login' => 'author1',
 			]
 		);
+
+		$this->author2 = $this->factory->user->create_and_get(
+			[
+				'role'       => 'author',
+				'user_login' => 'author2',
+			]
+		);
+
 		$this->editor1 = $this->factory->user->create_and_get(
 			[
 				'role'       => 'editor',
 				'user_login' => 'editor1',
+			]
+		);
+
+		$this->coauthor1 = $coauthors_plus->guest_authors->create(
+			[
+				'user_login'   => 'coauthor1',
+				'display_name' => 'coauthor1',
+			]
+		);
+
+		$this->coauthor2 = $coauthors_plus->guest_authors->create(
+			[
+				'user_login'   => 'coauthor2',
+				'display_name' => 'coauthor2',
 			]
 		);
 
@@ -66,9 +92,10 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$routes = $rest_server->get_routes( $this->_api::NAMESPACE );
 
 		$authors_route = sprintf(
-			'/%1$s/%2$s',
+			'/%1$s/%2$s%3$s',
 			$this->_api::NAMESPACE,
 			$this->_api::AUTHORS_ROUTE,
+			'/(?P<post_id>[\d]+)'
 		);
 
 		$search_route = sprintf(
@@ -114,7 +141,48 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 * @covers ::get_coauthors_search_results()
 	 */
 	public function test_get_coauthors_search_results(): void {
-		// assert returns coauthors when string is searched
+
+		$get_request = new WP_REST_Request( 'GET' );
+		$get_request->set_url_params(
+			[
+				'q'                => 'auth',
+				'existing_authors' => 'author1'
+			]
+		);
+
+		$get_response = $this->_api->get_coauthors_search_results( $get_request );
+
+		$this->assertArraySubset(
+			[
+				[
+					'display_name' => 'author2',
+				],
+				[
+					'display_name' => 'coauthor1',
+				],
+				[
+					'display_name' => 'coauthor2',
+				]
+			],
+			$get_response->data,
+			false,
+			'Failed to assert that coauthors search returns results matching the query.'
+		);
+
+		$not_found_get_request = new WP_REST_Request( 'GET' );
+		$not_found_get_request->set_url_params(
+			[
+				'q' => 'nonexistent',
+			]
+		);
+
+		$not_found_get_response = $this->_api->get_coauthors_search_results( $not_found_get_request );
+
+		$this->assertContains(
+			"Sorry",
+			$not_found_get_response->data,
+			'Failed to assert that coauthors search returns a not found message when no results match the query.'
+		);
 	}
 
 	/**
