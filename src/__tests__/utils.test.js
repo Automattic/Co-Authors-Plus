@@ -28,6 +28,40 @@ describe( 'Utility - moveItem', () => {
 		expect( moveItem( 'admin', [ 'admin', 'drake', 'laras126', 'fizzbuzz' ], 'down' ) ).toStrictEqual( [ 'drake', 'admin', 'laras126', 'fizzbuzz' ] );
 	});
 
+	it.only( 'should work with objects', () => {
+		const initialArray = [
+			{
+				value: 'drake',
+				display: 'Drake'
+			},
+			{
+				value: 'laras126',
+				display: 'Lara S'
+			},
+			{
+				value: 'admin',
+				display: 'Administrator'
+			},
+		];
+
+		expect( moveItem( {
+			value: 'drake',
+			display: 'Drake'
+		}, initialArray, 'down' ) ).toStrictEqual( [
+			{
+				value: 'laras126',
+				display: 'Lara S'
+			},
+			{
+				value: 'drake',
+				display: 'Drake'
+			},
+			{
+				value: 'admin',
+				display: 'Administrator'
+			},
+		] );
+	});
 } );
 
 describe( 'Utility - removeItem', () => {

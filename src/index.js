@@ -22,7 +22,7 @@ import { AuthorsSelection } from './components/AuthorsSelection';
  * @param {Object} props
  * @returns
  */
-const fetchAndSetOptions = ( {
+const fetchAuthors = ( {
 	postId,
 	selectedAuthors,
 	setSelectedAuthors,
@@ -37,7 +37,12 @@ const fetchAndSetOptions = ( {
 		} )
 			.then( ( result ) => {
 				const authorNames = result.map(
-					( author ) => author.user_nicename
+					( author ) => {
+						return {
+							value: author.user_nicename,
+							display: author.display_name
+						}
+					}
 				);
 				setSelectedAuthors( authorNames );
 			} )
@@ -63,45 +68,38 @@ const Render = ( { postId, updateAuthors } ) => {
 	// This is a proxy for detecting initial render.
 	// The data is retrieved via the withSelect method below.
 	useEffect( () => {
-		fetchAndSetOptions( {
+		fetchAuthors( {
 			postId,
 			selectedAuthors,
 			setSelectedAuthors,
 		} );
-	}, [ postId, selectedAuthors ] );
+	}, [ postId ] );
 
-	// When the selected options change, edit the post terms.
-	// This method is provided via withDispatch below.
-	// below.
-	// useEffect( () => {
-	// 	const termIds = selectedAuthors.map( ( option ) => option.id );
-	// 	updateTerms( termIds );
-	// }, [ selectedAuthors ] );
-
-	const onChange = ( newAuthor ) => {
-		const newAuthors = [ ...selectedAuthors, newAuthor ];
+	const onChange = ( newAuthorValue ) => {
+		const newAuthorObj = selectedAuthors.filter( ({ value }) => value === newAuthorValue );
+		const newAuthors = [ ...selectedAuthors, newAuthorObj ];
+		const authorValues = newAuthors.map( item => item.value );
 
 		setSelectedAuthors( newAuthors );
-		updateAuthors( newAuthors );
+		updateAuthors( authorValues );
 	};
 
 	const onFilterValueChange = ( query ) => {
-		const existingAuthors = selectedAuthors.join( ',' );
+		const existingAuthors = selectedAuthors.map( item => item.value ).join( ',' );
 
 		apiFetch( {
 			path: `/coauthors/v1/search/?q=${ query }&existing_authors=${ existingAuthors }`,
 			method: 'GET',
 		} ).then( ( response ) => {
 			const formatAuthorData = ( {
-				id,
 				display_name,
 				user_nicename,
 				email,
 			} ) => {
+				console.log(display_name);
 				return {
-					id,
 					label: `${ display_name } | ${ email }`,
-					name: display_name,
+					display: display_name,
 					value: user_nicename,
 				};
 			};
@@ -149,7 +147,7 @@ const CoAuthors = compose( [
 		const postId = post.id;
 
 		const updateAuthors = ( newAuthors ) => {
-			const authorsStr = newAuthors.join( ',' );
+			const authorsStr = newAuthors.map( item => item.value ).join( ',' );
 
 			apiFetch( {
 				path: `/coauthors/v1/authors/${ postId }?new_authors=${ authorsStr }`,

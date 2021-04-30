@@ -8,14 +8,22 @@
  */
 export const moveItem = ( targetItem, itemsArr, direction ) => {
 
-	const currIndex = itemsArr.indexOf( targetItem );
+	const currIndex = itemsArr.map( ( item ) => item.value ).indexOf( targetItem.value );
 	const indexUpdate = direction == 'up' ? -1 : 1;
 	const newIndex = currIndex + indexUpdate;
 
-	const arrCopy = [ ...itemsArr];
+	const arrCopy = itemsArr.map( item => Object.assign( {}, item ) );
 	const targetCopy = arrCopy[currIndex];
 
-	const newItems = arrCopy.filter( ( item ) => item !== targetCopy );
+	const newItems = ( () => {
+		return arrCopy.filter( ( item ) => {
+			if ( item.value ) {
+				return item.value !== targetCopy.value
+			} else {
+				return item !== targetCopy;
+			}
+		});
+	})();
 	const sortedArr = [...newItems]
 
 	sortedArr.splice( newIndex, 0, targetCopy );

@@ -14,12 +14,14 @@ export const AuthorsSelection = ( {
 	selectedAuthors,
 	setSelectedAuthors,
 } ) => {
-	return selectedAuthors.map( ( value, i ) => {
+	return selectedAuthors.map( ( author, i ) => {
+		const { display, value } = author;
+
 		return (
 			<div key={ value } className="cap-author">
 				<Flex align="center">
 					<FlexItem>
-						<span>{ value }</span>
+						<span>{ display }</span>
 					</FlexItem>
 					<FlexItem justify="flex-end">
 						<Flex>
@@ -32,7 +34,7 @@ export const AuthorsSelection = ( {
 									onClick={ () =>
 										setSelectedAuthors(
 											moveItem(
-												value,
+												author,
 												selectedAuthors,
 												'up'
 											)
@@ -52,7 +54,7 @@ export const AuthorsSelection = ( {
 									onClick={ () =>
 										setSelectedAuthors(
 											moveItem(
-												value,
+												author,
 												selectedAuthors,
 												'down'
 											)
@@ -69,7 +71,7 @@ export const AuthorsSelection = ( {
 									'coauthors-plus'
 								) }
 								onClick={ () => setSelectedAuthors(
-									removeItem( value, selectedAuthors )
+									removeItem( author, selectedAuthors )
 								) }
 							/>
 						</Flex>
