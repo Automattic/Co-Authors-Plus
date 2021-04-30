@@ -31,11 +31,12 @@ export const AuthorsSelection = ( {
 									label={ __( 'Move Up', 'coauthors-plus' ) }
 									disabled={ i === 0 }
 									onClick={ () =>
-										moveItem(
-											value,
-											selectedAuthors,
-											'up',
-											setSelectedAuthors
+										setSelectedAuthors(
+											moveItem(
+												value,
+												selectedAuthors,
+												'up'
+											)
 										)
 									}
 								/>
@@ -50,11 +51,12 @@ export const AuthorsSelection = ( {
 										i === selectedAuthors.length - 1
 									}
 									onClick={ () =>
-										moveItem(
-											value,
-											selectedAuthors,
-											'down',
-											setSelectedAuthors
+										setSelectedAuthors(
+											moveItem(
+												value,
+												selectedAuthors,
+												'down'
+											)
 										)
 									}
 								/>
