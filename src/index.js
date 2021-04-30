@@ -8,7 +8,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { compose, withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
-import { withSelect } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
  * Internal Dependencies
@@ -51,6 +51,17 @@ const fetchAuthors = ( {
 	}
 };
 
+const updateAuthors = ( postId, newAuthorsStr, onSuccess ) => {
+	apiFetch( {
+		path: `/coauthors/v1/authors/${ postId }?new_authors=${ newAuthorsStr }`,
+		method: 'POST',
+	} )
+		.then( ( res ) => {
+			onSuccess( res );
+		} )
+		.catch( ( e ) => console.error( e ) );
+};
+
 /**
  * The Render component that will be populated with data from
  * the select and methods from dispatch as composed below.
@@ -58,12 +69,15 @@ const fetchAuthors = ( {
  * @param {Object} props
  * @returns
  */
-const Render = ( { postId, updateAuthors } ) => {
+const Render = ( { postId } ) => {
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
 
 	// Options that are available in the dropdown
 	const [ dropdownOptions, setDropdownOptions ] = useState( [] );
+
+	const [ authorsUpdated, setAuthorsUpdated ] = useState( 0 );
+
 
 	// Run when taxonomyRestBase changes.
 	// This is a proxy for detecting initial render.
@@ -74,11 +88,17 @@ const Render = ( { postId, updateAuthors } ) => {
 			selectedAuthors,
 			setSelectedAuthors,
 		} );
+
+		setAuthorsUpdated( false );
 	}, [ postId ] );
 
 	useEffect( () => {
 		const authorValues = selectedAuthors.map( item => item.value );
-		updateAuthors( authorValues );
+
+		updateAuthors( postId, authorValues, ( val ) => {
+			setAuthorsUpdated( authorsUpdated + val );
+		} );
+
 	}, [ selectedAuthors ] );
 
 	const onChange = ( newAuthorValue ) => {
@@ -121,10 +141,13 @@ const Render = ( { postId, updateAuthors } ) => {
 	return (
 		<>
 			{ selectedAuthors.length ? (
-				<AuthorsSelection
-					selectedAuthors={ selectedAuthors }
-					setSelectedAuthors={ setSelectedAuthors }
-				/>
+				<>
+					<div>Updated: { authorsUpdated }</div>
+					<AuthorsSelection
+						selectedAuthors={ selectedAuthors }
+						setSelectedAuthors={ setSelectedAuthors }
+					/>
+				</>
 			) : (
 				<Spinner />
 			) }
@@ -146,23 +169,9 @@ const CoAuthors = compose( [
 	withSelect( ( select ) => {
 		const { getCurrentPost } = select( 'core/editor' );
 		const post = getCurrentPost();
-		const postId = post.id;
-
-		const updateAuthors = ( newAuthorsStr ) => {
-
-			apiFetch( {
-				path: `/coauthors/v1/authors/${ postId }?new_authors=${ newAuthorsStr }`,
-				method: 'POST',
-			} )
-				.then( ( res ) => {
-					console.log( res );
-				} )
-				.catch( ( e ) => console.error( e ) );
-		};
 
 		return {
-			updateAuthors,
-			postId,
+			postId: post.id,
 		};
 	} ),
 ] )( Render );

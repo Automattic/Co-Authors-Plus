@@ -163,7 +163,7 @@ class Endpoints {
 	 */
 	public function update_coauthors( WP_REST_Request $request ): WP_REST_Response {
 
-		$response = false;
+		$response = 0;
 
 		if ( isset( $request['new_authors'] ) ) {
 			$author_names = explode( ',', $request['new_authors'] );
@@ -171,7 +171,7 @@ class Endpoints {
 
 			$this->coauthors->add_coauthors( $request['post_id'], $coauthors );
 
-			$response = true;
+			$response = 1;
 		}
 
 		return rest_ensure_response( $response );
