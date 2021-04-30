@@ -1,45 +1,4 @@
-import { selectedAuthorsMock, termObj, userObj } from '../__mocks__/data';
-import { getOptionByValue, getOptionFromData, moveOption } from '../utils.js';
-
-describe( 'Utility - getOptionByValue', () => {
-	it( 'should retrieve an option by value', () => {
-		expect(
-			getOptionByValue( 'cap-tester', selectedAuthorsMock )
-		).toStrictEqual( selectedAuthorsMock[ 0 ] );
-	} );
-
-	it( 'should return null if there are no selected options', () => {
-		expect( getOptionByValue( 'cap-nonexistent', [] ) ).toStrictEqual(
-			null
-		);
-	} );
-
-	it( "should return null if there the author doesn't exist", () => {
-		expect(
-			getOptionByValue( 'cap-nonexistent', selectedAuthorsMock )
-		).toStrictEqual( null );
-	} );
-} );
-
-describe.only( 'Utility - getOptionFromData', () => {
-	const expected = {
-		label: 'Some Name tester 9 local@test.com',
-		name: 'tester',
-		value: 'cap-tester',
-	};
-
-	it( 'should get an option from a user object', () => {
-		expect( getOptionFromData( userObj, 'userObj' ) ).toStrictEqual(
-			expected
-		);
-	} );
-
-	it( 'should get an option from a term object', () => {
-		expect( getOptionFromData( termObj, 'termObj' ) ).toStrictEqual(
-			expected
-		);
-	} );
-} );
+import { moveOption } from '../utils.js';
 
 describe( 'Utility - moveOption', () => {
 	it( 'should add an option', () => {

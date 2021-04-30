@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies.
  */
-import { getOptionByValue, moveOption } from '../utils';
+import { moveOption } from '../utils';
 
 export const AuthorsSelection = ( {
 	selectedAuthors,

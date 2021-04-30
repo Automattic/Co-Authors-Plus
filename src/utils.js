@@ -1,27 +1,3 @@
-/**
- *
- * @param {Object} data
- * @param {String} type
- * @returns
- */
-export const getOptionFromData = ( data, type ) => {
-	switch ( type ) {
-		case 'termObj':
-			return {
-				value: data.slug,
-				name: data.name,
-				label: data.description,
-			};
-		case 'userObj':
-			return {
-				value: data.slug,
-				name: data.name,
-				label: data.name,
-			};
-		default:
-			return null;
-	}
-};
 
 /**
  * Retrieve a particular option from the selectedAuthors state
