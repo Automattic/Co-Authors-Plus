@@ -1,22 +1,4 @@
 
-/**
- * Retrieve a particular option from the selectedAuthors state
- * by value.
- *
- * @param {String} optionValueStr The cap-* prefixed slug of the author, the value of the value property for each items in selectedAuthors state.
- * @param {Array} optionsArr The selectedAuthors state object.
- * @returns Object with data for the author.
- */
-export const getOptionByValue = ( optionValueStr, optionsArr = [] ) => {
-	if ( ! optionsArr.length ) return null;
-
-	const filtered = optionsArr.filter( ( { value } ) => {
-		return value === optionValueStr;
-	} );
-
-	return filtered.length ? filtered[ 0 ] : null;
-};
-
 export const moveOption = ( option, optionsArr, direction, setState ) => {
 	const swap = ( arr, from, to ) => {
 		const arrCopy = [ ...arr ];
