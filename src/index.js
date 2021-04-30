@@ -124,7 +124,6 @@ const Render = ( { postId, updateAuthors } ) => {
 				<AuthorsSelection
 					selectedAuthors={ selectedAuthors }
 					setSelectedAuthors={ setSelectedAuthors }
-					removeFromSelected={ removeFromSelected }
 				/>
 			) : (
 				<Spinner />
