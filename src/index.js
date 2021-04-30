@@ -76,11 +76,15 @@ const Render = ( { postId, updateAuthors } ) => {
 		} );
 	}, [ postId ] );
 
+	useEffect( () => {
+		const authorValues = selectedAuthors.map( item => item.value );
+		updateAuthors( authorValues );
+	}, [ selectedAuthors ] );
+
 	const onChange = ( newAuthorValue ) => {
 		const newAuthors = addItem( newAuthorValue, selectedAuthors, dropdownOptions );
-		const authorValues = newAuthors.map( item => item.value );
+
 		setSelectedAuthors( newAuthors );
-		updateAuthors( authorValues );
 	};
 
 	const onFilterValueChange = ( query ) => {

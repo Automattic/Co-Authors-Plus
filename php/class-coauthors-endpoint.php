@@ -161,14 +161,20 @@ class Endpoints {
 	/**
 	 * Update coauthors.
 	 */
-	public function update_coauthors( WP_REST_Request $request ): void {
+	public function update_coauthors( WP_REST_Request $request ): WP_REST_Response {
+
+		$response = false;
 
 		if ( isset( $request['new_authors'] ) ) {
 			$author_names = explode( ',', $request['new_authors'] );
 			$coauthors    = array_map( 'sanitize_title', (array) $author_names );
 
 			$this->coauthors->add_coauthors( $request['post_id'], $coauthors );
+
+			$response = true;
 		}
+
+		return rest_ensure_response( $response );
 	}
 
 	/**
