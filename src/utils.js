@@ -31,6 +31,26 @@ export const moveItem = ( targetItem, itemsArr, direction ) => {
 	return sortedArr;
 };
 
+/**
+ * Remove an item from the array.
+ *
+ * @param {object} targetItem
+ * @param {array} itemsArr
+ * @returns array of items with the target item removed.
+ */
 export const removeItem = ( targetItem, itemsArr ) => {
-	return itemsArr.filter( ( item ) => item !== targetItem );
+	return itemsArr.filter( ( item ) => item.value !== targetItem.value );
+};
+
+/**
+ * Add a new author.
+ *
+ * @param {string} newAuthorValue
+ * @param {array} currAuthors
+ * @param {array} dropDownAuthors
+ * @returns Array of author objects including the new author.
+ */
+export const addItem = ( newAuthorValue, currAuthors, dropDownAuthors ) => {
+	const newAuthorObj = dropDownAuthors.filter( ( item ) => item.value === newAuthorValue );
+	return [ ...currAuthors, newAuthorObj[0] ];
 };

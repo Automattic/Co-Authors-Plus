@@ -15,7 +15,10 @@ export const AuthorsSelection = ( {
 	setSelectedAuthors,
 } ) => {
 	return selectedAuthors.map( ( author, i ) => {
-		const { display, value } = author;
+
+		// const { display, value } = author; // not working here for some reason
+		const display = author.display;
+		const value = author.value;
 
 		return (
 			<div key={ value } className="cap-author">

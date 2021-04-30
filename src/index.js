@@ -15,6 +15,7 @@ import { withSelect } from '@wordpress/data';
  */
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
+import { addItem } from './utils';
 
 /**
  * Fetch current coauthors and set state.
@@ -39,8 +40,8 @@ const fetchAuthors = ( {
 				const authorNames = result.map(
 					( author ) => {
 						return {
-							value: author.user_nicename,
-							display: author.display_name
+							display: author.display_name,
+							value: author.user_nicename
 						}
 					}
 				);
@@ -76,10 +77,8 @@ const Render = ( { postId, updateAuthors } ) => {
 	}, [ postId ] );
 
 	const onChange = ( newAuthorValue ) => {
-		const newAuthorObj = selectedAuthors.filter( ({ value }) => value === newAuthorValue );
-		const newAuthors = [ ...selectedAuthors, newAuthorObj ];
+		const newAuthors = addItem( newAuthorValue, selectedAuthors, dropdownOptions );
 		const authorValues = newAuthors.map( item => item.value );
-
 		setSelectedAuthors( newAuthors );
 		updateAuthors( authorValues );
 	};
@@ -96,7 +95,6 @@ const Render = ( { postId, updateAuthors } ) => {
 				user_nicename,
 				email,
 			} ) => {
-				console.log(display_name);
 				return {
 					label: `${ display_name } | ${ email }`,
 					display: display_name,
@@ -146,11 +144,10 @@ const CoAuthors = compose( [
 		const post = getCurrentPost();
 		const postId = post.id;
 
-		const updateAuthors = ( newAuthors ) => {
-			const authorsStr = newAuthors.map( item => item.value ).join( ',' );
+		const updateAuthors = ( newAuthorsStr ) => {
 
 			apiFetch( {
-				path: `/coauthors/v1/authors/${ postId }?new_authors=${ authorsStr }`,
+				path: `/coauthors/v1/authors/${ postId }?new_authors=${ newAuthorsStr }`,
 				method: 'POST',
 			} )
 				.then( ( res ) => {

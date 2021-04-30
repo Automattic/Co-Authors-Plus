@@ -1,4 +1,4 @@
-import { moveItem, removeItem } from '../utils.js';
+import { moveItem, removeItem, addItem } from '../utils.js';
 
 describe( 'Utility - moveItem', () => {
 
@@ -69,5 +69,44 @@ describe( 'Utility - removeItem', () => {
 		const initialArray = [ 'admin', 'laras126', 'drake', 'fizzbuzz' ];
 
 		expect( removeItem( 'fizzbuzz', initialArray ) ).toStrictEqual( [ 'admin', 'laras126', 'drake' ] );
+	});
+});
+
+
+describe( 'Utility - addItem', () => {
+	it.only( 'should add an item to the array', () => {
+
+		const initialArray = [
+			{
+				value: 'laras126',
+				display: 'Lara S'
+			},
+			{
+				value: 'admin',
+				display: 'Administrator'
+			},
+		];
+
+		const objectsStore = [
+			{
+				value: 'drake',
+				display: 'Drake'
+			}
+		];
+
+		expect( addItem( 'drake', initialArray, objectsStore ) ).toStrictEqual( [
+			{
+				value: 'laras126',
+				display: 'Lara S'
+			},
+			{
+				value: 'admin',
+				display: 'Administrator'
+			},
+			{
+				value: 'drake',
+				display: 'Drake'
+			},
+		] );
 	});
 });
