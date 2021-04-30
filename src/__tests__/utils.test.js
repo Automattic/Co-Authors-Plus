@@ -1,4 +1,4 @@
-import { moveItem } from '../utils.js';
+import { moveItem, removeItem } from '../utils.js';
 
 describe( 'Utility - moveItem', () => {
 
@@ -29,3 +29,11 @@ describe( 'Utility - moveItem', () => {
 	});
 
 } );
+
+describe( 'Utility - removeItem', () => {
+	it( 'should remove an item from an array', () => {
+		const initialArray = [ 'admin', 'laras126', 'drake', 'fizzbuzz' ];
+
+		expect( removeItem( 'fizzbuzz', initialArray ) ).toStrictEqual( [ 'admin', 'laras126', 'drake' ] );
+	});
+});

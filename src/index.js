@@ -8,7 +8,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { compose, withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withSelect } from '@wordpress/data';
 
 /**
  * Internal Dependencies
@@ -77,16 +77,6 @@ const Render = ( { postId, updateAuthors } ) => {
 	// 	const termIds = selectedAuthors.map( ( option ) => option.id );
 	// 	updateTerms( termIds );
 	// }, [ selectedAuthors ] );
-
-	// Helper function to remove an item.
-	const removeFromSelected = ( value ) => {
-		const newSelections = selectedAuthors.map( ( option ) => {
-			if ( option.value !== value ) {
-				return option;
-			}
-		} );
-		setSelectedAuthors( [ ...newSelections ] );
-	};
 
 	const onChange = ( newAuthor ) => {
 		const newAuthors = [ ...selectedAuthors, newAuthor ];

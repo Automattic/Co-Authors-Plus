@@ -22,3 +22,7 @@ export const moveItem = ( targetItem, itemsArr, direction ) => {
 
 	return sortedArr;
 };
+
+export const removeItem = ( targetItem, itemsArr ) => {
+	return itemsArr.filter( ( item ) => item !== targetItem );
+};

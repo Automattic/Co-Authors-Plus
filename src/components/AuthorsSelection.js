@@ -8,11 +8,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies.
  */
-import { moveItem } from '../utils';
+import { moveItem, removeItem } from '../utils';
 
 export const AuthorsSelection = ( {
 	selectedAuthors,
-	removeFromSelected,
 	setSelectedAuthors,
 } ) => {
 	return selectedAuthors.map( ( value, i ) => {
@@ -69,7 +68,9 @@ export const AuthorsSelection = ( {
 									'Remove Author',
 									'coauthors-plus'
 								) }
-								onClick={ () => removeFromSelected( value ) }
+								onClick={ () => setSelectedAuthors(
+									removeItem( value, selectedAuthors )
+								) }
 							/>
 						</Flex>
 					</FlexItem>
