@@ -1,25 +1,17 @@
 
-export const moveOption = ( option, optionsArr, direction, setState ) => {
-	const swap = ( arr, from, to ) => {
-		const arrCopy = [ ...arr ];
-		const temp = arrCopy[ from ];
+export const moveItem = ( targetItem, itemsArr, direction, setState ) => {
 
-		arrCopy[ from ] = arrCopy[ to ];
-		arrCopy[ to ] = temp;
+	const currIndex = itemsArr.indexOf( targetItem );
+	const indexUpdate = direction == 'up' ? -1 : 1;
+	const newIndex = currIndex + indexUpdate;
 
-		return arrCopy;
-	};
+	const arrCopy = [ ...itemsArr];
+	const targetCopy = arrCopy[currIndex];
 
-	const currIndex = optionsArr.indexOf( option );
+	const newItems = arrCopy.filter( ( item ) => item !== targetCopy );
+	const sortedArr = [...newItems]
 
-	switch ( direction ) {
-		case 'up':
-			if ( 0 === currIndex ) return;
-			setState( swap( optionsArr, currIndex, currIndex - 1 ) );
-		case 'down':
-			if ( currIndex === optionsArr.length - 1 ) return;
-			setState( swap( optionsArr, currIndex, currIndex + 1 ) );
-		default:
-			break;
-	}
+	sortedArr.splice( newIndex, 0, targetCopy );
+
+	setState( sortedArr );
 };

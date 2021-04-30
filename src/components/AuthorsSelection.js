@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies.
  */
-import { moveOption } from '../utils';
+import { moveItem } from '../utils';
 
 export const AuthorsSelection = ( {
 	selectedAuthors,
@@ -31,7 +31,7 @@ export const AuthorsSelection = ( {
 									label={ __( 'Move Up', 'coauthors-plus' ) }
 									disabled={ i === 0 }
 									onClick={ () =>
-										moveOption(
+										moveItem(
 											value,
 											selectedAuthors,
 											'up',
@@ -50,7 +50,7 @@ export const AuthorsSelection = ( {
 										i === selectedAuthors.length - 1
 									}
 									onClick={ () =>
-										moveOption(
+										moveItem(
 											value,
 											selectedAuthors,
 											'down',

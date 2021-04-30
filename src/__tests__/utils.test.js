@@ -1,33 +1,44 @@
-import { moveOption } from '../utils.js';
+import { moveItem } from '../utils.js';
 
-describe( 'Utility - moveOption', () => {
-	it( 'should add an option', () => {
-		const currentOptions = [ ...optionsMock ];
-		const newOption = { ...currentOptions[ 0 ] };
+describe( 'Utility - moveItem', () => {
 
-		expect( addAndGetOptions( newOption, currentOptions ) ).toHaveLength(
-			currentOptions.length
-		);
+	const stateMock = jest.fn();
+
+	it( 'should move an option down', () => {
+		const initialArray = [ 'admin', 'laras126', 'drake', 'fizzbuzz' ];
+
+		moveItem( 'admin', initialArray, 'down', stateMock );
+
+		expect( stateMock ).toHaveBeenCalledWith( [ 'laras126', 'admin', 'drake', 'fizzbuzz' ] );
+
 	} );
 
-	it( 'should not add duplicate options', () => {
-		const currentOptions = [ ...optionsMock ];
-		const newOption = { ...currentOptions[ 0 ] };
+	it( 'should move an option up', () => {
+		const initialArray = [ 'admin', 'laras126', 'drake', 'fizzbuzz' ];
 
-		expect( addAndGetOptions( newOption, currentOptions ) ).toHaveLength(
-			currentOptions.length
-		);
+		moveItem( 'laras126', initialArray, 'up', stateMock );
+
+		expect( stateMock ).toHaveBeenCalledWith( [ 'laras126', 'admin', 'drake', 'fizzbuzz' ] );
 	} );
 
-	it( 'should move an option up and down', () => {
-		const stateMock = jest.fn();
+	it( 'should move items at the end', () => {
+		const initialArray = [ 'admin', 'laras126', 'drake', 'fizzbuzz' ];
 
-		moveOption( 'a', [ 'a', 'b', 'c' ], 'down', stateMock );
+		moveItem( 'drake', initialArray, 'down', stateMock );
 
-		expect( stateMock ).toHaveBeenCalledWith( [ 'b', 'a', 'c' ] );
+		expect( stateMock ).toHaveBeenCalledWith( [ 'admin', 'laras126', 'fizzbuzz', 'drake' ] );
+	});
 
-		moveOption( 'c', [ 'a', 'b', 'c' ], 'up', stateMock );
+	it( 'should move items multiple times in multiple directions', () => {
+		const initialArray = [ 'admin', 'laras126', 'drake', 'fizzbuzz' ];
 
-		expect( stateMock ).toHaveBeenCalledWith( [ 'a', 'c', 'b' ] );
-	} );
+		moveItem( 'drake', initialArray, 'up', stateMock );
+
+		expect( stateMock ).toHaveBeenCalledWith( [ 'admin', 'drake', 'laras126', 'fizzbuzz' ] );
+
+		moveItem( 'admin', [ 'admin', 'drake', 'laras126', 'fizzbuzz' ], 'down', stateMock );
+
+		expect( stateMock ).toHaveBeenCalledWith( [ 'drake', 'admin', 'laras126', 'fizzbuzz' ] );
+	});
+
 } );
