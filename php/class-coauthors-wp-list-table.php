@@ -25,7 +25,6 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			)
 		);
 	}
-
 	/**
 	 * Perform Co-Authors Query
 	 */
@@ -151,8 +150,10 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 	function filter_query_for_search( $where ) {
 		global $wpdb;
-		$var    = '%' . sanitize_text_field( $_REQUEST['s'] ) . '%';
-		$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var );
+		if ( isset( $_REQUEST['s'] ) ) {
+			$var    = '%' . sanitize_text_field( $_REQUEST['s'] ) . '%';
+			$where .= $wpdb->prepare( ' AND (post_title LIKE %s OR post_name LIKE %s )', $var, $var );
+		}
 		return $where;
 	}
 
@@ -203,7 +204,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			case 'last_name':
 				return $item->$column_name;
 			case 'user_email':
-				return '<a href="' . esc_attr( 'mailto:' . $item->user_email ) . '">' . esc_html( $item->user_email ) . '</a>';
+				return '<a href="' . esc_url( 'mailto:' . $item->user_email ) . '">' . esc_html( $item->user_email ) . '</a>';
 
 			default:
 				do_action( 'coauthors_guest_author_custom_columns', $column_name, $item->ID );
@@ -294,7 +295,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 			if ( ! empty( $this->filters ) ) {
 				echo '<select name="filter">';
 				foreach ( $this->filters as $key => $value ) {
-					echo '<option value="' . esc_attr( $key ) . '" ' . selected( $this->active_filter, $key, false ) . '>' . esc_attr( $value ) . '</option>';
+					echo '<option value="' . esc_attr( $key ) . '" ' . selected( $this->active_filter, $key, false ) . '>' . esc_attr( $value ) . '</option>'; // phpcs:ignore
 				}
 				echo '</select>';
 				submit_button( __( 'Filter', 'co-authors-plus' ), 'secondary', false, false );
