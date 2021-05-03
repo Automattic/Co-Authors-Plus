@@ -8,7 +8,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { compose, withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
-import { withDispatch, withSelect } from '@wordpress/data';
+import { select, subscribe, withDispatch, withSelect, register } from '@wordpress/data';
 
 /**
  * Internal Dependencies
@@ -16,51 +16,29 @@ import { withDispatch, withSelect } from '@wordpress/data';
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
 import { addItem } from './utils';
+import { coauthorsStore } from './store';
 
 /**
- * Fetch current coauthors and set state.
- *
- * @param {Object} props
- * @returns
+ * Register our data store.
  */
-const fetchAuthors = ( {
-	postId,
-	selectedAuthors,
-	setSelectedAuthors,
-} ) => {
-	if ( ! postId ) {
-		return;
-	}
+register( coauthorsStore );
 
-	if ( selectedAuthors.length < 1 ) {
-		apiFetch( {
-			path: `/coauthors/v1/authors/${ postId }`,
-		} )
-			.then( ( result ) => {
-				const authorNames = result.map(
-					( author ) => {
-						return {
-							display: author.display_name,
-							value: author.user_nicename
-						}
-					}
-				);
-				setSelectedAuthors( authorNames );
-			} )
-			.catch( ( e ) => console.error( e ) );
-	}
-};
+// /**
+//  * Fetch current coauthors and set state.
+//  *
+//  * @param {Object} props
+//  * @returns
+//  */
+// const setInitialAuthors = ( {
+// 	authors,
+// 	setSelectedAuthors,
+// } ) => {
+// 	if ( ! authors ) {
+// 		return;
+// 	}
 
-const updateAuthors = ( postId, newAuthorsStr, onSuccess ) => {
-	apiFetch( {
-		path: `/coauthors/v1/authors/${ postId }?new_authors=${ newAuthorsStr }`,
-		method: 'POST',
-	} )
-		.then( ( res ) => {
-			onSuccess( res );
-		} )
-		.catch( ( e ) => console.error( e ) );
-};
+// 	setSelectedAuthors( authors );
+// };
 
 /**
  * The Render component that will be populated with data from
@@ -69,43 +47,28 @@ const updateAuthors = ( postId, newAuthorsStr, onSuccess ) => {
  * @param {Object} props
  * @returns
  */
-const Render = ( { postId } ) => {
+const Render = ( { authors } ) => {
+
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
 
 	// Options that are available in the dropdown
 	const [ dropdownOptions, setDropdownOptions ] = useState( [] );
 
-	const [ authorsUpdated, setAuthorsUpdated ] = useState( 0 );
-
-
-	// Run when taxonomyRestBase changes.
-	// This is a proxy for detecting initial render.
-	// The data is retrieved via the withSelect method below.
-	useEffect( () => {
-		fetchAuthors( {
-			postId,
-			selectedAuthors,
-			setSelectedAuthors,
-		} );
-
-		setAuthorsUpdated( false );
-	}, [ postId ] );
-
-	useEffect( () => {
-		const authorValues = selectedAuthors.map( item => item.value );
-
-		updateAuthors( postId, authorValues, ( val ) => {
-			setAuthorsUpdated( authorsUpdated + val );
-		} );
-
-	}, [ selectedAuthors ] );
-
 	const onChange = ( newAuthorValue ) => {
 		const newAuthors = addItem( newAuthorValue, selectedAuthors, dropdownOptions );
 
 		setSelectedAuthors( newAuthors );
 	};
+
+	// Run on first render.
+	useEffect( () => {
+		if ( ! authors.length ) {
+			return;
+		}
+		console.log('use effect ran with', authors);
+		setSelectedAuthors( authors );
+	}, [ authors ] );
 
 	const onFilterValueChange = ( query ) => {
 		const existingAuthors = selectedAuthors.map( item => item.value ).join( ',' );
@@ -138,11 +101,12 @@ const Render = ( { postId } ) => {
 		} );
 	};
 
+	console.log(selectedAuthors);
+
 	return (
 		<>
 			{ selectedAuthors.length ? (
 				<>
-					<div>Updated: { authorsUpdated }</div>
 					<AuthorsSelection
 						selectedAuthors={ selectedAuthors }
 						setSelectedAuthors={ setSelectedAuthors }
@@ -169,12 +133,52 @@ const CoAuthors = compose( [
 	withSelect( ( select ) => {
 		const { getCurrentPost } = select( 'core/editor' );
 		const post = getCurrentPost();
+		const postId = post.id;
+
+		const {
+			getAuthors
+		} = select( 'cap/authors' );
+
+		const authors = getAuthors( postId );
 
 		return {
-			postId: post.id,
+			postId,
+			authors,
 		};
 	} ),
+	withDispatch( () => {
+
+		const updateAuthors = ( postId, newAuthorsStr, onSuccess ) => {
+			apiFetch( {
+				path: `/coauthors/v1/authors/${ postId }?new_authors=${ newAuthorsStr }`,
+				method: 'POST',
+			} )
+				.then( ( res ) => {
+					onSuccess( res );
+				} )
+				.catch( ( e ) => console.error( e ) );
+		};
+
+		return {
+			updateAuthors
+		}
+	})
 ] )( Render );
+
+
+const { isSavingPost } = select( 'core/editor' );
+var checked = true; // Start in a checked state.
+
+subscribe( () => {
+	if ( isSavingPost() ) {
+			checked = false;
+	} else {
+		if ( ! checked ) {
+			console.log('saved'); // Perform your custom handling here.
+			checked = true;
+		}
+	}
+} );
 
 const PluginDocumentSettingPanelAuthors = () => (
 	<PluginDocumentSettingPanel
