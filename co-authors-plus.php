@@ -1049,23 +1049,27 @@ class CoAuthors_Plus {
 	 * @return int Post count
 	 */
 	function filter_count_user_posts( $count, $user_id ) {
-		$user = get_userdata( $user_id );
+		$user     = get_userdata( $user_id );
+		$coauthor = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
-		if ( is_object( $user ) ) {
-			$user = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
-
-			$term = $this->get_author_term( $user );
-
-			if ( $term && ! is_wp_error( $term ) ) {
-				if ( 'guest-author' === $user->type ) {
-					// If using guest author term count, add on linked user count.
-					$count = (int) $count + $term->count;
-				} else {
-					$count = $term->count;
-				}
-			}
+		// Return $count, if no coauthor exists.
+		if ( ! is_object( $coauthor ) ) {
+			return $count;
 		}
 
+		$term = $this->get_author_term( $coauthor );
+
+		if ( is_object( $term ) ) {
+			// Return combined post count, if account is linked.
+			if ( strlen( $coauthor->linked_account ) > 2 ) {
+				return $count + $term->count;
+			}
+
+			// Otherwise, return the term count.
+			return $term->count;
+		}
+
+		// Return $count as fallback.
 		return $count;
 	}
 
