@@ -151,19 +151,7 @@ const CoAuthors = compose( [
 			setAuthorsStore
 		} = dispatch( 'cap/authors' );
 
-		const updateAuthors = ( postId, newAuthorsStr, onSuccess ) => {
-			apiFetch( {
-				path: `/coauthors/v1/authors/${ postId }?new_authors=${ newAuthorsStr }`,
-				method: 'POST',
-			} )
-				.then( ( res ) => {
-					onSuccess( res );
-				} )
-				.catch( ( e ) => console.error( e ) );
-		};
-
 		return {
-			updateAuthors,
 			setAuthorsStore
 		}
 	})
@@ -174,12 +162,17 @@ const { isSavingPost } = select( 'core/editor' );
 
 var checked = true; // Start in a checked state.
 
+const {
+	updateAuthors
+} = dispatch( 'cap/authors' );
+
 subscribe( () => {
 	if ( isSavingPost() ) {
 			checked = false;
 	} else {
 		if ( ! checked ) {
 			console.log('saved'); // Perform your custom handling here.
+			updateAuthors()
 			checked = true;
 		}
 	}
