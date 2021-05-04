@@ -258,7 +258,7 @@ class CoAuthors_Guest_Authors {
 			// Reassign to a different user
 			case 'reassign-another':
 				if ( isset( $_POST['leave-assigned-to'] ) ) {
-					$user_nicename = sanitize_title(  );
+					$user_nicename = sanitize_title( $_POST['leave-assigned-to'] );
 					$reassign_to   = $coauthors_plus->get_coauthor_by( 'user_nicename', $user_nicename );
 					if ( ! $reassign_to ) {
 						wp_die( esc_html__( 'Co-author does not exists. Try again?', 'co-authors-plus' ) );
