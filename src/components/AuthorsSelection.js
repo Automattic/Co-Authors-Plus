@@ -13,7 +13,44 @@ import { moveItem, removeItem } from '../utils';
 export const AuthorsSelection = ( {
 	selectedAuthors,
 	setSelectedAuthors,
+	setAuthorsStore
 } ) => {
+
+	const onClick = ( author, action ) => {
+		let authors;
+
+		switch( action ) {
+			case 'moveDown':
+				console.log('moveDown');
+				authors = moveItem(
+					author,
+					selectedAuthors,
+					'down'
+				);
+				break;
+
+			case 'moveUp':
+				console.log('moveUp');
+				authors = moveItem(
+					author,
+					selectedAuthors,
+					'up'
+				);
+				break;
+
+			case 'remove':
+				console.log('remove');
+				authors = removeItem(
+					author,
+					selectedAuthors
+				);
+				break;
+		}
+
+		setAuthorsStore( authors );
+		setSelectedAuthors( authors );
+	};
+
 	return selectedAuthors.map( ( author, i ) => {
 
 		// const { display, value } = author; // not working here for some reason
@@ -34,15 +71,7 @@ export const AuthorsSelection = ( {
 									className={ 'cap-icon-button' }
 									label={ __( 'Move Up', 'coauthors-plus' ) }
 									disabled={ i === 0 }
-									onClick={ () =>
-										setSelectedAuthors(
-											moveItem(
-												author,
-												selectedAuthors,
-												'up'
-											)
-										)
-									}
+									onClick={ () => onClick( author, 'moveUp' ) }
 								/>
 								<Button
 									icon={ chevronDown }
@@ -54,15 +83,7 @@ export const AuthorsSelection = ( {
 									disabled={
 										i === selectedAuthors.length - 1
 									}
-									onClick={ () =>
-										setSelectedAuthors(
-											moveItem(
-												author,
-												selectedAuthors,
-												'down'
-											)
-										)
-									}
+									onClick={ () => onClick( author, 'moveDown' ) }
 								/>
 							</div>
 							<Button
@@ -73,9 +94,7 @@ export const AuthorsSelection = ( {
 									'Remove Author',
 									'coauthors-plus'
 								) }
-								onClick={ () => setSelectedAuthors(
-									removeItem( author, selectedAuthors )
-								) }
+								onClick={ () => onClick( author, 'remove' ) }
 							/>
 						</Flex>
 					</FlexItem>

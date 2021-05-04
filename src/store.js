@@ -14,6 +14,13 @@ const actions = {
 		};
 	},
 
+	setAuthorsStore( newAuthors ) {
+		return {
+			type: 'SET_AUTHORS_STORE',
+			authors: [ ...newAuthors ],
+		};
+	},
+
 	fetchFromAPI( path ) {
 		return {
 			type: 'FETCH_FROM_API',
@@ -28,11 +35,18 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 		switch ( action.type ) {
 
 			case 'SET_AUTHORS':
-				console.log('in reducer - state', state);
 				return {
 					...state,
 					authors: [
 						...state.authors,
+						...action.authors
+					]
+				};
+
+			case 'SET_AUTHORS_STORE':
+				return {
+					...state,
+					authors: [
 						...action.authors
 					]
 				};
@@ -63,10 +77,15 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 			const result = yield actions.fetchFromAPI( path );
 
 			const authors = result.map(
-				( author ) => {
+				( {
+					display_name,
+					user_nicename,
+					email
+				} ) => {
 					return {
-						display: author.display_name,
-						value: author.user_nicename
+						label: `${ display_name } | ${ email }`,
+						display: display_name,
+						value: user_nicename
 					}
 				}
 			);

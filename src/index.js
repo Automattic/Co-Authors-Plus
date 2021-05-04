@@ -8,7 +8,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { compose, withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
-import { select, subscribe, withDispatch, withSelect, register } from '@wordpress/data';
+import { select, dispatch, subscribe, withDispatch, withSelect, register } from '@wordpress/data';
 
 /**
  * Internal Dependencies
@@ -47,7 +47,7 @@ register( coauthorsStore );
  * @param {Object} props
  * @returns
  */
-const Render = ( { authors } ) => {
+const Render = ( { authors, setAuthorsStore } ) => {
 
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
@@ -58,6 +58,7 @@ const Render = ( { authors } ) => {
 	const onChange = ( newAuthorValue ) => {
 		const newAuthors = addItem( newAuthorValue, selectedAuthors, dropdownOptions );
 
+		setAuthorsStore( newAuthors );
 		setSelectedAuthors( newAuthors );
 	};
 
@@ -66,7 +67,6 @@ const Render = ( { authors } ) => {
 		if ( ! authors.length ) {
 			return;
 		}
-		console.log('use effect ran with', authors);
 		setSelectedAuthors( authors );
 	}, [ authors ] );
 
@@ -101,8 +101,6 @@ const Render = ( { authors } ) => {
 		} );
 	};
 
-	console.log(selectedAuthors);
-
 	return (
 		<>
 			{ selectedAuthors.length ? (
@@ -110,6 +108,7 @@ const Render = ( { authors } ) => {
 					<AuthorsSelection
 						selectedAuthors={ selectedAuthors }
 						setSelectedAuthors={ setSelectedAuthors }
+						setAuthorsStore={ setAuthorsStore }
 					/>
 				</>
 			) : (
@@ -146,7 +145,11 @@ const CoAuthors = compose( [
 			authors,
 		};
 	} ),
-	withDispatch( () => {
+	withDispatch( ( dispatch ) => {
+
+		const {
+			setAuthorsStore
+		} = dispatch( 'cap/authors' );
 
 		const updateAuthors = ( postId, newAuthorsStr, onSuccess ) => {
 			apiFetch( {
@@ -160,13 +163,15 @@ const CoAuthors = compose( [
 		};
 
 		return {
-			updateAuthors
+			updateAuthors,
+			setAuthorsStore
 		}
 	})
 ] )( Render );
 
 
 const { isSavingPost } = select( 'core/editor' );
+
 var checked = true; // Start in a checked state.
 
 subscribe( () => {
