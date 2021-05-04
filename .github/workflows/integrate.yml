@@ -1,4 +1,4 @@
-name: Run PHPUnit
+name: Run PHPUnit and PHPCS
 
 on: [push]
 
@@ -68,4 +68,7 @@ jobs:
         
       - name: Run integration tests (multisite)
         run: composer integration-ms
-        
+
+      - name: Run PHPCS
+        run: composer cs
+
