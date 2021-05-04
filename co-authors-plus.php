@@ -509,7 +509,7 @@ class CoAuthors_Plus {
 			return $value;
 		}
 		// We filter count_user_posts() so it provides an accurate number
-		$numposts = count_user_posts( $user_id );
+		$numposts = count_user_posts( $user_id ); // phpcs:ignore
 		$user     = get_user_by( 'id', $user_id );
 		if ( $numposts > 0 ) {
 			$value .= "<a href='edit.php?author_name=$user->user_nicename' title='" . esc_attr__( 'View posts by this author', 'co-authors-plus' ) . "' class='edit'>";
@@ -546,7 +546,8 @@ class CoAuthors_Plus {
 		global $wpdb;
 
 		$tt_ids   = implode( ', ', array_map( 'intval', $tt_ids ) );
-		$term_ids = $wpdb->get_results( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN ($tt_ids)" );
+		$term_ids = $wpdb->get_results( $wpdb->prepare( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN (%s)", $tt_ids ) );
+		
 
 		foreach ( (array) $term_ids as $term_id_result ) {
 			$term = get_term_by( 'id', $term_id_result->term_id, $this->coauthor_taxonomy );
@@ -612,9 +613,9 @@ class CoAuthors_Plus {
 
 		$query .= " WHERE ({$having_terms_and_authors}) AND {$wpdb->posts}.post_type IN ({$post_types}) AND {$wpdb->posts}.post_status = 'publish'";
 
-		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF ( {$wpdb->term_taxonomy}.taxonomy = '%s', IF ( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy );
+		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF ( {$wpdb->term_taxonomy}.taxonomy = '%s', IF ( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy ); //phpcs:ignore
 
-		$count = $wpdb->query( $query );
+		$count = $wpdb->query( $query ); // phpcs:ignore
 		$wpdb->update( $wpdb->term_taxonomy, array( 'count' => $count ), array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
 
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
@@ -808,10 +809,10 @@ class CoAuthors_Plus {
 		}
 
 		// This action happens when a post is saved while editing a post
-		if ( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) {
+		if ( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) { // phpcs:ignore
 
 			// rawurlencode() is for encoding coauthor name with special characters to compare names when getting coauthor.
-			$author = rawurlencode( sanitize_text_field( $_POST['coauthors'][0] ) );
+			$author = rawurlencode( sanitize_text_field( $_POST['coauthors'][0] ) ); // phpcs:ignore
 
 			if ( $author ) {
 				$author_data = $this->get_coauthor_by( 'user_nicename', $author );
@@ -959,7 +960,7 @@ class CoAuthors_Plus {
 	function delete_user_action( $delete_id ) {
 		global $wpdb;
 
-		$reassign_id = isset( $_POST['reassign_user'] ) ? absint( $_POST['reassign_user'] ) : false;
+		$reassign_id = isset( $_POST['reassign_user'] ) ? absint( $_POST['reassign_user'] ) : false; // phpcs:ignore
 
 		// If reassign posts, do that -- use coauthors_update_post
 		if ( $reassign_id ) {
@@ -1012,8 +1013,8 @@ class CoAuthors_Plus {
 		$orderby       = 'ORDER BY tr.term_order';
 		$order         = 'ASC';
 		$object_ids    = (int) $object_ids;
-		$query         = $wpdb->prepare( "SELECT t.name, t.term_id, tt.term_taxonomy_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $this->coauthor_taxonomy, $object_ids );
-		$raw_coauthors = $wpdb->get_results( $query );
+		$query         = $wpdb->prepare( "SELECT t.name, t.term_id, tt.term_taxonomy_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tt.taxonomy IN (%s) AND tr.object_id IN (%s) $orderby $order", $this->coauthor_taxonomy, $object_ids ); //phpcs:ignore
+		$raw_coauthors = $wpdb->get_results( $query ); //phpcs:ignore
 		$terms         = array();
 		foreach ( $raw_coauthors as $author ) {
 			if ( true === is_array( $args ) && true === isset( $args['fields'] ) ) {
@@ -1141,7 +1142,7 @@ class CoAuthors_Plus {
 		global $wp_query, $authordata;
 
 		if ( is_object( $author ) ) {
-			$authordata = $author;
+			$authordata = $author; //phpcs:ignore
 			$term       = $this->get_author_term( $authordata );
 		}
 
@@ -1191,7 +1192,7 @@ class CoAuthors_Plus {
 			die();
 		}
 
-		if ( empty( $_REQUEST['q'] ) ) {
+		if ( empty( $_REQUEST['q'] ) || empty( $_REQUEST['existing_authors'] ) ) {
 			die();
 		}
 
@@ -1202,7 +1203,7 @@ class CoAuthors_Plus {
 
 		// Return message if no authors found
 		if ( empty( $authors ) ) {
-			echo apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' );
+			echo esc_html( apply_filters( 'coauthors_no_matching_authors_message', 'Sorry, no matching authors found.' ) );
 		}
 
 		foreach ( $authors as $author ) {
@@ -1749,7 +1750,7 @@ class CoAuthors_Plus {
 			&& $guest_term->count ) {
 			$user = get_user_by( 'login', $guest_author->linked_account );
 			if ( is_object( $user ) ) {
-				return count_user_posts( $user->ID );
+				return count_user_posts( $user->ID ); // phpcs:ignore
 			}
 		} elseif ( $term ) {
 			return $term->count;
@@ -1869,7 +1870,7 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 			}
 			$notify_message .= sprintf( __( 'Spam it: %s' ), admin_url( "comment.php?action=spam&c=$comment_id" ) ) . "\r\n";
 
-			$wp_email = 'wordpress@' . preg_replace( '#^www\.#', '', strtolower( $_SERVER['SERVER_NAME'] ) );
+			$wp_email = 'wordpress@' . preg_replace( '#^www\.#', '', strtolower( $_SERVER['SERVER_NAME'] ) ); // phpcs:ignore
 
 			if ( '' == $comment->comment_author ) {
 				$from = "From: \"$blogname\" <$wp_email>";
