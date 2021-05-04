@@ -257,12 +257,14 @@ class CoAuthors_Guest_Authors {
 				break;
 			// Reassign to a different user
 			case 'reassign-another':
-				$user_nicename = sanitize_title( $_POST['leave-assigned-to'] );
-				$reassign_to   = $coauthors_plus->get_coauthor_by( 'user_nicename', $user_nicename );
-				if ( ! $reassign_to ) {
-					wp_die( esc_html__( 'Co-author does not exists. Try again?', 'co-authors-plus' ) );
+				if ( isset( $_POST['leave-assigned-to'] ) ) {
+					$user_nicename = sanitize_title( $_POST['leave-assigned-to'] );
+					$reassign_to   = $coauthors_plus->get_coauthor_by( 'user_nicename', $user_nicename );
+					if ( ! $reassign_to ) {
+						wp_die( esc_html__( 'Co-author does not exists. Try again?', 'co-authors-plus' ) );
+					}
+					$reassign_to = $reassign_to->user_login;
 				}
-				$reassign_to = $reassign_to->user_login;
 				break;
 			// Remove the byline, but don't delete the post
 			case 'remove-byline':
@@ -301,6 +303,10 @@ class CoAuthors_Guest_Authors {
 		global $coauthors_plus;
 
 		if ( ! current_user_can( $this->list_guest_authors_cap ) ) {
+			die();
+		}
+
+		if ( ! isset( $_GET['q'] ) ) {
 			die();
 		}
 
@@ -820,7 +826,7 @@ class CoAuthors_Guest_Authors {
 			// 'user_login' should only be saved on post update if it doesn't exist
 			if ( 'user_login' == $author_field['key'] && ! get_post_meta( $post_id, $key, true ) ) {
 				$display_name_key = $this->get_post_meta_key( 'display_name' );
-				$temp_slug        = sanitize_title( $_POST[ $display_name_key ] );
+				$temp_slug        = sanitize_title( $_POST[ $display_name_key ] ); // phpcs:ignore
 				update_post_meta( $post_id, $key, $temp_slug );
 				continue;
 			}
@@ -895,7 +901,7 @@ class CoAuthors_Guest_Authors {
 			case 'ID':
 			case 'id':
 				$query   = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE ID=%d AND post_type = %s", $value, $this->post_type );
-				$post_id = $wpdb->get_var( $query );
+				$post_id = $wpdb->get_var( $query ); // phpcs:ignore
 				if ( empty( $post_id ) ) {
 					$post_id = '0';
 				}
@@ -904,7 +910,7 @@ class CoAuthors_Guest_Authors {
 			case 'post_name':
 				$value   = $this->get_post_meta_key( $value );
 				$query   = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s AND post_type = %s", $value, $this->post_type );
-				$post_id = $wpdb->get_var( $query );
+				$post_id = $wpdb->get_var( $query ); // phpcs:ignore
 				if ( empty( $post_id ) ) {
 					$post_id = '0';
 				}
@@ -921,7 +927,7 @@ class CoAuthors_Guest_Authors {
 					$value = preg_replace( '#^cap\-#', '', $value );
 				}
 				$query   = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
-				$post_id = $wpdb->get_var( $query );
+				$post_id = $wpdb->get_var( $query ); // phpcs:ignore
 				if ( empty( $post_id ) ) {
 					if ( 'user_login' == $key ) {
 						return $this->get_guest_author_by( 'post_name', $value ); // fallback to post_name in case the guest author isn't a linked account

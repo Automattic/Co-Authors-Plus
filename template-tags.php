@@ -110,7 +110,7 @@ class CoAuthorsIterator {
 
 		// At the end of the loop
 		if ( $this->position > $this->count - 1 ) {
-			$authordata     = $this->current_author = $this->original_authordata;
+			$authordata     = $this->current_author = $this->original_authordata; // phpcs:ignore
 			$this->position = -1;
 			return false;
 		}
@@ -120,7 +120,7 @@ class CoAuthorsIterator {
 			$this->original_authordata = $authordata;
 		}
 
-		$authordata = $this->current_author = $this->authordata_array[ $this->position ];
+		$authordata = $this->current_author = $this->authordata_array[ $this->position ]; // phpcs:ignore
 
 		return true;
 	}
@@ -202,7 +202,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	$output .= $separators['after'];
 
 	if ( $echo ) {
-		echo $output;
+		echo esc_html( $output );
 	}
 
 	return $output;
@@ -717,7 +717,8 @@ function coauthors_wp_list_authors( $args = array() ) {
 	if ( ! $args['echo'] ) {
 		return $return;
 	}
-	echo $return;
+	
+	echo $return; // phpcs:ignore
 }
 
 /**

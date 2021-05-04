@@ -2,6 +2,8 @@
 
 class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
+	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
+
 	public function setUp() {
 
 		parent::setUp();
