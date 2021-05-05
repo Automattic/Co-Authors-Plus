@@ -2,3 +2,5 @@
 .svn
 .idea/
 wpcom-helper.php
+/composer.lock
+/vendor
