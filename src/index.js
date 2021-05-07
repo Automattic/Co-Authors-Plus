@@ -8,7 +8,14 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { compose, withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
-import { select, dispatch, subscribe, withDispatch, withSelect, register } from '@wordpress/data';
+import {
+	select,
+	dispatch,
+	subscribe,
+	withDispatch,
+	withSelect,
+	register,
+} from '@wordpress/data';
 
 /**
  * Internal Dependencies
@@ -48,7 +55,6 @@ register( coauthorsStore );
  * @returns
  */
 const Render = ( { authors, setAuthorsStore } ) => {
-
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
 
@@ -61,7 +67,11 @@ const Render = ( { authors, setAuthorsStore } ) => {
 	};
 
 	const onChange = ( newAuthorValue ) => {
-		const newAuthors = addItem( newAuthorValue, selectedAuthors, dropdownOptions );
+		const newAuthors = addItem(
+			newAuthorValue,
+			selectedAuthors,
+			dropdownOptions
+		);
 
 		updateAuthors( newAuthors );
 	};
@@ -75,7 +85,9 @@ const Render = ( { authors, setAuthorsStore } ) => {
 	}, [ authors ] );
 
 	const onFilterValueChange = ( query ) => {
-		const existingAuthors = selectedAuthors.map( item => item.value ).join( ',' );
+		const existingAuthors = selectedAuthors
+			.map( ( item ) => item.value )
+			.join( ',' );
 
 		apiFetch( {
 			path: `/coauthors/v1/search/?q=${ query }&existing_authors=${ existingAuthors }`,
@@ -138,9 +150,7 @@ const CoAuthors = compose( [
 		const post = getCurrentPost();
 		const postId = post.id;
 
-		const {
-			getAuthors
-		} = select( 'cap/authors' );
+		const { getAuthors } = select( 'cap/authors' );
 
 		const authors = getAuthors( postId );
 
@@ -150,10 +160,7 @@ const CoAuthors = compose( [
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-
-		const {
-			setAuthorsStore
-		} = dispatch( 'cap/authors' );
+		const { setAuthorsStore } = dispatch( 'cap/authors' );
 
 		return {
 			setAuthorsStore: ( authors ) => {
@@ -161,27 +168,27 @@ const CoAuthors = compose( [
 
 				// Save post meta to enable the publish button:
 				// https://github.com/WordPress/gutenberg/issues/13774
-				dispatch('core/editor').editPost( { meta: { _non_existing_meta: true } } );
+				dispatch( 'core/editor' ).editPost( {
+					meta: { _non_existing_meta: true },
+				} );
 			},
-		}
-	})
+		};
+	} ),
 ] )( Render );
 
-
 const { isSavingPost, getCurrentPost } = select( 'core/editor' );
-const { getAuthors, updatedAuthors } = select( 'cap/authors' );
+const { getAuthors, saveAuthors } = select( 'cap/authors' );
 
 let checked = true; // Start in a checked state.
 
 subscribe( () => {
 	if ( isSavingPost() ) {
-			checked = false;
+		checked = false;
 	} else {
 		if ( ! checked ) {
-			console.log('saved'); // Perform your custom handling here.
 			const { id } = getCurrentPost();
-			// const authors = getAuthors( id );
-			// console.log( updatedAuthors( id, authors) );
+			const authors = getAuthors( id );
+			saveAuthors( id, authors );
 			checked = true;
 		}
 	}
