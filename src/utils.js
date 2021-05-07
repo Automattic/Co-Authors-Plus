@@ -7,24 +7,25 @@
  * @returns Array with reordered items.
  */
 export const moveItem = ( targetItem, itemsArr, direction ) => {
-
-	const currIndex = itemsArr.map( ( item ) => item.value ).indexOf( targetItem.value );
+	const currIndex = itemsArr
+		.map( ( item ) => item.value )
+		.indexOf( targetItem.value );
 	const indexUpdate = direction == 'up' ? -1 : 1;
 	const newIndex = currIndex + indexUpdate;
 
-	const arrCopy = itemsArr.map( item => Object.assign( {}, item ) );
-	const targetCopy = arrCopy[currIndex];
+	const arrCopy = itemsArr.map( ( item ) => Object.assign( {}, item ) );
+	const targetCopy = arrCopy[ currIndex ];
 
 	const newItems = ( () => {
 		return arrCopy.filter( ( item ) => {
 			if ( item.value ) {
-				return item.value !== targetCopy.value
+				return item.value !== targetCopy.value;
 			} else {
 				return item !== targetCopy;
 			}
-		});
-	})();
-	const sortedArr = [...newItems]
+		} );
+	} )();
+	const sortedArr = [ ...newItems ];
 
 	sortedArr.splice( newIndex, 0, targetCopy );
 
@@ -51,6 +52,8 @@ export const removeItem = ( targetItem, itemsArr ) => {
  * @returns Array of author objects including the new author.
  */
 export const addItem = ( newAuthorValue, currAuthors, dropDownAuthors ) => {
-	const newAuthorObj = dropDownAuthors.filter( ( item ) => item.value === newAuthorValue );
-	return [ ...currAuthors, newAuthorObj[0] ];
+	const newAuthorObj = dropDownAuthors.filter(
+		( item ) => item.value === newAuthorValue
+	);
+	return [ ...currAuthors, newAuthorObj[ 0 ] ];
 };

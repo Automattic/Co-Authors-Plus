@@ -10,39 +10,21 @@ import { __ } from '@wordpress/i18n';
  */
 import { moveItem, removeItem } from '../utils';
 
-export const AuthorsSelection = ( {
-	selectedAuthors,
-	updateAuthors
-} ) => {
-
+export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 	const onClick = ( author, action ) => {
 		let authors;
 
-		switch( action ) {
+		switch ( action ) {
 			case 'moveDown':
-				console.log('moveDown');
-				authors = moveItem(
-					author,
-					selectedAuthors,
-					'down'
-				);
+				authors = moveItem( author, selectedAuthors, 'down' );
 				break;
 
 			case 'moveUp':
-				console.log('moveUp');
-				authors = moveItem(
-					author,
-					selectedAuthors,
-					'up'
-				);
+				authors = moveItem( author, selectedAuthors, 'up' );
 				break;
 
 			case 'remove':
-				console.log('remove');
-				authors = removeItem(
-					author,
-					selectedAuthors
-				);
+				authors = removeItem( author, selectedAuthors );
 				break;
 		}
 
@@ -50,8 +32,6 @@ export const AuthorsSelection = ( {
 	};
 
 	return selectedAuthors.map( ( author, i ) => {
-
-		// const { display, value } = author; // not working here for some reason
 		const display = author.display;
 		const value = author.value;
 
@@ -69,7 +49,9 @@ export const AuthorsSelection = ( {
 									className={ 'cap-icon-button' }
 									label={ __( 'Move Up', 'coauthors-plus' ) }
 									disabled={ i === 0 }
-									onClick={ () => onClick( author, 'moveUp' ) }
+									onClick={ () =>
+										onClick( author, 'moveUp' )
+									}
 								/>
 								<Button
 									icon={ chevronDown }
@@ -81,7 +63,9 @@ export const AuthorsSelection = ( {
 									disabled={
 										i === selectedAuthors.length - 1
 									}
-									onClick={ () => onClick( author, 'moveDown' ) }
+									onClick={ () =>
+										onClick( author, 'moveDown' )
+									}
 								/>
 							</div>
 							<Button
