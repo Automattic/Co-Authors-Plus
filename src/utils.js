@@ -44,14 +44,15 @@ export const removeItem = ( targetItem, itemsArr ) => {
 };
 
 /**
- * Add a new author.
+ * Get the author object from the list of available authors,
+ * then add it to the selected authors.
  *
  * @param {string} newAuthorValue
  * @param {array} currAuthors
  * @param {array} dropDownAuthors
  * @returns Array of author objects including the new author.
  */
-export const addItem = ( newAuthorValue, currAuthors, dropDownAuthors ) => {
+export const addItemByValue = ( newAuthorValue, currAuthors, dropDownAuthors ) => {
 	const newAuthorObj = dropDownAuthors.filter(
 		( item ) => item.value === newAuthorValue
 	);

@@ -22,7 +22,7 @@ import {
  */
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
-import { addItem } from './utils';
+import { addItemByValue } from './utils';
 import { coauthorsStore } from './store';
 
 /**
@@ -67,7 +67,7 @@ const Render = ( { authors, setAuthorsStore } ) => {
 	};
 
 	const onChange = ( newAuthorValue ) => {
-		const newAuthors = addItem(
+		const newAuthors = addItemByValue(
 			newAuthorValue,
 			selectedAuthors,
 			dropdownOptions
