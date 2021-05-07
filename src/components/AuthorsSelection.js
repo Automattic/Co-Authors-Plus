@@ -12,8 +12,7 @@ import { moveItem, removeItem } from '../utils';
 
 export const AuthorsSelection = ( {
 	selectedAuthors,
-	setSelectedAuthors,
-	setAuthorsStore
+	updateAuthors
 } ) => {
 
 	const onClick = ( author, action ) => {
@@ -47,8 +46,7 @@ export const AuthorsSelection = ( {
 				break;
 		}
 
-		setAuthorsStore( authors );
-		setSelectedAuthors( authors );
+		updateAuthors( authors );
 	};
 
 	return selectedAuthors.map( ( author, i ) => {

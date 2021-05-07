@@ -55,11 +55,15 @@ const Render = ( { authors, setAuthorsStore } ) => {
 	// Options that are available in the dropdown
 	const [ dropdownOptions, setDropdownOptions ] = useState( [] );
 
+	const updateAuthors = ( newAuthors ) => {
+		setAuthorsStore( newAuthors );
+		setSelectedAuthors( newAuthors );
+	};
+
 	const onChange = ( newAuthorValue ) => {
 		const newAuthors = addItem( newAuthorValue, selectedAuthors, dropdownOptions );
 
-		setAuthorsStore( newAuthors );
-		setSelectedAuthors( newAuthors );
+		updateAuthors( newAuthors );
 	};
 
 	// Run on first render.
@@ -108,7 +112,7 @@ const Render = ( { authors, setAuthorsStore } ) => {
 					<AuthorsSelection
 						selectedAuthors={ selectedAuthors }
 						setSelectedAuthors={ setSelectedAuthors }
-						setAuthorsStore={ setAuthorsStore }
+						updateAuthors={ updateAuthors }
 					/>
 				</>
 			) : (
@@ -152,19 +156,22 @@ const CoAuthors = compose( [
 		} = dispatch( 'cap/authors' );
 
 		return {
-			setAuthorsStore
+			setAuthorsStore: ( authors ) => {
+				setAuthorsStore( authors );
+
+				// Save post meta to enable the publish button:
+				// https://github.com/WordPress/gutenberg/issues/13774
+				dispatch('core/editor').editPost( { meta: { _non_existing_meta: true } } );
+			},
 		}
 	})
 ] )( Render );
 
 
-const { isSavingPost } = select( 'core/editor' );
+const { isSavingPost, getCurrentPost } = select( 'core/editor' );
+const { getAuthors, updatedAuthors } = select( 'cap/authors' );
 
-var checked = true; // Start in a checked state.
-
-const {
-	updateAuthors
-} = dispatch( 'cap/authors' );
+let checked = true; // Start in a checked state.
 
 subscribe( () => {
 	if ( isSavingPost() ) {
@@ -172,7 +179,9 @@ subscribe( () => {
 	} else {
 		if ( ! checked ) {
 			console.log('saved'); // Perform your custom handling here.
-			updateAuthors()
+			const { id } = getCurrentPost();
+			// const authors = getAuthors( id );
+			// console.log( updatedAuthors( id, authors) );
 			checked = true;
 		}
 	}

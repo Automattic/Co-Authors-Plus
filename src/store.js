@@ -1,9 +1,8 @@
 import apiFetch from '@wordpress/api-fetch';
-import { createReduxStore } from '@wordpress/data';
+import { createReduxStore, dispatch } from '@wordpress/data';
 
 const DEFAULT_STATE = {
-	authors: [],
-	postId: null,
+	authors: []
 };
 
 const actions = {
@@ -24,7 +23,7 @@ const actions = {
 	postToAPI( path ) {
 		return {
 			type: 'POST_TO_API',
-			path,
+			path
 		};
 	},
 
@@ -69,6 +68,11 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 			const { authors } = state;
 			return authors;
 		},
+
+		updatedAuthors( state ) {
+			const { authors } = state;
+			return authors;
+		},
 	},
 
 	controls: {
@@ -103,26 +107,27 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 			return actions.setAuthors( authors );
 		},
 
-		updateAuthors( postId, newAuthors ) {
-			// const authorsStr = newAuthors.map( item => item.value ).join( ',' );
-			// const path = `/coauthors/v1/authors/${ postId }?new_authors=${authorsStr}`;
-			// const result = actions.postToAPI( path );
+		updatedAuthors( postId, authors ) {
+			const authorsStr = authors.map( item => item.value ).join( ',' );
+			const path = `/coauthors/v1/authors/${ postId }?new_authors=${authorsStr}`;
+			const result = actions.postToAPI( path );
 
-			// const authors = result.map(
-			// 	( {
-			// 		display_name,
-			// 		user_nicename,
-			// 		email
-			// 	} ) => {
-			// 		return {
-			// 			label: `${ display_name } | ${ email }`,
-			// 			display: display_name,
-			// 			value: user_nicename
-			// 		}
-			// 	}
-			// );
+			const formattedAuthors = result.map(
+				( {
+					display_name,
+					user_nicename,
+					email
+				} ) => {
+					return {
+						label: `${ display_name } | ${ email }`,
+						display: display_name,
+						value: user_nicename
+					}
+				}
+			);
 
-			// return actions.setAuthors( authors );
+			return actions.setAuthors( formattedAuthors );
 		}
+
 	},
 } );
