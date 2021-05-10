@@ -207,7 +207,6 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @group now
 	 * @covers ::update_coauthors()
 	 */
 	public function test_update_coauthors(): void {

@@ -721,4 +721,16 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Restore coauthor taxonomy from backup.
 		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
 	}
+
+	/**
+	 * @group now
+	 */
+	public function test_enqueue_editor_assets() {
+		global $coauthors_plus;
+
+		add_filter( 'coauthors_block_editor_integration', '__return_true' );
+
+		var_dump( $coauthors_plus->enable_sidebar_disable_metabox() );
+	}
 }
+
