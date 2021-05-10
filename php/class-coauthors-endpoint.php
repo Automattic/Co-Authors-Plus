@@ -67,7 +67,6 @@ class Endpoints {
 							'description' => __( 'Names of existing coauthors to exclude from search results.' ),
 							'type'        => 'string',
 							'required'    => false,
-							// TODO: valudation of user_nicename?
 						],
 					],
 				]
@@ -100,7 +99,7 @@ class Endpoints {
 				[
 					'methods'             => 'POST',
 					'callback'            => [ $this, 'update_coauthors' ],
-					// 'permission_callback' => [ $this, 'can_edit_coauthors', $post ], // TODO
+					// 'permission_callback' => [ $this, 'can_edit_coauthors', $post ],
 					'permission_callback' => '__return_true',
 					'args'                => [
 						'post_id' => [
@@ -112,7 +111,6 @@ class Endpoints {
 							'description' => __( 'Names of coauthors to save.' ),
 							'type'        => 'string',
 							'required'    => false,
-							// TODO: valudation of user_nicename?
 						],
 					],
 				]
@@ -121,7 +119,10 @@ class Endpoints {
 	}
 
 	/**
-	 * Search and return authors.
+	 * Search and return authors based on a text query.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response
 	 */
 	public function get_coauthors_search_results( WP_REST_Request $request ): WP_REST_Response {
 		$response = [];
@@ -145,15 +146,7 @@ class Endpoints {
 	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
 		$response = [];
 
-		// Calling the global function of the same name.
-		$authors = get_coauthors( $request['post_id']);
-
-		// Return message if no authors found
-		if ( ! empty( $authors ) ) {
-			foreach ( $authors as $author ) {
-				$response[] = $this->_format_author_data( $author );
-			}
-		}
+		$this->_build_authors_response( $response, $request['post_id']);
 
 		return rest_ensure_response( $response );
 	}
@@ -163,7 +156,7 @@ class Endpoints {
 	 */
 	public function update_coauthors( WP_REST_Request $request ): WP_REST_Response {
 
-		$response = 0;
+		$response = [];
 
 		if ( isset( $request['new_authors'] ) ) {
 			$author_names = explode( ',', $request['new_authors'] );
@@ -171,7 +164,7 @@ class Endpoints {
 
 			$this->coauthors->add_coauthors( $request['post_id'], $coauthors );
 
-			$response = 1;
+			$this->_build_authors_response( $response, $request['post_id']);
 		}
 
 		return rest_ensure_response( $response );
@@ -215,5 +208,21 @@ class Endpoints {
 			'display_name'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
 			'avatar'        => esc_url( get_avatar_url( $author->ID ) ),
 		];
+	}
+
+	/**
+	 * Get authors' data and add it to the response.
+	 *
+	 * @param array The response array.
+	 * @param int   Thet post ID from the request.
+	 */
+	public function _build_authors_response( &$response, $post_id ): void {
+		$authors = get_coauthors( $post_id );
+
+		if ( ! empty( $authors ) ) {
+			foreach ( $authors as $author ) {
+				$response[] = $this->_format_author_data( $author );
+			}
+		}
 	}
 }

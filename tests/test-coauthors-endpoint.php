@@ -214,17 +214,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			]
 		);
 
-		$this->_api->update_coauthors( $post_request );
+		$update_response = $this->_api->update_coauthors( $post_request );
 
-		$after_update_get_request = new WP_REST_Request( 'GET' );
-		$after_update_get_request->set_url_params(
-			[
-				'post_id'     => $test_post_id
-			]
-		);
-		$after_update_get_response = $this->_api->get_coauthors( $after_update_get_request );
-
-		$this->assertEquals( 2, count( $after_update_get_response->data ) );
+		$this->assertEquals( 2, count( $update_response->data ) );
 	}
 
 }
