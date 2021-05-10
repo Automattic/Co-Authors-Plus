@@ -10,7 +10,6 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import {
 	select,
-	dispatch,
 	subscribe,
 	withDispatch,
 	withSelect,
@@ -30,31 +29,17 @@ import { coauthorsStore } from './store';
  */
 register( coauthorsStore );
 
-// /**
-//  * Fetch current coauthors and set state.
-//  *
-//  * @param {Object} props
-//  * @returns
-//  */
-// const setInitialAuthors = ( {
-// 	authors,
-// 	setSelectedAuthors,
-// } ) => {
-// 	if ( ! authors ) {
-// 		return;
-// 	}
-
-// 	setSelectedAuthors( authors );
-// };
-
 /**
  * The Render component that will be populated with data from
  * the select and methods from dispatch as composed below.
  *
- * @param {Object} props
- * @returns
+ * @param {Object}   root0
+ * @param {boolean}  root0.authors         Array of authors from the store.
+ * @param {function} root0.setAuthorsStore Method to save data new authors to the store.
+ * @return {JSX.Element}                   Document sidebar panel component.
  */
 const Render = ( { authors, setAuthorsStore } ) => {
+
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
 
@@ -76,14 +61,20 @@ const Render = ( { authors, setAuthorsStore } ) => {
 		updateAuthors( newAuthors );
 	};
 
-	// Run on first render.
+	// Run once after first render.
 	useEffect( () => {
 		if ( ! authors.length ) {
 			return;
 		}
 		setSelectedAuthors( authors );
-	}, [ authors ] );
+	}, [] );
 
+	/**
+	 * The callback for updating autocomplete in the ComboBox component.
+	 * Fetch a list of authors matching the search text.
+	 *
+	 * @param {string} query The text to search.
+	 */
 	const onFilterValueChange = ( query ) => {
 		const existingAuthors = selectedAuthors
 			.map( ( item ) => item.value )
@@ -93,17 +84,6 @@ const Render = ( { authors, setAuthorsStore } ) => {
 			path: `/coauthors/v1/search/?q=${ query }&existing_authors=${ existingAuthors }`,
 			method: 'GET',
 		} ).then( ( response ) => {
-			const formatAuthorData = ( {
-				display_name,
-				user_nicename,
-				email,
-			} ) => {
-				return {
-					label: `${ display_name } | ${ email }`,
-					display: display_name,
-					value: user_nicename,
-				};
-			};
 
 			const formattedAuthors = ( ( items ) => {
 				if ( items.length > 0 ) {
@@ -143,6 +123,10 @@ const Render = ( { authors, setAuthorsStore } ) => {
 	);
 };
 
+/**
+ * Retrieve selectors and data from WordPress,
+ * then pass it to our render component.
+ */
 const CoAuthors = compose( [
 	withState(),
 	withSelect( ( select ) => {
@@ -176,6 +160,9 @@ const CoAuthors = compose( [
 	} ),
 ] )( Render );
 
+
+// Save authors when the post is saved.
+// https://github.com/WordPress/gutenberg/issues/17632
 const { isSavingPost, getCurrentPost } = select( 'core/editor' );
 const { getAuthors, saveAuthors } = select( 'cap/authors' );
 
@@ -196,9 +183,9 @@ subscribe( () => {
 
 const PluginDocumentSettingPanelAuthors = () => (
 	<PluginDocumentSettingPanel
-		name="custom-panel"
+		name="coauthors-panel"
 		title="Authors"
-		className="authors"
+		className="coauthors"
 	>
 		<CoAuthors />
 	</PluginDocumentSettingPanel>

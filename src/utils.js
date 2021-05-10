@@ -58,3 +58,21 @@ export const addItemByValue = ( newAuthorValue, currAuthors, dropDownAuthors ) =
 	);
 	return [ ...currAuthors, newAuthorObj[ 0 ] ];
 };
+
+/**
+ * Format the author option object.
+ *
+ * @param {Object} root0               An author object from the API endpoint.
+ * @param {Object} root0.display_name  Name to display in the UI.
+ * @param {Object} root0.user_nicename The unique username.
+ * @param {Object} root0.email
+ *
+ * @return {Object} The object containing data relevant to the Coauthors component.
+ */
+export const formatAuthorData = ({ display_name, user_nicename, email }) => {
+	return {
+		label: `${ display_name } | ${ email }`,
+		display: display_name,
+		value: user_nicename,
+	};
+};

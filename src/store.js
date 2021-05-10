@@ -1,9 +1,19 @@
+/**
+ * External dependencies.
+ */
 import apiFetch from '@wordpress/api-fetch';
 import { createReduxStore } from '@wordpress/data';
+
+/**
+ * Internal dependencies.
+ */
+import { formatAuthorData } from './utils';
 
 const DEFAULT_STATE = {
 	authors: [],
 };
+
+const COAUTHORS_ENDPOINT = '/coauthors/v1/authors';
 
 const actions = {
 	setAuthors( authors ) {
@@ -70,18 +80,10 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 
 	resolvers: {
 		*getAuthors( postId ) {
-			const path = `/coauthors/v1/authors/${ postId }`;
+			const path = `${COAUTHORS_ENDPOINT}/${ postId }`;
 			const result = yield actions.apiRequest( path );
 
-			const authors = result.map(
-				( { display_name, user_nicename, email } ) => {
-					return {
-						label: `${ display_name } | ${ email }`,
-						display: display_name,
-						value: user_nicename,
-					};
-				}
-			);
+			const authors = result.map( author => formatAuthorData( author ) );
 			return actions.setAuthors( authors );
 		},
 
@@ -89,7 +91,7 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 			const authorsStr = authors
 				.map( ( item ) => item.value )
 				.join( ',' );
-			const path = `/coauthors/v1/authors/${ postId }?new_authors=${ authorsStr }`;
+			const path = `${COAUTHORS_ENDPOINT}/${ postId }?new_authors=${ authorsStr }`;
 
 			yield actions.apiRequest( path, 'POST' );
 		},
