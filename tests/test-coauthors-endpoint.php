@@ -179,10 +179,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::update_coauthors()
 	 * @covers ::get_coauthors()
 	 */
-	public function test_authors_route_callbacks(): void {
+	public function test_authors_get_coauthors(): void {
 		$test_post = $this->factory->post->create_and_get(
 			[
 				'post_author'  => $this->author1->ID,
@@ -203,14 +202,32 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		);
 
 		$get_response = $this->_api->get_coauthors( $get_request );
-
 		$this->assertEquals( 'author1', $get_response->data[0]['user_nicename'] );
+
+	}
+
+	/**
+	 * @group now
+	 * @covers ::update_coauthors()
+	 */
+	public function test_update_coauthors(): void {
+		$test_post = $this->factory->post->create_and_get(
+			[
+				'post_author'  => $this->author1->ID,
+				'post_status'  => 'publish',
+				'post_content' => rand_str(),
+				'post_title'   => rand_str(),
+				'post_type'    => 'post',
+			]
+		);
+
+		$test_post_id = $test_post->ID;
 
 		$post_request = new WP_REST_Request( 'POST' );
 		$post_request->set_url_params(
 			[
 				'post_id'     => $test_post_id,
-				'new_authors' => 'author2,coauthor2'
+				'new_authors' =>  $this->author1->user_nicename . ',coauthor2'
 			]
 		);
 

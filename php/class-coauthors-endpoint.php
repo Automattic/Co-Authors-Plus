@@ -146,7 +146,7 @@ class Endpoints {
 	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
 		$response = [];
 
-		$this->_build_authors_response( $response, $request['post_id']);
+		$this->_build_authors_response( $response, $request );
 
 		return rest_ensure_response( $response );
 	}
@@ -162,9 +162,10 @@ class Endpoints {
 			$author_names = explode( ',', $request['new_authors'] );
 			$coauthors    = array_map( 'sanitize_title', (array) $author_names );
 
+			// Replace all existing authors
 			$this->coauthors->add_coauthors( $request['post_id'], $coauthors );
 
-			$this->_build_authors_response( $response, $request['post_id']);
+			$this->_build_authors_response( $response, $request );
 		}
 
 		return rest_ensure_response( $response );
@@ -216,8 +217,8 @@ class Endpoints {
 	 * @param array The response array.
 	 * @param int   Thet post ID from the request.
 	 */
-	public function _build_authors_response( &$response, $post_id ): void {
-		$authors = get_coauthors( $post_id );
+	public function _build_authors_response( &$response, $request ): void {
+		$authors = get_coauthors( $request['post_id'] );
 
 		if ( ! empty( $authors ) ) {
 			foreach ( $authors as $author ) {
