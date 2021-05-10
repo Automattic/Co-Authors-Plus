@@ -138,33 +138,36 @@ class CoAuthors_Plus {
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
 
-		function sidebar_plugin_register() {
+		if ( $this->enable_sidebar_disable_metabox() ) {
 
-			$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
+			function sidebar_plugin_register() {
 
-			wp_register_script(
-				'plugin-sidebar-js',
-				plugins_url( 'build/index.js', __FILE__ ),
-				$asset['dependencies'],
-				$asset['version']
-			);
+				$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
 
-			wp_register_style(
-				'plugin-sidebar-css',
-				plugins_url( 'build/style-index.css', __FILE__ ),
-				'',
-				$asset['version']
-			);
+				wp_register_script(
+					'plugin-sidebar-js',
+					plugins_url( 'build/index.js', __FILE__ ),
+					$asset['dependencies'],
+					$asset['version']
+				);
+
+				wp_register_style(
+					'plugin-sidebar-css',
+					plugins_url( 'build/style-index.css', __FILE__ ),
+					'',
+					$asset['version']
+				);
+			}
+			add_action( 'init', 'sidebar_plugin_register' );
+
+			function sidebar_plugin_script_enqueue() {
+				wp_enqueue_script( 'plugin-sidebar-js' );
+				wp_enqueue_style( 'plugin-sidebar-css' );
+			}
+
+			add_action( 'enqueue_block_editor_assets', 'sidebar_plugin_script_enqueue' );
+
 		}
-		add_action( 'init', 'sidebar_plugin_register' );
-
-		function sidebar_plugin_script_enqueue() {
-			wp_enqueue_script( 'plugin-sidebar-js' );
-			wp_enqueue_style( 'plugin-sidebar-css' );
-		}
-
-		add_action( 'enqueue_block_editor_assets', 'sidebar_plugin_script_enqueue' );
-
 	}
 
 	/**
@@ -366,12 +369,18 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-		// $post_type = get_post_type();
-		// $is_block_editor = use_block_editor_for_post_type( $post_type );
 
-		// if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! $is_block_editor ) {
+		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! $this->enable_sidebar_disable_metabox() ) {
 			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
-		// }
+		}
+	}
+
+	/**
+	 * Filter to enable the sidebar plugin in the block editor,
+	 * and to disable metaboxes.
+	 */
+	public function enable_sidebar_disable_metabox() {
+		return apply_filters( 'coauthors_block_editor_integration', false );
 	}
 
 	/**
@@ -951,7 +960,9 @@ class CoAuthors_Plus {
 		$coauthors        = array_unique( array_merge( $existing_coauthors, $coauthors ) );
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
+			// var_dump( $author_name );
 			$field              = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
+			// var_dump( $field );
 			$author             = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
 			$term               = $this->update_author_term( $author );
