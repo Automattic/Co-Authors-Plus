@@ -163,7 +163,7 @@ class Endpoints {
 			$coauthors    = array_map( 'sanitize_title', (array) $author_names );
 
 			// Replace all existing authors
-			$this->coauthors->add_coauthors( $request['post_id'], $coauthors );
+			$this->coauthors->add_coauthors( $request->get_param( 'post_id' ), $coauthors );
 
 			$this->_build_authors_response( $response, $request );
 		}
@@ -218,7 +218,7 @@ class Endpoints {
 	 * @param int   Thet post ID from the request.
 	 */
 	public function _build_authors_response( &$response, $request ): void {
-		$authors = get_coauthors( $request['post_id'] );
+		$authors = get_coauthors( $request->get_param( 'post_id' ) );
 
 		if ( ! empty( $authors ) ) {
 			foreach ( $authors as $author ) {
