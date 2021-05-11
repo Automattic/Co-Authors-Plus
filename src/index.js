@@ -21,7 +21,7 @@ import {
  */
 import './style.css';
 import { AuthorsSelection } from './components/AuthorsSelection';
-import { addItemByValue } from './utils';
+import { addItemByValue, formatAuthorData } from './utils';
 import { coauthorsStore } from './store';
 
 /**
