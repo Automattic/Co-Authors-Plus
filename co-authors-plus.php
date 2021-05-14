@@ -370,7 +370,7 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! apply_filters( 'coauthors_sidebar_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
+		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
 			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
 		}
 	}
