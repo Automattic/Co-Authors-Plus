@@ -175,25 +175,28 @@ class CoAuthors_Plus {
 	}
 
 	public function enqueue_sidebar_plugin_assets() {
-		if ( apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
-			$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
+		if ( apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED )  ) {
 
-			wp_register_script(
-				'coauthors-sidebar-js',
-				plugins_url( 'build/index.js', __FILE__ ),
-				$asset['dependencies'],
-				$asset['version']
-			);
+			if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
+				$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
 
-			wp_register_style(
-				'coauthors-sidebar-css',
-				plugins_url( 'build/style-index.css', __FILE__ ),
-				'',
-				$asset['version']
-			);
+				wp_register_script(
+					'coauthors-sidebar-js',
+					plugins_url( 'build/index.js', __FILE__ ),
+					$asset['dependencies'],
+					$asset['version']
+				);
 
-			wp_enqueue_script( 'coauthors-sidebar-js' );
-			wp_enqueue_style( 'coauthors-sidebar-css' );
+				wp_register_style(
+					'coauthors-sidebar-css',
+					plugins_url( 'build/style-index.css', __FILE__ ),
+					'',
+					$asset['version']
+				);
+
+				wp_enqueue_script( 'coauthors-sidebar-js' );
+				wp_enqueue_style( 'coauthors-sidebar-css' );
+			}
 		}
 	}
 

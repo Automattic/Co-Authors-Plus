@@ -722,6 +722,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
 	}
 
+	/**
+	 * @covers CoAuthors_Plus::enqueue_sidebar_plugin_assets()
+	 */
 	public function test_enqueue_editor_assets() {
 
 		do_action( 'enqueue_block_editor_assets' );
@@ -729,17 +732,24 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertFalse( wp_script_is( 'coauthors-sidebar-js' ) );
 		$this->assertFalse( wp_style_is( 'coauthors-sidebar-css' ) );
 
-		add_filter( 'coauthors_block_editor_integration', '__return_true' );
+		wp_set_current_user( $this->editor1->ID );
+		set_current_screen( 'post-new.php' );
+		do_action( 'enqueue_block_editor_assets' );
 
+		$this->assertFalse( wp_script_is( 'coauthors-sidebar-js' ) );
+		$this->assertFalse( wp_style_is( 'coauthors-sidebar-css' ) );
+
+		add_filter( 'coauthors_block_editor_integration', '__return_true' );
 		do_action( 'enqueue_block_editor_assets' );
 
 		$this->assertTrue( wp_script_is( 'coauthors-sidebar-js' ) );
 		$this->assertTrue( wp_style_is( 'coauthors-sidebar-css' ) );
+
+
 	}
 
 	/**
 	 * @covers CoAuthors_Plus::add_coauthors_box()
-	 * @group now
 	 */
 	public function test_add_coauthors_box() {
 		global $coauthors_plus, $wp_meta_boxes;
