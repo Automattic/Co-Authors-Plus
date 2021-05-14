@@ -1,27 +1,62 @@
 {
-	"name"       : "automattic/co-authors-plus",
-	"description": "Multiple bylines and Guest Authors for WordPress",
-	"homepage"   : "http://wordpress.org/plugins/co-authors-plus/",
-	"type"       : "wordpress-plugin",
-	"license"    : "GPL-2.0+",
-	"authors"    : [
-		{
-			"name": "Daniel Bachhuber",
-			"email": "d@danielbachhuber.com",
-			"homepage": "http://danielbachhuber.com",
-			"role": "Developer"
-		},
-		{
-			"name"    : "Automattic",
-			"homepage": "http://automattic.com/"
-		}
-	],
-	"support"    : {
-			"issues": "https://github.com/Automattic/Co-Authors-Plus/issues",
-			"source": "https://github.com/Automattic/Co-Authors-Plus",
-			"forum": "http://wordpress.org/support/plugin/co-authors-plus"
-	},
-	"require": {
-		"composer/installers": "~1.0"
-	}
+  "name": "automattic/co-authors-plus",
+  "description": "Multiple bylines and Guest Authors for WordPress",
+  "homepage": "http://wordpress.org/plugins/co-authors-plus/",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Daniel Bachhuber",
+      "email": "d@danielbachhuber.com",
+      "homepage": "http://danielbachhuber.com",
+      "role": "Developer"
+    },
+    {
+      "name": "Automattic",
+      "homepage": "http://automattic.com/"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/Automattic/Co-Authors-Plus/issues",
+    "source": "https://github.com/Automattic/Co-Authors-Plus",
+    "forum": "http://wordpress.org/support/plugin/co-authors-plus"
+  },
+  "require": {
+    "composer/installers": "~1.0",
+    "php": ">=5.6"
+  },
+  "require-dev": {
+    "automattic/vipwpcs": "^2.2",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.4.1 || ^0.5 || ^0.6.2 || ^0.7",
+    "php-parallel-lint/php-parallel-lint": "^1.0",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "phpunit/phpunit": "^4 || ^5 || ^6 || ^7",
+    "squizlabs/php_codesniffer": "^3.5",
+    "wp-coding-standards/wpcs": "^2.3.0",
+    "yoast/phpunit-polyfills": "^0.2.0"
+  },
+  "scripts": {
+    "cs": [
+      "@php ./vendor/bin/phpcs -p -s -v -n . --standard=\"WordPress-VIP-Go\" --extensions=php --ignore=\"/vendor/*,/node_modules/*,/tests/*\""
+    ],
+    "cbf": [
+      "@php ./vendor/bin/phpcbf -p -s -v -n . --standard=\"WordPress-VIP-Go\" --extensions=php --ignore=\"/vendor/*,/node_modules/*,/tests/*\""
+    ],
+    "lint": [
+      "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git"
+    ],
+    "lint-ci": [
+      "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git --checkstyle"
+    ],
+    "prepare": [
+      "bash bin/install-wp-tests.sh wordpress_test root root localhost"
+    ],
+    "integration": [
+      "@php ./vendor/bin/phpunit --testsuite WP_Tests"
+    ],
+    "integration-ms": [
+      "@putenv WP_MULTISITE=1",
+      "@composer integration"
+    ]
+  }
 }
