@@ -145,7 +145,7 @@ class CoAuthors_Plus {
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
 
 		// Block editor assets for the sidebar plugin.
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_sidebar_plugin_assets' ] );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_sidebar_plugin_assets' ) );
 	}
 
 	/**
@@ -311,7 +311,7 @@ class CoAuthors_Plus {
 				if ( ! $user && ( 'login' == $key || 'slug' == $key ) ) {
 					// Re-try lookup without prefixed value if no results found.
 					$value = preg_replace( '#^cap\-#', '', $value );
-					$user = get_user_by( $key, $value );
+					$user  = get_user_by( $key, $value );
 				}
 				if ( ! $user ) {
 					return false;
@@ -370,8 +370,11 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
-			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
+		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
+
+			if ( false === apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
+				add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
+			}
 		}
 	}
 
@@ -953,7 +956,7 @@ class CoAuthors_Plus {
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
 			// var_dump( $author_name );
-			$field              = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
+			$field = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
 			// var_dump( $field );
 			$author             = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
@@ -1824,7 +1827,7 @@ class CoAuthors_Plus {
 }
 
 global $coauthors_plus;
-$coauthors_plus = new CoAuthors_Plus();
+$coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :

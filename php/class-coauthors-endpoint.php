@@ -22,7 +22,7 @@ class Endpoints {
 	/**
 	 * Route for authors search endpoint.
 	 */
-	public const SEARCH_ROUTE = 'search';
+	public const SEARCH_ROUTE  = 'search';
 	public const AUTHORS_ROUTE = 'authors';
 
 	/**
@@ -41,7 +41,7 @@ class Endpoints {
 	public function __construct( $coauthors_instance ) {
 		$this->coauthors = $coauthors_instance;
 
-		add_action( 'rest_api_init', [ $this, 'add_endpoints' ] );
+		add_action( 'rest_api_init', array( $this, 'add_endpoints' ) );
 	}
 
 	/**
@@ -52,69 +52,69 @@ class Endpoints {
 		register_rest_route(
 			static::NAMESPACE,
 			static::SEARCH_ROUTE,
-			[
-				[
+			array(
+				array(
 					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_coauthors_search_results' ],
+					'callback'            => array( $this, 'get_coauthors_search_results' ),
 					'permission_callback' => '__return_true',
-					'args'                => [
-						'q' => [
+					'args'                => array(
+						'q'                => array(
 							'description' => __( 'Text to search.' ),
 							'required'    => false,
 							'type'        => 'string',
-						],
-						'existing_authors' => [
+						),
+						'existing_authors' => array(
 							'description' => __( 'Names of existing coauthors to exclude from search results.' ),
 							'type'        => 'string',
 							'required'    => false,
-						],
-					],
-				]
-			]
+						),
+					),
+				),
+			)
 		);
 
 		register_rest_route(
 			static::NAMESPACE,
 			static::AUTHORS_ROUTE . static::ENDPOINT_POST_ID_REGEX,
-			[
-				[
+			array(
+				array(
 					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_coauthors' ],
+					'callback'            => array( $this, 'get_coauthors' ),
 					'permission_callback' => '__return_true',
-					'args'                => [
-						'post_id' => [
+					'args'                => array(
+						'post_id' => array(
 							'required'          => false,
 							'type'              => 'number',
-							'validate_callback' => [ $this, 'validate_numeric' ],
-						]
-					],
-				]
-			]
+							'validate_callback' => array( $this, 'validate_numeric' ),
+						),
+					),
+				),
+			)
 		);
 
 		register_rest_route(
 			static::NAMESPACE,
 			static::AUTHORS_ROUTE . static::ENDPOINT_POST_ID_REGEX,
-			[
-				[
+			array(
+				array(
 					'methods'             => 'POST',
-					'callback'            => [ $this, 'update_coauthors' ],
+					'callback'            => array( $this, 'update_coauthors' ),
 					// 'permission_callback' => [ $this, 'can_edit_coauthors', $post ],
 					'permission_callback' => '__return_true',
-					'args'                => [
-						'post_id' => [
+					'args'                => array(
+						'post_id'     => array(
 							'required'          => false,
 							'type'              => 'number',
-							'validate_callback' => [ $this, 'validate_numeric' ],
-						],
-						'new_authors' => [
+							'validate_callback' => array( $this, 'validate_numeric' ),
+						),
+						'new_authors' => array(
 							'description' => __( 'Names of coauthors to save.' ),
 							'type'        => 'string',
 							'required'    => false,
-						],
-					],
-				]
-			]
+						),
+					),
+				),
+			)
 		);
 	}
 
@@ -125,7 +125,7 @@ class Endpoints {
 	 * @return WP_REST_Response
 	 */
 	public function get_coauthors_search_results( WP_REST_Request $request ): WP_REST_Response {
-		$response = [];
+		$response = array();
 
 		$search  = sanitize_text_field( strtolower( $request['q'] ) );
 		$ignore  = array_map( 'sanitize_text_field', explode( ',', $request['existing_authors'] ) );
@@ -144,7 +144,7 @@ class Endpoints {
 	 * Return a single author.
 	 */
 	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
-		$response = [];
+		$response = array();
 
 		$this->_build_authors_response( $response, $request );
 
@@ -156,7 +156,7 @@ class Endpoints {
 	 */
 	public function update_coauthors( WP_REST_Request $request ): WP_REST_Response {
 
-		$response = [];
+		$response = array();
 
 		if ( isset( $request['new_authors'] ) ) {
 			$author_names = explode( ',', $request['new_authors'] );
@@ -201,14 +201,14 @@ class Endpoints {
 	 */
 	public function _format_author_data( object $author ): array {
 
-		return [
+		return array(
 			'id'            => esc_html( $author->ID ),
 			'user_nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
 			'login'         => esc_html( $author->user_login ),
 			'email'         => $author->user_email,
 			'display_name'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
 			'avatar'        => esc_url( get_avatar_url( $author->ID ) ),
-		];
+		);
 	}
 
 	/**

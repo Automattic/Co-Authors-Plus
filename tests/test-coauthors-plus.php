@@ -736,5 +736,28 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertTrue( wp_script_is( 'coauthors-sidebar-js' ) );
 		$this->assertTrue( wp_style_is( 'coauthors-sidebar-css' ) );
 	}
+
+	/**
+	 * @covers CoAuthors_Plus::add_coauthors_box()
+	 * @group now
+	 */
+	public function test_add_coauthors_box() {
+		global $coauthors_plus, $wp_meta_boxes;
+
+		add_filter( 'coauthors_block_editor_integration', '__return_true' );
+
+		wp_set_current_user( $this->editor1->ID );
+		set_current_screen( 'post-new.php' );
+
+		$coauthors_plus->add_coauthors_box();
+
+		$this->assertNull( $wp_meta_boxes, 'Failed to assert the coauthors metabox is not added when the block editor filter returns true.' );
+
+		remove_filter( 'coauthors_block_editor_integration', '__return_true' );
+
+		$coauthors_plus->add_coauthors_box();
+
+		$this->assertNotNull( $wp_meta_boxes, 'Failed to assert the coauthors metabox is added by default.' );
+	}
 }
 
