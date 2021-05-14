@@ -587,7 +587,7 @@ class CoAuthors_Plus {
 
 		$tt_ids   = implode( ', ', array_map( 'intval', $tt_ids ) );
 		$term_ids = $wpdb->get_results( $wpdb->prepare( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN (%s)", $tt_ids ) );
-		
+
 
 		foreach ( (array) $term_ids as $term_id_result ) {
 			$term = get_term_by( 'id', $term_id_result->term_id, $this->coauthor_taxonomy );
@@ -956,10 +956,9 @@ class CoAuthors_Plus {
 		// Set the co-authors
 		$coauthors        = array_unique( array_merge( $existing_coauthors, $coauthors ) );
 		$coauthor_objects = array();
-		foreach ( $coauthors as &$author_name ) {
-			// var_dump( $author_name );
+		foreach ( $coauthors as &$author_name )
 			$field = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
-			// var_dump( $field );
+
 			$author             = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
 			$term               = $this->update_author_term( $author );
