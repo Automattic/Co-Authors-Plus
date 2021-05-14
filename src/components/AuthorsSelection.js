@@ -48,7 +48,7 @@ export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 									icon={ chevronUp }
 									className={ 'cap-icon-button' }
 									label={ __( 'Move Up', 'coauthors-plus' ) }
-									disabled={ i === 0 }
+									disabled={ i === 0 || 1 === selectedAuthors.length }
 									onClick={ () =>
 										onClick( author, 'moveUp' )
 									}
@@ -61,7 +61,7 @@ export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 										'coauthors-plus'
 									) }
 									disabled={
-										i === selectedAuthors.length - 1
+										i === selectedAuthors.length - 1 || 1 === selectedAuthors.length
 									}
 									onClick={ () =>
 										onClick( author, 'moveDown' )
@@ -76,6 +76,9 @@ export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 									'Remove Author',
 									'coauthors-plus'
 								) }
+								disabled={
+									1 === selectedAuthors.length
+								}
 								onClick={ () => onClick( author, 'remove' ) }
 							/>
 						</Flex>
