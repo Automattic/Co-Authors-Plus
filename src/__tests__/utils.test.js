@@ -68,7 +68,7 @@ describe( 'Utility - removeItem', () => {
 	} );
 } );
 
-describe( 'Utility - addItem', () => {
+describe( 'Utility - addItemByValue', () => {
 	it( 'should add an item from dropdown options to end of the array', () => {
 		expect( addItemByValue( newAuthorValue, selectedAuthors, dropdownOptions ) ).toStrictEqual( [
 			...selectedAuthors,
