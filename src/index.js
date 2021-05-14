@@ -99,7 +99,7 @@ const Render = ( { authors, setAuthorsStore } ) => {
 
 	return (
 		<>
-			{ selectedAuthors.length ? (
+			{ Boolean( selectedAuthors.length ) ? (
 				<>
 					<AuthorsSelection
 						selectedAuthors={ selectedAuthors }
