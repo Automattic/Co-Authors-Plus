@@ -67,7 +67,11 @@ class CoAuthors_Plus {
 
 	var $to_be_filtered_caps = array();
 
-	const SIDEBAR_ENABLED_DEFAULT = false;
+	/**
+	 * Block editor functionality in the sidebar is
+	 * disabled by default.
+	 */
+	const SIDEBAR_PLUGIN_ENABLED = false;
 
 	/**
 	 * __construct()
@@ -139,6 +143,9 @@ class CoAuthors_Plus {
 
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
+
+		// Block editor assets for the sidebar plugin.
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_sidebar_plugin_assets' ] );
 	}
 
 	/**
@@ -165,30 +172,28 @@ class CoAuthors_Plus {
 			$coauthors_plus_template_filters = new CoAuthors_Template_Filters();
 		}
 
-		if ( apply_filters( 'coauthors_sidebar_integration', false ) ) {
+	}
+
+	public function enqueue_sidebar_plugin_assets() {
+		if ( apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
 			$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
 
 			wp_register_script(
-				'plugin-sidebar-js',
+				'coauthors-sidebar-js',
 				plugins_url( 'build/index.js', __FILE__ ),
 				$asset['dependencies'],
 				$asset['version']
 			);
 
 			wp_register_style(
-				'plugin-sidebar-css',
+				'coauthors-sidebar-css',
 				plugins_url( 'build/style-index.css', __FILE__ ),
 				'',
 				$asset['version']
 			);
 
-			function sidebar_plugin_script_enqueue() {
-				wp_enqueue_script( 'plugin-sidebar-js' );
-				wp_enqueue_style( 'plugin-sidebar-css' );
-			}
-
-			add_action( 'enqueue_block_editor_assets', 'sidebar_plugin_script_enqueue' );
-
+			wp_enqueue_script( 'coauthors-sidebar-js' );
+			wp_enqueue_style( 'coauthors-sidebar-css' );
 		}
 	}
 
@@ -365,7 +370,7 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! apply_filters( 'coauthors_sidebar_integration', self::SIDEBAR_ENABLED_DEFAULT ) ) {
+		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() && ! apply_filters( 'coauthors_sidebar_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
 			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
 		}
 	}
@@ -1034,6 +1039,7 @@ class CoAuthors_Plus {
 	 * Restrict WordPress from blowing away co-author order when bulk editing terms
 	 *
 	 * @since 2.6
+	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
 	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
 	 */
 	function filter_wp_get_object_terms( $terms, $object_ids, $taxonomies, $args ) {

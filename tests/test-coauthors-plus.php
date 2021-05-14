@@ -722,15 +722,19 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
 	}
 
-	/**
-	 * @group now
-	 */
 	public function test_enqueue_editor_assets() {
-		global $coauthors_plus;
+
+		do_action( 'enqueue_block_editor_assets' );
+
+		$this->assertFalse( wp_script_is( 'coauthors-sidebar-js' ) );
+		$this->assertFalse( wp_style_is( 'coauthors-sidebar-css' ) );
 
 		add_filter( 'coauthors_block_editor_integration', '__return_true' );
 
-		var_dump( $coauthors_plus->enable_sidebar_disable_metabox() );
+		do_action( 'enqueue_block_editor_assets' );
+
+		$this->assertTrue( wp_script_is( 'coauthors-sidebar-js' ) );
+		$this->assertTrue( wp_style_is( 'coauthors-sidebar-css' ) );
 	}
 }
 
