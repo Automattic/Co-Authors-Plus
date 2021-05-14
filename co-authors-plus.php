@@ -362,8 +362,6 @@ class CoAuthors_Plus {
 	 */
 	public function remove_authors_box() {
 
-		$post_type = get_post_type();
-
 		if ( $this->is_post_type_enabled() ) {
 			remove_meta_box( $this->coreauthors_meta_box_name, get_post_type(), 'normal' );
 		}
