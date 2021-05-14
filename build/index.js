@@ -7939,19 +7939,38 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var AuthorsSelection = function AuthorsSelection(_ref) {
-  var selectedOptions = _ref.selectedOptions,
-      removeFromSelected = _ref.removeFromSelected,
-      setSelectedOptions = _ref.setSelectedOptions;
-  return selectedOptions.map(function (_ref2, i) {
-    var name = _ref2.name,
-        value = _ref2.value;
-    var option = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["getOptionByValue"])(value, selectedOptions);
+  var selectedAuthors = _ref.selectedAuthors,
+      updateAuthors = _ref.updateAuthors;
+
+  var _onClick = function onClick(author, action) {
+    var authors;
+
+    switch (action) {
+      case 'moveDown':
+        authors = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["moveItem"])(author, selectedAuthors, 'down');
+        break;
+
+      case 'moveUp':
+        authors = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["moveItem"])(author, selectedAuthors, 'up');
+        break;
+
+      case 'remove':
+        authors = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["removeItem"])(author, selectedAuthors);
+        break;
+    }
+
+    updateAuthors(authors);
+  };
+
+  return selectedAuthors.map(function (author, i) {
+    var display = author.display;
+    var value = author.value;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
       key: value,
       className: "cap-author"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["Flex"], {
       align: "center"
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["FlexItem"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("span", null, name)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["FlexItem"], {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["FlexItem"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("span", null, display)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["FlexItem"], {
       justify: "flex-end"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["Flex"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
       className: "cap-icon-button-stack"
@@ -7959,25 +7978,26 @@ var AuthorsSelection = function AuthorsSelection(_ref) {
       icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["chevronUp"],
       className: 'cap-icon-button',
       label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__["__"])('Move Up', 'coauthors-plus'),
-      disabled: i === 0,
+      disabled: i === 0 || 1 === selectedAuthors.length,
       onClick: function onClick() {
-        return Object(_utils__WEBPACK_IMPORTED_MODULE_4__["moveOption"])(option, selectedOptions, 'up', setSelectedOptions);
+        return _onClick(author, 'moveUp');
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["Button"], {
       icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["chevronDown"],
       className: 'cap-icon-button',
       label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__["__"])('Move down', 'coauthors-plus'),
-      disabled: i === selectedOptions.length - 1,
+      disabled: i === selectedAuthors.length - 1 || 1 === selectedAuthors.length,
       onClick: function onClick() {
-        return Object(_utils__WEBPACK_IMPORTED_MODULE_4__["moveOption"])(option, selectedOptions, 'down', setSelectedOptions);
+        return _onClick(author, 'moveDown');
       }
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["Button"], {
       icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["close"],
       iconSize: 20,
       className: 'cap-icon-button',
       label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__["__"])('Remove Author', 'coauthors-plus'),
+      disabled: 1 === selectedAuthors.length,
       onClick: function onClick() {
-        return removeFromSelected(value);
+        return _onClick(author, 'remove');
       }
     })))));
   });
@@ -7994,34 +8014,29 @@ var AuthorsSelection = function AuthorsSelection(_ref) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/plugins */ "@wordpress/plugins");
-/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/edit-post */ "@wordpress/edit-post");
-/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/compose */ "@wordpress/compose");
-/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_compose__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./style.css */ "./src/style.css");
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_style_css__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _components_AuthorsSelection__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/AuthorsSelection */ "./src/components/AuthorsSelection.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
-
-
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/plugins */ "@wordpress/plugins");
+/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/edit-post */ "@wordpress/edit-post");
+/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/compose */ "@wordpress/compose");
+/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_compose__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./style.css */ "./src/style.css");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_style_css__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _components_AuthorsSelection__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/AuthorsSelection */ "./src/components/AuthorsSelection.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./store */ "./src/store.js");
 
 
 
@@ -8043,176 +8058,329 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
- * Fetch current coauthors and set state.
- *
- * @param {Object} props
- * @returns
+ * Register our data store.
  */
 
-var fetchAndSetOptions = function fetchAndSetOptions(_ref) {
-  var currentTermsIds = _ref.currentTermsIds,
-      currentUser = _ref.currentUser,
-      taxonomyRestBase = _ref.taxonomyRestBase,
-      setSelectedOptions = _ref.setSelectedOptions,
-      setDropdownOptions = _ref.setDropdownOptions;
-
-  if (!taxonomyRestBase || undefined === currentUser.name) {
-    return;
-  }
-
-  _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_8___default()({
-    path: "/wp/v2/".concat(taxonomyRestBase)
-  }).then(function (terms) {
-    var currentTermsOptions = [];
-    var allOptions = terms.map(function (term) {
-      var optionObj = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["getOptionFromData"])(term, 'termObj');
-
-      if (currentTermsIds.includes(term.id)) {
-        currentTermsOptions.push(optionObj);
-      }
-
-      return optionObj;
-    }); // If there are no author terms, this is a new post,
-    // so assign the user as the currently selected author
-
-    if (0 === currentTermsOptions.length) {
-      currentTermsOptions.push(Object(_utils__WEBPACK_IMPORTED_MODULE_13__["getOptionFromData"])(currentUser, 'userObj'));
-    }
-
-    setSelectedOptions(currentTermsOptions);
-    setDropdownOptions(allOptions);
-  });
-};
+Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_8__["register"])(_store__WEBPACK_IMPORTED_MODULE_12__["coauthorsStore"]);
 /**
  * The Render component that will be populated with data from
  * the select and methods from dispatch as composed below.
  *
- * @param {Object} props
- * @returns
+ * @param {Object}   root0
+ * @param {boolean}  root0.authors         Array of authors from the store.
+ * @param {function} root0.setAuthorsStore Method to save data new authors to the store.
+ * @return {JSX.Element}                   Document sidebar panel component.
  */
 
-
-var Render = function Render(_ref2) {
-  var currentTermsIds = _ref2.currentTermsIds,
-      taxonomyRestBase = _ref2.taxonomyRestBase,
-      currentUser = _ref2.currentUser,
-      updateTerms = _ref2.updateTerms;
+var Render = function Render(_ref) {
+  var authors = _ref.authors,
+      setAuthorsStore = _ref.setAuthorsStore;
 
   // Currently selected options
-  var _useState = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["useState"])([]),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2___default()(_useState, 2),
-      selectedOptions = _useState2[0],
-      setSelectedOptions = _useState2[1]; // Options that are available in the dropdown
+  var _useState = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["useState"])([]),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      selectedAuthors = _useState2[0],
+      setSelectedAuthors = _useState2[1]; // Options that are available in the dropdown
 
 
-  var _useState3 = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["useState"])([]),
-      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2___default()(_useState3, 2),
-      filteredOptions = _useState4[0],
-      setDropdownOptions = _useState4[1]; // Run when taxonomyRestBase changes.
-  // This is a proxy for detecting initial render.
-  // The data is retrieved via the withSelect method below.
+  var _useState3 = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["useState"])([]),
+      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
+      dropdownOptions = _useState4[0],
+      setDropdownOptions = _useState4[1];
 
-
-  Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(function () {
-    fetchAndSetOptions({
-      currentUser: currentUser,
-      currentTermsIds: currentTermsIds,
-      taxonomyRestBase: taxonomyRestBase,
-      setSelectedOptions: setSelectedOptions,
-      setDropdownOptions: setDropdownOptions
-    });
-  }, [taxonomyRestBase, currentTermsIds, currentUser]); // When the selected options change, edit the post terms.
-  // This method is provided via withDispatch below.
-  // below.
-
-  Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(function () {
-    var termIds = selectedOptions.map(function (option) {
-      return option.id;
-    });
-    updateTerms(termIds);
-  }, [selectedOptions]); // Helper function to remove an item.
-
-  var removeFromSelected = function removeFromSelected(value) {
-    var newSelections = selectedOptions.map(function (option) {
-      if (option.value !== value) {
-        return option;
-      }
-    });
-    setSelectedOptions(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(newSelections));
+  var updateAuthors = function updateAuthors(newAuthors) {
+    setAuthorsStore(newAuthors);
+    setSelectedAuthors(newAuthors);
   };
 
-  var onChange = function onChange(newValue) {
-    var newOption = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["getOptionByValue"])(newValue, filteredOptions); // Ensure value is not added twice
+  var onChange = function onChange(newAuthorValue) {
+    var newAuthors = Object(_utils__WEBPACK_IMPORTED_MODULE_11__["addItemByValue"])(newAuthorValue, selectedAuthors, dropdownOptions);
+    updateAuthors(newAuthors);
+  }; // Run once after first render.
 
-    var newSelectedOptions = selectedOptions.map(function (option) {
-      if (option !== newOption) return option;
+
+  Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
+    if (!authors.length) {
+      return;
+    }
+
+    setSelectedAuthors(authors);
+  }, []);
+  /**
+   * The callback for updating autocomplete in the ComboBox component.
+   * Fetch a list of authors matching the search text.
+   *
+   * @param {string} query The text to search.
+   */
+
+  var onFilterValueChange = function onFilterValueChange(query) {
+    var existingAuthors = selectedAuthors.map(function (item) {
+      return item.value;
+    }).join(',');
+    _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6___default()({
+      path: "/coauthors/v1/search/?q=".concat(query, "&existing_authors=").concat(existingAuthors),
+      method: 'GET'
+    }).then(function (response) {
+      var formattedAuthors = function (items) {
+        if (items.length > 0) {
+          return items.map(function (item) {
+            return Object(_utils__WEBPACK_IMPORTED_MODULE_11__["formatAuthorData"])(item);
+          });
+        } else {
+          return [];
+        }
+      }(response);
+
+      setDropdownOptions(formattedAuthors);
     });
-    setSelectedOptions([].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(newSelectedOptions), [newOption]));
   };
 
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_components_AuthorsSelection__WEBPACK_IMPORTED_MODULE_12__["AuthorsSelection"], {
-    selectedOptions: selectedOptions,
-    setSelectedOptions: setSelectedOptions,
-    removeFromSelected: removeFromSelected
-  }), !!filteredOptions[0] ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["ComboboxControl"], {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Boolean(selectedAuthors.length) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_components_AuthorsSelection__WEBPACK_IMPORTED_MODULE_10__["AuthorsSelection"], {
+    selectedAuthors: selectedAuthors,
+    setSelectedAuthors: setSelectedAuthors,
+    updateAuthors: updateAuthors
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["Spinner"], null), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__["ComboboxControl"], {
     className: "cap-combobox",
     label: "Select An Author",
     value: null,
-    options: filteredOptions,
+    options: dropdownOptions,
     onChange: onChange,
-    onFilterValueChange: function onFilterValueChange() {}
-  }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])("span", null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])("p", null, Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__["__"])('Loading authors, this could take a moment...', 'coauthors')), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["Spinner"], null)));
+    onFilterValueChange: onFilterValueChange
+  }));
 };
+/**
+ * Retrieve selectors and data from WordPress,
+ * then pass it to our render component.
+ */
 
-var CoAuthors = Object(_wordpress_compose__WEBPACK_IMPORTED_MODULE_7__["compose"])([Object(_wordpress_compose__WEBPACK_IMPORTED_MODULE_7__["withState"])(), Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_10__["withSelect"])(function (select) {
-  var _select = select('core'),
-      getTaxonomy = _select.getTaxonomy,
-      getEntity = _select.getEntity,
-      getCurrentUser = _select.getCurrentUser;
 
-  var _select2 = select('core/editor'),
-      getCurrentPost = _select2.getCurrentPost;
+var CoAuthors = Object(_wordpress_compose__WEBPACK_IMPORTED_MODULE_5__["compose"])([Object(_wordpress_compose__WEBPACK_IMPORTED_MODULE_5__["withState"])(), Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_8__["withSelect"])(function (select) {
+  var _select = select('core/editor'),
+      getCurrentPost = _select.getCurrentPost;
 
-  var taxonomy = getTaxonomy('author');
-  var postType = getEntity('postType', 'guest-author');
-  var currentUser = getCurrentUser();
-  var taxonomyRestBase = taxonomy === null || taxonomy === void 0 ? void 0 : taxonomy.rest_base;
+  var post = getCurrentPost();
+  var postId = post.id;
 
-  var currentTermsIds = function () {
-    var post = getCurrentPost();
-    return post === null || post === void 0 ? void 0 : post[taxonomyRestBase];
-  }();
+  var _select2 = select('cap/authors'),
+      getAuthors = _select2.getAuthors;
 
+  var authors = getAuthors(postId);
   return {
-    currentTermsIds: currentTermsIds,
-    currentUser: currentUser,
-    taxonomyRestBase: taxonomyRestBase,
-    postTypeRestBase: postType.rest_base
+    postId: postId,
+    authors: authors
   };
-}), Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_10__["withDispatch"])(function (dispatch, _ref3) {
-  var currentTermsIds = _ref3.currentTermsIds,
-      taxonomyRestBase = _ref3.taxonomyRestBase;
+}), Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_8__["withDispatch"])(function (dispatch) {
+  var _dispatch = dispatch('cap/authors'),
+      _setAuthorsStore = _dispatch.setAuthorsStore;
+
   return {
-    updateTerms: function updateTerms(newTerms) {
-      if (null !== taxonomyRestBase && undefined !== newTerms) {
-        dispatch('core/editor').editPost(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()({}, taxonomyRestBase, newTerms));
-      }
+    setAuthorsStore: function setAuthorsStore(authors) {
+      _setAuthorsStore(authors); // Save post meta to enable the publish button:
+      // https://github.com/WordPress/gutenberg/issues/13774
+
+
+      dispatch('core/editor').editPost({
+        meta: {
+          _non_existing_meta: true
+        }
+      });
     }
   };
-})])(Render);
+})])(Render); // Save authors when the post is saved.
+// https://github.com/WordPress/gutenberg/issues/17632
+
+var _select3 = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_8__["select"])('core/editor'),
+    isSavingPost = _select3.isSavingPost,
+    getCurrentPost = _select3.getCurrentPost;
+
+var _select4 = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_8__["select"])('cap/authors'),
+    getAuthors = _select4.getAuthors,
+    saveAuthors = _select4.saveAuthors;
+
+var checked = true; // Start in a checked state.
+
+Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_8__["subscribe"])(function () {
+  if (isSavingPost()) {
+    checked = false;
+  } else {
+    if (!checked) {
+      var _getCurrentPost = getCurrentPost(),
+          id = _getCurrentPost.id;
+
+      var authors = getAuthors(id);
+      saveAuthors(id, authors);
+      checked = true;
+    }
+  }
+});
 
 var PluginDocumentSettingPanelAuthors = function PluginDocumentSettingPanelAuthors() {
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_6__["PluginDocumentSettingPanel"], {
-    name: "custom-panel",
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_4__["PluginDocumentSettingPanel"], {
+    name: "coauthors-panel",
     title: "Authors",
-    className: "authors"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__["createElement"])(CoAuthors, null));
+    className: "coauthors"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(CoAuthors, null));
 };
 
-Object(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])('plugin-coauthors-document-setting', {
+Object(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_3__["registerPlugin"])('plugin-coauthors-document-setting', {
   render: PluginDocumentSettingPanelAuthors,
   icon: 'users'
+});
+
+/***/ }),
+
+/***/ "./src/store.js":
+/*!**********************!*\
+  !*** ./src/store.js ***!
+  \**********************/
+/*! exports provided: coauthorsStore */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "coauthorsStore", function() { return coauthorsStore; });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "@babel/runtime/regenerator");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+/**
+ * External dependencies.
+ */
+
+
+/**
+ * Internal dependencies.
+ */
+
+
+var DEFAULT_STATE = {
+  authors: []
+};
+var COAUTHORS_ENDPOINT = '/coauthors/v1/authors';
+var actions = {
+  setAuthors: function setAuthors(authors) {
+    return {
+      type: 'SET_AUTHORS',
+      authors: _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(authors)
+    };
+  },
+  setAuthorsStore: function setAuthorsStore(newAuthors) {
+    return {
+      type: 'SET_AUTHORS_STORE',
+      authors: _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(newAuthors)
+    };
+  },
+  apiRequest: function apiRequest(path) {
+    var method = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'GET';
+    return {
+      type: 'API_REQUEST',
+      path: path,
+      method: method
+    };
+  }
+};
+var coauthorsStore = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_4__["createReduxStore"])('cap/authors', {
+  reducer: function reducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_STATE;
+    var action = arguments.length > 1 ? arguments[1] : undefined;
+
+    switch (action.type) {
+      case 'SET_AUTHORS':
+        return _objectSpread(_objectSpread({}, state), {}, {
+          authors: [].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(state.authors), _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(action.authors))
+        });
+
+      case 'SET_AUTHORS_STORE':
+        return _objectSpread(_objectSpread({}, state), {}, {
+          authors: _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(action.authors)
+        });
+    }
+
+    return state;
+  },
+  actions: actions,
+  selectors: {
+    getAuthors: function getAuthors(state) {
+      var authors = state.authors;
+      return authors;
+    },
+    saveAuthors: function saveAuthors(state) {
+      var authors = state.authors;
+      return authors;
+    }
+  },
+  controls: {
+    API_REQUEST: function API_REQUEST(action) {
+      return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3___default()({
+        path: action.path,
+        method: action.method
+      });
+    }
+  },
+  resolvers: {
+    getAuthors: /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function getAuthors(postId) {
+      var path, result, authors;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function getAuthors$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              console.log(postId);
+              path = "".concat(COAUTHORS_ENDPOINT, "/").concat(postId);
+              _context.next = 4;
+              return actions.apiRequest(path);
+
+            case 4:
+              result = _context.sent;
+              authors = result.map(function (author) {
+                return Object(_utils__WEBPACK_IMPORTED_MODULE_5__["formatAuthorData"])(author);
+              });
+              return _context.abrupt("return", actions.setAuthors(authors));
+
+            case 7:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, getAuthors);
+    }),
+    saveAuthors: /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function saveAuthors(postId, authors) {
+      var authorsStr, path;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function saveAuthors$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              authorsStr = authors.map(function (item) {
+                return item.value;
+              }).join(',');
+              path = "".concat(COAUTHORS_ENDPOINT, "/").concat(postId, "?new_authors=").concat(authorsStr);
+              _context2.next = 4;
+              return actions.apiRequest(path, 'POST');
+
+            case 4:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, saveAuthors);
+    })
+  }
 });
 
 /***/ }),
@@ -8221,87 +8389,114 @@ Object(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])('plugi
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: getOptionFromData, getOptionByValue, moveOption */
+/*! exports provided: moveItem, removeItem, addItemByValue, formatAuthorData */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOptionFromData", function() { return getOptionFromData; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOptionByValue", function() { return getOptionByValue; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "moveOption", function() { return moveOption; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "moveItem", function() { return moveItem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeItem", function() { return removeItem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addItemByValue", function() { return addItemByValue; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatAuthorData", function() { return formatAuthorData; });
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
 
 
 /**
+ * Move an item up or down in an array.
  *
- * @param {Object} data
- * @param {String} type
- * @returns
+ * @param {string} targetItem Item to move.
+ * @param {array} itemsArr Array in which to move the item.
+ * @param {string} direction 'up' or 'down'
+ * @returns Array with reordered items.
  */
-var getOptionFromData = function getOptionFromData(data, type) {
-  switch (type) {
-    case 'termObj':
-      return {
-        value: data.slug,
-        name: data.name,
-        label: data.description
-      };
+var moveItem = function moveItem(targetItem, itemsArr, direction) {
+  var currIndex = itemsArr.map(function (item) {
+    return item.value;
+  }).indexOf(targetItem.value);
+  var indexUpdate = direction == 'up' ? -1 : 1;
+  var newIndex = currIndex + indexUpdate;
+  var arrCopy = itemsArr.map(function (item) {
+    return Object.assign({}, item);
+  });
+  var targetCopy = arrCopy[currIndex];
 
-    case 'userObj':
-      return {
-        value: data.slug,
-        name: data.name,
-        label: data.name
-      };
+  var newItems = function () {
+    return arrCopy.filter(function (item) {
+      if (item.value) {
+        return item.value !== targetCopy.value;
+      } else {
+        return item !== targetCopy;
+      }
+    });
+  }();
 
-    default:
-      return null;
-  }
+  var sortedArr = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(newItems);
+
+  sortedArr.splice(newIndex, 0, targetCopy);
+  return sortedArr;
 };
 /**
- * Retrieve a particular option from the selectedOptions state
- * by value.
+ * Remove an item from the array.
  *
- * @param {String} optionValueStr The cap-* prefixed slug of the author, the value of the value property for each items in selectedOptions state.
- * @param {Array} optionsArr The selectedOptions state object.
- * @returns Object with data for the author.
+ * @param {object} targetItem
+ * @param {array} itemsArr
+ * @returns array of items with the target item removed.
  */
 
-var getOptionByValue = function getOptionByValue(optionValueStr) {
-  var optionsArr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-  if (!optionsArr.length) return null;
-  var filtered = optionsArr.filter(function (_ref) {
-    var value = _ref.value;
-    return value === optionValueStr;
+var removeItem = function removeItem(targetItem, itemsArr) {
+  return itemsArr.filter(function (item) {
+    return item.value !== targetItem.value;
   });
-  return filtered.length ? filtered[0] : null;
 };
-var moveOption = function moveOption(option, optionsArr, direction, setState) {
-  var swap = function swap(arr, from, to) {
-    var arrCopy = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(arr);
+/**
+ * Get the author object from the list of available authors,
+ * then add it to the selected authors.
+ *
+ * @param {string} newAuthorValue
+ * @param {array} currAuthors
+ * @param {array} dropDownAuthors
+ * @returns Array of author objects including the new author.
+ */
 
-    var temp = arrCopy[from];
-    arrCopy[from] = arrCopy[to];
-    arrCopy[to] = temp;
-    return arrCopy;
+var addItemByValue = function addItemByValue(newAuthorValue, currAuthors, dropDownAuthors) {
+  var newAuthorObj = dropDownAuthors.filter(function (item) {
+    return item.value === newAuthorValue;
+  });
+  return [].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(currAuthors), [newAuthorObj[0]]);
+};
+/**
+ * Format the author option object.
+ *
+ * @param {Object} root0               An author object from the API endpoint.
+ * @param {Object} root0.display_name  Name to display in the UI.
+ * @param {Object} root0.user_nicename The unique username.
+ * @param {Object} root0.email
+ *
+ * @return {Object} The object containing data relevant to the Coauthors component.
+ */
+
+var formatAuthorData = function formatAuthorData(_ref) {
+  var display_name = _ref.display_name,
+      user_nicename = _ref.user_nicename,
+      email = _ref.email;
+  return {
+    label: "".concat(display_name, " | ").concat(email),
+    display: display_name,
+    value: user_nicename
   };
-
-  var currIndex = optionsArr.indexOf(option);
-
-  switch (direction) {
-    case 'up':
-      if (0 === currIndex) return;
-      setState(swap(optionsArr, currIndex, currIndex - 1));
-
-    case 'down':
-      if (currIndex === optionsArr.length - 1) return;
-      setState(swap(optionsArr, currIndex, currIndex + 1));
-
-    default:
-      break;
-  }
 };
+
+/***/ }),
+
+/***/ "@babel/runtime/regenerator":
+/*!*************************************!*\
+  !*** external "regeneratorRuntime" ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["regeneratorRuntime"]; }());
 
 /***/ }),
 

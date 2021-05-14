@@ -18,5 +18,14 @@
 	padding-top: 0;
 }
 
+/* Start brittle CSS to hide the author select. */
+.components-panel__row:nth-child(6) {
+	min-height: unset;
+}
+
+.post-author-selector {
+	display: none !important;
+}
+/* End brittle CSS to hide the author select. */
 
 /*# sourceMappingURL=style-index.css.map*/
