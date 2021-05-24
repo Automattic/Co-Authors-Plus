@@ -238,12 +238,12 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 * @covers ::remove_author_link()
 	 */
 	public function test_remove_author_link(): void {
+
+		$response = new WP_REST_Response();
 		$test_post = $this->factory->post->create_and_get(
 			[
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
 				'post_type'    => 'post',
 			]
 		);
@@ -251,10 +251,34 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$request->set_param( 'context', 'view' );
 
+		$this->_api->remove_author_link( $response, $test_post, $request );
 
-		$response = $this->_api->get_coauthors( $request );
+		$this->assertArrayNotHasKey(
+			$this->_api::AUTHORS_LINK,
+			$response->get_links(),
+			'Failed to assert that `view` context is not modified.'
+		);
+
+		$request->set_param( 'context', 'edit' );
+		add_filter( 'use_block_editor_for_post', '__return_false' );
 
 		$this->_api->remove_author_link( $response, $test_post, $request );
+
+		$this->assertArrayNotHasKey(
+			$this->_api::AUTHORS_LINK,
+			$response->get_links(),
+			'Failed to assert that output is not modified when Gutenberg is disabled.'
+		);
+
+		add_filter( 'use_block_editor_for_post', '__return_true', 11 );
+
+		$this->_api->remove_author_link( $response, $test_post, $request );
+
+		$this->assertArrayHasKey(
+			$this->_api::AUTHORS_LINK,
+			$response->get_links(),
+			'Failed to assert that output is not modified when Gutenberg is disabled.'
+		);
 
 	}
 

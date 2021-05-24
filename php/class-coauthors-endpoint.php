@@ -8,6 +8,7 @@ require_once ABSPATH . 'wp-includes/rest-api/class-wp-rest-request.php';
 
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_Post;
 
 /**
  * Class Endpoint.
@@ -24,6 +25,11 @@ class Endpoints {
 	 */
 	public const SEARCH_ROUTE  = 'search';
 	public const AUTHORS_ROUTE = 'authors';
+
+	/**
+	 * Link to remove from response.
+	 */
+	public const AUTHORS_LINK = 'wp:action-assign-author';
 
 	/**
 	 * Regex to capture the query in a request.
@@ -185,7 +191,7 @@ class Endpoints {
 	 * Permissions for updating coauthors.
 	 */
 	public function can_edit_coauthors( WP_Post $post ): bool {
-		if ( ! $this->is_post_type_enabled( $post->post_type ) ) {
+		if ( ! $this->coauthors->is_post_type_enabled( $post->post_type ) ) {
 			return false;
 		}
 
@@ -224,6 +230,59 @@ class Endpoints {
 			foreach ( $authors as $author ) {
 				$response[] = $this->_format_author_data( $author );
 			}
+		}
+	}
+
+	public function remove_author_link(
+		WP_REST_Response $response,
+		WP_Post $post,
+		WP_REST_Request $request
+	): WP_REST_Response {
+		if (
+			! isset( $request['context'] )
+			|| 'edit' !== $request['context']
+		) {
+			return $response;
+		}
+
+		if ( ! use_block_editor_for_post( $post ) ) {
+			return $response;
+		}
+
+		$self = $response->get_links()['self'] ?? null;
+
+		var_dump( $self );
+		// if ( ! is_array( $self ) ) {
+		// 	return $response;
+		// }
+
+		// $self = array_shift( $self );
+
+		// $response->add_link( static::SUPPORT_LINK, $self['href'] );
+
+		return $response;
+	}
+
+	/**
+	 * Add filters to REST endpoints for each post that
+	 * supports coauthors.
+	 */
+	public function modify_responses(): void {
+
+		$post_types = $this->coauthors->supported_post_types;
+
+		if ( empty( $post_types ) || ! is_array( $post_types ) ) {
+			return;
+		}
+
+		foreach ( $post_types as $post_type ) {
+
+			add_filter(
+				'rest_prepare_' . $post_type,
+				[ $this, 'remove_author_link' ],
+				10,
+				3
+			);
 		}
 	}
 }
