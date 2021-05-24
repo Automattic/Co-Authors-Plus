@@ -981,7 +981,8 @@ class CoAuthors_Plus {
 		$delete_user = get_user_by( 'id', $delete_id );
 		if ( is_object( $delete_user ) ) {
 			// Delete term
-			wp_delete_term( $delete_user->user_login, $this->coauthor_taxonomy );
+			$term = $this->get_author_term( $delete_user );
+			wp_delete_term( $term->term_id, $this->coauthor_taxonomy );
 		}
 
 		if ( $this->is_guest_authors_enabled() ) {
