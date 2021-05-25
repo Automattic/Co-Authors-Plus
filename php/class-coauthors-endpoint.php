@@ -27,9 +27,10 @@ class Endpoints {
 	public const AUTHORS_ROUTE = 'authors';
 
 	/**
-	 * Link to remove from response.
+	 * Link to remove from REST response to manage
+	 * core author visibility in admin.
 	 */
-	public const AUTHORS_LINK = 'wp:action-assign-author';
+	public const SUPPORT_LINK = 'https://api.w.org/action-assign-author';
 
 	/**
 	 * Regex to capture the query in a request.
@@ -127,7 +128,7 @@ class Endpoints {
 	/**
 	 * Search and return authors based on a text query.
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
 	public function get_coauthors_search_results( WP_REST_Request $request ): WP_REST_Response {
@@ -148,6 +149,9 @@ class Endpoints {
 
 	/**
 	 * Return a single author.
+	 *
+	 * @param WP_REST_Request   $request Request object.
+	 * @return WP_REST_Response
 	 */
 	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
 		$response = array();
@@ -159,6 +163,9 @@ class Endpoints {
 
 	/**
 	 * Update coauthors.
+	 *
+	 * @param WP_REST_Request   $request Request object.
+	 * @return WP_REST_Response
 	 */
 	public function update_coauthors( WP_REST_Request $request ): WP_REST_Response {
 
@@ -202,7 +209,7 @@ class Endpoints {
 	 * Helper function to consistently format the author data for
 	 * the response.
 	 *
-	 * @param object $author The result from coauthors methods.
+	 * @param object  $author The result from coauthors methods.
 	 * @return array
 	 */
 	public function _format_author_data( object $author ): array {
@@ -233,6 +240,16 @@ class Endpoints {
 		}
 	}
 
+	/**
+	 * Remove the link for wp:action-assign-author to remove the author
+	 * select from the document sidebar.
+	 * @see https://github.com/WordPress/gutenberg/pull/6630
+	 *
+	 * @param WP_REST_Response  $request Response object.
+	 * @param WP_Post           $post    The current post object.
+	 * @param WP_REST_Request   $request Response object.
+	 * @return WP_REST_Response
+	 */
 	public function remove_author_link(
 		WP_REST_Response $response,
 		WP_Post $post,
@@ -243,22 +260,24 @@ class Endpoints {
 			|| 'edit' !== $request['context']
 		) {
 			return $response;
+
 		}
 
 		if ( ! use_block_editor_for_post( $post ) ) {
 			return $response;
 		}
 
-		$self = $response->get_links()['self'] ?? null;
+		if ( ! $this->coauthors->using_block_editor_integration() ) {
+			return $response;
+		}
 
-		var_dump( $self );
-		// if ( ! is_array( $self ) ) {
-		// 	return $response;
-		// }
+		$link = $response->get_links()[ self::SUPPORT_LINK ] ?? null;
 
-		// $self = array_shift( $self );
+		if ( ! isset( $link ) ) {
+			return $response;
+		}
 
-		// $response->add_link( static::SUPPORT_LINK, $self['href'] );
+		$response->remove_link( static::SUPPORT_LINK );
 
 		return $response;
 	}
@@ -276,7 +295,6 @@ class Endpoints {
 		}
 
 		foreach ( $post_types as $post_type ) {
-
 			add_filter(
 				'rest_prepare_' . $post_type,
 				[ $this, 'remove_author_link' ],

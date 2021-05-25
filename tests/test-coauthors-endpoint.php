@@ -239,46 +239,75 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_remove_author_link(): void {
 
-		$response = new WP_REST_Response();
 		$test_post = $this->factory->post->create_and_get(
 			[
-				'post_author'  => $this->author1->ID,
+				'post_author'  => $this->editor1->ID,
 				'post_status'  => 'publish',
 				'post_type'    => 'post',
 			]
 		);
-		$request = new WP_REST_Request( 'GET', 'test' );
 
-		$request->set_param( 'context', 'view' );
+		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $test_post->ID );
 
-		$this->_api->remove_author_link( $response, $test_post, $request );
-
-		$this->assertArrayNotHasKey(
-			$this->_api::AUTHORS_LINK,
-			$response->get_links(),
-			'Failed to assert that `view` context is not modified.'
-		);
+		wp_set_current_user( $this->editor1->ID );
 
 		$request->set_param( 'context', 'edit' );
-		add_filter( 'use_block_editor_for_post', '__return_false' );
 
-		$this->_api->remove_author_link( $response, $test_post, $request );
-
-		$this->assertArrayNotHasKey(
-			$this->_api::AUTHORS_LINK,
-			$response->get_links(),
-			'Failed to assert that output is not modified when Gutenberg is disabled.'
-		);
-
-		add_filter( 'use_block_editor_for_post', '__return_true', 11 );
+		$response = rest_do_request( $request );
 
 		$this->_api->remove_author_link( $response, $test_post, $request );
 
 		$this->assertArrayHasKey(
-			$this->_api::AUTHORS_LINK,
+			$this->_api::SUPPORT_LINK,
 			$response->get_links(),
-			'Failed to assert that output is not modified when Gutenberg is disabled.'
+			'Failed to assert that links are unchanged when block editor integration filter is at default.'
 		);
+
+		add_filter( 'coauthors_block_editor_integration', '__return_true' );
+		$response = rest_do_request( $request );
+
+		$this->_api->remove_author_link( $response, $test_post, $request );
+
+		$this->assertArrayNotHasKey(
+			$this->_api::SUPPORT_LINK,
+			$response->get_links(),
+			'Failed to assert that link is removed when block editor integration filter returns true.'
+		);
+
+		add_filter( 'use_block_editor_for_post', '__return_false' );
+
+		$this->_api->remove_author_link( $response, $test_post, $request );
+		$response = rest_do_request( $request );
+
+		$this->assertArrayHasKey(
+			$this->_api::SUPPORT_LINK,
+			$response->get_links(),
+			'Failed to assert that links are unchanged when block editor is disabled.'
+		);
+
+		// add_filter( 'coauthors_block_editor_integration', '__return_true' );
+
+
+
+		// $request->set_param( 'context', 'edit' );
+
+		// $this->_api->remove_author_link( $response, $test_post, $request );
+
+		// $this->assertArrayNotHasKey(
+		// 	$this->_api::AUTHORS_LINK,
+		// 	$response->get_links(),
+		// 	'Failed to assert that output is not modified when Gutenberg is disabled.'
+		// );
+
+		// add_filter( 'use_block_editor_for_post', '__return_true', 11 );
+
+		// $this->_api->remove_author_link( $response, $test_post, $request );
+
+		// $this->assertArrayHasKey(
+		// 	$this->_api::AUTHORS_LINK,
+		// 	$response->get_links(),
+		// 	'Failed to assert that output is not modified when Gutenberg is disabled.'
+		// );
 
 	}
 
