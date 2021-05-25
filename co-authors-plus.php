@@ -174,8 +174,12 @@ class CoAuthors_Plus {
 
 	}
 
+	public function using_block_editor_integration() {
+		return apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
+	}
+
 	public function enqueue_sidebar_plugin_assets() {
-		if ( apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED )  ) {
+		if ( $this->using_block_editor_integration() ) {
 
 			if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
 				$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
@@ -373,7 +377,7 @@ class CoAuthors_Plus {
 	public function add_coauthors_box() {
 		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
 
-			if ( false === apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED ) ) {
+			if ( false === $this->using_block_editor_integration() ) {
 				add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
 			}
 		}
