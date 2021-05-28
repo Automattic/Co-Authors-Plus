@@ -1,5 +1,21 @@
 # Changelog for Co-Authors Plus
 
+**3.4.6 (May 28, 2021)**
+
+* Gravatars for guest authors now display in author select box #767
+* Fix non-functional filter button on Guest Author listing page #768
+* Added Hebrew translation strings #772
+* Improve code style via PHPCBF #771 and .editorconfig #773
+* Fix bug where guest author with pipe character in name is not rendered in author select box #775
+* Fix `get_coauthor_by()` for correct return of users prefixed with "Cap" in name #778
+* Correct failing unit tests under WP 5.7 #774
+* Linked accounts display more accurate counts #776
+* Switch to GitHub Actions from TravisCI #784
+* Update .gitignore to exclude composer lock file and vendor dir #787
+* Hide author section in Gutenberg for WP 5.7+ #793
+* Delete correct CAP associated term on user delete #792
+* Move changelog out of readme #768
+
 **3.4.5 (Mar. 28, 2021)**
 * Fixed bug where guest authors with spaces in names were not showing when queried in AJAX suggest box #764
 
