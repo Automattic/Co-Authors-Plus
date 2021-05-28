@@ -48,13 +48,17 @@ class Endpoints {
 	public function __construct( $coauthors_instance ) {
 		$this->coauthors = $coauthors_instance;
 
-		add_action( 'rest_api_init', array( $this, 'add_endpoints' ) );
+		$this->modify_responses();
+
+		add_action( 'rest_api_init', [ $this, 'add_endpoints' ] );
 	}
 
 	/**
 	 * Register endpoints.
 	 */
 	public function add_endpoints(): void {
+
+		global $post;
 
 		register_rest_route(
 			static::NAMESPACE,
@@ -86,13 +90,13 @@ class Endpoints {
 			array(
 				array(
 					'methods'             => 'GET',
-					'callback'            => array( $this, 'get_coauthors' ),
+					'callback'            => [ $this, 'get_coauthors' ],
 					'permission_callback' => '__return_true',
 					'args'                => array(
 						'post_id' => array(
 							'required'          => false,
 							'type'              => 'number',
-							'validate_callback' => array( $this, 'validate_numeric' ),
+							'validate_callback' => [ $this, 'validate_numeric' ],
 						),
 					),
 				),
@@ -105,9 +109,8 @@ class Endpoints {
 			array(
 				array(
 					'methods'             => 'POST',
-					'callback'            => array( $this, 'update_coauthors' ),
-					// 'permission_callback' => [ $this, 'can_edit_coauthors', $post ],
-					'permission_callback' => '__return_true',
+					'callback'            => [ $this, 'update_coauthors' ],
+					'permission_callback' => [ $this, 'can_edit_coauthors' ],
 					'args'                => array(
 						'post_id'     => array(
 							'required'          => false,
@@ -197,12 +200,8 @@ class Endpoints {
 	/**
 	 * Permissions for updating coauthors.
 	 */
-	public function can_edit_coauthors( WP_Post $post ): bool {
-		if ( ! $this->coauthors->is_post_type_enabled( $post->post_type ) ) {
-			return false;
-		}
-
-		return $this->current_user_can_set_authors( $post );
+	public function can_edit_coauthors(): bool {
+		return $this->coauthors->current_user_can_set_authors();
 	}
 
 	/**
@@ -260,7 +259,6 @@ class Endpoints {
 			|| 'edit' !== $request['context']
 		) {
 			return $response;
-
 		}
 
 		if ( ! use_block_editor_for_post( $post ) ) {

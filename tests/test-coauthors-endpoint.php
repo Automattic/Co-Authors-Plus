@@ -59,6 +59,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 	/**
 	 * @covers ::__construct()
+	 * @covers ::modify_endpoints()
 	 */
 	public function test_construct() {
 
@@ -72,6 +73,20 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 				]
 			)
 		);
+
+		foreach ( $this->_cap->supported_post_types as $post_type ) {
+			$this->assertEquals(
+				10,
+				has_filter(
+					'rest_prepare_' . $post_type,
+					[
+						$this->_api,
+						'remove_author_link',
+					]
+				)
+			);
+		}
+
 	}
 
 	/**
@@ -209,6 +224,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 * @covers ::update_coauthors()
 	 */
 	public function test_update_coauthors(): void {
+
+		wp_set_current_user( $this->editor1->ID );
+
 		$test_post = $this->factory->post->create_and_get(
 			[
 				'post_author'  => $this->author1->ID,
@@ -232,6 +250,16 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$update_response = $this->_api->update_coauthors( $post_request );
 
 		$this->assertEquals( 2, count( $update_response->data ) );
+	}
+
+	public function test_can_edit_coauthors(): void {
+		wp_set_current_user( $this->editor1->ID );
+
+		$this->assertTrue( $this->_api->can_edit_coauthors() );
+
+		wp_set_current_user( $this->author1->ID );
+
+		$this->assertFalse( $this->_api->can_edit_coauthors() );
 	}
 
 	/**
@@ -284,30 +312,6 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			$response->get_links(),
 			'Failed to assert that links are unchanged when block editor is disabled.'
 		);
-
-		// add_filter( 'coauthors_block_editor_integration', '__return_true' );
-
-
-
-		// $request->set_param( 'context', 'edit' );
-
-		// $this->_api->remove_author_link( $response, $test_post, $request );
-
-		// $this->assertArrayNotHasKey(
-		// 	$this->_api::AUTHORS_LINK,
-		// 	$response->get_links(),
-		// 	'Failed to assert that output is not modified when Gutenberg is disabled.'
-		// );
-
-		// add_filter( 'use_block_editor_for_post', '__return_true', 11 );
-
-		// $this->_api->remove_author_link( $response, $test_post, $request );
-
-		// $this->assertArrayHasKey(
-		// 	$this->_api::AUTHORS_LINK,
-		// 	$response->get_links(),
-		// 	'Failed to assert that output is not modified when Gutenberg is disabled.'
-		// );
 
 	}
 
