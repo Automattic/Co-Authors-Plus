@@ -61,13 +61,14 @@ const Render = ( { authors, setAuthorsStore } ) => {
 		updateAuthors( newAuthors );
 	};
 
-	// Run once after first render.
+	// Run when authors updates.
 	useEffect( () => {
 		if ( ! authors.length ) {
 			return;
 		}
+
 		setSelectedAuthors( authors );
-	}, [] );
+	}, [ authors ] );
 
 	/**
 	 * The callback for updating autocomplete in the ComboBox component.
