@@ -2,7 +2,7 @@
 
 * Contributors: batmoo, danielbachhuber, automattic
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-* Tested up to: 5.7
+* Tested up to: 5.7.2
 * Requires at least: 4.1
 * Stable tag: 3.4.6
 
