@@ -1,7 +1,9 @@
 # Changelog for Co-Authors Plus
 
-**3.4.6 (May 28, 2021)**
+**3.4.7 (May 31, 2021)**
+* Fix accidental escaping introduced to `coauthors_posts_links()` #797
 
+**3.4.6 (May 28, 2021)**
 * Gravatars for guest authors now display in author select box #767
 * Fix non-functional filter button on Guest Author listing page #768
 * Added Hebrew translation strings #772
