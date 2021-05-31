@@ -202,7 +202,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	$output .= $separators['after'];
 
 	if ( $echo ) {
-		echo esc_html( $output );
+		echo $output; // phpcs:ignore
 	}
 
 	return $output;
