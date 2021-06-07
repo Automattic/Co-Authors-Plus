@@ -1135,7 +1135,7 @@ class CoAuthors_Plus {
 
 		global $wp_query, $authordata;
  
-		if ( ! isset( $wp_query ) ) {
+		if ( ! did_action( 'wp' ) ) {
 			return;
 		}
 
