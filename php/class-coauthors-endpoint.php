@@ -2,10 +2,6 @@
 
 namespace CoAuthors\API;
 
-// Load required classes from core.
-require_once ABSPATH . 'wp-includes/rest-api/class-wp-rest-response.php';
-require_once ABSPATH . 'wp-includes/rest-api/class-wp-rest-request.php';
-
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Post;
@@ -48,9 +44,8 @@ class Endpoints {
 	public function __construct( $coauthors_instance ) {
 		$this->coauthors = $coauthors_instance;
 
-		$this->modify_responses();
-
 		add_action( 'rest_api_init', [ $this, 'add_endpoints' ] );
+		add_action( 'wp_loaded', [ $this, 'modify_responses' ] );
 	}
 
 	/**
@@ -240,13 +235,36 @@ class Endpoints {
 	}
 
 	/**
+	 * Add filters to REST endpoints for each post that
+	 * supports coauthors.
+	 */
+	public function modify_responses(): void {
+
+		$post_types = $this->coauthors->supported_post_types;
+
+		if ( empty( $post_types ) || ! is_array( $post_types ) ) {
+			return;
+		}
+
+		foreach ( $post_types as $post_type ) {
+			add_filter(
+				'rest_prepare_' . $post_type,
+				[ $this, 'remove_author_link' ],
+				10,
+				3
+			);
+		}
+	}
+
+	/**
 	 * Remove the link for wp:action-assign-author to remove the author
 	 * select from the document sidebar.
+	 *
 	 * @see https://github.com/WordPress/gutenberg/pull/6630
 	 *
-	 * @param WP_REST_Response  $request Response object.
-	 * @param WP_Post           $post    The current post object.
-	 * @param WP_REST_Request   $request Response object.
+	 * @param WP_REST_Response  $response Response object.
+	 * @param WP_Post           $post     The current post object.
+	 * @param WP_REST_Request   $request  Request object.
 	 * @return WP_REST_Response
 	 */
 	public function remove_author_link(
@@ -269,7 +287,7 @@ class Endpoints {
 			return $response;
 		}
 
-		$link = $response->get_links()[ self::SUPPORT_LINK ] ?? null;
+		$link = $response->get_links()[ static::SUPPORT_LINK ] ?? null;
 
 		if ( ! isset( $link ) ) {
 			return $response;
@@ -278,27 +296,5 @@ class Endpoints {
 		$response->remove_link( static::SUPPORT_LINK );
 
 		return $response;
-	}
-
-	/**
-	 * Add filters to REST endpoints for each post that
-	 * supports coauthors.
-	 */
-	public function modify_responses(): void {
-
-		$post_types = $this->coauthors->supported_post_types;
-
-		if ( empty( $post_types ) || ! is_array( $post_types ) ) {
-			return;
-		}
-
-		foreach ( $post_types as $post_type ) {
-			add_filter(
-				'rest_prepare_' . $post_type,
-				[ $this, 'remove_author_link' ],
-				10,
-				3
-			);
-		}
 	}
 }
