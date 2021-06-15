@@ -1,5 +1,8 @@
 # Changelog for Co-Authors Plus
 
+**3.4.7 (June 15, 2021)**
+* Fix AJAX author autocomplete when no author to post in author selector #803
+
 **3.4.7 (May 31, 2021)**
 * Fix accidental escaping introduced to `coauthors_posts_links()` #797
 

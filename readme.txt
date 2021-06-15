@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 5.7.2
 Requires at least: 4.1
-Stable tag: 3.4.7
+Stable tag: 3.4.8
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
