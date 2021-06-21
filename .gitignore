@@ -4,3 +4,4 @@
 wpcom-helper.php
 /composer.lock
 /vendor
+node_modules

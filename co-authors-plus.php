@@ -38,6 +38,7 @@ require_once dirname( __FILE__ ) . '/template-tags.php';
 require_once dirname( __FILE__ ) . '/deprecated.php';
 
 require_once dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php';
+require_once dirname( __FILE__ ) . '/php/class-coauthors-endpoint.php';
 require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -65,6 +66,12 @@ class CoAuthors_Plus {
 	var $having_terms = '';
 
 	var $to_be_filtered_caps = array();
+
+	/**
+	 * Block editor functionality in the sidebar is
+	 * disabled by default.
+	 */
+	const SIDEBAR_PLUGIN_ENABLED = false;
 
 	/**
 	 * __construct()
@@ -136,6 +143,9 @@ class CoAuthors_Plus {
 
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
+
+		// Block editor assets for the sidebar plugin.
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_sidebar_plugin_assets' ) );
 	}
 
 	/**
@@ -164,6 +174,36 @@ class CoAuthors_Plus {
 
 	}
 
+	public function using_block_editor_integration() {
+		return apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
+	}
+
+	public function enqueue_sidebar_plugin_assets() {
+		if ( $this->using_block_editor_integration() ) {
+
+			if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
+				$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
+
+				wp_register_script(
+					'coauthors-sidebar-js',
+					plugins_url( 'build/index.js', __FILE__ ),
+					$asset['dependencies'],
+					$asset['version']
+				);
+
+				wp_register_style(
+					'coauthors-sidebar-css',
+					plugins_url( 'build/style-index.css', __FILE__ ),
+					'',
+					$asset['version']
+				);
+
+				wp_enqueue_script( 'coauthors-sidebar-js' );
+				wp_enqueue_style( 'coauthors-sidebar-css' );
+			}
+		}
+	}
+
 	/**
 	 * Register the 'author' taxonomy and add post type support
 	 */
@@ -178,7 +218,9 @@ class CoAuthors_Plus {
 			'public'       => false,
 			'sort'         => true,
 			'args'         => array( 'orderby' => 'term_order' ),
+			'show_in_rest' => true,
 			'show_ui'      => false,
+			'rest_base'    => 'coauthors',
 		);
 
 		// If we use the nasty SQL query, we need our custom callback. Otherwise, we still need to flush cache.
@@ -276,7 +318,7 @@ class CoAuthors_Plus {
 				if ( ! $user && ( 'login' == $key || 'slug' == $key ) ) {
 					// Re-try lookup without prefixed value if no results found.
 					$value = preg_replace( '#^cap\-#', '', $value );
-					$user = get_user_by( $key, $value );
+					$user  = get_user_by( $key, $value );
 				}
 				if ( ! $user ) {
 					return false;
@@ -333,9 +375,11 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-
 		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
-			add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
+
+			if ( false === $this->using_block_editor_integration() ) {
+				add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'normal' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
+			}
 		}
 	}
 
@@ -917,7 +961,8 @@ class CoAuthors_Plus {
 		$coauthors        = array_unique( array_merge( $existing_coauthors, $coauthors ) );
 		$coauthor_objects = array();
 		foreach ( $coauthors as &$author_name ) {
-			$field              = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
+			$field = apply_filters( 'coauthors_post_get_coauthor_by_field', $query_type, $author_name );
+
 			$author             = $this->get_coauthor_by( $field, $author_name );
 			$coauthor_objects[] = $author;
 			$term               = $this->update_author_term( $author );
@@ -1003,6 +1048,7 @@ class CoAuthors_Plus {
 	 * Restrict WordPress from blowing away co-author order when bulk editing terms
 	 *
 	 * @since 2.6
+	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
 	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
 	 */
 	function filter_wp_get_object_terms( $terms, $object_ids, $taxonomies, $args ) {
@@ -1791,7 +1837,8 @@ class CoAuthors_Plus {
 }
 
 global $coauthors_plus;
-$coauthors_plus = new CoAuthors_Plus();
+$coauthors_plus     = new CoAuthors_Plus();
+$coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**
