@@ -74,25 +74,23 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		foreach ( $this->_cap->supported_post_types as $post_type ) {
-			$this->assertEquals(
-				10,
-				has_filter(
-					'rest_prepare_' . $post_type,
-					[
-						$this->_api,
-						'remove_author_link',
-					]
-				)
-			);
-		}
+		$this->assertEquals(
+			10,
+			has_action(
+				'wp_loaded',
+				[
+					$this->_api,
+					'modify_responses',
+				]
+			)
+		);
 
 	}
 
 	/**
 	 * @covers ::add_endpoints()
 	 */
-	public function test_add_endpoints(): void {
+	public function test_add_endpoints() {
 
 		$rest_server = rest_get_server();
 
@@ -151,7 +149,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	/**
 	 * @covers ::get_coauthors_search_results()
 	 */
-	public function test_get_coauthors_search_results(): void {
+	public function test_get_coauthors_search_results() {
 
 		$get_request = new WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
@@ -195,7 +193,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	/**
 	 * @covers ::get_coauthors()
 	 */
-	public function test_authors_get_coauthors(): void {
+	public function test_authors_get_coauthors() {
 		$test_post = $this->factory->post->create_and_get(
 			[
 				'post_author'  => $this->author1->ID,
@@ -223,7 +221,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	/**
 	 * @covers ::update_coauthors()
 	 */
-	public function test_update_coauthors(): void {
+	public function test_update_coauthors() {
 
 		wp_set_current_user( $this->editor1->ID );
 
@@ -252,7 +250,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( 2, count( $update_response->data ) );
 	}
 
-	public function test_can_edit_coauthors(): void {
+	public function test_can_edit_coauthors() {
 		$post = $this->factory->post->create_and_get(
 			[
 				'post_author' => $this->editor1->ID,
@@ -271,7 +269,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	/**
 	 * @covers ::remove_author_link()
 	 */
-	public function test_remove_author_link(): void {
+	public function test_remove_author_link() {
 
 		$test_post = $this->factory->post->create_and_get(
 			[
@@ -324,7 +322,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	/**
 	 * @covers ::modify_response()
 	 */
-	public function test_modify_response(): void {
+	public function test_modify_response() {
 		$this->_api->modify_responses();
 
 		foreach ( $this->_cap->supported_post_types as $post_type ) {
