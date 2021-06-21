@@ -17,14 +17,14 @@ class Endpoints {
 	public const NAMESPACE = 'coauthors/v1';
 
 	/**
-	 * Route for authors search endpoint.
+	 * Routes for various endpoints.
 	 */
 	public const SEARCH_ROUTE  = 'search';
 	public const AUTHORS_ROUTE = 'authors';
 
 	/**
-	 * Link to remove from REST response to manage
-	 * core author visibility in admin.
+	 * Link to remove from REST response to manage core author visibility in
+	 * admin.
 	 */
 	public const SUPPORT_LINK = 'https://api.w.org/action-assign-author';
 
@@ -52,9 +52,6 @@ class Endpoints {
 	 * Register endpoints.
 	 */
 	public function add_endpoints(): void {
-
-		global $post;
-
 		register_rest_route(
 			static::NAMESPACE,
 			static::SEARCH_ROUTE,
@@ -62,7 +59,7 @@ class Endpoints {
 				array(
 					'methods'             => 'GET',
 					'callback'            => array( $this, 'get_coauthors_search_results' ),
-					'permission_callback' => '__return_true',
+					'permission_callback' => array( $this, 'can_edit_posts' ),
 					'args'                => array(
 						'q'                => array(
 							'description' => __( 'Text to search.' ),
@@ -86,10 +83,10 @@ class Endpoints {
 				array(
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_coauthors' ],
-					'permission_callback' => '__return_true',
+					'permission_callback' => array( $this, 'can_edit_posts' ),
 					'args'                => array(
 						'post_id' => array(
-							'required'          => false,
+							'required'          => true,
 							'type'              => 'number',
 							'validate_callback' => [ $this, 'validate_numeric' ],
 						),
@@ -108,7 +105,7 @@ class Endpoints {
 					'permission_callback' => [ $this, 'can_edit_coauthors' ],
 					'args'                => array(
 						'post_id'     => array(
-							'required'          => false,
+							'required'          => true,
 							'type'              => 'number',
 							'validate_callback' => array( $this, 'validate_numeric' ),
 						),
@@ -132,8 +129,8 @@ class Endpoints {
 	public function get_coauthors_search_results( WP_REST_Request $request ): WP_REST_Response {
 		$response = array();
 
-		$search  = sanitize_text_field( strtolower( $request['q'] ) );
-		$ignore  = array_map( 'sanitize_text_field', explode( ',', $request['existing_authors'] ) );
+		$search  = strtolower( $request->get_param( 'q' ) );
+		$ignore  = explode( ',', $request->get_param( 'existing_authors' ) );
 		$authors = $this->coauthors->search_authors( $search, $ignore );
 
 		if ( ! empty( $authors ) ) {
@@ -169,9 +166,8 @@ class Endpoints {
 
 		$response = array();
 
-		if ( isset( $request['new_authors'] ) ) {
-			$author_names = explode( ',', $request['new_authors'] );
-			$coauthors    = array_map( 'sanitize_title', (array) $author_names );
+		if ( ! empty( $request->get_param( 'new_authors' ) ) ) {
+			$coauthors = explode( ',', $request->get_param( 'new_authors' ) );
 
 			// Replace all existing authors
 			$this->coauthors->add_coauthors( $request->get_param( 'post_id' ), $coauthors );
@@ -193,7 +189,19 @@ class Endpoints {
 	}
 
 	/**
+	 * Limit read endpoints to users that can edit posts.
+	 *
+	 * @return bool
+	 */
+	public function can_edit_posts(): bool {
+		return current_user_can( 'edit_posts' );
+	}
+
+	/**
 	 * Permissions for updating coauthors.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return bool
 	 */
 	public function can_edit_coauthors( WP_REST_Request $request ): bool {
 		$post = get_post( $request->get_param( 'post_id' ) );
