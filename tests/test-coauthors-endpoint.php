@@ -97,22 +97,22 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$rest_server = rest_get_server();
 
 		$this->assertContains(
-			$this->_api::NAMESPACE,
+			$this->_api::NS,
 			$rest_server->get_namespaces()
 		);
 
-		$routes = $rest_server->get_routes( $this->_api::NAMESPACE );
+		$routes = $rest_server->get_routes( $this->_api::NS );
 
 		$authors_route = sprintf(
 			'/%1$s/%2$s%3$s',
-			$this->_api::NAMESPACE,
+			$this->_api::NS,
 			$this->_api::AUTHORS_ROUTE,
 			'/(?P<post_id>[\d]+)'
 		);
 
 		$search_route = sprintf(
 			'/%1$s/%2$s',
-			$this->_api::NAMESPACE,
+			$this->_api::NS,
 			$this->_api::SEARCH_ROUTE
 		);
 

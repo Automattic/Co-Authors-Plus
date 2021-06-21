@@ -14,7 +14,7 @@ class Endpoints {
 	/**
 	 * Namespace for our endpoints.
 	 */
-	const NAMESPACE = 'coauthors/v1';
+	const NS = 'coauthors/v1';
 
 	/**
 	 * Routes for various endpoints.
@@ -51,9 +51,9 @@ class Endpoints {
 	/**
 	 * Register endpoints.
 	 */
-	public function add_endpoints(): void {
+	public function add_endpoints() {
 		register_rest_route(
-			static::NAMESPACE,
+			static::NS,
 			static::SEARCH_ROUTE,
 			array(
 				array(
@@ -77,7 +77,7 @@ class Endpoints {
 		);
 
 		register_rest_route(
-			static::NAMESPACE,
+			static::NS,
 			static::AUTHORS_ROUTE . static::ENDPOINT_POST_ID_REGEX,
 			array(
 				array(
@@ -96,7 +96,7 @@ class Endpoints {
 		);
 
 		register_rest_route(
-			static::NAMESPACE,
+			static::NS,
 			static::AUTHORS_ROUTE . static::ENDPOINT_POST_ID_REGEX,
 			array(
 				array(
@@ -238,7 +238,7 @@ class Endpoints {
 	 * @param array The response array.
 	 * @param int   Thet post ID from the request.
 	 */
-	public function _build_authors_response( &$response, $request ): void {
+	public function _build_authors_response( &$response, $request ) {
 		$authors = get_coauthors( $request->get_param( 'post_id' ) );
 
 		if ( ! empty( $authors ) ) {
@@ -252,7 +252,7 @@ class Endpoints {
 	 * Add filters to REST endpoints for each post that
 	 * supports coauthors.
 	 */
-	public function modify_responses(): void {
+	public function modify_responses() {
 
 		$post_types = $this->coauthors->supported_post_types;
 
