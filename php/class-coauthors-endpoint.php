@@ -14,24 +14,24 @@ class Endpoints {
 	/**
 	 * Namespace for our endpoints.
 	 */
-	public const NAMESPACE = 'coauthors/v1';
+	const NAMESPACE = 'coauthors/v1';
 
 	/**
 	 * Routes for various endpoints.
 	 */
-	public const SEARCH_ROUTE  = 'search';
-	public const AUTHORS_ROUTE = 'authors';
+	const SEARCH_ROUTE  = 'search';
+	const AUTHORS_ROUTE = 'authors';
 
 	/**
 	 * Link to remove from REST response to manage core author visibility in
 	 * admin.
 	 */
-	public const SUPPORT_LINK = 'https://api.w.org/action-assign-author';
+	const SUPPORT_LINK = 'https://api.w.org/action-assign-author';
 
 	/**
 	 * Regex to capture the query in a request.
 	 */
-	protected const ENDPOINT_POST_ID_REGEX = '/(?P<post_id>[\d]+)';
+	const ENDPOINT_POST_ID_REGEX = '/(?P<post_id>[\d]+)';
 
 	/**
 	 * An instance of the Co_Authors_Plus class.
