@@ -1,7 +1,7 @@
 {
   "name": "co-authors-plus-3.4",
   "version": "1.0.0",
-  "description": "=== Co-Authors Plus === Contributors: batmoo, danielbachhuber, automattic Tags: authors, users, multiple authors, coauthors, multi-author, publishing Tested up to: 5.3.1 Requires at least: 4.1 Stable tag: 3.4.2",
+  "description": "Allows multiple authors to be assigned to a post.",
   "main": "index.js",
   "directories": {
     "lib": "lib"

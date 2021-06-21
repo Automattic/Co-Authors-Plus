@@ -154,7 +154,7 @@ const CoAuthors = compose( [
 				// Save post meta to enable the publish button:
 				// https://github.com/WordPress/gutenberg/issues/13774
 				dispatch( 'core/editor' ).editPost( {
-					meta: { _non_existing_meta: true },
+					meta: { _non_existing_meta: Date.now() },
 				} );
 			},
 		};
