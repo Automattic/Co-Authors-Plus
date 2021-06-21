@@ -126,7 +126,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function get_coauthors_search_results( WP_REST_Request $request ): WP_REST_Response {
+	public function get_coauthors_search_results( $request ) {
 		$response = array();
 
 		$search  = strtolower( $request->get_param( 'q' ) );
@@ -148,7 +148,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function get_coauthors( WP_REST_Request $request ): WP_REST_Response {
+	public function get_coauthors( $request ) {
 		$response = array();
 
 		$this->_build_authors_response( $response, $request );
@@ -162,7 +162,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function update_coauthors( WP_REST_Request $request ): WP_REST_Response {
+	public function update_coauthors( $request ) {
 
 		$response = array();
 
@@ -184,7 +184,7 @@ class Endpoints {
 	 * @param mixed $param Value to validate.
 	 * @return bool
 	 */
-	public function validate_numeric( $param ): bool {
+	public function validate_numeric( $param ) {
 		return is_numeric( $param );
 	}
 
@@ -193,7 +193,7 @@ class Endpoints {
 	 *
 	 * @return bool
 	 */
-	public function can_edit_posts(): bool {
+	public function can_edit_posts() {
 		return current_user_can( 'edit_posts' );
 	}
 
@@ -203,7 +203,7 @@ class Endpoints {
 	 * @param WP_REST_Request $request Request object.
 	 * @return bool
 	 */
-	public function can_edit_coauthors( WP_REST_Request $request ): bool {
+	public function can_edit_coauthors( $request ) {
 		$post = get_post( $request->get_param( 'post_id' ) );
 
 		if ( ! $post instanceof WP_Post ) {
@@ -220,7 +220,7 @@ class Endpoints {
 	 * @param object  $author The result from coauthors methods.
 	 * @return array
 	 */
-	public function _format_author_data( object $author ): array {
+	public function _format_author_data( $author ) {
 
 		return array(
 			'id'            => esc_html( $author->ID ),
@@ -281,11 +281,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request  Request object.
 	 * @return WP_REST_Response
 	 */
-	public function remove_author_link(
-		WP_REST_Response $response,
-		WP_Post $post,
-		WP_REST_Request $request
-	): WP_REST_Response {
+	public function remove_author_link( $response, $post, $request ) {
 		if (
 			! isset( $request['context'] )
 			|| 'edit' !== $request['context']
