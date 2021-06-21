@@ -253,13 +253,19 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test_can_edit_coauthors(): void {
+		$post = $this->factory->post->create_and_get(
+			[
+				'post_author' => $this->editor1->ID,
+			]
+		);
+
 		wp_set_current_user( $this->editor1->ID );
 
-		$this->assertTrue( $this->_api->can_edit_coauthors() );
+		$this->assertTrue( $this->_api->can_edit_coauthors( $post ) );
 
 		wp_set_current_user( $this->author1->ID );
 
-		$this->assertFalse( $this->_api->can_edit_coauthors() );
+		$this->assertFalse( $this->_api->can_edit_coauthors( $post ) );
 	}
 
 	/**
