@@ -195,8 +195,14 @@ class Endpoints {
 	/**
 	 * Permissions for updating coauthors.
 	 */
-	public function can_edit_coauthors(): bool {
-		return $this->coauthors->current_user_can_set_authors();
+	public function can_edit_coauthors( WP_REST_Request $request ): bool {
+		$post = get_post( $request->get_param( 'post_id' ) );
+
+		if ( ! $post instanceof WP_Post ) {
+			return false;
+		}
+
+		return $this->coauthors->current_user_can_set_authors( $post );
 	}
 
 	/**
