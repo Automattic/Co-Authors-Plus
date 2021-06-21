@@ -261,7 +261,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$request = new WP_REST_Request(
 			'GET',
-			'',
+			''
 		);
 		$request->set_default_params(
 			[
