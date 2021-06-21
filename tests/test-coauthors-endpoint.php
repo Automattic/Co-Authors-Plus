@@ -113,7 +113,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$search_route = sprintf(
 			'/%1$s/%2$s',
 			$this->_api::NAMESPACE,
-			$this->_api::SEARCH_ROUTE,
+			$this->_api::SEARCH_ROUTE
 		);
 
 		$this->assertArrayHasKey(
