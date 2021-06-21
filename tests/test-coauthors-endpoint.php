@@ -1,5 +1,7 @@
 <?php
 
+use CoAuthors\API\Endpoints;
+
 /*
  * @coversDefaultClass \CoAuthors\API\Endpoints
  */
@@ -95,23 +97,23 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$rest_server = rest_get_server();
 
 		$this->assertContains(
-			$this->_api::NS,
+			Endpoints::NS,
 			$rest_server->get_namespaces()
 		);
 
-		$routes = $rest_server->get_routes( $this->_api::NS );
+		$routes = $rest_server->get_routes( Endpoints::NS );
 
 		$authors_route = sprintf(
 			'/%1$s/%2$s%3$s',
-			$this->_api::NS,
-			$this->_api::AUTHORS_ROUTE,
+			Endpoints::NS,
+			Endpoints::AUTHORS_ROUTE,
 			'/(?P<post_id>[\d]+)'
 		);
 
 		$search_route = sprintf(
 			'/%1$s/%2$s',
-			$this->_api::NS,
-			$this->_api::SEARCH_ROUTE
+			Endpoints::NS,
+			Endpoints::SEARCH_ROUTE
 		);
 
 		$this->assertArrayHasKey(
@@ -290,7 +292,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$this->_api->remove_author_link( $response, $test_post, $request );
 
 		$this->assertArrayHasKey(
-			$this->_api::SUPPORT_LINK,
+			Endpoints::SUPPORT_LINK,
 			$response->get_links(),
 			'Failed to assert that links are unchanged when block editor integration filter is at default.'
 		);
@@ -301,7 +303,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$this->_api->remove_author_link( $response, $test_post, $request );
 
 		$this->assertArrayNotHasKey(
-			$this->_api::SUPPORT_LINK,
+			Endpoints::SUPPORT_LINK,
 			$response->get_links(),
 			'Failed to assert that link is removed when block editor integration filter returns true.'
 		);
@@ -312,7 +314,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$response = rest_do_request( $request );
 
 		$this->assertArrayHasKey(
-			$this->_api::SUPPORT_LINK,
+			Endpoints::SUPPORT_LINK,
 			$response->get_links(),
 			'Failed to assert that links are unchanged when block editor is disabled.'
 		);
