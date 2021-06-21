@@ -297,9 +297,9 @@ class Endpoints {
 			return $response;
 		}
 
-		$link = $response->get_links()[ static::SUPPORT_LINK ] ?? null;
+		$links = $response->get_links();
 
-		if ( ! isset( $link ) ) {
+		if ( ! isset( $links[ static::SUPPORT_LINK ] ) ) {
 			return $response;
 		}
 
