@@ -600,22 +600,23 @@ class CoAuthors_Plus {
 		$query = "SELECT COUNT({$wpdb->posts}.ID) FROM {$wpdb->posts}";
 
 		$query .= " LEFT JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
-		$query .= " LEFT JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
-
-		$having_terms_and_authors = $having_terms = $wpdb->prepare( "{$wpdb->term_taxonomy}.term_id = %d", $term->term_id );
-		if ( 'wpuser' == $coauthor->type ) {
-			$having_terms_and_authors .= $wpdb->prepare( " OR {$wpdb->posts}.post_author = %d", $coauthor->ID );
-		}
-
+		$query .= " LEFT JOIN {$wpdb->terms} ON ({$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->terms}.term_id)";
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.user_meta__wpdb__users
+		$query .= " LEFT JOIN {$wpdb->users} ON ({$wpdb->posts}.post_author = {$wpdb->users}.ID)";
+	
 		$post_types = apply_filters( 'coauthors_count_published_post_types', array( 'post' ) );
 		$post_types = array_map( 'sanitize_key', $post_types );
 		$post_types = "'" . implode( "','", $post_types ) . "'";
 
-		$query .= " WHERE ({$having_terms_and_authors}) AND {$wpdb->posts}.post_type IN ({$post_types}) AND {$wpdb->posts}.post_status = 'publish'";
+		$query .= " WHERE {$wpdb->posts}.post_type IN ({$post_types})";
+		$query .= " AND {$wpdb->posts}.post_status = 'publish'";
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.user_meta__wpdb__users
+		$query .= " AND ( {$wpdb->users}.user_login = %s OR {$wpdb->terms}.name = %s )";
+		
+		$query .= " GROUP BY {$wpdb->posts}.ID";
 
-		$query .= $wpdb->prepare( " GROUP BY {$wpdb->posts}.ID HAVING MAX( IF ( {$wpdb->term_taxonomy}.taxonomy = '%s', IF ( {$having_terms},2,1 ),0 ) ) <> 1 ", $this->coauthor_taxonomy ); //phpcs:ignore
-
-		$count = $wpdb->query( $query ); // phpcs:ignore
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$count = $wpdb->query( $wpdb->prepare( $query, $coauthor->linked_account, $coauthor->user_login ) ); 
 		$wpdb->update( $wpdb->term_taxonomy, array( 'count' => $count ), array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
 
 		wp_cache_delete( 'author-term-' . $coauthor->user_nicename, 'co-authors-plus' );
@@ -1060,13 +1061,8 @@ class CoAuthors_Plus {
 
 		$term = $this->get_author_term( $coauthor );
 
+		// Return $term->count, if $term exists.
 		if ( is_object( $term ) ) {
-			// Return combined post count, if account is linked.
-			if ( strlen( $coauthor->linked_account ) > 2 ) {
-				return $count + $term->count;
-			}
-
-			// Otherwise, return the term count.
 			return $term->count;
 		}
 
