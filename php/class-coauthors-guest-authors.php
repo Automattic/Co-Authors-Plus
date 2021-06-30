@@ -790,7 +790,7 @@ class CoAuthors_Guest_Authors {
 			&& is_user_member_of_blog( $user->ID, get_current_blog_id() )
 			&& $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) ) {
 			// if user has selected to link account to matching user we don't have to bail
-			if ( (int)$_POST['cap-linked_account'] === (int)$user->ID ) {
+			if ( isset( $_POST['cap-linked_account'] ) && (int) $_POST['cap-linked_account'] === (int) $user->ID ) {
 				return $post_data;
 			}
 			wp_die( esc_html__( 'There is a WordPress user with the same username as this guest author, please go back and link them in order to update.', 'co-authors-plus' ) );
