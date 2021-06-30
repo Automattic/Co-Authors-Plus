@@ -779,10 +779,6 @@ class CoAuthors_Guest_Authors
 			if ( (int)$_POST['cap-linked_account'] === (int)$user->ID ) {
 				return $post_data;
 			}
-			// if user has selected to link account NOT matching user, bail with custom message
-			if ( $_POST['cap-linked_account'] > 0 && ( (int)$_POST['cap-linked_account'] !== (int)$user->ID ) ) {
-				wp_die( esc_html__( 'Please map the guest author to the user with the same username', 'co-authors-plus' ) );
-			}
 			wp_die( esc_html__( 'There is a WordPress user with the same username as this guest author, please go back and link them in order to update.', 'co-authors-plus' ) );
 		}
 
