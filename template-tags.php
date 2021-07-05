@@ -4,7 +4,7 @@ function get_coauthors( $post_id = 0 ) {
 	global $post, $post_ID, $coauthors_plus, $wpdb;
 
 	$coauthors = array();
-	$post_id = (int) $post_id;
+	$post_id   = (int) $post_id;
 	if ( ! $post_id && $post_ID ) {
 		$post_id = $post_ID;
 	}
@@ -18,13 +18,13 @@ function get_coauthors( $post_id = 0 ) {
 		if ( is_array( $coauthor_terms ) && ! empty( $coauthor_terms ) ) {
 			foreach ( $coauthor_terms as $coauthor ) {
 				$coauthor_slug = preg_replace( '#^cap\-#', '', $coauthor->slug );
-				$post_author = $coauthors_plus->get_coauthor_by( 'user_nicename', $coauthor_slug );
+				$post_author   = $coauthors_plus->get_coauthor_by( 'user_nicename', $coauthor_slug );
 				// In case the user has been deleted while plugin was deactivated
 				if ( ! empty( $post_author ) ) {
 					$coauthors[] = $post_author;
 				}
 			}
-		} else if ( ! $coauthors_plus->force_guest_authors ) {
+		} elseif ( ! $coauthors_plus->force_guest_authors ) {
 			if ( $post && $post_id == $post->ID ) {
 				$post_author = get_userdata( $post->post_author );
 			} else {
@@ -43,8 +43,9 @@ function get_coauthors( $post_id = 0 ) {
 
 /**
  * Checks to see if the the specified user is author of the current global post or post (if specified)
+ *
  * @param object|int $user
- * @param int $post_id
+ * @param int        $post_id
  */
 function is_coauthor_for_post( $user, $post_id = 0 ) {
 	global $post;
@@ -65,7 +66,7 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 	if ( is_numeric( $user ) ) {
 		$user = get_userdata( $user );
 		$user = $user->user_login;
-	} else if ( isset( $user->user_login ) ) {
+	} elseif ( isset( $user->user_login ) ) {
 		$user = $user->user_login;
 	} else {
 		return false;
@@ -98,7 +99,7 @@ class CoAuthorsIterator {
 		}
 
 		$this->original_authordata = $this->current_author = $authordata;
-		$this->authordata_array = get_coauthors( $postID );
+		$this->authordata_array    = get_coauthors( $postID );
 
 		$this->count = count( $this->authordata_array );
 	}
@@ -107,19 +108,19 @@ class CoAuthorsIterator {
 		global $authordata;
 		$this->position++;
 
-		//At the end of the loop
+		// At the end of the loop
 		if ( $this->position > $this->count - 1 ) {
-			$authordata = $this->current_author = $this->original_authordata;
+			$authordata     = $this->current_author = $this->original_authordata; // phpcs:ignore
 			$this->position = -1;
 			return false;
 		}
 
-		//At the beginning of the loop
+		// At the beginning of the loop
 		if ( 0 === $this->position && ! empty( $authordata ) ) {
 			$this->original_authordata = $authordata;
 		}
 
-		$authordata = $this->current_author = $this->authordata_array[ $this->position ];
+		$authordata = $this->current_author = $this->authordata_array[ $this->position ]; // phpcs:ignore
 
 		return true;
 	}
@@ -131,7 +132,7 @@ class CoAuthorsIterator {
 		return $this->position;
 	}
 	function is_last() {
-		return  $this->position === $this->count - 1;
+		return $this->position === $this->count - 1;
 	}
 	function is_first() {
 		return $this->position === 0;
@@ -144,15 +145,15 @@ class CoAuthorsIterator {
 	}
 }
 
-//Helper function for the following new template tags
+// Helper function for the following new template tags
 function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args = null, $echo = true ) {
 
 	// Define the standard output separator. Constant support is for backwards compat.
 	// @see https://github.com/danielbachhuber/Co-Authors-Plus/issues/12
-	$default_before = ( defined( 'COAUTHORS_DEFAULT_BEFORE' ) ) ? COAUTHORS_DEFAULT_BEFORE : '';
-	$default_between = ( defined( 'COAUTHORS_DEFAULT_BETWEEN' ) ) ? COAUTHORS_DEFAULT_BETWEEN : ', ';
-	$default_between_last = ( defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) ) ? COAUTHORS_DEFAULT_BETWEEN_LAST :  __( ' and ', 'co-authors-plus' );
-	$default_after = ( defined( 'COAUTHORS_DEFAULT_AFTER' ) ) ? COAUTHORS_DEFAULT_AFTER : '';
+	$default_before       = ( defined( 'COAUTHORS_DEFAULT_BEFORE' ) ) ? COAUTHORS_DEFAULT_BEFORE : '';
+	$default_between      = ( defined( 'COAUTHORS_DEFAULT_BETWEEN' ) ) ? COAUTHORS_DEFAULT_BETWEEN : ', ';
+	$default_between_last = ( defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) ) ? COAUTHORS_DEFAULT_BETWEEN_LAST : __( ' and ', 'co-authors-plus' );
+	$default_after        = ( defined( 'COAUTHORS_DEFAULT_AFTER' ) ) ? COAUTHORS_DEFAULT_AFTER : '';
 
 	if ( ! isset( $separators['before'] ) || null === $separators['before'] ) {
 		$separators['before'] = apply_filters( 'coauthors_default_before', $default_before );
@@ -169,7 +170,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 
 	$output = '';
 
-	$i = new CoAuthorsIterator();
+	$i       = new CoAuthorsIterator();
 	$output .= $separators['before'];
 	$i->iterate();
 	do {
@@ -201,7 +202,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	$output .= $separators['after'];
 
 	if ( $echo ) {
-		echo $output;
+		echo $output; // phpcs:ignore
 	}
 
 	return $output;
@@ -215,15 +216,21 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
  * @param string $betweenLast Delimiter that should appear between the last two co-authors
  * @param string $before What should appear before the presentation of co-authors
  * @param string $after What should appear after the presentation of co-authors
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo('display_name', 'field', array(
-		'between' => $between,
-		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
-	), null, $echo );
+	return coauthors__echo(
+		'display_name',
+		'field',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		null,
+		$echo
+	);
 }
 
 /**
@@ -234,7 +241,7 @@ function coauthors( $between = null, $betweenLast = null, $before = null, $after
  * @param string $betweenLast Delimiter that should appear between the last two co-authors
  * @param string $before What should appear before the presentation of co-authors
  * @param string $after What should appear after the presentation of co-authors
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_posts_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 
@@ -252,12 +259,18 @@ function coauthors_posts_links( $between = null, $betweenLast = null, $before = 
 		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
 	}
 
-	$coauthors_posts_links = coauthors__echo( 'coauthors_posts_links_single', 'callback', array(
-		'between'     => $between,
-		'betweenLast' => $betweenLast,
-		'before'      => $before,
-		'after'       => $after,
-	), null, $echo );
+	$coauthors_posts_links = coauthors__echo(
+		'coauthors_posts_links_single',
+		'callback',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		null,
+		$echo
+	);
 
 	if ( $modify_filter ) {
 		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
@@ -282,16 +295,16 @@ function coauthors_posts_links_single( $author ) {
 		);
 		return;
 	}
-	$args = array(
+	$args        = array(
 		'before_html' => '',
-		'href' => get_author_posts_url( $author->ID, $author->user_nicename ),
-		'rel' => 'author',
-		'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), apply_filters( 'the_author', $author->display_name ) ),
-		'class' => 'author url fn',
-		'text' => apply_filters( 'the_author', $author->display_name ),
-		'after_html' => '',
+		'href'        => get_author_posts_url( $author->ID, $author->user_nicename ),
+		'rel'         => 'author',
+		'title'       => sprintf( __( 'Posts by %s', 'co-authors-plus' ), apply_filters( 'the_author', $author->display_name ) ),
+		'class'       => 'author url fn',
+		'text'        => apply_filters( 'the_author', $author->display_name ),
+		'after_html'  => '',
 	);
-	$args = apply_filters( 'coauthors_posts_link', $args, $author );
+	$args        = apply_filters( 'coauthors_posts_link', $args, $author );
 	$single_link = sprintf(
 		'<a href="%1$s" title="%2$s" class="%3$s" rel="%4$s">%5$s</a>',
 		esc_url( $args['href'] ),
@@ -310,15 +323,21 @@ function coauthors_posts_links_single( $author ) {
  * @param string $betweenLast Delimiter that should appear between the last two co-authors
  * @param string $before What should appear before the presentation of co-authors
  * @param string $after What should appear after the presentation of co-authors
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_firstnames( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo('get_the_author_meta', 'tag', array(
-		'between' => $between,
-		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
-	), 'first_name', $echo );
+	return coauthors__echo(
+		'get_the_author_meta',
+		'tag',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		'first_name',
+		$echo
+	);
 }
 
 /**
@@ -328,15 +347,21 @@ function coauthors_firstnames( $between = null, $betweenLast = null, $before = n
  * @param string $betweenLast Delimiter that should appear between the last two co-authors
  * @param string $before What should appear before the presentation of co-authors
  * @param string $after What should appear after the presentation of co-authors
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_lastnames( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo( 'get_the_author_meta', 'tag', array(
-		'between' => $between,
-		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
-	), 'last_name', $echo );
+	return coauthors__echo(
+		'get_the_author_meta',
+		'tag',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		'last_name',
+		$echo
+	);
 }
 
 /**
@@ -346,15 +371,21 @@ function coauthors_lastnames( $between = null, $betweenLast = null, $before = nu
  * @param string $betweenLast Delimiter that should appear between the last two co-authors
  * @param string $before What should appear before the presentation of co-authors
  * @param string $after What should appear after the presentation of co-authors
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_nicknames( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo( 'get_the_author_meta', 'tag', array(
-		'between' => $between,
-		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
-	), 'nickname', $echo );
+	return coauthors__echo(
+		'get_the_author_meta',
+		'tag',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		'nickname',
+		$echo
+	);
 }
 
 /**
@@ -364,7 +395,7 @@ function coauthors_nicknames( $between = null, $betweenLast = null, $before = nu
  * @param string $betweenLast Delimiter that should appear between the last two co-authors
  * @param string $before What should appear before the presentation of co-authors
  * @param string $after What should appear after the presentation of co-authors
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_links( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
 
@@ -382,12 +413,18 @@ function coauthors_links( $between = null, $betweenLast = null, $before = null, 
 		remove_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
 	}
 
-	$coauthors_links = coauthors__echo( 'coauthors_links_single', 'callback', array(
-		'between'     => $between,
-		'betweenLast' => $betweenLast,
-		'before'      => $before,
-		'after'       => $after,
-	), null, $echo );
+	$coauthors_links = coauthors__echo(
+		'coauthors_links_single',
+		'callback',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		null,
+		$echo
+	);
 
 	if ( $modify_filter ) {
 		add_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) );
@@ -403,15 +440,21 @@ function coauthors_links( $between = null, $betweenLast = null, $before = null, 
  * @param string $betweenLast Delimiter that should appear between the last two email addresses
  * @param string $before What should appear before the presentation of email addresses
  * @param string $after What should appear after the presentation of email addresses
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_emails( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo( 'get_the_author_meta', 'tag', array(
-		'between' => $between,
-		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
-	), 'user_email', $echo );
+	return coauthors__echo(
+		'get_the_author_meta',
+		'tag',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		'user_email',
+		$echo
+	);
 }
 
 /**
@@ -422,20 +465,20 @@ function coauthors_emails( $between = null, $betweenLast = null, $before = null,
  */
 function coauthors_links_single( $author ) {
 	if ( 'guest-author' === $author->type && get_the_author_meta( 'website' ) ) {
-		return sprintf( '<a href="%s" title="%s" rel="author external">%s</a>',
+		return sprintf(
+			'<a href="%s" title="%s" rel="author external">%s</a>',
 			esc_url( get_the_author_meta( 'website' ) ),
 			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
 			esc_html( get_the_author() )
 		);
-	}
-	elseif ( get_the_author_meta( 'url' ) ) {
-		return sprintf( '<a href="%s" title="%s" rel="author external">%s</a>',
+	} elseif ( get_the_author_meta( 'url' ) ) {
+		return sprintf(
+			'<a href="%s" title="%s" rel="author external">%s</a>',
 			esc_url( get_the_author_meta( 'url' ) ),
 			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
 			esc_html( get_the_author() )
 		);
-	}
-	else {
+	} else {
 		return esc_html( get_the_author() );
 	}
 }
@@ -447,15 +490,21 @@ function coauthors_links_single( $author ) {
  * @param string $betweenLast Delimiter that should appear between the last two co-authors
  * @param string $before What should appear before the presentation of co-authors
  * @param string $after What should appear after the presentation of co-authors
- * @param bool $echo Whether the co-authors should be echoed or returned. Defaults to true.
+ * @param bool   $echo Whether the co-authors should be echoed or returned. Defaults to true.
  */
 function coauthors_ids( $between = null, $betweenLast = null, $before = null, $after = null, $echo = true ) {
-	return coauthors__echo( 'ID', 'field', array(
-		'between' => $between,
-		'betweenLast' => $betweenLast,
-		'before' => $before,
-		'after' => $after,
-	), null, $echo );
+	return coauthors__echo(
+		'ID',
+		'field',
+		array(
+			'between'     => $between,
+			'betweenLast' => $betweenLast,
+			'before'      => $before,
+			'after'       => $after,
+		),
+		null,
+		$echo
+	);
 }
 
 /**
@@ -467,55 +516,52 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
  * @return array $meta Value of the user field
  */
 function get_the_coauthor_meta( $field, $user_id = false ) {
-    global $coauthors_plus;
+	global $coauthors_plus;
 
-    if ( ! $user_id ) {
-        $coauthors = get_coauthors();
-    }
-    else {
-        $coauthor_data = $coauthors_plus->get_coauthor_by( 'id', $user_id );
-        $coauthors = array();
-        if ( ! empty( $coauthor_data ) ) {
-            $coauthors[] = $coauthor_data;
-        }
-    }
+	if ( ! $user_id ) {
+		$coauthors = get_coauthors();
+	} else {
+		$coauthor_data = $coauthors_plus->get_coauthor_by( 'id', $user_id );
+		$coauthors     = array();
+		if ( ! empty( $coauthor_data ) ) {
+			$coauthors[] = $coauthor_data;
+		}
+	}
 
-    $meta = array();
+	$meta = array();
 
-    if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) ) {
-        $field = 'user_' . $field;
-    }
+	if ( in_array( $field, array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' ) ) ) {
+		$field = 'user_' . $field;
+	}
 
-    foreach ( $coauthors as $coauthor ) {
-        $user_id = $coauthor->ID;
+	foreach ( $coauthors as $coauthor ) {
+		$user_id = $coauthor->ID;
 
-        if ( isset( $coauthor->type ) && 'user_url' === $field ) {
-            if ( 'guest-author' === $coauthor->type ) {
-                $field = 'website';
-            }
-        }
-        else if ( 'website' === $field ) {
-            $field = 'user_url';
-        }
+		if ( isset( $coauthor->type ) && 'user_url' === $field ) {
+			if ( 'guest-author' === $coauthor->type ) {
+				$field = 'website';
+			}
+		} elseif ( 'website' === $field ) {
+			$field = 'user_url';
+		}
 
-        if ( isset( $coauthor->$field ) ) {
-            $meta[ $user_id ] = $coauthor->$field;
-        }
-        else {
-            $meta[ $user_id ] = '';
-        }
-    }
+		if ( isset( $coauthor->$field ) ) {
+			$meta[ $user_id ] = $coauthor->$field;
+		} else {
+			$meta[ $user_id ] = '';
+		}
+	}
 
-    return $meta;
+	return $meta;
 }
 
 
 function the_coauthor_meta( $field, $user_id = 0 ) {
-    // TODO: need before after options
-    $coauthor_meta = get_the_coauthor_meta( $field, $user_id );
-    foreach ( $coauthor_meta as $meta ) {
-        echo esc_html( $meta );
-    }
+	// TODO: need before after options
+	$coauthor_meta = get_the_coauthor_meta( $field, $user_id );
+	foreach ( $coauthor_meta as $meta ) {
+		echo esc_html( $meta );
+	}
 }
 
 /**
@@ -527,6 +573,7 @@ function the_coauthor_meta( $field, $user_id = 0 ) {
  * feed_image (string) (''): If isn't empty, use this image to link to feeds.
  * echo (boolean) (true): Set to false to return the output, instead of echoing.
  * authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
+ *
  * @param array $args The argument array.
  * @return null|string The output, if echo is set to false.
  */
@@ -534,32 +581,32 @@ function coauthors_wp_list_authors( $args = array() ) {
 	global $coauthors_plus;
 
 	$defaults = array(
-		'optioncount'        => false,
-		'show_fullname'      => false,
-		'hide_empty'         => true,
-		'feed'               => '',
-		'feed_image'         => '',
-		'feed_type'          => '',
-		'echo'               => true,
-		'style'              => 'list',
-		'html'               => true,
-		'number'           	 => 20, // A sane limit to start to avoid breaking all the things
-		'guest_authors_only' => false,
+		'optioncount'             => false,
+		'show_fullname'           => false,
+		'hide_empty'              => true,
+		'feed'                    => '',
+		'feed_image'              => '',
+		'feed_type'               => '',
+		'echo'                    => true,
+		'style'                   => 'list',
+		'html'                    => true,
+		'number'                  => 20, // A sane limit to start to avoid breaking all the things
+		'guest_authors_only'      => false,
 		'authors_with_posts_only' => false,
 	);
 
-	$args = wp_parse_args( $args, $defaults );
+	$args   = wp_parse_args( $args, $defaults );
 	$return = '';
 
-	$term_args = array(
-			'orderby'      => 'name',
-			'number'       => (int) $args['number'],
-			/*
-			 * Historically, this was set to always be `0` ignoring `$args['hide_empty']` value
-			 * To avoid any backwards incompatibility, inventing `authors_with_posts_only` that defaults to false
-			 */
-			'hide_empty'   => (boolean) $args['authors_with_posts_only'],
-		);
+	$term_args    = array(
+		'orderby'    => 'name',
+		'number'     => (int) $args['number'],
+		/*
+		 * Historically, this was set to always be `0` ignoring `$args['hide_empty']` value
+		 * To avoid any backwards incompatibility, inventing `authors_with_posts_only` that defaults to false
+		 */
+		'hide_empty' => (bool) $args['authors_with_posts_only'],
+	);
 	$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, $term_args );
 
 	$authors = array();
@@ -572,10 +619,9 @@ function coauthors_wp_list_authors( $args = array() ) {
 		$authors[ $author_term->name ] = $coauthor;
 
 		// only show guest authors if the $args is set to true
-		if ( ! $args['guest_authors_only'] ||  $authors[ $author_term->name ]->type === 'guest-author' ) {
+		if ( ! $args['guest_authors_only'] || $authors[ $author_term->name ]->type === 'guest-author' ) {
 			$authors[ $author_term->name ]->post_count = $author_term->count;
-		}
-		else {
+		} else {
 			unset( $authors[ $author_term->name ] );
 		}
 	}
@@ -585,7 +631,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 	// remove duplicates from linked accounts
 	$linked_accounts = array_unique( array_column( $authors, 'linked_account' ) );
 	foreach ( $linked_accounts as $linked_account ) {
-		unset( $authors[$linked_account] );
+		unset( $authors[ $linked_account ] );
 	}
 
 	foreach ( (array) $authors as $author ) {
@@ -655,13 +701,13 @@ function coauthors_wp_list_authors( $args = array() ) {
 			}
 
 			if ( $args['optioncount'] ) {
-				$link .= ' ('. $author->post_count . ')';
+				$link .= ' (' . $author->post_count . ')';
 			}
 		}
 
 		if ( ! ( 0 === $author->post_count && $args['hide_empty'] ) && 'list' == $args['style'] ) {
 			$return .= $link . '</li>';
-		} else if ( ! $args['hide_empty'] ) {
+		} elseif ( ! $args['hide_empty'] ) {
 			$return .= $link . ', ';
 		}
 	}
@@ -671,7 +717,8 @@ function coauthors_wp_list_authors( $args = array() ) {
 	if ( ! $args['echo'] ) {
 		return $return;
 	}
-	echo $return;
+	
+	echo $return; // phpcs:ignore
 }
 
 /**
@@ -683,16 +730,16 @@ function coauthors_wp_list_authors( $args = array() ) {
  * This is a replacement for using get_avatar(), which only operates on email addresses and cannot differentiate
  * between Guest Authors (who may share an email) and regular user accounts
  *
- * @param  object        $coauthor The Co Author or Guest Author object.
- * @param  int           $size     The desired size.
- * @param  string        $default  Optional. URL for the default image or a default type. Accepts '404'
- *                                 (return a 404 instead of a default image), 'retro' (8bit), 'monsterid'
- *                                 (monster), 'wavatar' (cartoon face), 'indenticon' (the "quilt"),
- *                                 'mystery', 'mm', or 'mysteryman' (The Oyster Man), 'blank' (transparent GIF),
- *                                 or 'gravatar_default' (the Gravatar logo). Default is the value of the
- *                                 'avatar_default' option, with a fallback of 'mystery'.
- * @param  string        $alt      Optional. Alternative text to use in &lt;img&gt; tag. Default false.
- * @param  array|string  $class    Optional. Array or string of additional classes to add to the &lt;img&gt; element. Default null.
+ * @param  object       $coauthor The Co Author or Guest Author object.
+ * @param  int          $size     The desired size.
+ * @param  string       $default  Optional. URL for the default image or a default type. Accepts '404'
+ *                                (return a 404 instead of a default image), 'retro' (8bit), 'monsterid'
+ *                                (monster), 'wavatar' (cartoon face), 'indenticon' (the "quilt"),
+ *                                'mystery', 'mm', or 'mysteryman' (The Oyster Man), 'blank' (transparent GIF),
+ *                                or 'gravatar_default' (the Gravatar logo). Default is the value of the
+ *                                'avatar_default' option, with a fallback of 'mystery'.
+ * @param  string       $alt      Optional. Alternative text to use in &lt;img&gt; tag. Default false.
+ * @param  array|string $class    Optional. Array or string of additional classes to add to the &lt;img&gt; element. Default null.
  * @return string                  The image tag for the avatar, or an empty string if none could be determined.
  */
 function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = false, $class = null ) {

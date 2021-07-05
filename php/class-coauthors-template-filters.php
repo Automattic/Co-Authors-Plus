@@ -12,7 +12,7 @@ class CoAuthors_Template_Filters {
 
 		// Add support for Guest Authors in RSS feeds.
 		add_filter( 'the_author', array( $this, 'filter_the_author_rss' ), 15 ); // Override CoAuthors_Template_Filters::filter_the_author for RSS feeds
-		add_action( 'rss2_item',  array( $this, 'action_add_rss_guest_authors' ) );
+		add_action( 'rss2_item', array( $this, 'action_add_rss_guest_authors' ) );
 	}
 
 	function filter_the_author() {

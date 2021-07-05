@@ -112,6 +112,7 @@
 
 /** Block Editor Hack for 5.0: Hide the core author input **/
 .block-editor label[for^="post-author-selector-"],
-.block-editor select[id^="post-author-selector-"] {
+.block-editor select[id^="post-author-selector-"],
+.block-editor .post-author-selector {
 	display: none;
 }

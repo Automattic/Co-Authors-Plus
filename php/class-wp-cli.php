@@ -22,13 +22,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		$defaults = array(
 				// There are no arguments at this time
-			);
+		);
 		$this->args = wp_parse_args( $assoc_args, $defaults );
 
-		$users = get_users();
-		$created = 0;
-		$skipped = 0;
-		$progress = \WP_CLI\Utils\make_progress_bar( 'Processing guest authors...', count ( $users ) );
+		$users    = get_users();
+		$created  = 0;
+		$skipped  = 0;
+		$progress = \WP_CLI\Utils\make_progress_bar( 'Processing guest authors...', count( $users ) );
 		foreach ( $users as $user ) {
 
 			$result = $coauthors_plus->guest_authors->create_guest_author_from_user_id( $user->ID );
@@ -54,21 +54,21 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		global $coauthors_plus, $wp_post_types;
 
 		// Cache these to prevent repeated lookups
-		$authors = array();
+		$authors      = array();
 		$author_terms = array();
 
 		$args = array(
-				'order'            => 'ASC',
-				'orderby'          => 'ID',
-				'post_type'         => $coauthors_plus->supported_post_types,
-				'posts_per_page'    => 100,
-				'paged'             => 1,
-				'update_meta_cache' => false,
-			);
+			'order'             => 'ASC',
+			'orderby'           => 'ID',
+			'post_type'         => $coauthors_plus->supported_post_types,
+			'posts_per_page'    => 100,
+			'paged'             => 1,
+			'update_meta_cache' => false,
+		);
 
-		$posts = new WP_Query( $args );
-		$affected = 0;
-		$count = 0;
+		$posts       = new WP_Query( $args );
+		$affected    = 0;
+		$count       = 0;
 		$total_posts = $posts->found_posts;
 		WP_CLI::line( "Now inspecting or updating {$posts->found_posts} total posts." );
 		while ( $posts->post_count ) {
@@ -87,10 +87,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					continue;
 				}
 
-				$author = ( ! empty( $authors[ $single_post->post_author ] ) ) ? $authors[ $single_post->post_author ] : get_user_by( 'id', $single_post->post_author );
+				$author                               = ( ! empty( $authors[ $single_post->post_author ] ) ) ? $authors[ $single_post->post_author ] : get_user_by( 'id', $single_post->post_author );
 				$authors[ $single_post->post_author ] = $author;
 
-				$author_term = ( ! empty( $author_terms[ $single_post->post_author ] ) ) ? $author_terms[ $single_post->post_author ] : $coauthors_plus->update_author_term( $author );
+				$author_term                               = ( ! empty( $author_terms[ $single_post->post_author ] ) ) ? $author_terms[ $single_post->post_author ] : $coauthors_plus->update_author_term( $author );
 				$author_terms[ $single_post->post_author ] = $author_term;
 
 				wp_set_post_terms( $single_post->ID, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy );
@@ -126,26 +126,26 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function assign_coauthors( $args, $assoc_args ) {
 		global $coauthors_plus;
 
-		$defaults = array(
-				'meta_key'         => '_original_import_author',
-				'post_type'        => 'post',
-				'order'            => 'ASC',
-				'orderby'          => 'ID',
-				'posts_per_page'   => 100,
-				'paged'            => 1,
-				'append_coauthors' => false,
-			);
+		$defaults   = array(
+			'meta_key'         => '_original_import_author',
+			'post_type'        => 'post',
+			'order'            => 'ASC',
+			'orderby'          => 'ID',
+			'posts_per_page'   => 100,
+			'paged'            => 1,
+			'append_coauthors' => false,
+		);
 		$this->args = wp_parse_args( $assoc_args, $defaults );
 
 		// For global use and not a part of WP_Query
 		$append_coauthors = $this->args['append_coauthors'];
 		unset( $this->args['append_coauthors'] );
 
-		$posts_total = 0;
+		$posts_total              = 0;
 		$posts_already_associated = 0;
-		$posts_missing_coauthor = 0;
-		$posts_associated = 0;
-		$missing_coauthors = array();
+		$posts_missing_coauthor   = 0;
+		$posts_associated         = 0;
+		$missing_coauthors        = array();
 
 		$posts = new WP_Query( $this->args );
 		while ( $posts->post_count ) {
@@ -154,7 +154,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$posts_total++;
 
 				// See if the value in the post meta field is the same as any of the existing coauthors
-				$original_author = get_post_meta( $single_post->ID, $this->args['meta_key'], true );
+				$original_author    = get_post_meta( $single_post->ID, $this->args['meta_key'], true );
 				$existing_coauthors = get_coauthors( $single_post->ID );
 				$already_associated = false;
 				foreach ( $existing_coauthors as $existing_coauthor ) {
@@ -215,13 +215,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function assign_user_to_coauthor( $args, $assoc_args ) {
 		global $coauthors_plus, $wpdb;
 
-		$defaults = array(
-				'user_login'        => '',
-				'coauthor'          => '',
-			);
+		$defaults   = array(
+			'user_login' => '',
+			'coauthor'   => '',
+		);
 		$assoc_args = wp_parse_args( $assoc_args, $defaults );
 
-		$user = get_user_by( 'login', $assoc_args['user_login'] );
+		$user     = get_user_by( 'login', $assoc_args['user_login'] );
 		$coauthor = $coauthors_plus->get_coauthor_by( 'login', $assoc_args['coauthor'] );
 
 		if ( ! $user ) {
@@ -233,21 +233,23 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		$post_types = implode( "','", $coauthors_plus->supported_post_types );
-		$posts = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
-		$affected = 0;
+		$posts      = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN (%s)", $user->ID, $post_types ) );
+		$affected   = 0;
 		foreach ( $posts as $post_id ) {
 			$coauthors = cap_get_coauthor_terms_for_post( $post_id );
 			if ( ! empty( $coauthors ) ) {
-				WP_CLI::line( sprintf(
-					__( 'Skipping - Post #%d already has co-authors assigned: %s', 'co-authors-plus' ),
-					$post_id,
-					implode( ', ', wp_list_pluck( $coauthors, 'slug' ) )
-				) );
+				WP_CLI::line(
+					sprintf(
+						__( 'Skipping - Post #%1$d already has co-authors assigned: %2$s', 'co-authors-plus' ),
+						$post_id,
+						implode( ', ', wp_list_pluck( $coauthors, 'slug' ) )
+					)
+				);
 				continue;
 			}
 
 			$coauthors_plus->add_coauthors( $post_id, array( $coauthor->user_login ) );
-			WP_CLI::line( sprintf( __( "Updating - Adding %s's byline to post #%d", 'co-authors-plus' ), $coauthor->user_login, $post_id ) );
+			WP_CLI::line( sprintf( __( "Updating - Adding %1\$s's byline to post #%2\$d", 'co-authors-plus' ), $coauthor->user_login, $post_id ) );
 			$affected++;
 			if ( $affected && 0 === $affected % 100 ) {
 				sleep( 2 );
@@ -274,22 +276,22 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function reassign_terms( $args, $assoc_args ) {
 		global $coauthors_plus;
 
-		$defaults = array(
-				'author_mapping'    => null,
-				'old_term'          => null,
-				'new_term'          => null,
-			);
+		$defaults   = array(
+			'author_mapping' => null,
+			'old_term'       => null,
+			'new_term'       => null,
+		);
 		$this->args = wp_parse_args( $assoc_args, $defaults );
 
 		$author_mapping = $this->args['author_mapping'];
-		$old_term = $this->args['old_term'];
-		$new_term = $this->args['new_term'];
+		$old_term       = $this->args['old_term'];
+		$new_term       = $this->args['new_term'];
 
 		// Get the reassignment data
 		if ( $author_mapping && file_exists( $author_mapping ) ) {
-			require_once( $author_mapping );
+			require_once $author_mapping;
 			$authors_to_migrate = $cli_user_map;
-		} else if ( $author_mapping ) {
+		} elseif ( $author_mapping ) {
 			WP_CLI::error( "author_mapping doesn't exist: " . $author_mapping );
 			exit;
 		}
@@ -297,17 +299,17 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		// Alternate reassigment approach
 		if ( $old_term && $new_term ) {
 			$authors_to_migrate = array(
-					$old_term => $new_term,
-				);
+				$old_term => $new_term,
+			);
 		}
 
 		// For each author to migrate, check whether the term exists,
 		// whether the target term exists, and only do the migration if both are met
 		$results = (object) array(
-				'old_term_missing' => 0,
-				'new_term_exists' => 0,
-				'success' => 0,
-			);
+			'old_term_missing' => 0,
+			'new_term_exists'  => 0,
+			'success'          => 0,
+		);
 		foreach ( $authors_to_migrate as $old_user => $new_user ) {
 
 			if ( is_numeric( $new_user ) ) {
@@ -329,16 +331,16 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			if ( is_object( $new_term ) ) {
 				WP_CLI::line( "Success: There's already a '{$new_user}' term for '{$old_user}'. Reassigning {$old_term->count} posts and then deleting the term" );
 				$args = array(
-						'default' => $new_term->term_id,
-						'force_default' => true,
-					);
+					'default'       => $new_term->term_id,
+					'force_default' => true,
+				);
 				wp_delete_term( $old_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
 				$results->new_term_exists++;
 			} else {
 				$args = array(
-						'slug' => $new_user,
-						'name' => $new_user,
-					);
+					'slug' => $new_user,
+					'name' => $new_user,
+				);
 				wp_update_term( $old_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
 				WP_CLI::line( "Success: Converted '{$old_user}' term to '{$new_user}'" );
 				$results->success++;
@@ -366,13 +368,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function rename_coauthor( $args, $assoc_args ) {
 		global $coauthors_plus, $wpdb;
 
-		$defaults = array(
-				'from'      => null,
-				'to'        => null,
-			);
+		$defaults   = array(
+			'from' => null,
+			'to'   => null,
+		);
 		$assoc_args = array_merge( $defaults, $assoc_args );
 
-		$to_userlogin = $assoc_args['to'];
+		$to_userlogin          = $assoc_args['to'];
 		$to_userlogin_prefixed = 'cap-' . $to_userlogin;
 
 		$orig_coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $assoc_args['from'] );
@@ -392,9 +394,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		WP_CLI::line( "Renaming {$orig_term->name} to {$to_userlogin}" );
 		$rename_args = array(
-				'name'         => $to_userlogin,
-				'slug'         => $to_userlogin_prefixed,
-			);
+			'name' => $to_userlogin,
+			'slug' => $to_userlogin_prefixed,
+		);
 		wp_update_term( $orig_term->term_id, $coauthors_plus->coauthor_taxonomy, $rename_args );
 
 		if ( 'guest-author' == $orig_coauthor->type ) {
@@ -421,19 +423,19 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$defaults = array(
 			'from'      => null,
 			'to'        => null,
-			'post_type'	=> 'post',
-			'dry'		=> false,
+			'post_type' => 'post',
+			'dry'       => false,
 		);
 
 		$assoc_args = array_merge( $defaults, $assoc_args );
 
-		$dry 						= $assoc_args['dry'];
+		$dry = $assoc_args['dry'];
 
-		$from_userlogin 			= $assoc_args['from'];
-		$to_userlogin 				= $assoc_args['to'];
+		$from_userlogin = $assoc_args['from'];
+		$to_userlogin   = $assoc_args['to'];
 
-		$from_userlogin_prefixed	= 'cap-' . $from_userlogin;
-		$to_userlogin_prefixed 		= 'cap-' . $to_userlogin;
+		$from_userlogin_prefixed = 'cap-' . $from_userlogin;
+		$to_userlogin_prefixed   = 'cap-' . $to_userlogin;
 
 		$orig_coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $from_userlogin );
 
@@ -454,16 +456,16 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		WP_CLI::line( "Swapping authorship from {$from_userlogin} to {$to_userlogin}" );
 
 		$query_args = array(
-			'post_type'        	=> $assoc_args['post_type'],
-			'order'            	=> 'ASC',
-			'orderby'          	=> 'ID',
-			'posts_per_page'   	=> 100,
-			'paged'            	=> 1,
-			'tax_query'			=> array(
+			'post_type'      => $assoc_args['post_type'],
+			'order'          => 'ASC',
+			'orderby'        => 'ID',
+			'posts_per_page' => 100,
+			'paged'          => 1,
+			'tax_query'      => array(
 				array(
-					'taxonomy' 	=> $coauthors_plus->coauthor_taxonomy,
-					'field'		=> 'slug',
-					'terms'		=> array( $from_userlogin_prefixed ),
+					'taxonomy' => $coauthors_plus->coauthor_taxonomy,
+					'field'    => 'slug',
+					'terms'    => array( $from_userlogin_prefixed ),
 				),
 			),
 		);
@@ -534,16 +536,16 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function list_posts_without_terms( $args, $assoc_args ) {
 		global $coauthors_plus;
 
-		$defaults = array(
-				'post_type'         => 'post',
-				'order'             => 'ASC',
-				'orderby'           => 'ID',
-				'year'              => '',
-				'posts_per_page'    => 300,
-				'paged'             => 1,
-				'no_found_rows'     => true,
-				'update_meta_cache' => false,
-			);
+		$defaults   = array(
+			'post_type'         => 'post',
+			'order'             => 'ASC',
+			'orderby'           => 'ID',
+			'year'              => '',
+			'posts_per_page'    => 300,
+			'paged'             => 1,
+			'no_found_rows'     => true,
+			'update_meta_cache' => false,
+		);
 		$this->args = wp_parse_args( $assoc_args, $defaults );
 
 		$posts = new WP_Query( $this->args );
@@ -554,11 +556,11 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$terms = cap_get_coauthor_terms_for_post( $single_post->ID );
 				if ( empty( $terms ) ) {
 					$saved = array(
-							$single_post->ID,
-							addslashes( $single_post->post_title ),
-							get_permalink( $single_post->ID ),
-							$single_post->post_date,
-						);
+						$single_post->ID,
+						addslashes( $single_post->post_title ),
+						get_permalink( $single_post->ID ),
+						$single_post->post_date,
+					);
 					WP_CLI::line( '"' . implode( '","', $saved ) . '"' );
 				}
 			}
@@ -595,7 +597,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			if ( $prefixed_term = get_term_by( 'slug', 'cap-' . $author_term->slug, $coauthors_plus->coauthor_taxonomy ) ) {
 				WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) has a new term too: $prefixed_term->slug ($prefixed_term->term_id). Merging" );
 				$args = array(
-					'default' => $author_term->term_id,
+					'default'       => $author_term->term_id,
 					'force_default' => true,
 				);
 				wp_delete_term( $prefixed_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
@@ -604,8 +606,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			// Term isn't prefixed, doesn't have a sibling, and should be updated
 			WP_CLI::line( "Term {$author_term->slug} ({$author_term->term_id}) isn't prefixed, adding one" );
 			$args = array(
-					'slug' => 'cap-' . $author_term->slug,
-				);
+				'slug' => 'cap-' . $author_term->slug,
+			);
 			wp_update_term( $author_term->term_id, $coauthors_plus->coauthor_taxonomy, $args );
 		}
 		WP_CLI::success( 'All done! Grab a cold one (Affogatto)' );
@@ -624,7 +626,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		WP_CLI::line( 'Now updating ' . count( $author_terms ) . ' terms' );
 		foreach ( $author_terms as $author_term ) {
 			$old_count = $author_term->count;
-			$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $author_term->slug );
+			$coauthor  = $coauthors_plus->get_coauthor_by( 'user_nicename', $author_term->slug );
 			$coauthors_plus->update_author_term( $coauthor );
 			$coauthors_plus->update_author_term_post_count( $author_term );
 			wp_cache_delete( $author_term->term_id, $coauthors_plus->coauthor_taxonomy );
@@ -725,7 +727,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function create_guest_authors_from_wxr( $args, $assoc_args ) {
 		global $coauthors_plus;
 
-		$defaults = array(
+		$defaults   = array(
 			'file' => '',
 		);
 		$this->args = wp_parse_args( $assoc_args, $defaults );
@@ -735,10 +737,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		if ( ! class_exists( 'WXR_Parser' ) ) {
-			require_once( WP_CONTENT_DIR . '/plugins/wordpress-importer/parsers.php' );
+			require_once WP_CONTENT_DIR . '/plugins/wordpress-importer/parsers.php';
 		}
 
-		$parser = new WXR_Parser();
+		$parser      = new WXR_Parser();
 		$import_data = $parser->parse( $this->args['file'] );
 
 		if ( is_wp_error( $import_data ) ) {
@@ -753,11 +755,11 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			$guest_author_data = array(
 				'display_name' => $author['author_display_name'],
-				'user_login' => $author['author_login'],
-				'user_email' => $author['author_email'],
-				'first_name' => $author['author_first_name'],
-				'last_name' => $author['author_last_name'],
-				'ID' => $author['author_id'],
+				'user_login'   => $author['author_login'],
+				'user_email'   => $author['author_email'],
+				'first_name'   => $author['author_first_name'],
+				'last_name'    => $author['author_last_name'],
+				'ID'           => $author['author_id'],
 			);
 
 			$guest_author_id = $this->create_guest_author( $guest_author_data );
@@ -775,7 +777,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	public function create_guest_authors_from_csv( $args, $assoc_args ) {
 		global $coauthors_plus;
 
-		$defaults = array(
+		$defaults   = array(
 			'file' => '',
 		);
 		$this->args = wp_parse_args( $assoc_args, $defaults );
@@ -798,7 +800,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$field_keys = array_map( 'trim', $data );
 				// TODO: bail if required fields not found
 			} else {
-				$row_data = array_map( 'trim', $data );
+				$row_data    = array_map( 'trim', $data );
 				$author_data = array();
 				foreach ( (array) $row_data as $col_num => $val ) {
 						// Don't use the value of the field key isn't set
@@ -821,24 +823,24 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			$guest_author_data = array(
 				'display_name' => sanitize_text_field( $author['display_name'] ),
-				'user_login' => sanitize_user( $author['user_login'] ),
-				'user_email' => sanitize_email( $author['user_email'] ),
-				'website' => esc_url_raw( $author['website'] ),
-				'description' => wp_filter_post_kses( $author['description'] ),
-				'avatar' => absint( $author['avatar'] ),
+				'user_login'   => sanitize_user( $author['user_login'] ),
+				'user_email'   => sanitize_email( $author['user_email'] ),
+				'website'      => esc_url_raw( $author['website'] ),
+				'description'  => wp_filter_post_kses( $author['description'] ),
+				'avatar'       => absint( $author['avatar'] ),
 			);
 
 			$display_name_space_pos = strpos( $author['display_name'], ' ' );
 
 			if ( false !== $display_name_space_pos && empty( $author['first_name'] ) && empty( $author['last_name'] ) ) {
 				$first_name = substr( $author['display_name'], 0, $display_name_space_pos );
-				$last_name = substr( $author['display_name'], ( $display_name_space_pos + 1 ) );
+				$last_name  = substr( $author['display_name'], ( $display_name_space_pos + 1 ) );
 
 				$guest_author_data['first_name'] = sanitize_text_field( $first_name );
-				$guest_author_data['last_name'] = sanitize_text_field( $last_name );
+				$guest_author_data['last_name']  = sanitize_text_field( $last_name );
 			} elseif ( ! empty( $author['first_name'] ) && ! empty( $author['last_name'] ) ) {
 				$guest_author_data['first_name'] = sanitize_text_field( $author['first_name'] );
-				$guest_author_data['last_name'] = sanitize_text_field( $author['last_name'] );
+				$guest_author_data['last_name']  = sanitize_text_field( $author['last_name'] );
 			}
 
 			$guest_author_id = $this->create_guest_author( $guest_author_data );
@@ -858,16 +860,18 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		if ( ! $guest_author ) {
 			WP_CLI::line( '-- Not found; creating profile.' );
 
-			$guest_author_id = $coauthors_plus->guest_authors->create( array(
-				'display_name' => $author['display_name'],
-				'user_login' => $author['user_login'],
-				'user_email' => $author['user_email'],
-				'first_name' => $author['first_name'],
-				'last_name' => $author['last_name'],
-				'website' => $author['website'],
-				'description' => $author['description'],
-				'avatar' => $author['avatar'],
-			) );
+			$guest_author_id = $coauthors_plus->guest_authors->create(
+				array(
+					'display_name' => $author['display_name'],
+					'user_login'   => $author['user_login'],
+					'user_email'   => $author['user_email'],
+					'first_name'   => $author['first_name'],
+					'last_name'    => $author['last_name'],
+					'website'      => $author['website'],
+					'description'  => $author['description'],
+					'avatar'       => $author['avatar'],
+				)
+			);
 
 			if ( $guest_author_id ) {
 				WP_CLI::line( sprintf( '-- Created as guest author #%s', $guest_author_id ) );
@@ -897,10 +901,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			return;
 		}
 
-		$wp_object_cache->group_ops = array();
-		$wp_object_cache->stats = array();
+		$wp_object_cache->group_ops      = array();
+		$wp_object_cache->stats          = array();
 		$wp_object_cache->memcache_debug = array();
-		$wp_object_cache->cache = array();
+		$wp_object_cache->cache          = array();
 
 		if ( is_callable( $wp_object_cache, '__remoteset' ) ) {
 			$wp_object_cache->__remoteset(); // important

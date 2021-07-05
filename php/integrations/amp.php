@@ -13,7 +13,7 @@ function cap_update_amp_json_metadata( $metadata, $post ) {
 	foreach ( $authors as $author ) {
 		$authors_json[] = array(
 			'@type' => 'Person',
-			'name' => $author->display_name,
+			'name'  => $author->display_name,
 		);
 	}
 	$metadata['author'] = $authors_json;
