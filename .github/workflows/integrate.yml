@@ -45,16 +45,6 @@ jobs:
         with:
           composer-options: "${{ matrix.composer-options }}"
           
-      - name: Install Composer dependencies (PHP < 8.0 )
-        if: ${{ matrix.php < 8.0 }}
-        uses: ramsey/composer-install@v1
-
-      - name: Install Composer dependencies (PHP >= 8.0)
-        if: ${{ matrix.php >= 8.0 }}
-        uses: ramsey/composer-install@v1
-        with:
-          composer-options: --ignore-platform-reqs
-
       - name: Setup Problem Matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
