@@ -12,15 +12,21 @@ jobs:
       WP_VERSION: ${{ matrix.wordpress }}
       
     strategy:
-      fail-fast: false
       matrix:
         php: [ '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0' ]
         wordpress: [ '5.5', '5.6', '5.7'  ]
         allowed_failure: [ false ]
-        # https://make.wordpress.org/core/2020/11/23/wordpress-and-php-8-0/
+        include:
+          - php: "8.0"
+            # Ignore platform requirements, so that PHPUnit 7.5 can be installed on PHP 8.0 (and above).
+            composer-options: "--ignore-platform-reqs"
+            extensions: pcov
+            ini-values: pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
+            coverage: pcov
         exclude: 
           - php: '8.0'
             wordpress: '5.5'
+      fail-fast: false
 
     steps:
       - name: Checkout code
@@ -30,10 +36,15 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          coverage: pcov
-          # https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions
-          extensions: curl, dom, exif, fileinfo, hash, json, mbstring, mysqli, libsodium, openssl, pcre, imagick, xml, zip
+          extensions: ${{ matrix.extensions }}
+          ini-values: ${{ matrix.ini-values }}
+          coverage: ${{ matrix.coverage }}
 
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: "${{ matrix.composer-options }}"
+          
       - name: Install Composer dependencies (PHP < 8.0 )
         if: ${{ matrix.php < 8.0 }}
         uses: ramsey/composer-install@v1
