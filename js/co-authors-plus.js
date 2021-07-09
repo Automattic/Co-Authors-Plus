@@ -32,7 +32,7 @@ jQuery( document ).ready(function () {
 
 		$tag.hide();
 		$co.show()
-			.focus()
+			.on( 'focus' )
 			;
 
 		$co.previousAuthor = $tag.text();
@@ -96,13 +96,13 @@ jQuery( document ).ready(function () {
 			}
 		}
 
-		co.bind( 'blur', coauthors_stop_editing );
+		co.on( 'blur', coauthors_stop_editing );
 
 		// Set the value for the auto-suggest box to the co-author's name and hide it
 		// unescape() is deprecated, so replacing it with decodeURIComponent() here and every places.
 		co.val( decodeURIComponent( author.name ) )
 			.hide()
-			.unbind( 'focus' )
+			.off( 'focus' )
 			;
 
 		return true;
@@ -146,7 +146,7 @@ jQuery( document ).ready(function () {
 			var deleteBtn = jQuery( '<span/>' )
 								.addClass( 'delete-coauthor' )
 								.text( coAuthorsPlusStrings.delete_label )
-								.bind( 'click', coauthors_delete_onclick )
+								.on( 'click', coauthors_delete_onclick )
 								;
 			$options.append( deleteBtn );
 		}
@@ -175,15 +175,15 @@ jQuery( document ).ready(function () {
 				onSelect: coauthors_autosuggest_select,
 				delay: 1000
 			})
-			.keydown( coauthors_autosuggest_keydown )
+			.on( 'keydown', coauthors_autosuggest_keydown )
 			;
 
 		if ( authorName )
 			$co.attr( 'value', decodeURIComponent( authorName ) );
 		else
 			$co.attr( 'value', coAuthorsPlusStrings.search_box_text )
-				.focus( function(){ $co.val( '' ) } )
-				.blur( function(){ $co.val( coAuthorsPlusStrings.search_box_text ) } )
+				.on( 'focus', function(){ $co.val( '' ) } )
+				.on( 'blur', function(){ $co.val( coAuthorsPlusStrings.search_box_text ) } )
 				;
 
 		return $co;
@@ -250,7 +250,7 @@ jQuery( document ).ready(function () {
 							.attr( 'title', coAuthorsPlusStrings.input_box_title )
 							.addClass( 'coauthor-tag' )
 							// Add Click event to edit
-							.click( coauthors_edit_onclick );
+							.on( 'click', coauthors_edit_onclick );
 		return $tag;
 	}
 
