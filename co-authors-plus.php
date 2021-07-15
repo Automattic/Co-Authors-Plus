@@ -174,8 +174,18 @@ class CoAuthors_Plus {
 
 	}
 
-	public function using_block_editor_integration() {
-		return apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
+	/**
+	 * Determine if block editor sidebar integration should be loaded.
+	 *
+	 * @param WP_Post|int|null $post Post ID or object, null to use global.
+	 * @return bool
+	 */
+	public function using_block_editor_integration( $post = null ) {
+		if ( ! use_block_editor_for_post( $post ) ) {
+			return false;
+		}
+
+		return (bool) apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
 	}
 
 	public function enqueue_sidebar_plugin_assets() {
