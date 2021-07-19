@@ -196,16 +196,16 @@ jQuery( document ).ready(function () {
 		var vals = this.value.split( '∣' );
 
 		var author = {}
-		author.id = jQuery.trim( vals[0] );
-		author.login = jQuery.trim( vals[1] );
-		author.name = jQuery.trim( vals[2] );
-		author.email = jQuery.trim( vals[3] );
+		author.id = vals[0].trim();
+		author.login = vals[1].trim();
+		author.name = vals[2].trim();
+		author.email = vals[3].trim();
 		if( author.avatar !== '' ){
-			author.avatar = jQuery.trim( vals[5] );
+			author.avatar = vals[5].trim();
 		}
 
 		// Decode user-nicename if it has special characters in it.
-		author.nicename = decodeURIComponent( jQuery.trim( vals[4] ) );
+		author.nicename = decodeURIComponent( vals[4].trim() );
 
 		if ( author.id=='New' ) {
 			coauthors_new_author_display( name );
