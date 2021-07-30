@@ -790,7 +790,11 @@ class CoAuthors_Guest_Authors {
 		if ( $user
 			&& is_user_member_of_blog( $user->ID, get_current_blog_id() )
 			&& $user->user_login != get_post_meta( $original_args['ID'], $this->get_post_meta_key( 'linked_account' ), true ) ) {
-			wp_die( esc_html__( 'Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user on the Manage Users listing instead.', 'co-authors-plus' ) );
+			// if user has selected to link account to matching user we don't have to bail
+			if ( isset( $_POST['cap-linked_account'] ) && (int) $_POST['cap-linked_account'] === (int) $user->ID ) {
+				return $post_data;
+			}
+			wp_die( esc_html__( 'There is a WordPress user with the same username as this guest author, please go back and link them in order to update.', 'co-authors-plus' ) );
 		}
 
 		// Guest authors can't have the same post_name value

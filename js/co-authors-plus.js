@@ -32,7 +32,7 @@ jQuery( document ).ready(function () {
 
 		$tag.hide();
 		$co.show()
-			.focus()
+			.on( 'focus' )
 			;
 
 		$co.previousAuthor = $tag.text();
@@ -96,13 +96,13 @@ jQuery( document ).ready(function () {
 			}
 		}
 
-		co.bind( 'blur', coauthors_stop_editing );
+		co.on( 'blur', coauthors_stop_editing );
 
 		// Set the value for the auto-suggest box to the co-author's name and hide it
 		// unescape() is deprecated, so replacing it with decodeURIComponent() here and every places.
 		co.val( decodeURIComponent( author.name ) )
 			.hide()
-			.unbind( 'focus' )
+			.off( 'focus' )
 			;
 
 		return true;
@@ -146,7 +146,7 @@ jQuery( document ).ready(function () {
 			var deleteBtn = jQuery( '<span/>' )
 								.addClass( 'delete-coauthor' )
 								.text( coAuthorsPlusStrings.delete_label )
-								.bind( 'click', coauthors_delete_onclick )
+								.on( 'click', coauthors_delete_onclick )
 								;
 			$options.append( deleteBtn );
 		}
@@ -175,15 +175,15 @@ jQuery( document ).ready(function () {
 				onSelect: coauthors_autosuggest_select,
 				delay: 1000
 			})
-			.keydown( coauthors_autosuggest_keydown )
+			.on( 'keydown', coauthors_autosuggest_keydown )
 			;
 
 		if ( authorName )
 			$co.attr( 'value', decodeURIComponent( authorName ) );
 		else
 			$co.attr( 'value', coAuthorsPlusStrings.search_box_text )
-				.focus( function(){ $co.val( '' ) } )
-				.blur( function(){ $co.val( coAuthorsPlusStrings.search_box_text ) } )
+				.on( 'focus', function(){ $co.val( '' ) } )
+				.on( 'blur', function(){ $co.val( coAuthorsPlusStrings.search_box_text ) } )
 				;
 
 		return $co;
@@ -196,16 +196,16 @@ jQuery( document ).ready(function () {
 		var vals = this.value.split( '∣' );
 
 		var author = {}
-		author.id = jQuery.trim( vals[0] );
-		author.login = jQuery.trim( vals[1] );
-		author.name = jQuery.trim( vals[2] );
-		author.email = jQuery.trim( vals[3] );
+		author.id = vals[0].trim();
+		author.login = vals[1].trim();
+		author.name = vals[2].trim();
+		author.email = vals[3].trim();
 		if( author.avatar !== '' ){
-			author.avatar = jQuery.trim( vals[5] );
+			author.avatar = vals[5].trim();
 		}
 
 		// Decode user-nicename if it has special characters in it.
-		author.nicename = decodeURIComponent( jQuery.trim( vals[4] ) );
+		author.nicename = decodeURIComponent( vals[4].trim() );
 
 		if ( author.id=='New' ) {
 			coauthors_new_author_display( name );
@@ -250,7 +250,7 @@ jQuery( document ).ready(function () {
 							.attr( 'title', coAuthorsPlusStrings.input_box_title )
 							.addClass( 'coauthor-tag' )
 							// Add Click event to edit
-							.click( coauthors_edit_onclick );
+							.on( 'click', coauthors_edit_onclick );
 		return $tag;
 	}
 
