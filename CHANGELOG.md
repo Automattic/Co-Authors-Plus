@@ -1,5 +1,8 @@
 # Changelog for Co-Authors Plus
 
+**3.4.91 (Aug 12, 2021)**
+* Revert change with #686 regex change #816
+
 **3.4.9 (Aug 11, 2021)**
 * Fix clash on updating guest author with same slug as a WP_User #748
 * Resolve warning from fix_author_page() when called too early #801
