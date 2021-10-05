@@ -737,18 +737,14 @@ class CoAuthors_Plus {
 
 				// When WordPress generates query as 'post_author IN (id)'.
 				if ( false !== strpos( $where, "{$wpdb->posts}.post_author IN " ) ) {
-
-					$maybe_both_query = $maybe_both ? '$0 OR' : '';
-
-					if ( is_admin() ) { // if this is an admin page, adjust for unnecessary `post_author IN` returned from WordPress
-						// remove author line to prevent duplicates in query parameters
-						$where = preg_replace( '/AND\s*\((?:' . $wpdb->posts . '\.)?post_author\s*\=\s*\d+\)/', ' ', $where, 1 );
-						// remove .post_author `IN` and replace with `=`
-						$where = preg_replace( '/\s\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*\(\d+\)/', ' (' . $wpdb->posts . '.post_author = ' . $id . ' OR (' . $terms_implode . '))', $where, - 1 );
+					// remove author line to prevent duplicates in query parameters
+					$where = preg_replace( '/AND\s*\((?:' . $wpdb->posts . '\.)?post_author\s*\=\s*\d+\)/', ' ', $where, 1 );
+					// if there is a user match, remove .post_author `IN` and replace with `=`, otherwise, just look for the guest author's term taxonomy
+					if ( $id !== '\d+' ) {
+						$where = preg_replace( '/\s\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*\(\d+\)/', ' (' . $wpdb->posts . '.post_author = ' . $id . ' OR ' . $terms_implode . ')', $where, - 1 );
 					} else {
-						$where = preg_replace( '/\s\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*\(' . $id . '\)/', ' (' . $maybe_both_query . ' ' . $terms_implode . ')', $where, - 1 ); // ' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+						$where = preg_replace( '/\s\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*\(\d+\)/', ' ' . $terms_implode, $where, - 1 );
 					}
-
 				} else {
 					$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, 1 ); // ' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
 				}
