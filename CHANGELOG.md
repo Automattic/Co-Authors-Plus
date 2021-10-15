@@ -1,5 +1,8 @@
 # Changelog for Co-Authors Plus
 
+**3.4.92 (Oct 14, 2021)**
+* Fix admin posts view for contributors #823
+
 **3.4.91 (Aug 12, 2021)**
 * Revert change with #686 regex change #816
 
