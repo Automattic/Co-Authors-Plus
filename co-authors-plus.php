@@ -735,15 +735,17 @@ class CoAuthors_Plus {
 					$id = '\d+';
 				}
 
-				// When WordPress generates query as 'post_author IN (id)'.
-				if ( false !== strpos( $where, "{$wpdb->posts}.post_author IN " ) ) {
+				$maybe_both_query = $maybe_both ? '$0 OR' : '';
 
-					$maybe_both_query = $maybe_both ? '$0 OR' : '';
+				// add the taxonomy terms to the where query
+				$where = preg_replace( '/\(?\b(?:' . $wpdb->posts . '\.)?post_author\s*(?:=|IN)\s*\(?\d+\)?\)?/', ' (' . $maybe_both_query . ' ' . $terms_implode . ')', $where, 1 );
 
-					$where = preg_replace( '/\s\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*\(' . $id . '\)/', ' (' . $maybe_both_query . ' ' . $terms_implode . ')', $where, -1 ); // ' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				// if there is a duplicate post_author query parameter, remove the duplicate
+				$where = preg_replace( '/AND\s*\((?:' . $wpdb->posts . '\.)?post_author\s*\=\s*\d+\)/', ' ', $where, 1 );
 
-				} else {
-					$where = preg_replace( '/(\b(?:' . $wpdb->posts . '\.)?post_author\s*=\s*(' . $id . '))/', '(' . $maybe_both_query . ' ' . $terms_implode . ')', $where, 1 ); // ' . $wpdb->postmeta . '.meta_id IS NOT NULL AND
+				// When WordPress generates query as 'post_author IN (id)', and there is a numeric $id, replace the often errant $id with the correct one - related to https://core.trac.wordpress.org/ticket/54268
+				if ( '\d+' !== $id ) {
+					$where = preg_replace( '/\b(?:' . $wpdb->posts . '\.)?post_author\s*IN\s*\(\d+\)/', ' (' . $wpdb->posts . '.post_author = ' . $id . ')', $where, 1 );
 				}
 
 				// the block targets the private posts clause (if it exists)
