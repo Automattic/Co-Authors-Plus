@@ -190,9 +190,6 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			'user_email',
 			'linked_account',
 			'website',
-			'aim',
-			'yahooim',
-			'jabber',
 			'description',
 		);
 
@@ -219,7 +216,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$fields = $guest_author_obj->get_guest_author_fields( 'contact-info' );
 		$keys   = wp_list_pluck( $fields, 'key' );
 
-		$this->assertEquals( array( 'user_email', 'website', 'aim', 'yahooim', 'jabber' ), $keys );
+		$this->assertEquals( array( 'user_email', 'website' ), $keys );
 
 		// Checks all the meta fields with group "about".
 		$fields = $guest_author_obj->get_guest_author_fields( 'about' );
