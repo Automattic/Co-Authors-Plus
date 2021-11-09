@@ -546,7 +546,7 @@ class CoAuthors_Plus {
 		global $wpdb;
 
 		$tt_ids   = implode( ', ', array_map( 'intval', $tt_ids ) );
-		$term_ids = $wpdb->get_results( $wpdb->prepare( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN (%s)", $tt_ids ) );
+		$term_ids = $wpdb->get_results( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN ($tt_ids)" ); // phpcs:ignore
 
 
 		foreach ( (array) $term_ids as $term_id_result ) {
