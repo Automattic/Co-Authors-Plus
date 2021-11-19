@@ -233,7 +233,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		$post_types = implode( "','", $coauthors_plus->supported_post_types );
-		// phpcs:ignore
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching 
 		$posts      = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ('$post_types')", $user->ID ) );
 		$affected   = 0;
 		foreach ( $posts as $post_id ) {
