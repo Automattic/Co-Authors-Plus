@@ -1222,7 +1222,7 @@ class CoAuthors_Guest_Authors {
 				$value_key = 'user_nicename';
 			} elseif ( 'login' == $key ) {
 				$value_key = 'user_login';
-			} else if ( 'id' == $key ) {
+			} elseif ( 'id' == $key ) {
 				$value_key = 'ID';
 			}
 
