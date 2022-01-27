@@ -180,7 +180,7 @@ class CoAuthors_Plus {
 	 * @param WP_Post|int|null $post Post ID or object, null to use global.
 	 * @return bool
 	 */
-	public function using_block_editor_integration( $post = null ) {
+	public function using_block_editor_integration( $post = null ): bool {
 		if ( ! use_block_editor_for_post( $post ) ) {
 			return false;
 		}
@@ -188,7 +188,11 @@ class CoAuthors_Plus {
 		return (bool) apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
 	}
 
-	public function enqueue_sidebar_plugin_assets() {
+	/**
+	 * When filter is set to enable block editor integration, nqueue assets
+	 * for posts and users where Co Authors is enabled.
+	 */
+	public function enqueue_sidebar_plugin_assets(): void {
 		if ( $this->using_block_editor_integration() ) {
 
 			if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
