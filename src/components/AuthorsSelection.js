@@ -47,7 +47,7 @@ export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 								<Button
 									icon={ chevronUp }
 									className={ 'cap-icon-button' }
-									label={ __( 'Move Up', 'coauthors-plus' ) }
+									label={ __( 'Move Up', 'co-authors-plus' ) }
 									disabled={
 										i === 0 || 1 === selectedAuthors.length
 									}
@@ -60,7 +60,7 @@ export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 									className={ 'cap-icon-button' }
 									label={ __(
 										'Move down',
-										'coauthors-plus'
+										'co-authors-plus'
 									) }
 									disabled={
 										i === selectedAuthors.length - 1 ||
@@ -77,7 +77,7 @@ export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 								className={ 'cap-icon-button' }
 								label={ __(
 									'Remove Author',
-									'coauthors-plus'
+									'co-authors-plus'
 								) }
 								disabled={ 1 === selectedAuthors.length }
 								onClick={ () => onClick( author, 'remove' ) }

@@ -111,7 +111,7 @@ const Render = ( { authors, setAuthorsStore } ) => {
 
 			<ComboboxControl
 				className="cap-combobox"
-				label="Select An Author"
+				label={ __( 'Select An Author', 'co-authors-plus' ) }
 				value={ null }
 				options={ dropdownOptions }
 				onChange={ onChange }
@@ -127,12 +127,12 @@ const Render = ( { authors, setAuthorsStore } ) => {
  */
 const CoAuthors = compose( [
 	withState(),
-	withSelect( ( select ) => {
-		const { getCurrentPost } = select( 'core/editor' );
+	withSelect( ( scopedSelect ) => {
+		const { getCurrentPost } = scopedSelect( 'core/editor' );
 		const post = getCurrentPost();
 		const postId = post.id;
 
-		const { getAuthors } = select( 'cap/authors' );
+		const { getAuthors } = scopedSelect( 'cap/authors' );
 
 		const authors = getAuthors( postId );
 

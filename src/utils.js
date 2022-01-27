@@ -2,15 +2,15 @@
  * Move an item up or down in an array.
  *
  * @param {string} targetItem Item to move.
- * @param {Array} itemsArr Array in which to move the item.
- * @param {string} direction 'up' or 'down'
- * @return Array with reordered items.
+ * @param {Array}  itemsArr   Array in which to move the item.
+ * @param {string} direction  'up' or 'down'
+ * @return {Array} Array with reordered items.
  */
 export const moveItem = ( targetItem, itemsArr, direction ) => {
 	const currIndex = itemsArr
 		.map( ( item ) => item.value )
 		.indexOf( targetItem.value );
-	const indexUpdate = direction == 'up' ? -1 : 1;
+	const indexUpdate = direction === 'up' ? -1 : 1;
 	const newIndex = currIndex + indexUpdate;
 
 	const arrCopy = itemsArr.map( ( item ) => Object.assign( {}, item ) );
@@ -35,8 +35,8 @@ export const moveItem = ( targetItem, itemsArr, direction ) => {
  * Remove an item from the array.
  *
  * @param {Object} targetItem
- * @param {Array} itemsArr
- * @return array of items with the target item removed.
+ * @param {Array}  itemsArr
+ * @return {Array} array of items with the target item removed.
  */
 export const removeItem = ( targetItem, itemsArr ) => {
 	return itemsArr.filter( ( item ) => item.value !== targetItem.value );
@@ -47,9 +47,9 @@ export const removeItem = ( targetItem, itemsArr ) => {
  * then add it to the selected authors.
  *
  * @param {string} newAuthorValue
- * @param {Array} currAuthors
- * @param {Array} dropDownAuthors
- * @return Array of author objects including the new author.
+ * @param {Array}  currAuthors
+ * @param {Array}  dropDownAuthors
+ * @return {Array} Author objects including the new author.
  */
 export const addItemByValue = (
 	newAuthorValue,
@@ -65,17 +65,17 @@ export const addItemByValue = (
 /**
  * Format the author option object.
  *
- * @param {Object} root0               An author object from the API endpoint.
- * @param {Object} root0.display_name  Name to display in the UI.
- * @param {Object} root0.user_nicename The unique username.
+ * @param {Object} root0              An author object from the API endpoint.
+ * @param {Object} root0.displayName  Name to display in the UI.
+ * @param {Object} root0.userNicename The unique username.
  * @param {Object} root0.email
  *
  * @return {Object} The object containing data relevant to the Coauthors component.
  */
-export const formatAuthorData = ( { display_name, user_nicename, email } ) => {
+export const formatAuthorData = ( { displayName, userNicename, email } ) => {
 	return {
-		label: `${ display_name } | ${ email }`,
-		display: display_name,
-		value: user_nicename,
+		label: `${ displayName } | ${ email }`,
+		display: displayName,
+		value: userNicename,
 	};
 };

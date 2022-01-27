@@ -224,10 +224,10 @@ class Endpoints {
 
 		return array(
 			'id'            => esc_html( $author->ID ),
-			'user_nicename' => esc_html( rawurldecode( $author->user_nicename ) ),
+			'userNicename'  => esc_html( rawurldecode( $author->user_nicename ) ),
 			'login'         => esc_html( $author->user_login ),
 			'email'         => $author->user_email,
-			'display_name'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
+			'displayName'   => esc_html( str_replace( '∣', '|', $author->display_name ) ),
 			'avatar'        => esc_url( get_avatar_url( $author->ID ) ),
 		);
 	}
