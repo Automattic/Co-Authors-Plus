@@ -22,10 +22,10 @@ export const newAuthorValue = 'questlove';
 export const dropdownOptions = [
 	{
 		value: 'questlove',
-		display: 'Ahmir Thompson'
+		display: 'Ahmir Thompson',
 	},
 	{
 		value: 'claudette',
-		display: 'Claudette Colvin'
+		display: 'Claudette Colvin',
 	},
-]
+];

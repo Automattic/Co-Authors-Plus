@@ -80,10 +80,12 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 
 	resolvers: {
 		*getAuthors( postId ) {
-			const path = `${COAUTHORS_ENDPOINT}/${ postId }`;
+			const path = `${ COAUTHORS_ENDPOINT }/${ postId }`;
 			const result = yield actions.apiRequest( path );
 
-			const authors = result.map( author => formatAuthorData( author ) );
+			const authors = result.map( ( author ) =>
+				formatAuthorData( author )
+			);
 			return actions.setAuthors( authors );
 		},
 
@@ -91,7 +93,7 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 			const authorsStr = authors
 				.map( ( item ) => item.value )
 				.join( ',' );
-			const path = `${COAUTHORS_ENDPOINT}/${ postId }?new_authors=${ authorsStr }`;
+			const path = `${ COAUTHORS_ENDPOINT }/${ postId }?new_authors=${ authorsStr }`;
 
 			yield actions.apiRequest( path, 'POST' );
 		},

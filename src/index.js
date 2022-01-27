@@ -35,11 +35,10 @@ register( coauthorsStore );
  *
  * @param {Object}   root0
  * @param {boolean}  root0.authors         Array of authors from the store.
- * @param {function} root0.setAuthorsStore Method to save data new authors to the store.
+ * @param {Function} root0.setAuthorsStore Method to save data new authors to the store.
  * @return {JSX.Element}                   Document sidebar panel component.
  */
 const Render = ( { authors, setAuthorsStore } ) => {
-
 	// Currently selected options
 	const [ selectedAuthors, setSelectedAuthors ] = useState( [] );
 
@@ -85,13 +84,11 @@ const Render = ( { authors, setAuthorsStore } ) => {
 			path: `/coauthors/v1/search/?q=${ query }&existing_authors=${ existingAuthors }`,
 			method: 'GET',
 		} ).then( ( response ) => {
-
 			const formattedAuthors = ( ( items ) => {
 				if ( items.length > 0 ) {
 					return items.map( ( item ) => formatAuthorData( item ) );
-				} else {
-					return [];
 				}
+				return [];
 			} )( response );
 
 			setDropdownOptions( formattedAuthors );
@@ -161,7 +158,6 @@ const CoAuthors = compose( [
 	} ),
 ] )( Render );
 
-
 // Save authors when the post is saved.
 // https://github.com/WordPress/gutenberg/issues/17632
 const { isSavingPost, getCurrentPost } = select( 'core/editor' );
@@ -172,13 +168,11 @@ let checked = true; // Start in a checked state.
 subscribe( () => {
 	if ( isSavingPost() ) {
 		checked = false;
-	} else {
-		if ( ! checked ) {
-			const { id } = getCurrentPost();
-			const authors = getAuthors( id );
-			saveAuthors( id, authors );
-			checked = true;
-		}
+	} else if ( ! checked ) {
+		const { id } = getCurrentPost();
+		const authors = getAuthors( id );
+		saveAuthors( id, authors );
+		checked = true;
 	}
 } );
 

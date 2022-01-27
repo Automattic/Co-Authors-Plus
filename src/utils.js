@@ -2,9 +2,9 @@
  * Move an item up or down in an array.
  *
  * @param {string} targetItem Item to move.
- * @param {array} itemsArr Array in which to move the item.
+ * @param {Array} itemsArr Array in which to move the item.
  * @param {string} direction 'up' or 'down'
- * @returns Array with reordered items.
+ * @return Array with reordered items.
  */
 export const moveItem = ( targetItem, itemsArr, direction ) => {
 	const currIndex = itemsArr
@@ -20,9 +20,8 @@ export const moveItem = ( targetItem, itemsArr, direction ) => {
 		return arrCopy.filter( ( item ) => {
 			if ( item.value ) {
 				return item.value !== targetCopy.value;
-			} else {
-				return item !== targetCopy;
 			}
+			return item !== targetCopy;
 		} );
 	} )();
 	const sortedArr = [ ...newItems ];
@@ -35,9 +34,9 @@ export const moveItem = ( targetItem, itemsArr, direction ) => {
 /**
  * Remove an item from the array.
  *
- * @param {object} targetItem
- * @param {array} itemsArr
- * @returns array of items with the target item removed.
+ * @param {Object} targetItem
+ * @param {Array} itemsArr
+ * @return array of items with the target item removed.
  */
 export const removeItem = ( targetItem, itemsArr ) => {
 	return itemsArr.filter( ( item ) => item.value !== targetItem.value );
@@ -48,11 +47,15 @@ export const removeItem = ( targetItem, itemsArr ) => {
  * then add it to the selected authors.
  *
  * @param {string} newAuthorValue
- * @param {array} currAuthors
- * @param {array} dropDownAuthors
- * @returns Array of author objects including the new author.
+ * @param {Array} currAuthors
+ * @param {Array} dropDownAuthors
+ * @return Array of author objects including the new author.
  */
-export const addItemByValue = ( newAuthorValue, currAuthors, dropDownAuthors ) => {
+export const addItemByValue = (
+	newAuthorValue,
+	currAuthors,
+	dropDownAuthors
+) => {
 	const newAuthorObj = dropDownAuthors.filter(
 		( item ) => item.value === newAuthorValue
 	);
@@ -69,7 +72,7 @@ export const addItemByValue = ( newAuthorValue, currAuthors, dropDownAuthors ) =
  *
  * @return {Object} The object containing data relevant to the Coauthors component.
  */
-export const formatAuthorData = ({ display_name, user_nicename, email }) => {
+export const formatAuthorData = ( { display_name, user_nicename, email } ) => {
 	return {
 		label: `${ display_name } | ${ email }`,
 		display: display_name,
