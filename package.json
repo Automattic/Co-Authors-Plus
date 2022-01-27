@@ -14,6 +14,7 @@
     "format:js:src": "wp-scripts format-js ./src",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
+    "lint:js:src": "wp-scripts lint-js ./src",
     "lint:md:docs": "wp-scripts lint-md-docs",
     "lint:md:js": "wp-scripts lint-md-js",
     "lint:pkg-json": "wp-scripts lint-pkg-json",
@@ -27,8 +28,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/scripts": "^13.0.3",
     "@wordpress/icons": "^2.10.2",
+    "@wordpress/scripts": "^20.0.0",
     "prettier": "npm:wp-prettier@^2.2.1-beta-1"
   },
   "dependencies": {}
