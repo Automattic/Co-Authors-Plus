@@ -1,6 +1,20 @@
 # Changelog for Co-Authors Plus
 
-**3.4.7 (June 15, 2021)**
+**3.4.92 (Oct 14, 2021)**
+* Fix admin posts view for contributors #823
+
+**3.4.91 (Aug 12, 2021)**
+* Revert change with #686 regex change #816
+
+**3.4.9 (Aug 11, 2021)**
+* Fix clash on updating guest author with same slug as a WP_User #748
+* Resolve warning from fix_author_page() when called too early #801
+* Adjust regex on posts_where_filter to be less greedy #686
+* Update deprecated GitHub hosted runner #808
+* Replace deprecated jQuery shorthand methods #812
+* Switch guest author metabox to aside context #746
+
+**3.4.8 (June 15, 2021)**
 * Fix AJAX author autocomplete when no author to post in author selector #803
 
 **3.4.7 (May 31, 2021)**

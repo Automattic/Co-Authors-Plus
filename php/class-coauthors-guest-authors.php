@@ -1215,7 +1215,7 @@ class CoAuthors_Guest_Authors {
 
 		// Delete the lookup cache associated with each old co-author value
 		$keys = wp_list_pluck( $this->get_guest_author_fields(), 'key' );
-		$keys = array_merge( $keys, array( 'login', 'post_name', 'user_nicename', 'ID' ) );
+		$keys = array_merge( $keys, array( 'login', 'post_name', 'user_nicename', 'ID', 'id' ) );
 		foreach ( $keys as $key ) {
 			$value_key = $key;
 
@@ -1223,6 +1223,8 @@ class CoAuthors_Guest_Authors {
 				$value_key = 'user_nicename';
 			} elseif ( 'login' == $key ) {
 				$value_key = 'user_login';
+			} elseif ( 'id' == $key ) {
+				$value_key = 'ID';
 			}
 
 			$cache_key = $this->get_cache_key( $key, $guest_author->$value_key );
