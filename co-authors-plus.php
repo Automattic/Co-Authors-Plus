@@ -189,8 +189,8 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * When filter is set to enable block editor integration, nqueue assets
-	 * for posts and users where Co Authors is enabled.
+	 * When filter is set to enable block editor integration, enqueue assets
+	 * for posts and users where Co Authors is enabled
 	 */
 	public function enqueue_sidebar_plugin_assets(): void {
 		if ( $this->using_block_editor_integration() ) {
