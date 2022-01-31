@@ -51,7 +51,7 @@ class Endpoints {
 	/**
 	 * Register endpoints.
 	 */
-	public function add_endpoints(): void {
+	public function add_endpoints() {
 		register_rest_route(
 			static::NS,
 			static::SEARCH_ROUTE,
@@ -126,7 +126,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function get_coauthors_search_results( $request ): WP_REST_Response {
+	public function get_coauthors_search_results( $request ) {
 		$response = array();
 
 		$search  = strtolower( $request->get_param( 'q' ) );
@@ -148,7 +148,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function get_coauthors( $request ): WP_REST_Response {
+	public function get_coauthors( $request ) {
 		$response = array();
 
 		$this->_build_authors_response( $response, $request );
@@ -162,7 +162,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function update_coauthors( $request ): WP_REST_Response {
+	public function update_coauthors( $request ) {
 
 		$response = array();
 
@@ -184,7 +184,7 @@ class Endpoints {
 	 * @param mixed $param Value to validate.
 	 * @return bool
 	 */
-	public function validate_numeric( $param ): bool {
+	public function validate_numeric( $param ) {
 		return is_numeric( $param );
 	}
 
@@ -193,7 +193,7 @@ class Endpoints {
 	 *
 	 * @return bool
 	 */
-	public function can_edit_posts(): bool {
+	public function can_edit_posts() {
 		return current_user_can( 'edit_posts' );
 	}
 
@@ -203,7 +203,7 @@ class Endpoints {
 	 * @param WP_REST_Request $request Request object.
 	 * @return bool
 	 */
-	public function can_edit_coauthors( $request ): bool {
+	public function can_edit_coauthors( $request ) {
 		$post = get_post( $request->get_param( 'post_id' ) );
 
 		if ( ! $post instanceof WP_Post ) {
@@ -220,7 +220,7 @@ class Endpoints {
 	 * @param object  $author The result from coauthors methods.
 	 * @return array
 	 */
-	public function _format_author_data( $author ): array {
+	public function _format_author_data( $author ) {
 
 		return array(
 			'id'            => esc_html( $author->ID ),
@@ -238,7 +238,7 @@ class Endpoints {
 	 * @param array The response array.
 	 * @param int   Thet post ID from the request.
 	 */
-	public function _build_authors_response( &$response, $request ): void {
+	public function _build_authors_response( &$response, $request ) {
 		$authors = get_coauthors( $request->get_param( 'post_id' ) );
 
 		if ( ! empty( $authors ) ) {
@@ -252,7 +252,7 @@ class Endpoints {
 	 * Add filters to REST endpoints for each post that
 	 * supports coauthors.
 	 */
-	public function modify_responses(): void {
+	public function modify_responses() {
 
 		$post_types = $this->coauthors->supported_post_types;
 
@@ -281,7 +281,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request  Request object.
 	 * @return WP_REST_Response
 	 */
-	public function remove_author_link( $response, $post, $request ): WP_REST_Response {
+	public function remove_author_link( $response, $post, $request ) {
 		if (
 			! isset( $request['context'] )
 			|| 'edit' !== $request['context']
