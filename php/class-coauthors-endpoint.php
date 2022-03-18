@@ -289,11 +289,12 @@ class Endpoints {
 			return $response;
 		}
 
+
 		if ( ! use_block_editor_for_post( $post ) ) {
 			return $response;
 		}
 
-		if ( ! $this->coauthors->using_block_editor_integration() ) {
+		if ( ! $this->coauthors->is_block_editor() ) {
 			return $response;
 		}
 
@@ -302,6 +303,7 @@ class Endpoints {
 		if ( ! isset( $links[ static::SUPPORT_LINK ] ) ) {
 			return $response;
 		}
+
 
 		$response->remove_link( static::SUPPORT_LINK );
 

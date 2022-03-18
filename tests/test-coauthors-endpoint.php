@@ -307,7 +307,6 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			'Failed to assert that links are unchanged when block editor integration filter is at default.'
 		);
 
-		add_filter( 'coauthors_block_editor_integration', '__return_true' );
 		$response = rest_do_request( $request );
 
 		$this->_api->remove_author_link( $response, $test_post, $request );

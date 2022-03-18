@@ -82,11 +82,3 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 1. Multiple authors can be added to a Post, Page, or Custom Post Type using an auto-complete interface.
 2. The order of your co-authors can be changed by drag and drop.
 3. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
-
-## Block Editor Integration
-
-There is an integration of Co-Authors into the document sidebar in the block editor. To enable this integration, add the following filter to the `after_setup_theme` action in your theme or plugin.
-
-```
-add_filter( 'coauthors_block_editor_integration', '__return_true' );
-```

@@ -180,21 +180,24 @@ class CoAuthors_Plus {
 	 * @param WP_Post|int|null $post Post ID or object, null to use global.
 	 * @return bool
 	 */
-	public function using_block_editor_integration( $post = null ) {
-		$editor_active = use_block_editor_for_post( $post );
+	public function is_block_editor( $post = null ) {
+		// $editor_active = use_block_editor_for_post( $post );
 
-		// If it's a new post, $post will be null, so we check
-		// block editor support for the post type
-		if ( ! isset( $post ) ) {
-			global $typenow;
-			$editor_active = use_block_editor_for_post_type( $typenow );
-		}
+		// // If it's a new post, $post will be null, so we check
+		// // block editor support for the post type
+		// if ( ! isset( $post ) ) {
+		// 	global $typenow;
+		// 	$editor_active = use_block_editor_for_post_type( $typenow );
+		// }
 
-		if ( ! $editor_active ) {
-			return false;
-		}
+		// if ( ! $editor_active ) {
+		// 	return false;
+		// }
 
-		return (bool) apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
+		// return (bool) apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
+		$screen = get_current_screen();
+
+		return $screen->is_block_editor();
 	}
 
 	/**
@@ -202,7 +205,7 @@ class CoAuthors_Plus {
 	 * for posts and users where Co Authors is enabled
 	 */
 	public function enqueue_sidebar_plugin_assets() {
-		if ( $this->using_block_editor_integration() ) {
+		if ( $this->is_block_editor() ) {
 
 			if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
 				$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
@@ -399,7 +402,7 @@ class CoAuthors_Plus {
 	 */
 	public function add_coauthors_box() {
 		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
-			if ( false === $this->using_block_editor_integration() ) {
+			if ( false === $this->is_block_editor() ) {
 				add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'side' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
 			}
 		}
