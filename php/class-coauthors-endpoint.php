@@ -294,16 +294,11 @@ class Endpoints {
 			return $response;
 		}
 
-		if ( ! $this->coauthors->is_block_editor() ) {
-			return $response;
-		}
-
 		$links = $response->get_links();
 
 		if ( ! isset( $links[ static::SUPPORT_LINK ] ) ) {
 			return $response;
 		}
-
 
 		$response->remove_link( static::SUPPORT_LINK );
 

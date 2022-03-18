@@ -301,16 +301,6 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$this->_api->remove_author_link( $response, $test_post, $request );
 
-		$this->assertArrayHasKey(
-			Endpoints::SUPPORT_LINK,
-			$response->get_links(),
-			'Failed to assert that links are unchanged when block editor integration filter is at default.'
-		);
-
-		$response = rest_do_request( $request );
-
-		$this->_api->remove_author_link( $response, $test_post, $request );
-
 		$this->assertArrayNotHasKey(
 			Endpoints::SUPPORT_LINK,
 			$response->get_links(),
@@ -319,8 +309,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		add_filter( 'use_block_editor_for_post', '__return_false' );
 
-		$this->_api->remove_author_link( $response, $test_post, $request );
 		$response = rest_do_request( $request );
+
+		$this->_api->remove_author_link( $response, $test_post, $request );
 
 		$this->assertArrayHasKey(
 			Endpoints::SUPPORT_LINK,

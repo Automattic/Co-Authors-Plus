@@ -205,28 +205,25 @@ class CoAuthors_Plus {
 	 * for posts and users where Co Authors is enabled
 	 */
 	public function enqueue_sidebar_plugin_assets() {
-		if ( $this->is_block_editor() ) {
+		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
+			$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
 
-			if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
-				$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
+			wp_register_script(
+				'coauthors-sidebar-js',
+				plugins_url( 'build/index.js', __FILE__ ),
+				$asset['dependencies'],
+				$asset['version']
+			);
 
-				wp_register_script(
-					'coauthors-sidebar-js',
-					plugins_url( 'build/index.js', __FILE__ ),
-					$asset['dependencies'],
-					$asset['version']
-				);
+			wp_register_style(
+				'coauthors-sidebar-css',
+				plugins_url( 'build/style-index.css', __FILE__ ),
+				'',
+				$asset['version']
+			);
 
-				wp_register_style(
-					'coauthors-sidebar-css',
-					plugins_url( 'build/style-index.css', __FILE__ ),
-					'',
-					$asset['version']
-				);
-
-				wp_enqueue_script( 'coauthors-sidebar-js' );
-				wp_enqueue_style( 'coauthors-sidebar-css' );
-			}
+			wp_enqueue_script( 'coauthors-sidebar-js' );
+			wp_enqueue_style( 'coauthors-sidebar-css' );
 		}
 	}
 
