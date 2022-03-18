@@ -166,10 +166,10 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$this->assertArraySubset(
 			[
 				[
-					'display_name' => 'author2',
+					'displayName' => 'author2',
 				],
 				[
-					'display_name' => 'coauthor1',
+					'displayName' => 'coauthor1',
 				],
 			],
 			$get_response->data,
@@ -216,7 +216,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		);
 
 		$get_response = $this->_api->get_coauthors( $get_request );
-		$this->assertEquals( 'author1', $get_response->data[0]['user_nicename'] );
+		$this->assertEquals( 'author1', $get_response->data[0]['userNicename'] );
 
 	}
 

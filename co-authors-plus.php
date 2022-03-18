@@ -181,7 +181,16 @@ class CoAuthors_Plus {
 	 * @return bool
 	 */
 	public function using_block_editor_integration( $post = null ) {
-		if ( ! use_block_editor_for_post( $post ) ) {
+		$editor_active = use_block_editor_for_post( $post );
+
+		// If it's a new post, $post will be null, so we check
+		// block editor support for the post type
+		if ( ! isset( $post ) ) {
+			global $typenow;
+			$editor_active = use_block_editor_for_post_type( $typenow );
+		}
+
+		if ( ! $editor_active ) {
 			return false;
 		}
 

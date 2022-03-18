@@ -723,6 +723,20 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
+	 * @covers CoAuthors_Plus::using_block_editor_integration()
+	 */
+	public function test_using_block_editor_integration() {
+		global $coauthors_plus;
+
+		$this->assertFalse( $coauthors_plus->using_block_editor_integration() );
+		$this->assertFalse( $coauthors_plus->using_block_editor_integration( $this->post ) );
+
+		add_filter( 'coauthors_block_editor_integration', '__return_true' );
+
+		$this->assertTrue( $coauthors_plus->using_block_editor_integration( $this->post ) );
+	}
+
+	/**
 	 * @covers CoAuthors_Plus::enqueue_sidebar_plugin_assets()
 	 */
 	public function test_enqueue_editor_assets() {
@@ -733,21 +747,20 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertFalse( wp_script_is( 'coauthors-sidebar-js' ) );
 		$this->assertFalse( wp_style_is( 'coauthors-sidebar-css' ) );
 
-		// Enabled post type and user who can edit
+		// Enabled post type and user who can edit, feature not enabled
 		wp_set_current_user( $this->editor1->ID );
-		set_current_screen( 'post-new.php' );
+		set_current_screen( 'edit-post' );
 		do_action( 'enqueue_block_editor_assets' );
 
 		$this->assertFalse( wp_script_is( 'coauthors-sidebar-js' ) );
 		$this->assertFalse( wp_style_is( 'coauthors-sidebar-css' ) );
 
-		// Enabled post type and user who can edit and enabled block editor
+		// Enabled post type and user who can edit, feature enabled
 		add_filter( 'coauthors_block_editor_integration', '__return_true' );
 		do_action( 'enqueue_block_editor_assets' );
 
 		$this->assertTrue( wp_script_is( 'coauthors-sidebar-js' ) );
 		$this->assertTrue( wp_style_is( 'coauthors-sidebar-css' ) );
-
 
 	}
 
