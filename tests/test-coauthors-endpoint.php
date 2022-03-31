@@ -304,7 +304,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey(
 			Endpoints::SUPPORT_LINK,
 			$response->get_links(),
-			'Failed to assert that link is removed when block editor integration filter returns true.'
+			'Failed to assert that link is removed when the block editor is loaded.'
 		);
 
 		add_filter( 'use_block_editor_for_post', '__return_false' );
