@@ -183,6 +183,7 @@ class CoAuthors_Plus {
 	public function is_block_editor( $post = null ) {
 		$screen = get_current_screen();
 
+		// Pre-5.0 compatibility
 		if ( method_exists( $screen, 'is_block_editor' ) ) {
 			return $screen->is_block_editor();
 		} else {
