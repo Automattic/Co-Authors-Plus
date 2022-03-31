@@ -181,23 +181,13 @@ class CoAuthors_Plus {
 	 * @return bool
 	 */
 	public function is_block_editor( $post = null ) {
-		// $editor_active = use_block_editor_for_post( $post );
-
-		// // If it's a new post, $post will be null, so we check
-		// // block editor support for the post type
-		// if ( ! isset( $post ) ) {
-		// 	global $typenow;
-		// 	$editor_active = use_block_editor_for_post_type( $typenow );
-		// }
-
-		// if ( ! $editor_active ) {
-		// 	return false;
-		// }
-
-		// return (bool) apply_filters( 'coauthors_block_editor_integration', self::SIDEBAR_PLUGIN_ENABLED );
 		$screen = get_current_screen();
 
-		return $screen->is_block_editor();
+		if ( method_exists( $screen, 'is_block_editor' ) ) {
+			return $screen->is_block_editor();
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -613,7 +603,6 @@ class CoAuthors_Plus {
 
 		$tt_ids   = implode( ', ', array_map( 'intval', $tt_ids ) );
 		$term_ids = $wpdb->get_results( "SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN ($tt_ids)" ); // phpcs:ignore
-
 
 		foreach ( (array) $term_ids as $term_id_result ) {
 			$term = get_term_by( 'id', $term_id_result->term_id, $this->coauthor_taxonomy );
