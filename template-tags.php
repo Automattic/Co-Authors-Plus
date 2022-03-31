@@ -717,7 +717,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 	if ( ! $args['echo'] ) {
 		return $return;
 	}
-	
+
 	echo $return; // phpcs:ignore
 }
 

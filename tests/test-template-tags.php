@@ -1088,7 +1088,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
+		$guest_author  = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
 		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/fixtures/dummy-attachment.png', $guest_author_id );
 
 		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*'( loading='[^']*')?/>$|", coauthors_get_avatar( $guest_author ) ), 1 );

@@ -14,48 +14,48 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		$this->author1 = $this->factory->user->create_and_get(
-			[
+			array(
 				'role'       => 'author',
 				'user_login' => 'author1',
-			]
+			)
 		);
 
 		$this->author2 = $this->factory->user->create_and_get(
-			[
+			array(
 				'role'       => 'author',
 				'user_login' => 'author2',
-			]
+			)
 		);
 
 		$this->editor1 = $this->factory->user->create_and_get(
-			[
+			array(
 				'role'       => 'editor',
 				'user_login' => 'editor1',
-			]
+			)
 		);
 
 		$this->coauthor1 = $coauthors_plus->guest_authors->create(
-			[
+			array(
 				'user_login'   => 'coauthor1',
 				'display_name' => 'coauthor1',
-			]
+			)
 		);
 
 		$this->coauthor2 = $coauthors_plus->guest_authors->create(
-			[
+			array(
 				'user_login'   => 'coauthor2',
 				'display_name' => 'coauthor2',
-			]
+			)
 		);
 
 		$this->post = $this->factory->post->create_and_get(
-			[
+			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
 				'post_content' => rand_str(),
 				'post_title'   => rand_str(),
 				'post_type'    => 'post',
-			]
+			)
 		);
 	}
 
@@ -69,10 +69,10 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			10,
 			has_action(
 				'rest_api_init',
-				[
+				array(
 					$this->_api,
 					'add_endpoints',
-				]
+				)
 			)
 		);
 
@@ -80,10 +80,10 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			10,
 			has_action(
 				'wp_loaded',
-				[
+				array(
 					$this->_api,
 					'modify_responses',
-				]
+				)
 			)
 		);
 
@@ -155,23 +155,23 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$get_request = new WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
-			[
+			array(
 				'q'                => 'auth',
 				'existing_authors' => 'author1,coauthor2',
-			]
+			)
 		);
 
 		$get_response = $this->_api->get_coauthors_search_results( $get_request );
 
 		$this->assertArraySubset(
-			[
-				[
+			array(
+				array(
 					'displayName' => 'author2',
-				],
-				[
+				),
+				array(
 					'displayName' => 'coauthor1',
-				],
-			],
+				),
+			),
 			$get_response->data,
 			false,
 			'Failed to assert that coauthors search returns results matching the query.'
@@ -179,9 +179,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$not_found_get_request = new WP_REST_Request( 'GET' );
 		$not_found_get_request->set_url_params(
-			[
+			array(
 				'q' => 'nonexistent',
-			]
+			)
 		);
 
 		$not_found_get_response = $this->_api->get_coauthors_search_results( $not_found_get_request );
@@ -197,22 +197,22 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_authors_get_coauthors() {
 		$test_post = $this->factory->post->create_and_get(
-			[
+			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
 				'post_content' => rand_str(),
 				'post_title'   => rand_str(),
 				'post_type'    => 'post',
-			]
+			)
 		);
 
 		$test_post_id = $test_post->ID;
 
 		$get_request = new WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
-			[
+			array(
 				'post_id' => $test_post_id,
-			]
+			)
 		);
 
 		$get_response = $this->_api->get_coauthors( $get_request );
@@ -228,23 +228,23 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		wp_set_current_user( $this->editor1->ID );
 
 		$test_post = $this->factory->post->create_and_get(
-			[
+			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
 				'post_content' => rand_str(),
 				'post_title'   => rand_str(),
 				'post_type'    => 'post',
-			]
+			)
 		);
 
 		$test_post_id = $test_post->ID;
 
 		$post_request = new WP_REST_Request( 'POST' );
 		$post_request->set_url_params(
-			[
+			array(
 				'post_id'     => $test_post_id,
 				'new_authors' => $this->author1->user_nicename . ',coauthor2',
-			]
+			)
 		);
 
 		$update_response = $this->_api->update_coauthors( $post_request );
@@ -254,9 +254,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 	public function test_can_edit_coauthors() {
 		$post_id = $this->factory->post->create(
-			[
+			array(
 				'post_author' => $this->editor1->ID,
-			]
+			)
 		);
 
 		$request = new WP_REST_Request(
@@ -264,9 +264,9 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			''
 		);
 		$request->set_default_params(
-			[
+			array(
 				'post_id' => $post_id,
-			]
+			)
 		);
 
 		wp_set_current_user( $this->editor1->ID );
@@ -284,11 +284,11 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	public function test_remove_author_link() {
 
 		$test_post = $this->factory->post->create_and_get(
-			[
-				'post_author'  => $this->editor1->ID,
-				'post_status'  => 'publish',
-				'post_type'    => 'post',
-			]
+			array(
+				'post_author' => $this->editor1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
 		);
 
 		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $test_post->ID );
@@ -332,10 +332,10 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 				10,
 				has_filter(
 					'rest_prepare_' . $post_type,
-					[
+					array(
 						$this->_api,
 						'remove_author_link',
-					]
+					)
 				)
 			);
 		}

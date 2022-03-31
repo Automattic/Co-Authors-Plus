@@ -44,8 +44,8 @@ class Endpoints {
 	public function __construct( $coauthors_instance ) {
 		$this->coauthors = $coauthors_instance;
 
-		add_action( 'rest_api_init', [ $this, 'add_endpoints' ] );
-		add_action( 'wp_loaded', [ $this, 'modify_responses' ] );
+		add_action( 'rest_api_init', array( $this, 'add_endpoints' ) );
+		add_action( 'wp_loaded', array( $this, 'modify_responses' ) );
 	}
 
 	/**
@@ -82,13 +82,13 @@ class Endpoints {
 			array(
 				array(
 					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_coauthors' ],
+					'callback'            => array( $this, 'get_coauthors' ),
 					'permission_callback' => array( $this, 'can_edit_posts' ),
 					'args'                => array(
 						'post_id' => array(
 							'required'          => true,
 							'type'              => 'number',
-							'validate_callback' => [ $this, 'validate_numeric' ],
+							'validate_callback' => array( $this, 'validate_numeric' ),
 						),
 					),
 				),
@@ -101,8 +101,8 @@ class Endpoints {
 			array(
 				array(
 					'methods'             => 'POST',
-					'callback'            => [ $this, 'update_coauthors' ],
-					'permission_callback' => [ $this, 'can_edit_coauthors' ],
+					'callback'            => array( $this, 'update_coauthors' ),
+					'permission_callback' => array( $this, 'can_edit_coauthors' ),
 					'args'                => array(
 						'post_id'     => array(
 							'required'          => true,
@@ -223,12 +223,12 @@ class Endpoints {
 	public function _format_author_data( $author ) {
 
 		return array(
-			'id'            => esc_html( $author->ID ),
-			'userNicename'  => esc_html( rawurldecode( $author->user_nicename ) ),
-			'login'         => esc_html( $author->user_login ),
-			'email'         => sanitize_email( $author->user_email ),
-			'displayName'   => esc_html( str_replace( '∣', '|', $author->display_name ) ),
-			'avatar'        => esc_url( get_avatar_url( $author->ID ) ),
+			'id'           => esc_html( $author->ID ),
+			'userNicename' => esc_html( rawurldecode( $author->user_nicename ) ),
+			'login'        => esc_html( $author->user_login ),
+			'email'        => sanitize_email( $author->user_email ),
+			'displayName'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
+			'avatar'       => esc_url( get_avatar_url( $author->ID ) ),
 		);
 	}
 
@@ -263,7 +263,7 @@ class Endpoints {
 		foreach ( $post_types as $post_type ) {
 			add_filter(
 				'rest_prepare_' . $post_type,
-				[ $this, 'remove_author_link' ],
+				array( $this, 'remove_author_link' ),
 				10,
 				3
 			);
@@ -288,7 +288,6 @@ class Endpoints {
 		) {
 			return $response;
 		}
-
 
 		if ( ! use_block_editor_for_post( $post ) ) {
 			return $response;
