@@ -68,12 +68,6 @@ class CoAuthors_Plus {
 	var $to_be_filtered_caps = array();
 
 	/**
-	 * Block editor functionality in the sidebar is
-	 * disabled by default.
-	 */
-	const SIDEBAR_PLUGIN_ENABLED = false;
-
-	/**
 	 * __construct()
 	 */
 	function __construct() {
