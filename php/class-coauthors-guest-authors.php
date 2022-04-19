@@ -125,6 +125,7 @@ class CoAuthors_Guest_Authors {
 			'publicly_queryable'  => false,
 			'exclude_from_search' => true,
 			'show_in_menu'        => false,
+			'show_in_rest'        => true,
 			'supports'            => array(
 				'thumbnail',
 			),

@@ -721,4 +721,57 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		// Restore coauthor taxonomy from backup.
 		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
 	}
+
+	/**
+	 * @covers CoAuthors_Plus::is_block_editor()
+	 */
+	public function test_is_block_editor() {
+		global $coauthors_plus;
+
+		set_current_screen( 'post-new.php' );
+
+		$this->assertTrue( $coauthors_plus->is_block_editor() );
+
+		set_current_screen( 'wp-login.php' );
+
+		$this->assertFalse( $coauthors_plus->is_block_editor() );
+	}
+
+	/**
+	 * @covers CoAuthors_Plus::enqueue_sidebar_plugin_assets()
+	 */
+	public function test_enqueue_editor_assets() {
+
+		// Default state
+		do_action( 'enqueue_block_editor_assets' );
+
+		$this->assertFalse( wp_script_is( 'coauthors-sidebar-js' ) );
+		$this->assertFalse( wp_style_is( 'coauthors-sidebar-css' ) );
+
+		// Enabled post type and user who can edit, feature not enabled
+		wp_set_current_user( $this->editor1->ID );
+		set_current_screen( 'edit-post' );
+
+		do_action( 'enqueue_block_editor_assets' );
+
+		$this->assertTrue( wp_script_is( 'coauthors-sidebar-js' ) );
+		$this->assertTrue( wp_style_is( 'coauthors-sidebar-css' ) );
+
+	}
+
+	/**
+	 * @covers CoAuthors_Plus::add_coauthors_box()
+	 */
+	public function test_add_coauthors_box() {
+		global $coauthors_plus, $wp_meta_boxes;
+
+		wp_set_current_user( $this->editor1->ID );
+		set_current_screen( 'post-new.php' );
+
+		$coauthors_plus->add_coauthors_box();
+
+		$this->assertNull( $wp_meta_boxes, 'Failed to assert the coauthors metabox is not added when the block editor is loaded.' );
+
+	}
 }
+
