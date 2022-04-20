@@ -1,5 +1,11 @@
 # Changelog for Co-Authors Plus
 
+**3.5 (April 21, 2022)**
+* Add Block Editor integration #790
+* Fix issues with cache key `id` not being deleted #832
+* Fix broken SQL query caused by wpdb->prepare() escaping quotes #831
+* Fix `_update_users_posts_count` function to recount Guest Author's shadow taxonomy term count. #829
+
 **3.4.92 (Oct 14, 2021)**
 * Fix admin posts view for contributors #823
 
