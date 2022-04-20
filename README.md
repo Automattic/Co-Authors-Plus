@@ -4,7 +4,7 @@
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 5.8
 * Requires at least: 4.1
-* Stable tag: 3.4.92
+* Stable tag: 3.5
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
