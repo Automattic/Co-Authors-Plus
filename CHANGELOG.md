@@ -4,7 +4,8 @@
 * Add Block Editor integration #790
 * Fix issues with cache key `id` not being deleted #832
 * Fix broken SQL query caused by wpdb->prepare() escaping quotes #831
-* Fix `_update_users_posts_count` function to recount Guest Author's shadow taxonomy term count. #829
+* Fix `_update_users_posts_count` function to recount Guest Author's shadow taxonomy term count #829
+* Update dependencies #833 #834 #835 #836 #837 #838
 
 **3.4.92 (Oct 14, 2021)**
 * Fix admin posts view for contributors #823
