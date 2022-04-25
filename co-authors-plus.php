@@ -32,7 +32,7 @@ Co-author - in the context of a single post, a guest author or user assigned to 
 Author - user with the role of author
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '3.5.0' );
+define( 'COAUTHORS_PLUS_VERSION', '3.5.1' );
 
 require_once dirname( __FILE__ ) . '/template-tags.php';
 require_once dirname( __FILE__ ) . '/deprecated.php';
