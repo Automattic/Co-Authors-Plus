@@ -1,5 +1,8 @@
 # Changelog for Co-Authors Plus
 
+**3.5.1 (April 25, 2022)**
+* Fix error for undefined `use_block_editor_for_post` #843
+
 **3.5 (April 21, 2022)**
 * Add Block Editor integration #790
 * Fix issues with cache key `id` not being deleted #832
