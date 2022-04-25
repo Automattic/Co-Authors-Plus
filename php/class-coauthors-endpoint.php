@@ -236,7 +236,7 @@ class Endpoints {
 	 * Get authors' data and add it to the response.
 	 *
 	 * @param array The response array.
-	 * @param int   Thet post ID from the request.
+	 * @param int   The post ID from the request.
 	 */
 	public function _build_authors_response( &$response, $request ) {
 		$authors = get_coauthors( $request->get_param( 'post_id' ) );
@@ -289,7 +289,9 @@ class Endpoints {
 			return $response;
 		}
 
-		if ( ! use_block_editor_for_post( $post ) ) {
+		require_once ABSPATH . '/wp-admin/includes/post.php';
+
+		if ( ! \use_block_editor_for_post( $post ) ) {
 			return $response;
 		}
 
