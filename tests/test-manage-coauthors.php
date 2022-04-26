@@ -5,46 +5,61 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->admin1 = $this->factory->user->create( array( 'role' => 'administrator', 'user_login' => 'admin1' ) );
-		$this->author1 = $this->factory->user->create( array( 'role' => 'author', 'user_login' => 'author1' ) );
-		$this->editor1 = $this->factory->user->create( array( 'role' => 'editor', 'user_login' => 'editor2' ) );
+		$this->admin1  = $this->factory->user->create(
+			array(
+				'role'       => 'administrator',
+				'user_login' => 'admin1',
+			)
+		);
+		$this->author1 = $this->factory->user->create(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author1',
+			)
+		);
+		$this->editor1 = $this->factory->user->create(
+			array(
+				'role'       => 'editor',
+				'user_login' => 'editor2',
+			)
+		);
 
 		$post = array(
-			'post_author'     => $this->author1,
-			'post_status'     => 'publish',
-			'post_content'    => rand_str(),
-			'post_title'      => rand_str(),
-			'post_type'       => 'post',
+			'post_author'  => $this->author1,
+			'post_status'  => 'publish',
+			'post_content' => rand_str(),
+			'post_title'   => rand_str(),
+			'post_type'    => 'post',
 		);
 
 		$this->author1_post1 = wp_insert_post( $post );
 
 		$post = array(
-			'post_author'     => $this->author1,
-			'post_status'     => 'publish',
-			'post_content'    => rand_str(),
-			'post_title'      => rand_str(),
-			'post_type'       => 'post',
+			'post_author'  => $this->author1,
+			'post_status'  => 'publish',
+			'post_content' => rand_str(),
+			'post_title'   => rand_str(),
+			'post_type'    => 'post',
 		);
 
 		$this->author1_post2 = wp_insert_post( $post );
 
 		$page = array(
-			'post_author'     => $this->author1,
-			'post_status'     => 'publish',
-			'post_content'    => rand_str(),
-			'post_title'      => rand_str(),
-			'post_type'       => 'page',
+			'post_author'  => $this->author1,
+			'post_status'  => 'publish',
+			'post_content' => rand_str(),
+			'post_title'   => rand_str(),
+			'post_type'    => 'page',
 		);
 
 		$this->author1_page1 = wp_insert_post( $page );
 
 		$page = array(
-			'post_author'     => $this->author1,
-			'post_status'     => 'publish',
-			'post_content'    => rand_str(),
-			'post_title'      => rand_str(),
-			'post_type'       => 'page',
+			'post_author'  => $this->author1,
+			'post_status'  => 'publish',
+			'post_content' => rand_str(),
+			'post_title'   => rand_str(),
+			'post_type'    => 'page',
 		);
 
 		$this->author1_page2 = wp_insert_post( $page );
@@ -158,15 +173,23 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$this->assertEquals( 10, has_filter( 'wp_insert_post_data', array(
-			$coauthors_plus,
-			'coauthors_set_post_author_field',
-		) ) );
+		$this->assertEquals(
+			10,
+			has_filter(
+				'wp_insert_post_data',
+				array(
+					$coauthors_plus,
+					'coauthors_set_post_author_field',
+				)
+			)
+		);
 
-		$post_id = $this->factory->post->create( array(
-			'post_author' => $this->author1,
-			'post_type'   => 'attachment',
-		) );
+		$post_id = $this->factory->post->create(
+			array(
+				'post_author' => $this->author1,
+				'post_type'   => 'attachment',
+			)
+		);
 
 		$post = get_post( $post_id );
 
@@ -216,10 +239,12 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$user_id = $this->factory->user->create( array(
-			'user_login'    => 'test_admin',
-			'user_nicename' => 'test_admiи',
-		) );
+		$user_id = $this->factory->user->create(
+			array(
+				'user_login'    => 'test_admin',
+				'user_nicename' => 'test_admiи',
+			)
+		);
 
 		$user = get_user_by( 'id', $user_id );
 
@@ -227,14 +252,17 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$post_backup    = $_POST;
 		$request_backup = $_REQUEST;
 
-		$_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );;
-		$_POST['coauthors']          = array(
+		$_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );
+
+		$_POST['coauthors'] = array(
 			$user->user_nicename,
 		);
 
-		$post_id = $this->factory->post->create( array(
-			'post_author' => $user_id,
-		) );
+		$post_id = $this->factory->post->create(
+			array(
+				'post_author' => $user_id,
+			)
+		);
 
 		$post = get_post( $post_id );
 
@@ -278,13 +306,14 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$post_backup    = $_POST;
 		$request_backup = $_REQUEST;
 
-		$_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );;
-		$_POST['coauthors']          = array(
+		$_REQUEST['coauthors-nonce'] = wp_create_nonce( 'coauthors-edit' );
+
+		$_POST['coauthors'] = array(
 			$author1->user_nicename,
 		);
 
 		// Create guest author with linked account with user.
-		$coauthors_plus->guest_authors = new CoAuthors_Guest_Authors;
+		$coauthors_plus->guest_authors = new CoAuthors_Guest_Authors();
 		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->author1 );
 
 		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );
@@ -345,15 +374,23 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$this->assertEquals( 10, has_action( 'save_post', array(
-			$coauthors_plus,
-			'coauthors_update_post',
-		) ) );
+		$this->assertEquals(
+			10,
+			has_action(
+				'save_post',
+				array(
+					$coauthors_plus,
+					'coauthors_update_post',
+				)
+			)
+		);
 
-		$post_id = $this->factory->post->create( array(
-			'post_author' => $this->author1,
-			'post_type'   => 'attachment',
-		) );
+		$post_id = $this->factory->post->create(
+			array(
+				'post_author' => $this->author1,
+				'post_type'   => 'attachment',
+			)
+		);
 
 		$post   = get_post( $post_id );
 		$return = $coauthors_plus->coauthors_update_post( $post_id, $post );
@@ -377,9 +414,11 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$admin1  = get_user_by( 'id', $this->admin1 );
 		$author1 = get_user_by( 'id', $this->author1 );
 
-		$post_id = $this->factory->post->create( array(
-			'post_author' => $this->admin1,
-		) );
+		$post_id = $this->factory->post->create(
+			array(
+				'post_author' => $this->admin1,
+			)
+		);
 
 		$post = get_post( $post_id );
 

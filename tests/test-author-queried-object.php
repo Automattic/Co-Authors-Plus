@@ -20,17 +20,19 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 		 */
 		$author1 = $this->factory->user->create( array( 'user_login' => 'msauthor1' ) );
 		$author2 = $this->factory->user->create( array( 'user_login' => 'msauthor2' ) );
-		$blog2 = $this->factory->blog->create( array( 'user_id' => $author1 ) );
+		$blog2   = $this->factory->blog->create( array( 'user_id' => $author1 ) );
 
 		switch_to_blog( $blog2 );
 		$wp_rewrite->init();
 
-		$blog2_post1 = $this->factory->post->create( array(
-			'post_status'     => 'publish',
-			'post_content'    => rand_str(),
-			'post_title'      => rand_str(),
-			'post_author'     => $author1,
-		) );
+		$blog2_post1 = $this->factory->post->create(
+			array(
+				'post_status'  => 'publish',
+				'post_content' => rand_str(),
+				'post_title'   => rand_str(),
+				'post_author'  => $author1,
+			)
+		);
 
 		/**
 		 * Author 1 is an author on the blog
