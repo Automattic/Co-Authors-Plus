@@ -605,7 +605,7 @@ class CoAuthors_Plus {
 		<label class="bulk-edit-group bulk-edit-coauthors">
 			<span class="title"><?php esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
 			<div id="coauthors-edit" class="hide-if-no-js">
-				<p><?php echo wp_kses( __( 'Leave the field below blank to keep the authors unchanged. Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+				<p><?php echo wp_kses( __( 'Leave the field below blank to keep the authors unchanged. Any change here will overwrite all previously assigned authors.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
 			</div>
 			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 		</label>
@@ -617,8 +617,9 @@ class CoAuthors_Plus {
 	 */
 	function action_bulk_edit_update_coauthors( $post_data, $postarr ) {
 
-		if ( ! $this->is_post_type_enabled( $post_data['post_type'] ) )
-			return;
+		if ( ( ! isset( $postarr['post'] ) ) || ( ! $this->is_post_type_enabled( $post_data['post_type'] ) ) ) {
+			return $post_data;
+		}
 
 		foreach( $postarr['post'] as $post_id ) {
 			$post = get_post( $post_id );
@@ -627,7 +628,7 @@ class CoAuthors_Plus {
 					$coauthors = array_map( 'sanitize_title', (array) $postarr['coauthors'] );
 					$this->add_coauthors( $post_id, $coauthors );
 			} else {
-				// If the user can't set authors and a co-author isn't currently set, we need to explicity set one
+				// If the user can't set authors and a co-author isn't currently set, we need to explicitly set one
 				if ( ! $this->has_author_terms( $post_id ) ) {
 					$user = get_userdata( $post->post_author );
 					if ( $user ) {
@@ -636,6 +637,8 @@ class CoAuthors_Plus {
 				}
 			}
 		}
+
+		return $post_data;
 	}
 
 	/**
