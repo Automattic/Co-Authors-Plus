@@ -87,3 +87,5 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 
 **3.5.2 (June 1, 2022)**
 * Remove the `/wp/v2/coauthors` endpoint #851
+
+For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
