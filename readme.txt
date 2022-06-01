@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 5.8
 Requires at least: 4.1
-Stable tag: 3.5.1
+Stable tag: 3.5.2
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -49,13 +49,20 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 == Installation ==
 
 1. IMPORTANT: Please disable the original Co-Authors plugin (if you are using it) before installing Co-Authors Plus
-1. Extract the coauthors-plus.zip file and upload its contents to the `/wp-content/plugins/` directory. Alternately, you can install directly from the Plugin directory within your WordPress Install.
-1. Activate the plugin through the "Plugins" menu in WordPress.
-1. Place the appropriate [co-authors template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) in your template.
-1. Add co-authors to your posts and pages.
+2. Extract the coauthors-plus.zip file and upload its contents to the `/wp-content/plugins/` directory. Alternately, you can install directly from the Plugin directory within your WordPress Install.
+3. Activate the plugin through the "Plugins" menu in WordPress.
+4. Place the appropriate [co-authors template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) in your template.
+5. Add co-authors to your posts and pages.
 
 == Screenshots ==
 
 1. Multiple authors can be added to a Post, Page, or Custom Post Type using an auto-complete interface.
 2. The order of your co-authors can be changed by drag and drop.
 3. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
+
+== Changelog ==
+
+= 3.5.2 =
+* Remove the `/wp/v2/coauthors` endpoint #851
+
+For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
