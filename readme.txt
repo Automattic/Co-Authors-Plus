@@ -49,10 +49,10 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 == Installation ==
 
 1. IMPORTANT: Please disable the original Co-Authors plugin (if you are using it) before installing Co-Authors Plus
-1. Extract the coauthors-plus.zip file and upload its contents to the `/wp-content/plugins/` directory. Alternately, you can install directly from the Plugin directory within your WordPress Install.
-1. Activate the plugin through the "Plugins" menu in WordPress.
-1. Place the appropriate [co-authors template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) in your template.
-1. Add co-authors to your posts and pages.
+2. Extract the coauthors-plus.zip file and upload its contents to the `/wp-content/plugins/` directory. Alternately, you can install directly from the Plugin directory within your WordPress Install.
+3. Activate the plugin through the "Plugins" menu in WordPress.
+4. Place the appropriate [co-authors template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) in your template.
+5. Add co-authors to your posts and pages.
 
 == Screenshots ==
 
@@ -65,3 +65,5 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 = 3.5.2 =
 * Remove the `/wp/v2/coauthors` endpoint #851
 * Remove CSS hack that hides the add author box from core in the block editor #847
+
+For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
