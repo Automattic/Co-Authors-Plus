@@ -4,7 +4,7 @@
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 5.8
 * Requires at least: 4.1
-* Stable tag: 3.5.1
+* Stable tag: 3.5.2
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -82,3 +82,11 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 1. Multiple authors can be added to a Post, Page, or Custom Post Type using an auto-complete interface.
 2. The order of your co-authors can be changed by drag and drop.
 3. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
+
+## Changelog
+
+**3.5.2 (June 1, 2022)**
+* Remove the `/wp/v2/coauthors` endpoint #851
+* Remove CSS hack that hides the add author box from core in the block editor #847
+
+For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
