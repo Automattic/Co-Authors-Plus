@@ -64,5 +64,6 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 
 = 3.5.2 =
 * Remove the `/wp/v2/coauthors` endpoint #851
+* Remove CSS hack that hides the add author box from core in the block editor #847
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
