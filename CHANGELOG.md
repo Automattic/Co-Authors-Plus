@@ -1,8 +1,11 @@
 # Changelog for Co-Authors Plus
 
+** 3.5.2 (June 1, 2022)**
+* Remove the `/wp/v2/coauthors` endpoint #851
+* Remove CSS hack that hides the add author box from core in the block editor #847
+
 **3.5.1 (April 25, 2022)**
 * Fix error for undefined `use_block_editor_for_post` #843
-* Remove CSS hack that hides the add author box from core in the block editor #847
 
 **3.5 (April 21, 2022)**
 * Add Block Editor integration #790
