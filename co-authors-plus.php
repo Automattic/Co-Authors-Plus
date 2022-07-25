@@ -98,7 +98,7 @@ class CoAuthors_Plus {
 		add_action( 'wp_ajax_coauthors_ajax_suggest', array( $this, 'ajax_suggest' ) );
 
 		// Filter to allow co-authors to edit posts
-		add_filter( 'user_has_cap', array( $this, 'filter_user_has_cap' ), 10, 3 );
+		add_filter( 'map_meta_cap', array( $this, 'filter_user_caps' ), 1, 4 );
 
 		// Handle the custom co-author meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_coauthors_box' ) );
@@ -1504,52 +1504,46 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Allows guest authors to edit the post they're co-authors of
+	 * Sets the custom capabilities for Co-Authors Plus.
+	 *
+	 * @param string[] $caps    Array of the user's capabilities.
+	 * @param string   $cap     Capability name.
+	 * @param int      $user_id The user ID.
+	 * @param array    $args    Adds the context to the cap. Typically the object ID.
 	 */
-	function filter_user_has_cap( $allcaps, $caps, $args ) {
+	public function filter_user_caps( $caps, $cap, $user_id, $args ) {
+		$user_id     = isset( $user_id ) ? $user_id : 0;
+		$post_id     = isset( $args[0] ) ? $args[0] : 0;
+		$caps_values = array_flip( $caps );
+		$obj         = get_post_type_object( get_post_type( $post_id ) );
 
-		$cap     = $args[0];
-		$user_id = isset( $args[1] ) ? $args[1] : 0;
-		$post_id = isset( $args[2] ) ? $args[2] : 0;
-
+		// Return the default $caps if the current $cap isn't one of the Co-Authors Plus filtered capabilities.
 		if ( ! in_array( $cap, $this->get_to_be_filtered_caps(), true ) ) {
-			return $allcaps;
+			return $caps;
 		}
 
-		$obj = get_post_type_object( get_post_type( $post_id ) );
+		// Return the default $caps if the current post is a revision. 
 		if ( ! $obj || 'revision' == $obj->name ) {
-			return $allcaps;
-		}
-
-		// Even though we bail if cap is not among the to_be_filtered ones, there is a time in early request processing in which that list is not yet available, so the following block is needed
-		$caps_to_modify = array(
-			$obj->cap->edit_post,
-			'edit_post', // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
-			$obj->cap->edit_others_posts, // This as well: http://core.trac.wordpress.org/ticket/22417
-			'read_post',
-			$obj->cap->read_post,
-		);
-		if ( ! in_array( $cap, $caps_to_modify ) ) {
-			return $allcaps;
+			return $caps;
 		}
 
 		// We won't be doing any modification if they aren't already a co-author on the post
 		if ( ! is_user_logged_in() || ! is_coauthor_for_post( $user_id, $post_id ) ) {
-			return $allcaps;
+			return $caps;
 		}
 
-		$current_user = wp_get_current_user();
-		if ( 'publish' == get_post_status( $post_id ) &&
-			( isset( $obj->cap->edit_published_posts ) && ! empty( $current_user->allcaps[ $obj->cap->edit_published_posts ] ) ) ) {
-			$allcaps[ $obj->cap->edit_published_posts ] = true;
-		} elseif ( 'private' == get_post_status( $post_id ) &&
-			( isset( $obj->cap->edit_private_posts ) && ! empty( $current_user->allcaps[ $obj->cap->edit_private_posts ] ) ) ) {
-			$allcaps[ $obj->cap->edit_private_posts ] = true;
+		switch ( $cap ) {
+			case 'edit_post':
+				// Remove the 'edit_others_posts' capability when editing a post of which the user is a co-author.
+				if( is_coauthor_for_post( $user_id, $post_id ) ) {
+					if( isset( $caps_values['edit_others_posts'] ) ) {
+						unset( $caps[ $caps_values['edit_others_posts'] ] );
+					}
+				}
+				break;
 		}
 
-		$allcaps[ $obj->cap->edit_others_posts ] = true;
-
-		return $allcaps;
+		return $caps;
 	}
 
 	/**
