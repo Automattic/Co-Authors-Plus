@@ -1683,14 +1683,17 @@ class CoAuthors_Plus {
 	public function filter_jetpack_open_graph_tags( $og_tags, $image_dimensions ) {
 
 		if ( is_author() ) {
-			$author                        = get_queried_object();
-			$og_tags['og:title']           = $author->display_name;
-			$og_tags['og:url']             = get_author_posts_url( $author->ID, $author->user_nicename );
-			$og_tags['og:description']     = $author->description;
-			$og_tags['profile:first_name'] = $author->first_name;
-			$og_tags['profile:last_name']  = $author->last_name;
-			if ( isset( $og_tags['article:author'] ) ) {
-				$og_tags['article:author'] = get_author_posts_url( $author->ID, $author->user_nicename );
+			$author = get_queried_object();
+
+			if ( ! empty( $author ) ) {
+				$og_tags['og:title']           = $author->display_name;
+				$og_tags['og:url']             = get_author_posts_url( $author->ID, $author->user_nicename );
+				$og_tags['og:description']     = $author->description;
+				$og_tags['profile:first_name'] = $author->first_name;
+				$og_tags['profile:last_name']  = $author->last_name;
+				if ( isset( $og_tags['article:author'] ) ) {
+					$og_tags['article:author'] = get_author_posts_url( $author->ID, $author->user_nicename );
+				}
 			}
 		} elseif ( is_singular() && $this->is_post_type_enabled() ) {
 			$authors = get_coauthors();
