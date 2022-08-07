@@ -565,41 +565,30 @@ function the_coauthor_meta( $field, $user_id = 0 ) {
 }
 
 /**
- * List all the *co-authors* of the blog, with several options available.
- * optioncount (boolean) (false): Show the count in parenthesis next to the author's name.
- * show_fullname (boolean) (false): Show their full names.
- * hide_empty (boolean) (true): Don't show authors without any posts.
- * feed (string) (''): If isn't empty, show links to author's feeds.
- * feed_image (string) (''): If isn't empty, use this image to link to feeds.
- * echo (boolean) (true): Set to false to return the output, instead of echoing.
- * authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
+ * Returns an array of blog users and co-authors.
+ * @param array $args An argument array to customize the returned result.
+ *      number (int) (20): The maximum number of (co-)authors to return.
+ *      guest_authors_only (boolean) (false): If true, include only guest authors without WP users.
+ *      authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
+ *      orderby (string) ('name'): A field to order the authors by {@see WP_Term_Query::__construct()}
  *
- * @param array $args The argument array.
- * @return null|string The output, if echo is set to false.
+ * @return array A unique array of WP_User-like objects each containing data for a use or a co-author.
+ *      The returned array may contain a mix of native WP users as well as guest authors as
+ *      designated by $args. You can use the $user->type property to check for the user type.
  */
-function coauthors_wp_list_authors( $args = array() ) {
+function coauthors_get_users( $args = array() ) {
 	global $coauthors_plus;
 
 	$defaults = array(
-		'optioncount'             => false,
-		'show_fullname'           => false,
-		'hide_empty'              => true,
-		'feed'                    => '',
-		'feed_image'              => '',
-		'feed_type'               => '',
-		'echo'                    => true,
-		'style'                   => 'list',
-		'html'                    => true,
 		'number'                  => 20, // A sane limit to start to avoid breaking all the things
 		'guest_authors_only'      => false,
 		'authors_with_posts_only' => false,
+		'orderby'                 => 'name',
 	);
-
 	$args   = wp_parse_args( $args, $defaults );
-	$return = '';
 
 	$term_args    = array(
-		'orderby'    => 'name',
+		'orderby'    => $args['orderby'],
 		'number'     => (int) $args['number'],
 		/*
 		 * Historically, this was set to always be `0` ignoring `$args['hide_empty']` value
@@ -625,7 +614,6 @@ function coauthors_wp_list_authors( $args = array() ) {
 			unset( $authors[ $author_term->name ] );
 		}
 	}
-
 	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
 
 	// remove duplicates from linked accounts
@@ -634,6 +622,43 @@ function coauthors_wp_list_authors( $args = array() ) {
 		unset( $authors[ $linked_account ] );
 	}
 
+	return $authors;
+}
+
+/**
+ * List all the *co-authors* of the blog, with several options available.
+ * optioncount (boolean) (false): Show the count in parenthesis next to the author's name.
+ * show_fullname (boolean) (false): Show their full names.
+ * hide_empty (boolean) (true): Don't show authors without any posts.
+ * feed (string) (''): If isn't empty, show links to author's feeds.
+ * feed_image (string) (''): If isn't empty, use this image to link to feeds.
+ * echo (boolean) (true): Set to false to return the output, instead of echoing.
+ * authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
+ *
+ * @param array $args The argument array.
+ * @return null|string The output, if echo is set to false.
+ */
+function coauthors_wp_list_authors( $args = array() ) {
+	$defaults = array(
+		'optioncount'             => false,
+		'show_fullname'           => false,
+		'hide_empty'              => true,
+		'feed'                    => '',
+		'feed_image'              => '',
+		'feed_type'               => '',
+		'echo'                    => true,
+		'style'                   => 'list',
+		'html'                    => true,
+		'number'                  => 20, // A sane limit to start to avoid breaking all the things
+		'guest_authors_only'      => false,
+		'authors_with_posts_only' => false,
+		'orderby'                 => 'name',
+	);
+	$args   = wp_parse_args( $args, $defaults );
+
+	$return = '';
+
+	$authors = coauthors_get_users( $args );
 	foreach ( (array) $authors as $author ) {
 
 		$link = '';
@@ -713,7 +738,6 @@ function coauthors_wp_list_authors( $args = array() ) {
 	}
 
 	$return = trim( $return, ', ' );
-
 	if ( ! $args['echo'] ) {
 		return $return;
 	}
