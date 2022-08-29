@@ -7,14 +7,14 @@ jobs:
     name: WP ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
     runs-on: ubuntu-18.04
     continue-on-error: ${{ matrix.allowed_failure }}
-    
+
     env:
       WP_VERSION: ${{ matrix.wordpress }}
-      
+
     strategy:
       matrix:
         php: [ '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0' ]
-        wordpress: [ '5.5', '5.6', '5.7'  ]
+        wordpress: [ '5.5', '5.6', '5.7', '5.8', '5.9', '6.0' ]
         allowed_failure: [ false ]
         include:
           - php: "8.0"
@@ -23,7 +23,7 @@ jobs:
             extensions: pcov
             ini-values: pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
             coverage: pcov
-        exclude: 
+        exclude:
           - php: '8.0'
             wordpress: '5.5'
       fail-fast: false
@@ -44,7 +44,7 @@ jobs:
         uses: ramsey/composer-install@v1
         with:
           composer-options: "${{ matrix.composer-options }}"
-          
+
       - name: Setup Problem Matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
@@ -61,10 +61,9 @@ jobs:
 
       - name: Run integration tests (single site)
         run: composer integration
-        
+
       - name: Run integration tests (multisite)
         run: composer integration-ms
 
       - name: Run PHPCS
         run: composer cs
-
