@@ -58,5 +58,11 @@
       "@putenv WP_MULTISITE=1",
       "@composer integration"
     ]
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
