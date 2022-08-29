@@ -29,7 +29,7 @@
   "license": "ISC",
   "devDependencies": {
     "@wordpress/icons": "^2.10.2",
-    "@wordpress/scripts": "^20.0.0",
+    "@wordpress/scripts": "^24.0.0",
     "prettier": "npm:wp-prettier@^2.2.1-beta-1"
   },
   "dependencies": {}
