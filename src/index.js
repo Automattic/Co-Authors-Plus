@@ -101,7 +101,6 @@ const Render = ( { authors, setAuthorsStore } ) => {
 				<>
 					<AuthorsSelection
 						selectedAuthors={ selectedAuthors }
-						setSelectedAuthors={ setSelectedAuthors }
 						updateAuthors={ updateAuthors }
 					/>
 				</>
