@@ -29,7 +29,7 @@ import { addItemByValue, formatAuthorData } from './utils';
 /**
  * Store
  */
-import { coauthorsStore } from './store';
+import coauthorsStore from './store';
 
 /**
  * Styles
