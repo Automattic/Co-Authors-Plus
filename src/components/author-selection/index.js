@@ -1,16 +1,36 @@
 /**
  * External dependencies.
  */
+import PropTypes from 'prop-types';
+
+/**
+ * WordPress dependencies.
+ */
 import { chevronUp, chevronDown, close } from '@wordpress/icons';
 import { Button, Flex, FlexItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
- * Internal dependencies.
+ * Utils
  */
-import { moveItem, removeItem } from '../utils';
+import { moveItem, removeItem } from '../../utils';
 
-export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
+/**
+ * Author Selection feature.
+ *
+ * @param {Object}   param0 props.
+ * @param {array}    param0.selectedAuthors selected authors array.
+ * @param {function} param0.updateAuthors function to set selected authors.
+ *
+ * @returns {JSXElement}
+ */
+const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
+
+	/**
+	 *
+	 * @param {object}   author author object.
+	 * @param {function} action action type.
+	 */
 	const onClick = ( author, action ) => {
 		let authors;
 
@@ -89,3 +109,22 @@ export const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 		);
 	} );
 };
+
+AuthorsSelection.propTypes = {
+	selectedAuthors: PropTypes.arrayOf([
+		PropTypes.shape({
+			id: PropTypes.oneOfType([
+				PropTypes.string,
+				PropTypes.number,
+			]),
+			userNiceName: PropTypes.string,
+			login: PropTypes.string,
+			email: PropTypes.string,
+			displayName: PropTypes.string,
+			avatar: PropTypes.string,
+		})
+	]).isRequired,
+	updateAuthors: PropTypes.func.isRequired,
+}
+
+export default AuthorsSelection;
