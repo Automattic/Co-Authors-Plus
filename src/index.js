@@ -17,12 +17,24 @@ import {
 } from '@wordpress/data';
 
 /**
- * Internal Dependencies
+ * Components
+ */
+import AuthorsSelection from './components/author-selection';
+
+/**
+ * Utilities
+ */
+import { addItemByValue, formatAuthorData } from './utils';
+
+/**
+ * Store
+ */
+import { coauthorsStore } from './store';
+
+/**
+ * Styles
  */
 import './style.css';
-import { AuthorsSelection } from './components/AuthorsSelection';
-import { addItemByValue, formatAuthorData } from './utils';
-import { coauthorsStore } from './store';
 
 /**
  * Register our data store.
