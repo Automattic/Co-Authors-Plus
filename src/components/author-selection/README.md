@@ -10,3 +10,7 @@ A component for adding, removing, and removing authors selected via search.
 ```
 
 ## Props
+| name            | type     | required | description                                |
+|-----------------|----------|----------|--------------------------------------------|
+| authors         | array    | yes      | Array of author objects.                   |
+| setAuthorsStore | function | yes      | Callback setter for authors array updates. |
