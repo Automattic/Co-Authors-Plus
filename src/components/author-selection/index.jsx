@@ -25,7 +25,6 @@ import { moveItem, removeItem } from '../../utils';
  * @returns {JSXElement}
  */
 const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
-
 	/**
 	 *
 	 * @param {object}   author author object.
@@ -111,20 +110,17 @@ const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 };
 
 AuthorsSelection.propTypes = {
-	selectedAuthors: PropTypes.arrayOf([
-		PropTypes.shape({
-			id: PropTypes.oneOfType([
-				PropTypes.string,
-				PropTypes.number,
-			]),
+	selectedAuthors: PropTypes.arrayOf( [
+		PropTypes.shape( {
+			id: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 			userNiceName: PropTypes.string,
 			login: PropTypes.string,
 			email: PropTypes.string,
 			displayName: PropTypes.string,
 			avatar: PropTypes.string,
-		})
-	]).isRequired,
+		} ),
+	] ).isRequired,
 	updateAuthors: PropTypes.func.isRequired,
-}
+};
 
 export default AuthorsSelection;
