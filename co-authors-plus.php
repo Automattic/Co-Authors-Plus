@@ -1302,6 +1302,7 @@ class CoAuthors_Plus {
 				'user_email',
 				'user_login',
 			),
+			'capability'     => array( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ),
 			'fields'         => 'all_with_meta',
 		);
 		$found_users = get_users( $args );
