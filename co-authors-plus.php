@@ -220,7 +220,10 @@ class CoAuthors_Plus {
 		// Register new taxonomy so that we can store all of the relationships
 		$args = array(
 			'hierarchical' => false,
-			'label'        => false,
+			'labels' => array(
+				'name'			=> __( 'Authors' ),
+				'all_items' 	=> __( 'All Authors' ),
+			),
 			'query_var'    => false,
 			'rewrite'      => false,
 			'public'       => false,
