@@ -1,5 +1,11 @@
 # Changelog for Co-Authors Plus
 
+**3.5.3 (Oct 24, 2022)**
+* Add author taxonomy labels #860
+* Add check for empty author in Jetpack Open Graph tags #861
+* Improve performance of search_authors() #872
+* Update WP versions in tests and grant permission to composer-installer packages #863
+
 **3.5.2 (June 1, 2022)**
 * Remove the `/wp/v2/coauthors` endpoint #851
 * Remove CSS hack that hides the add author box from core in the block editor #847
