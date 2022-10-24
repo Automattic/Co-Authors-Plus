@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 5.8
 Requires at least: 4.1
-Stable tag: 3.5.2
+Stable tag: 3.5.3
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -62,8 +62,10 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 
 == Changelog ==
 
-= 3.5.2 =
-* Remove the `/wp/v2/coauthors` endpoint #851
-* Remove CSS hack that hides the add author box from core in the block editor #847
+= 3.5.3 =
+* Add author taxonomy labels #860
+* Add check for empty author in Jetpack Open Graph tags #861
+* Improve performance of search_authors() #872
+* Update WP versions in tests and grant permission to composer-installer packages #863
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
