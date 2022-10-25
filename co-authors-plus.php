@@ -34,12 +34,16 @@ Author - user with the role of author
 
 define( 'COAUTHORS_PLUS_VERSION', '3.5.3' );
 
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+
 require_once dirname( __FILE__ ) . '/template-tags.php';
 require_once dirname( __FILE__ ) . '/deprecated.php';
 
 require_once dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php';
 require_once dirname( __FILE__ ) . '/php/class-coauthors-endpoint.php';
 require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
+
+CoAuthors\Integrations\Yoast::init();
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once dirname( __FILE__ ) . '/php/class-wp-cli.php';
@@ -220,9 +224,9 @@ class CoAuthors_Plus {
 		// Register new taxonomy so that we can store all of the relationships
 		$args = array(
 			'hierarchical' => false,
-			'labels' => array(
-				'name'			=> __( 'Authors' ),
-				'all_items' 	=> __( 'All Authors' ),
+			'labels'       => array(
+				'name'      => __( 'Authors' ),
+				'all_items' => __( 'All Authors' ),
 			),
 			'query_var'    => false,
 			'rewrite'      => false,

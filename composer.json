@@ -35,6 +35,11 @@
     "wp-coding-standards/wpcs": "^2.3.0",
     "yoast/phpunit-polyfills": "^1.0.1"
   },
+  "autoload": {
+		"classmap": [
+			"php"
+		]
+	},
   "scripts": {
     "cs": [
       "@php ./vendor/bin/phpcs -p -s -v -n . --standard=\"WordPress-VIP-Go\" --extensions=php --ignore=\"/vendor/*,/node_modules/*,/tests/*\""
