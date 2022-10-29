@@ -889,14 +889,14 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			return WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
 		}
 
-		// translators: Guest Author ID.
-		WP_CLI::success( sprintf( esc_html__( '-- Created as guest author #%s', 'co-authors-plus' ), $guest_author_id ) );
-
 		if ( isset( $author['author_id'] ) ) {
 			update_post_meta( $guest_author_id, '_original_author_id', $author['ID'] );
 		}
 
 		update_post_meta( $guest_author_id, '_original_author_login', $author['user_login'] );
+
+		// translators: Guest Author ID.
+		WP_CLI::success( sprintf( esc_html__( '-- Created as guest author #%s', 'co-authors-plus' ), $guest_author_id ) );
 	}
 
 	/**
