@@ -50,6 +50,11 @@ const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 		updateAuthors( authors );
 	};
 
+	// Bail if there are no selected authors.
+	if ( ! selectedAuthors?.length ) {
+		return null;
+	}
+
 	return selectedAuthors.map( ( author, i ) => {
 		const display = author.display;
 		const value = author.value;
