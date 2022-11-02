@@ -97,15 +97,6 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 		
 		switch_to_blog($blog);
 		$wp_rewrite->init();
-
-		$this->factory->post->create(
-			array(
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_author'  => $author,
-			)
-		);
 	
 		/**
 		* Author non existent page throws 404
