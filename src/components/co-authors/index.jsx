@@ -67,13 +67,6 @@ const CoAuthors = () => {
 	);
 
 	/**
-	 * Is saving?
-	 */
-	const isSavingPost = useSelect( ( select ) =>
-		select( 'core/editor' ).isSavingPost()
-	);
-
-	/**
 	 * Dispatchers
 	 */
 	const { setAuthorsStore } = useDispatch( 'cap/authors' );
