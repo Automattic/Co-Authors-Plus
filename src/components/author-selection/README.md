@@ -1,5 +1,5 @@
 # AuthorSelection
-A component for adding, removing, and removing authors selected via search.
+A component for adding and removing authors selected via search.
 
 ## Usage
 ```jsx
