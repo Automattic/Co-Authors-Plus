@@ -770,6 +770,25 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Create a single guest author.
+	 *
+	 * self::create_guest_author() wrapper.
+	 *
+	 * @subcommand create-single-author
+	 * @synopsis
+	 * [--display_name=<display_name>]
+	 * [--user_login=<user_login>]
+	 * [--first_name=<first_name>]
+	 * [--last_name=<last_name>]
+	 * [--website=<website>]
+	 * [--user_email=<user_email>]
+	 * [--description=<description>]
+	 */
+	public function create_single_author( $args, $assoc_args ) {
+		$this->create_guest_author( $assoc_args );
+	}
+
+	/**
 	 * Subcommand to create guest authors from an author list in a CSV file
 	 *
 	 * @subcommand create-guest-authors-from-csv
