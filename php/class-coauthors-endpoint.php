@@ -194,14 +194,7 @@ class Endpoints {
 	 * @param WP_REST_Request $request Request object.
 	 * @return bool
 	 */
-	public function can_edit_coauthors( $request ) {
-		set_current_user( 0 );
-		$post = get_post( $request->get_param( 'post_id' ) );
-
-		if ( $post instanceof WP_Post ) {
-			return $this->coauthors->current_user_can_set_authors( $post );;
-		}
-
+	public function can_edit_coauthors() {
 		return $this->coauthors->current_user_can_set_authors();
 	}
 

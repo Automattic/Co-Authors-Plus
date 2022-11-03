@@ -173,20 +173,10 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	 *
 	 * @covers CoAuthors_Plus::current_user_can_set_authors()
 	 */
-	public function test_current_user_can_set_authors_using_current_screen() {
-
+	public function test_current_user_can_set_author() {
 		global $coauthors_plus;
 
 		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
-
-		$screen = get_current_screen();
-
-		// Set the edit post current screen.
-		set_current_screen( 'edit-post' );
-
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
-
-		$GLOBALS['current_screen'] = $screen;
 
 		// Backing up current user.
 		$current_user = get_current_user_id();
@@ -196,22 +186,10 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
 
-		set_current_screen( 'edit-post' );
-
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
-
-		$GLOBALS['current_screen'] = $screen;
-
 		// Checks when current user is editor.
 		wp_set_current_user( $this->editor1->ID );
 
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
-
-		set_current_screen( 'edit-post' );
-
 		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
-
-		$GLOBALS['current_screen'] = $screen;
 
 		// Checks when current user is admin.
 		$admin1 = $this->factory->user->create_and_get(
@@ -222,101 +200,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		wp_set_current_user( $admin1->ID );
 
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
-
-		set_current_screen( 'edit-post' );
-
 		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
-
-		$GLOBALS['current_screen'] = $screen;
-
-		// Restore current user from backup.
-		wp_set_current_user( $current_user );
-	}
-
-	/**
-	 * Checks if the current user can set co-authors or not using global post.
-	 *
-	 * @covers CoAuthors_Plus::current_user_can_set_authors()
-	 */
-	public function test_current_user_can_set_authors_using_global_post() {
-
-		global $coauthors_plus, $post;
-
-		// Backing up global post.
-		$post_backup = $post;
-
-		$post = $this->post;
-
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
-
-		// Backing up current user.
-		$current_user = get_current_user_id();
-
-		// Checks when current user is author.
-		wp_set_current_user( $this->author1->ID );
-
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
-
-		// Checks when current user is editor.
-		wp_set_current_user( $this->editor1->ID );
-
-		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
-
-		// Checks when current user is super admin.
-		$admin1 = $this->factory->user->create_and_get(
-			array(
-				'role' => 'administrator',
-			)
-		);
-
-		grant_super_admin( $admin1->ID );
-		wp_set_current_user( $admin1->ID );
-
-		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
-
-		// Restore current user from backup.
-		wp_set_current_user( $current_user );
-
-		// Restore global post from backup.
-		$post = $post_backup;
-	}
-
-	/**
-	 * Checks if the current user can set co-authors or not using normal post.
-	 *
-	 * @covers CoAuthors_Plus::current_user_can_set_authors()
-	 */
-	public function test_current_user_can_set_authors_using_normal_post() {
-
-		global $coauthors_plus;
-
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $this->post ) );
-
-		// Backing up current user.
-		$current_user = get_current_user_id();
-
-		// Checks when current user is author.
-		wp_set_current_user( $this->author1->ID );
-
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $this->post ) );
-
-		// Checks when current user is editor.
-		wp_set_current_user( $this->editor1->ID );
-
-		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
-
-		// Checks when current user is super admin.
-		$admin1 = $this->factory->user->create_and_get(
-			array(
-				'role' => 'administrator',
-			)
-		);
-
-		grant_super_admin( $admin1->ID );
-		wp_set_current_user( $admin1->ID );
-
-		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -341,22 +225,22 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
 
 		add_filter( 'coauthors_plus_edit_authors', '__return_true' );
 
-		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
 
 		remove_filter( 'coauthors_plus_edit_authors', '__return_true' );
 
 		// Checks when current user is editor.
 		wp_set_current_user( $this->editor1->ID );
 
-		$this->assertTrue( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
 
 		add_filter( 'coauthors_plus_edit_authors', '__return_false' );
 
-		$this->assertFalse( $coauthors_plus->current_user_can_set_authors( $this->post ) );
+		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
 
 		remove_filter( 'coauthors_plus_edit_authors', '__return_false' );
 
@@ -774,4 +658,3 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 	}
 }
-

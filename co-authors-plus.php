@@ -909,7 +909,7 @@ class CoAuthors_Plus {
 			return;
 		}
 
-		if ( $this->current_user_can_set_authors( $post ) ) {
+		if ( $this->current_user_can_set_authors() ) {
 			// if current_user_can_set_authors and nonce valid
 			if ( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
@@ -1133,29 +1133,8 @@ class CoAuthors_Plus {
 	/**
 	 * Checks to see if the current user can set co-authors or not
 	 */
-	function current_user_can_set_authors( $post = null ) {
-		global $typenow;
-
-		if ( ! $post ) {
-			$post = get_post();
-			if ( ! $post ) {
-				// if user is on pages, you need to grab post type another way
-				$current_screen = get_current_screen();
-				$post_type      = ( ! empty( $current_screen->post_type ) ) ? $current_screen->post_type : '';
-			} else {
-				$post_type = $post->post_type;
-			}
-		} else {
-			$post_type = $post->post_type;
-		}
-
-		// TODO: need to fix this; shouldn't just say no if don't have post_type
-		if ( ! $post_type ) {
-			return false;
-		}
-
-		$post_type_object = get_post_type_object( $post_type );
-		$current_user     = wp_get_current_user();
+	function current_user_can_set_authors() {
+		$current_user = wp_get_current_user();
 		if ( ! $current_user ) {
 			return false;
 		}
