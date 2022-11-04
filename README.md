@@ -2,9 +2,9 @@
 
 * Contributors: batmoo, danielbachhuber, automattic
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-* Tested up to: 5.8
+* Tested up to: 6.1
 * Requires at least: 4.1
-* Stable tag: 3.5.3
+* Stable tag: 3.5.4
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -20,29 +20,29 @@ This plugin is an almost complete rewrite of the [Co-Authors](https://wordpress.
 
 ## Frequently Asked Questions
 
-* How do I add Co-Authors Plus support to my theme?
+### How do I add Co-Authors Plus support to my theme?
 
 If you've just installed Co-Authors Plus, you might notice that the bylines are being added in the backend but aren't appearing on the frontend. You'll need to [add the template tags to your theme](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) before the bylines will appear.
 
-* What happens to posts and pages when I delete a user assigned to a post or page as a coauthor?
+### What happens to posts and pages when I delete a user assigned to a post or page as a coauthor?
 
 When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you chose to reassign their posts to another user, that user will be set as the coauthor instead.
 
-* Can I use Co-Authors Plus with WordPress multisite?
+### Can I use Co-Authors Plus with WordPress multisite?
 
 Yep! Co-Authors Plus can be activated on a site-by-site basis, or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
 
-* Who needs permission to do what?
+### Who needs permission to do what?
 
 To assign co-authors to posts, a WordPress user will need the `edit_others_posts` capability. This is typically granted to the Editor role, but can be altered with the `coauthors_plus_edit_authors` filter.
 
 To create new guest author profiles, a WordPress will need the `list_users` capability. This is typically granted to the Administrator role, but can be altered with the `coauthors_guest_author_manage_cap` filter.
 
-* Can I easily create a list of all co-authors?
+### Can I easily create a list of all co-authors?
 
 Yep! There's a template tag called `coauthors_wp_list_authors()` that accepts many of the same arguments as `wp_list_authors()`. Look in template-tags.php for more details.
 
-* I have a large database, will this make it slow?
+### I have a large database, will this make it slow?
 
 If the site has a large database, you may run into issues with heavier than usual queries. You can work around this by disabling compat mode and force it to use simpler, tax-only queries by adding the following to your theme:
 
@@ -58,7 +58,7 @@ Note that this requires the site(s) to have proper terms set up for all users. Y
 $ wp --url=example.com co-authors-plus create-terms-for-posts
 ```
 
-* How do I use custom post types?
+### How do I use custom post types?
 
 1. To ensure posts with your CPT are counted, use the `coauthors_count_published_post_types` filter.
 ```php
@@ -85,10 +85,13 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 
 ## Changelog
 
-**3.5.3 (Oct 24, 2022)**
-* Add author taxonomy labels #860
-* Add check for empty author in Jetpack Open Graph tags #861
-* Improve performance of search_authors() #872
-* Update WP versions in tests and grant permission to composer-installer packages #863
+**3.5.4 (Nov 4, 2022)**
+* Handle `WP_Error` on failed guest author creation for method `create_guest_author()` #879
+* Only use `pre_handle_404` filter in non-paged result #874
+* Add CLI create-author command #880
+* Add template tag `co_authors_get_users()` #862
+* Change permission callback for authors and search endpoint and improve `current_user_can_set_authors()` #883
+* Fix tests and add IDE files #882
+* Bump dependencies #866 #865 #864
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
