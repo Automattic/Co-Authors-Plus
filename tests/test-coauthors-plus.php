@@ -179,7 +179,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
 
 		// Backing up current user.
-		$current_user = get_current_user_id();
+		$original_user = get_current_user_id();
 
 		// Checks when current user is author.
 		wp_set_current_user( $this->author1->ID );
@@ -203,7 +203,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
 
 		// Restore current user from backup.
-		wp_set_current_user( $current_user );
+		wp_set_current_user( $original_user );
 	}
 
 	/**
@@ -244,8 +244,52 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		remove_filter( 'coauthors_plus_edit_authors', '__return_false' );
 
-		// Restore current user from backup.
+		// Restore original user from backup.
 		wp_set_current_user( $current_user );
+	}
+
+	/**
+	 * Checks if the current user can edit a post they are set as a coauthor for.
+	 */
+	public function test_current_user_can_edit_post_they_coauthor() {
+		global $coauthors_plus;
+
+		// Backing up current user.
+		$current_user = get_current_user_id();
+
+		// Set up test post
+		$admin_user = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'administrator',
+				'user_login' => 'admin1',
+			)
+		);
+
+		$post_id = $this->factory->post->create(
+			array(
+				'post_author' => $admin_user->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+
+		// Checks when current user is author.
+		wp_set_current_user( $this->author1->ID );
+
+		// Author cannot edit by default.
+		$this->assertFalse( current_user_can( 'edit_post', $post_id ) );
+
+		// Author can editor when coauthor
+		$coauthors_plus->add_coauthors( $post_id, array( $this->author1->user_login ) );
+		$this->assertTrue( current_user_can( 'edit_post', $post_id ) );
+
+		// Editor can edit by default
+		$this->assertTrue( current_user_can( 'edit_post', $post_id ) );
+
+		// Restore original user from backup.
+		wp_set_current_user( $current_user );
+
 	}
 
 	/**
