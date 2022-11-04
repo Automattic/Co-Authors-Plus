@@ -1143,6 +1143,7 @@ class CoAuthors_Plus {
 			return true;
 		}
 
+		// Instead of using current_user_can(), we need to manually check the allcaps because of filter_user_has_cap
 		$can_set_authors = isset( $current_user->allcaps['edit_others_posts'] ) ? $current_user->allcaps['edit_others_posts'] : false;
 
 		return apply_filters( 'coauthors_plus_edit_authors', $can_set_authors );
