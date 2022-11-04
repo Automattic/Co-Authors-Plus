@@ -59,7 +59,7 @@ class Endpoints {
 				array(
 					'methods'             => 'GET',
 					'callback'            => array( $this, 'get_coauthors_search_results' ),
-					'permission_callback' => array( $this, 'can_edit_posts' ),
+					'permission_callback' => array( $this, 'can_edit_coauthors' ),
 					'args'                => array(
 						'q'                => array(
 							'description' => __( 'Text to search.' ),
@@ -83,7 +83,7 @@ class Endpoints {
 				array(
 					'methods'             => 'GET',
 					'callback'            => array( $this, 'get_coauthors' ),
-					'permission_callback' => array( $this, 'can_edit_posts' ),
+					'permission_callback' => array( $this, 'can_edit_coauthors' ),
 					'args'                => array(
 						'post_id' => array(
 							'required'          => true,
@@ -189,28 +189,12 @@ class Endpoints {
 	}
 
 	/**
-	 * Limit read endpoints to users that can edit posts.
-	 *
-	 * @return bool
-	 */
-	public function can_edit_posts() {
-		return current_user_can( 'edit_posts' );
-	}
-
-	/**
 	 * Permissions for updating coauthors.
 	 *
-	 * @param WP_REST_Request $request Request object.
 	 * @return bool
 	 */
-	public function can_edit_coauthors( $request ) {
-		$post = get_post( $request->get_param( 'post_id' ) );
-
-		if ( ! $post instanceof WP_Post ) {
-			return false;
-		}
-
-		return $this->coauthors->current_user_can_set_authors( $post );
+	public function can_edit_coauthors() {
+		return $this->coauthors->current_user_can_set_authors();
 	}
 
 	/**

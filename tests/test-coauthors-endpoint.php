@@ -34,6 +34,20 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
+		$this->contributor1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'contributor',
+				'user_login' => 'contributor1',
+			)
+		);
+
+		$this->subscriber1 = $this->factory->user->create_and_get(
+			array(
+				'role'       => 'subscriber',
+				'user_login' => 'subscriber1',
+			)
+		);
+
 		$this->coauthor1 = $coauthors_plus->guest_authors->create(
 			array(
 				'user_login'   => 'coauthor1',
@@ -263,6 +277,35 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			'GET',
 			''
 		);
+
+		wp_set_current_user( $this->editor1->ID );
+
+		$this->assertTrue( $this->_api->can_edit_coauthors( $request ) );
+
+		wp_set_current_user( $this->author1->ID );
+
+		$this->assertFalse( $this->_api->can_edit_coauthors( $request ) );
+
+		wp_set_current_user( $this->contributor1->ID );
+
+		$this->assertFalse( $this->_api->can_edit_coauthors( $request ) );
+
+		wp_set_current_user( $this->subscriber1->ID );
+
+		$this->assertFalse( $this->_api->can_edit_coauthors( $request ) );
+	}
+
+	public function test_can_edit_coauthors__with_post_param() {
+		$post_id = $this->factory->post->create(
+			array(
+				'post_author' => $this->editor1->ID,
+			)
+		);
+
+		$request = new WP_REST_Request(
+			'GET',
+			''
+		);
 		$request->set_default_params(
 			array(
 				'post_id' => $post_id,
@@ -274,6 +317,14 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 		$this->assertTrue( $this->_api->can_edit_coauthors( $request ) );
 
 		wp_set_current_user( $this->author1->ID );
+
+		$this->assertFalse( $this->_api->can_edit_coauthors( $request ) );
+
+		wp_set_current_user( $this->contributor1->ID );
+
+		$this->assertFalse( $this->_api->can_edit_coauthors( $request ) );
+
+		wp_set_current_user( $this->subscriber1->ID );
 
 		$this->assertFalse( $this->_api->can_edit_coauthors( $request ) );
 	}
