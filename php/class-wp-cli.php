@@ -774,7 +774,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * self::create_guest_author() wrapper.
 	 *
-	 * @subcommand create-single-author
+	 * @subcommand create-author
 	 * @synopsis
 	 * [--display_name=<display_name>]
 	 * [--user_login=<user_login>]
@@ -784,7 +784,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * [--user_email=<user_email>]
 	 * [--description=<description>]
 	 */
-	public function create_single_author( $args, $assoc_args ) {
+	public function create_author( $args, $assoc_args ) {
 		$this->create_guest_author( $assoc_args );
 	}
 
