@@ -1239,9 +1239,12 @@ class CoAuthors_Guest_Authors {
 
 
 	/**
-	 * Create a guest author
+	 * Create a guest author.
+	 *
+	 * @param $args array Author args. Required keys to create author: 'display_name' and 'user_email'.
 	 *
 	 * @since 3.0
+	 * @return int|WP_Error The ID of the created guest author, or a WP_Error object if the author could not be created.
 	 */
 	function create( $args ) {
 		global $coauthors_plus;
