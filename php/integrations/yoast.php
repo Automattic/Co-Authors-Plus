@@ -9,6 +9,7 @@ use CoAuthors\Integrations\Yoast\CoAuthor;
 use Yoast\WP\SEO\Config\Schema_Types;
 use Yoast\WP\SEO\Context\Meta_Tags_Context;
 use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
+use WP_User;
 
 /**
  * The main Yoast integration class
@@ -77,10 +78,10 @@ class Yoast {
 	 * @return void
 	 */
 	public static function register_hooks() {
-		\add_filter( 'wpseo_schema_graph', [ __CLASS__, 'filter_graph' ], 11, 2 );
-		\add_filter( 'wpseo_schema_author', [ __CLASS__, 'filter_author_graph' ], 11, 4 );
-		\add_filter( 'wpseo_schema_profilepage', [ __CLASS__, 'filter_schema_profilepage' ], 11, 4 );
-		\add_filter( 'wpseo_meta_author', [ __CLASS__, 'filter_author_meta' ], 11, 2 );
+		add_filter( 'wpseo_schema_graph', [ __CLASS__, 'filter_graph' ], 11, 2 );
+		add_filter( 'wpseo_schema_author', [ __CLASS__, 'filter_author_graph' ], 11, 4 );
+		add_filter( 'wpseo_schema_profilepage', [ __CLASS__, 'filter_schema_profilepage' ], 11, 4 );
+		add_filter( 'wpseo_meta_author', [ __CLASS__, 'filter_author_meta' ], 11, 2 );
 	}
 
 	/**
@@ -99,14 +100,14 @@ class Yoast {
 			return $data;
 		}
 
-		$user = \get_queried_object();
+		$user = get_queried_object();
 
 		if ( empty( $user->type ) || $user->type !== 'guest-author' ) {
 			return $data;
 		}
 
 		// Fix author URL.
-		$author_url                                     = \get_author_posts_url( $user->ID, $user->user_nicename );
+		$author_url                                     = get_author_posts_url( $user->ID, $user->user_nicename );
 		$graph_piece_generator->context->canonical      = $author_url;
 		$graph_piece_generator->context->main_schema_id = $author_url;
 
@@ -129,11 +130,11 @@ class Yoast {
 		}
 
 		if ( isset( $data['image']['@id'] ) ) {
-			$data['image']['@id'] .= \md5( $data['image']['url'] );
+			$data['image']['@id'] .= md5( $data['image']['url'] );
 		}
 
 		if ( isset( $data['logo']['@id'] ) ) {
-			$data['logo']['@id'] .= \md5( $data['image']['url'] );
+			$data['logo']['@id'] .= md5( $data['image']['url'] );
 		}
 
 		return $data;
@@ -148,20 +149,20 @@ class Yoast {
 	 * @return array The (potentially altered) schema graph.
 	 */
 	public static function filter_graph( $data, $context ) {
-		if ( ! \is_singular() ) {
+		if ( ! is_singular() ) {
 			return $data;
 		}
 
-		if ( ! \function_exists( '\get_coauthors' ) ) {
+		if ( ! function_exists( 'get_coauthors' ) ) {
 			return $data;
 		}
 
 		/**
 		 * Contains the authors from the CoAuthors Plus plugin.
 		 *
-		 * @var \WP_User[] $author_objects
+		 * @var WP_User[] $author_objects
 		 */
-		$author_objects = \get_coauthors( $context->post->ID );
+		$author_objects = get_coauthors( $context->post->ID );
 
 		$ids     = [];
 		$authors = [];
@@ -170,9 +171,9 @@ class Yoast {
 		foreach ( $author_objects as $author ) {
 			$author_generator          = new CoAuthor();
 			$author_generator->context = $context;
-			$author_generator->helpers = \YoastSEO()->helpers;
+			$author_generator->helpers = YoastSEO()->helpers;
 
-			if ( $author instanceof \WP_User ) {
+			if ( $author instanceof WP_User ) {
 				$author_data = $author_generator->generate_from_user_id( $author->ID );
 			} elseif ( ! empty( $author->type ) && $author->type === 'guest-author' ) {
 				$author_data = $author_generator->generate_from_guest_author( $author );
@@ -189,7 +190,7 @@ class Yoast {
 		// Change the author reference to reference our multiple authors.
 		$add_to_graph = false;
 		foreach ( $data as $key => $piece ) {
-			if ( \in_array( $piece['@type'], $article_types, true ) ) {
+			if ( in_array( $piece['@type'], $article_types, true ) ) {
 				$data[ $key ]['author'] = $ids;
 				$add_to_graph           = true;
 				break;
@@ -198,7 +199,7 @@ class Yoast {
 
 		if ( $add_to_graph ) {
 			// Clean all Persons from the schema, as the user stored as post owner might be incorrectly added if the post post has only guest authors as authors.
-			$data = \array_filter(
+			$data = array_filter(
 				$data,
 				function( $piece ) {
 					return empty( $piece['@type'] ) || $piece['@type'] !== 'Person';
@@ -207,7 +208,7 @@ class Yoast {
 
 			if ( ! empty( $author_data ) ) {
 				if ( $context->site_represents !== 'person' || $author->ID !== $context->site_user_id ) {
-					$data = \array_merge( $data, $authors );
+					$data = array_merge( $data, $authors );
 				}
 			}
 		}
@@ -223,7 +224,7 @@ class Yoast {
 	 * @return string
 	 */
 	public static function filter_author_meta( $author_name, $presentation ) {
-		$author_objects = \get_coauthors( $presentation->context->post->id );
+		$author_objects = get_coauthors( $presentation->context->post->id );
 
 		// Fallback in case of error.
 		if ( empty( $author_objects ) ) {
