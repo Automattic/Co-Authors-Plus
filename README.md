@@ -4,7 +4,7 @@
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 6.1
 * Requires at least: 4.1
-* Stable tag: 3.5.4
+* Stable tag: 3.5.5
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -85,13 +85,8 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 
 ## Changelog
 
-**3.5.4 (Nov 4, 2022)**
-* Handle `WP_Error` on failed guest author creation for method `create_guest_author()` #879
-* Only use `pre_handle_404` filter in non-paged result #874
-* Add CLI create-author command #880
-* Add template tag `co_authors_get_users()` #862
-* Change permission callback for authors and search endpoint and improve `current_user_can_set_authors()` #883
-* Fix tests and add IDE files #882
-* Bump dependencies #866 #865 #864
+**3.5.5 (Nov 16, 2022)**
+* Add Yoast integration #877
+* CI: Add WP 6.1 #886 #887
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
