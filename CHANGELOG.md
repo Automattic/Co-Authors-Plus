@@ -1,5 +1,9 @@
 # Changelog for Co-Authors Plus
 
+**3.5.5 (Nov 16, 2022)**
+* Add Yoast integration #877
+* CI: Add WP 6.1 #886 #887
+
 **3.5.4 (Nov 4, 2022)**
 * Handle `WP_Error` on failed guest author creation for method `create_guest_author()` #879
 * Only use `pre_handle_404` filter in non-paged result #874
