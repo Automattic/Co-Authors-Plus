@@ -5,5 +5,8 @@
 /.github
 /bin
 /package.json
+/package-lock.json
 /composer.json
 /tests
+/phpunit.xml
+/Makefile
