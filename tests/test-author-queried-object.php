@@ -80,4 +80,35 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 		restore_current_blog();
 
 	}
+
+
+	/**
+	 * On author pages, when paginated, 
+	 * if page number is outside the range, throws 404
+	 */
+	function test__author_non_existent_page_throws_404() {
+		global $wp_rewrite;
+
+		/**
+		 * Set up
+		 */
+		$author = $this->factory->user->create( array( 'user_login' => 'author' ) );
+		$blog = $this->factory->blog->create( array( 'user_id' => $author ) );
+		
+		switch_to_blog($blog);
+		$wp_rewrite->init();
+	
+		/**
+		* Author non existent page throws 404
+		*/
+	   $non_existent_page = 1000;
+	   $this->go_to( get_author_posts_url( $author ) . 'page/' . $non_existent_page );
+	   $this->assertQueryTrue( 'is_404' );
+
+		/**
+		* Author existent page loads
+		*/
+	   $this->go_to( get_author_posts_url( $author ) );
+	   $this->assertQueryTrue( 'is_archive', 'is_author' );
+	}
 }

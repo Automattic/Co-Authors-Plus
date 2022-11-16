@@ -1,5 +1,5 @@
 {
-  "name": "co-authors-plus-3.5.2",
+  "name": "co-authors-plus-3.5.3",
   "version": "1.0.0",
   "description": "Allows multiple authors to be assigned to a post.",
   "main": "index.js",
@@ -28,8 +28,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/icons": "^2.10.3",
-    "@wordpress/scripts": "^24.1.0",
+    "@wordpress/icons": "^2.10.2",
+    "@wordpress/scripts": "^24.0.0",
     "prettier": "npm:wp-prettier@^2.2.1-beta-1",
     "prop-types": "^15.8.1"
   },

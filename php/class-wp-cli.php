@@ -770,6 +770,25 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Create a single guest author.
+	 *
+	 * self::create_guest_author() wrapper.
+	 *
+	 * @subcommand create-author
+	 * @synopsis
+	 * [--display_name=<display_name>]
+	 * [--user_login=<user_login>]
+	 * [--first_name=<first_name>]
+	 * [--last_name=<last_name>]
+	 * [--website=<website>]
+	 * [--user_email=<user_email>]
+	 * [--description=<description>]
+	 */
+	public function create_author( $args, $assoc_args ) {
+		$this->create_guest_author( $assoc_args );
+	}
+
+	/**
 	 * Subcommand to create guest authors from an author list in a CSV file
 	 *
 	 * @subcommand create-guest-authors-from-csv
@@ -850,6 +869,12 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		WP_CLI::line( 'All done!' );
 	}
 
+	/**
+	 * Helper function to create a guest author.
+	 *
+	 * @param $author array author args. Required: display_name, user_login
+	 * @return void
+	 */
 	private function create_guest_author( $author ) {
 		global $coauthors_plus;
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email', $author['user_email'], true );
@@ -858,36 +883,39 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $author['user_login'], true );
 		}
 
-		if ( ! $guest_author ) {
-			WP_CLI::line( '-- Not found; creating profile.' );
-
-			$guest_author_id = $coauthors_plus->guest_authors->create(
-				array(
-					'display_name' => $author['display_name'],
-					'user_login'   => $author['user_login'],
-					'user_email'   => $author['user_email'],
-					'first_name'   => $author['first_name'],
-					'last_name'    => $author['last_name'],
-					'website'      => $author['website'],
-					'description'  => $author['description'],
-					'avatar'       => $author['avatar'],
-				)
-			);
-
-			if ( $guest_author_id ) {
-				WP_CLI::line( sprintf( '-- Created as guest author #%s', $guest_author_id ) );
-
-				if ( isset( $author['author_id'] ) ) {
-					update_post_meta( $guest_author_id, '_original_author_id', $author['ID'] );
-				}
-
-				update_post_meta( $guest_author_id, '_original_author_login', $author['user_login'] );
-			} else {
-				WP_CLI::warning( '-- Failed to create guest author.' );
-			}
-		} else {
-			WP_CLI::line( sprintf( '-- Author already exists (ID #%s); skipping.', $guest_author->ID ) );
+		if ( $guest_author ) {
+			// translators: Guest Author ID.
+			return WP_CLI::warning( sprintf( esc_html__( '-- Author already exists (ID #%s); skipping.', 'co-authors-plus' ), $guest_author->ID ) );
 		}
+
+		WP_CLI::line( esc_html__( '-- Not found; creating profile.', 'co-authors-plus' ) );
+
+		$guest_author_id = $coauthors_plus->guest_authors->create(
+			array(
+				'display_name' => $author['display_name'],
+				'user_login'   => $author['user_login'],
+				'user_email'   => $author['user_email'],
+				'first_name'   => $author['first_name'],
+				'last_name'    => $author['last_name'],
+				'website'      => $author['website'],
+				'description'  => $author['description'],
+				'avatar'       => $author['avatar'],
+			)
+		);
+
+		if ( is_wp_error( $guest_author_id ) ) {
+			// translators: The error message.
+			return WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
+		}
+
+		if ( isset( $author['author_id'] ) ) {
+			update_post_meta( $guest_author_id, '_original_author_id', $author['ID'] );
+		}
+
+		update_post_meta( $guest_author_id, '_original_author_login', $author['user_login'] );
+
+		// translators: Guest Author ID.
+		WP_CLI::success( sprintf( esc_html__( '-- Created as guest author #%s', 'co-authors-plus' ), $guest_author_id ) );
 	}
 
 	/**

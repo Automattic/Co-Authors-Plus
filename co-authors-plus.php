@@ -3,7 +3,7 @@
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 3.5.2
+Version: 3.5.6
 Author: Mohammad Jangda, Daniel Bachhuber, Automattic
 Copyright: 2008-2015 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
 
@@ -32,7 +32,9 @@ Co-author - in the context of a single post, a guest author or user assigned to 
 Author - user with the role of author
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '3.5.2' );
+define( 'COAUTHORS_PLUS_VERSION', '3.5.6' );
+
+require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
 require_once dirname( __FILE__ ) . '/template-tags.php';
 require_once dirname( __FILE__ ) . '/deprecated.php';
@@ -40,6 +42,8 @@ require_once dirname( __FILE__ ) . '/deprecated.php';
 require_once dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php';
 require_once dirname( __FILE__ ) . '/php/class-coauthors-endpoint.php';
 require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
+
+CoAuthors\Integrations\Yoast::init();
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once dirname( __FILE__ ) . '/php/class-wp-cli.php';
@@ -220,7 +224,10 @@ class CoAuthors_Plus {
 		// Register new taxonomy so that we can store all of the relationships
 		$args = array(
 			'hierarchical' => false,
-			'label'        => false,
+			'labels'       => array(
+				'name'      => __( 'Authors' ),
+				'all_items' => __( 'All Authors' ),
+			),
 			'query_var'    => false,
 			'rewrite'      => false,
 			'public'       => false,
@@ -906,7 +913,7 @@ class CoAuthors_Plus {
 			return;
 		}
 
-		if ( $this->current_user_can_set_authors( $post ) ) {
+		if ( $this->current_user_can_set_authors() ) {
 			// if current_user_can_set_authors and nonce valid
 			if ( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
@@ -1130,29 +1137,8 @@ class CoAuthors_Plus {
 	/**
 	 * Checks to see if the current user can set co-authors or not
 	 */
-	function current_user_can_set_authors( $post = null ) {
-		global $typenow;
-
-		if ( ! $post ) {
-			$post = get_post();
-			if ( ! $post ) {
-				// if user is on pages, you need to grab post type another way
-				$current_screen = get_current_screen();
-				$post_type      = ( ! empty( $current_screen->post_type ) ) ? $current_screen->post_type : '';
-			} else {
-				$post_type = $post->post_type;
-			}
-		} else {
-			$post_type = $post->post_type;
-		}
-
-		// TODO: need to fix this; shouldn't just say no if don't have post_type
-		if ( ! $post_type ) {
-			return false;
-		}
-
-		$post_type_object = get_post_type_object( $post_type );
-		$current_user     = wp_get_current_user();
+	function current_user_can_set_authors() {
+		$current_user = wp_get_current_user();
 		if ( ! $current_user ) {
 			return false;
 		}
@@ -1161,6 +1147,7 @@ class CoAuthors_Plus {
 			return true;
 		}
 
+		// Instead of using current_user_can(), we need to manually check the allcaps because of filter_user_has_cap
 		$can_set_authors = isset( $current_user->allcaps['edit_others_posts'] ) ? $current_user->allcaps['edit_others_posts'] : false;
 
 		return apply_filters( 'coauthors_plus_edit_authors', $can_set_authors );
@@ -1209,7 +1196,9 @@ class CoAuthors_Plus {
 		if ( is_object( $authordata ) || ! empty( $term ) ) {
 			$wp_query->queried_object    = $authordata;
 			$wp_query->queried_object_id = $authordata->ID;
-			add_filter( 'pre_handle_404', '__return_true' );
+			if ( ! is_paged() ) {
+				add_filter( 'pre_handle_404', '__return_true' );
+			}
 		} else {
 			$wp_query->queried_object = $wp_query->queried_object_id = null;
 			$wp_query->is_author      = $wp_query->is_archive = false;
@@ -1302,6 +1291,7 @@ class CoAuthors_Plus {
 				'user_email',
 				'user_login',
 			),
+			'capability'     => array( apply_filters( 'coauthors_edit_author_cap', 'edit_posts' ) ),
 			'fields'         => 'all_with_meta',
 		);
 		$found_users = get_users( $args );
