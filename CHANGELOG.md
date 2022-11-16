@@ -1,5 +1,9 @@
 # Changelog for Co-Authors Plus
 
+**3.5.6 (Nov 16, 2022)**
+* CI: Add new deployment workflow #890
+* Dependency update #891
+
 **3.5.5 (Nov 16, 2022)**
 * Add Yoast integration #877
 * CI: Add WP 6.1 #886 #887

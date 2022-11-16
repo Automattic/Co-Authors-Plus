@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 6.1
 Requires at least: 4.1
-Stable tag: 3.5.5
+Stable tag: 3.5.6
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -62,8 +62,8 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 
 == Changelog ==
 
-= 3.5.5 =
-* Add Yoast integration #877
-* CI: Add WP 6.1 #886 #887
+= 3.5.6 (Nov 16, 2022) =
+* CI: Add new deployment workflow #890
+* Dependency update #891
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
