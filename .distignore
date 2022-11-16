@@ -1,0 +1,9 @@
+/.distignore
+/.editorconfig
+/.git
+/.gitignore
+/.github
+/bin
+/package.json
+/composer.json
+/tests
