@@ -10,3 +10,4 @@
 /tests
 /phpunit.xml
 /Makefile
+/phpcs.xml
