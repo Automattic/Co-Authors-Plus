@@ -79,6 +79,10 @@ export default createReduxStore( 'cap/authors', {
 	},
 	resolvers: {
 		*getAuthors( postId ) {
+			if ( ! postId ) {
+				return actions.setAuthors( [] );
+			}
+
 			const path = `${ COAUTHORS_ENDPOINT }/${ postId }`;
 			const result = yield actions.apiRequest( path );
 

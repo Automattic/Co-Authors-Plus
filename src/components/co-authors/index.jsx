@@ -37,7 +37,7 @@ register( coauthorsStore );
  * the select and methods from dispatch as composed below.
  *
  * @return {JSX.Element} Document sidebar panel component.
- */
+*/
 const CoAuthors = () => {
 	/**
 	 * Local state
@@ -55,14 +55,16 @@ const CoAuthors = () => {
 	/**
 	 * CoAuthor select functions.
 	 */
-	const [ authors, saveAuthors ] = useSelect(
-		( select ) => {
-			const { saveAuthors, getAuthors } = select( 'cap/authors' );
-			return {
-				authors: getAuthors( postId ),
-				saveAuthors,
-			};
-		},
+	const saveAuthors = useSelect(
+		( select ) => select( 'cap/authors' )?.saveAuthors,
+		[]
+	);
+
+	/**
+	 * CoAuthor select functions.
+	 */
+	const authors = useSelect(
+		( select ) => select( 'cap/authors' )?.getAuthors( postId ),
 		[ postId ]
 	);
 
