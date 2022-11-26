@@ -233,7 +233,9 @@ class CoAuthors_Plus {
 			'public'       => false,
 			'sort'         => true,
 			'args'         => array( 'orderby' => 'term_order' ),
+			'show_in_rest' => true,
 			'show_ui'      => false,
+			'rest_base'    => 'coauthors',
 		);
 
 		// If we use the nasty SQL query, we need our custom callback. Otherwise, we still need to flush cache.
