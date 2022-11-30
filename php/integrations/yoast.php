@@ -39,6 +39,7 @@ class Yoast {
 	 */
 	public static function do_initialization() {
 		if ( self::should_initialize() ) {
+			require_once dirname( __FILE__ ) . '/yoast/class-coauthor.php';
 			self::register_hooks();
 		}
 	}
@@ -242,3 +243,5 @@ class Yoast {
 	}
 
 }
+
+Yoast::init();

@@ -34,16 +34,13 @@ Author - user with the role of author
 
 define( 'COAUTHORS_PLUS_VERSION', '3.5.6' );
 
-require_once dirname( __FILE__ ) . '/vendor/autoload.php';
-
 require_once dirname( __FILE__ ) . '/template-tags.php';
 require_once dirname( __FILE__ ) . '/deprecated.php';
 
 require_once dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php';
 require_once dirname( __FILE__ ) . '/php/class-coauthors-endpoint.php';
 require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
-
-CoAuthors\Integrations\Yoast::init();
+require_once dirname( __FILE__ ) . '/php/integrations/yoast.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once dirname( __FILE__ ) . '/php/class-wp-cli.php';
