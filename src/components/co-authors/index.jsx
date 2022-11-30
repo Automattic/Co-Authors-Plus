@@ -6,11 +6,12 @@ import PropTypes from 'prop-types';
 /**
  * WordPress dependencies
  */
-import { ComboboxControl, Spinner } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
-import { useDispatch, useSelect, register } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
+import { ComboboxControl, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { applyFilters } from '@wordpress/hooks';
+import { useDispatch, useSelect, register } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Components
@@ -41,11 +42,9 @@ register( coauthorsStore );
  * The Render component that will be populated with data from
  * the select and methods from dispatch as composed below.
  *
- * @param {integer} threshold optional search threshold.
- *
  * @return {JSX.Element} Document sidebar panel component.
 */
-const CoAuthors = ({ threshold }) => {
+const CoAuthors = () => {
 	/**
 	 * Local state
 	 */
@@ -79,6 +78,13 @@ const CoAuthors = ({ threshold }) => {
 	 * Dispatchers
 	 */
 	const { setAuthorsStore } = useDispatch( 'cap/authors' );
+
+	/**
+	 * Threshold filter for determining when a search query is preformed.
+	 *
+	 * @param {integer} threshold length threshold. default 2.
+	 */
+	const threshold = applyFilters( 'coAuthors.search.threshold', 2 );
 
 	/**
 	 * Setter for updating authors and selected authors simultaneously.
@@ -185,14 +191,6 @@ const CoAuthors = ({ threshold }) => {
 			/>
 		</>
 	);
-};
-
-CoAuthors.defaultProps = {
-	threshold: 2,
-}
-
-CoAuthors.propTypes = {
-	threshold: PropTypes.number,
 };
 
 export default CoAuthors;
