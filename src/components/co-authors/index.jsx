@@ -1,4 +1,9 @@
 /**
+ * Dependencies.
+ */
+import PropTypes from 'prop-types';
+
+/**
  * WordPress dependencies
  */
 import { ComboboxControl, Spinner } from '@wordpress/components';
@@ -36,9 +41,11 @@ register( coauthorsStore );
  * The Render component that will be populated with data from
  * the select and methods from dispatch as composed below.
  *
+ * @param {integer} threshold optional search threshold.
+ *
  * @return {JSX.Element} Document sidebar panel component.
 */
-const CoAuthors = () => {
+const CoAuthors = ({ threshold }) => {
 	/**
 	 * Local state
 	 */
@@ -107,6 +114,12 @@ const CoAuthors = () => {
 	 */
 	const onFilterValueChange = async ( query ) => {
 		let response = 0;
+
+		// Don't kick off search without having at least two characters.
+		if ( threshold < 2 ) {
+			return;
+		}
+
 		const existingAuthors = selectedAuthors
 			.map( ( item ) => item.value )
 			.join( ',' );
@@ -172,6 +185,14 @@ const CoAuthors = () => {
 			/>
 		</>
 	);
+};
+
+CoAuthors.defaultProps = {
+	threshold: 2,
+}
+
+CoAuthors.propTypes = {
+	threshold: PropTypes.number,
 };
 
 export default CoAuthors;
