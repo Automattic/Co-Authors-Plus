@@ -929,7 +929,7 @@ class CoAuthors_Guest_Authors {
 				}
 				// Ensure we aren't doing the lookup by the prefixed value
 				if ( 'user_login' == $key ) {
-					$value = preg_replace( '#^cap\-#', '', $value );
+					$value = preg_replace( '#^cap\-#', '', sanitize_title( $value ) );
 				}
 				$query   = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
 				$post_id = $wpdb->get_var( $query ); // phpcs:ignore
