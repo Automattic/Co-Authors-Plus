@@ -4,7 +4,7 @@
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 6.1
 * Requires at least: 4.1
-* Stable tag: 3.5.6
+* Stable tag: 3.5.7
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -85,8 +85,8 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 
 ## Changelog
 
-**3.5.6 (Nov 16, 2022)**
-* CI: Add new deployment workflow #890
-* Dependency update #891
+**3.5.7 (Jan 5, 2023)**
+* Remove Composer autoloader dependency #898
+* Fixes Yoast deprecated warning for get_article_type_options_values() #901
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)

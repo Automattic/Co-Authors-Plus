@@ -1,5 +1,9 @@
 # Changelog for Co-Authors Plus
 
+**3.5.7 (Jan 5, 2022)**
+* Remove Composer autoloader dependency #898
+* Fixes Yoast deprecated warning for get_article_type_options_values() #901
+
 **3.5.6 (Nov 16, 2022)**
 * CI: Add new deployment workflow #890
 * Dependency update #891
