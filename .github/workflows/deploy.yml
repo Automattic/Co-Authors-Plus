@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build # Remove or modify this step as needed
-        run: composer install --no-dev
       - name: Push to WordPress.org
         uses: 10up/action-wordpress-plugin-deploy@stable
         env:
