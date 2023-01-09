@@ -39,6 +39,7 @@ class Yoast {
 	 */
 	public static function do_initialization() {
 		if ( self::should_initialize() ) {
+			require_once dirname( __FILE__ ) . '/yoast/class-coauthor.php';
 			self::register_hooks();
 		}
 	}
@@ -185,7 +186,12 @@ class Yoast {
 			}
 		}
 		$schema_types  = new Schema_Types();
-		$article_types = $schema_types->get_article_type_options_values();
+		$article_types = array_map(
+			function( $article_type ) {
+				return $article_type['value'];
+			},
+			$schema_types->get_article_type_options()
+		);
 
 		// Change the author reference to reference our multiple authors.
 		$add_to_graph = false;
@@ -242,3 +248,5 @@ class Yoast {
 	}
 
 }
+
+Yoast::init();

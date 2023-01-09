@@ -3,7 +3,7 @@
 Plugin Name: Co-Authors Plus
 Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
 Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 3.5.6
+Version: 3.5.7
 Author: Mohammad Jangda, Daniel Bachhuber, Automattic
 Copyright: 2008-2015 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
 
@@ -32,9 +32,7 @@ Co-author - in the context of a single post, a guest author or user assigned to 
 Author - user with the role of author
 */
 
-define( 'COAUTHORS_PLUS_VERSION', '3.5.6' );
-
-require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+define( 'COAUTHORS_PLUS_VERSION', '3.5.7' );
 
 require_once dirname( __FILE__ ) . '/template-tags.php';
 require_once dirname( __FILE__ ) . '/deprecated.php';
@@ -42,8 +40,7 @@ require_once dirname( __FILE__ ) . '/deprecated.php';
 require_once dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php';
 require_once dirname( __FILE__ ) . '/php/class-coauthors-endpoint.php';
 require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
-
-CoAuthors\Integrations\Yoast::init();
+require_once dirname( __FILE__ ) . '/php/integrations/yoast.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once dirname( __FILE__ ) . '/php/class-wp-cli.php';
