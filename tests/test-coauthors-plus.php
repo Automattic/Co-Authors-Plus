@@ -75,6 +75,31 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
+	 * Checks coauthor object when he/she is a guest author with unicode user_login
+	 *
+	 * @covers CoAuthors_Plus::get_coauthor_by()
+	 */
+	public function test_get_coauthor_by_when_guest_author_has_unicode_username() {
+
+		global $coauthors_plus;
+
+		$user_login = 'محمود-الحسيني';
+		$guest_author_id = $coauthors_plus->guest_authors->create(
+			array(
+				'user_login'	=> $user_login,
+				'display_name'	=> 'محمود الحسيني',
+			)
+		);
+
+		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $user_login );
+
+		$this->assertInstanceOf( stdClass::class, $coauthor );
+		$this->assertObjectHasAttribute( 'ID', $coauthor );
+		$this->assertEquals( $guest_author_id, $coauthor->ID );
+		$this->assertEquals( 'guest-author', $coauthor->type );
+	}
+
+	/**
 	 * Checks coauthor object when he/she is a wp author.
 	 *
 	 * @covers CoAuthors_Plus::get_coauthor_by()
