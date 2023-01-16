@@ -1,14 +1,17 @@
 /**
- * External dependencies.
+ * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
 import { createReduxStore } from '@wordpress/data';
 
 /**
- * Internal dependencies.
+ * Utils
  */
 import { formatAuthorData } from './utils';
 
+/**
+ * Store defaults
+ */
 const DEFAULT_STATE = {
 	authors: [],
 };
@@ -39,7 +42,7 @@ const actions = {
 	},
 };
 
-export const coauthorsStore = createReduxStore( 'cap/authors', {
+export default createReduxStore( 'cap/authors', {
 	reducer( state = DEFAULT_STATE, action ) {
 		switch ( action.type ) {
 			case 'SET_AUTHORS':
@@ -57,9 +60,7 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 
 		return state;
 	},
-
 	actions,
-
 	selectors: {
 		getAuthors( state ) {
 			const { authors } = state;
@@ -71,15 +72,17 @@ export const coauthorsStore = createReduxStore( 'cap/authors', {
 			return authors;
 		},
 	},
-
 	controls: {
 		API_REQUEST( action ) {
 			return apiFetch( { path: action.path, method: action.method } );
 		},
 	},
-
 	resolvers: {
 		*getAuthors( postId ) {
+			if ( ! postId ) {
+				return actions.setAuthors( [] );
+			}
+
 			const path = `${ COAUTHORS_ENDPOINT }/${ postId }`;
 			const result = yield actions.apiRequest( path );
 
