@@ -84,6 +84,7 @@ class Yoast {
 		add_filter( 'wpseo_schema_profilepage', [ __CLASS__, 'filter_schema_profilepage' ], 11, 4 );
 		add_filter( 'wpseo_meta_author', [ __CLASS__, 'filter_author_meta' ], 11, 2 );
 		add_filter( 'wpseo_robots_array', [ __CLASS__, 'allow_indexing_guest_author_archive' ], 10, 2 );
+		add_filter( 'wpseo_opengraph_url', [ __CLASS__, 'fix_guest_author_archive_url_presenter' ], 10, 2 );
 	}
 
 	/**
@@ -284,6 +285,20 @@ class Yoast {
 		}
 
 		return $robots;
+	}
+
+	public static function fix_guest_author_archive_url_presenter( $url, $presenter ) {
+		if ( ! is_author() ) {
+			return $url;
+		}
+
+		$user = get_queried_object();
+
+		if ( empty( $user->type ) || $user->type !== 'guest-author' ) {
+			return $url;
+		}
+
+		return get_author_posts_url( $user->ID, $user->user_nicename );
 	}
 }
 
