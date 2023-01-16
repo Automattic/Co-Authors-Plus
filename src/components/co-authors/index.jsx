@@ -122,7 +122,7 @@ const CoAuthors = () => {
 		let response = 0;
 
 		// Don't kick off search without having at least two characters.
-		if ( threshold < 2 ) {
+		if ( query.length < threshold ) {
 			return;
 		}
 
