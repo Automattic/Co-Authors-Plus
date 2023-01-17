@@ -10,7 +10,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { ComboboxControl, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
-import { useDispatch, useSelect, register } from '@wordpress/data';
+import { useDispatch, useSelect, register, subscribe } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 
 /**
@@ -78,6 +78,13 @@ const CoAuthors = () => {
 	 * Dispatchers
 	 */
 	const { setAuthorsStore } = useDispatch( 'cap/authors' );
+
+	/**
+	 * Is saving post
+	 */
+	const isSavingPost = useSelect(
+		(select) => select('core/editor').isSavingPost
+	);
 
 	/**
 	 * Threshold filter for determining when a search query is preformed.
@@ -164,9 +171,20 @@ const CoAuthors = () => {
 		// Set author store.
 		setAuthorsStore( authors );
 
-		// Save author details to CAP.
-		saveAuthors( postId, authors );
 	}, [ authors ] );
+
+	let checked = true;
+	subscribe( () => {
+		if ( isSavingPost() ) {
+			checked = false;
+		} else if ( ! checked ) {
+			if ( authors.length ) {
+				// Save author details to CAP.
+				saveAuthors( postId, authors );
+			}
+			checked = true;
+		}
+	});
 
 	return (
 		<>
