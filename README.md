@@ -4,7 +4,7 @@
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 6.1
 * Requires at least: 4.1
-* Stable tag: 3.5.7
+* Stable tag: 3.5.8
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -85,8 +85,11 @@ add_filter( 'coauthors_count_published_post_types', function( $post_types ) {
 
 ## Changelog
 
-**3.5.7 (Jan 5, 2023)**
-* Remove Composer autoloader dependency #898
-* Fixes Yoast deprecated warning for get_article_type_options_values() #901
+**3.5.8 (Jan 18, 2022)**
+* Make CoAuthors_Plus::get_coauthor_by() compatible with unicode author usernames #909
+* Yoast: Prevent no-indexing of guest authors' archive pages by @adekbadek #912
+* Refactors Gutenberg Feature #870
+* Fixes guest author menu item to display accurate URL #913
+* Only update authors on Gutenberg post save #914
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
