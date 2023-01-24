@@ -9,7 +9,7 @@ import { select, subscribe } from "@wordpress/data";
 /**
  * Components
  */
-import CoAuthors from "./components/co-authors";
+import CoAuthors from './components/co-authors';
 
 /**
  * Component for rendering the plugin sidebar.
@@ -24,9 +24,9 @@ const PluginDocumentSettingPanelAuthors = () => (
 	</PluginDocumentSettingPanel>
 );
 
-registerPlugin("plugin-coauthors-document-setting", {
+registerPlugin('plugin-coauthors-document-setting', {
 	render: PluginDocumentSettingPanelAuthors,
-	icon: "users",
+	icon: 'users',
 });
 
 // Save authors when the post is saved.
