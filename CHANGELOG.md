@@ -1,5 +1,8 @@
 # Changelog for Co-Authors Plus
 
+**3.5.10 (Jan 24, 2023)**
+* Fix: Authors not being updated properly in the editor #920
+
 **3.5.9 (Jan 19, 2023)**
 * Fix: Avoid Fatal errors reported in the Nav menu filters for Guest Authors #917
 

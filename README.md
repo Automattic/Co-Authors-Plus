@@ -4,7 +4,7 @@
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Tested up to: 6.1
 * Requires at least: 4.1
-* Stable tag: 3.5.9
+* Stable tag: 3.5.10
 
 Assign multiple bylines to posts, pages, and custom post types with a search-as-you-type input box.
 
@@ -28,7 +28,7 @@ Refer to our [wiki](https://github.com/Automattic/Co-Authors-Plus/wiki) for deta
 
 ## Changelog
 
-**3.5.9 (Jan 19, 2022)**
-* Fix: Avoid Fatal errors reported in the Nav menu filters for Guest Authors #917
+**3.5.10 (Jan 24, 2023)**
+* Fix: Authors not being updated properly in the editor #920
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
