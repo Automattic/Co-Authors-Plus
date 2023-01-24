@@ -24,10 +24,10 @@ const PluginDocumentSettingPanelAuthors = () => (
 	</PluginDocumentSettingPanel>
 );
 
-registerPlugin('plugin-coauthors-document-setting', {
+registerPlugin( 'plugin-coauthors-document-setting', {
 	render: PluginDocumentSettingPanelAuthors,
 	icon: 'users',
-});
+} );
 
 // Save authors when the post is saved.
 // https://github.com/WordPress/gutenberg/issues/17632
