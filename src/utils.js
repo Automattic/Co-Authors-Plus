@@ -73,8 +73,10 @@ export const addItemByValue = (
  * @return {Object} The object containing data relevant to the Coauthors component.
  */
 export const formatAuthorData = ( { displayName, userNicename, email } ) => {
+	const emailLabel = email ? ` | ${ email }` : '';
+	const nicenameLabel = userNicename ? ` | ${ userNicename }` : '';
 	return {
-		label: `${ displayName } | ${ email }`,
+		label: `${ displayName }${ emailLabel }${ nicenameLabel }`,
 		display: displayName,
 		value: userNicename,
 	};
