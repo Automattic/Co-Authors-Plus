@@ -131,6 +131,7 @@ const CoAuthors = () => {
 
 		// Don't kick off search without having at least two characters.
 		if ( query.length < threshold ) {
+			setDropdownOptions( [] );
 			return;
 		}
 
