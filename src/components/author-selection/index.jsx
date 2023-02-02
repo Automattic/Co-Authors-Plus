@@ -61,11 +61,11 @@ const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 
 		return (
 			<div key={ value } className="cap-author">
-				<Flex align="center">
-					<FlexItem>
+				<Flex align="flex-start">
+					<FlexItem className="cap-author-flex-item">
 						<span>{ display }</span>
 					</FlexItem>
-					<FlexItem justify="flex-end">
+					<FlexItem justify="flex-end" className="cap-author-flex-item">
 						<Flex>
 							<div className="cap-icon-button-stack">
 								<Button
