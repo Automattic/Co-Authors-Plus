@@ -72,6 +72,9 @@ class CoAuthors_Guest_Authors {
 		// Add a Personal Data Exporter to guest authors
 		add_filter( 'wp_privacy_personal_data_exporters', array( $this, 'filter_personal_data_exporter' ), 1 );
 
+		// Filters the guest author menu URL in nav menus.
+		add_filter( 'nav_menu_link_attributes', array( $this, 'filter_nav_menu_attributes' ), 10, 2 );
+
 		// Allow users to change where this is placed in the WordPress admin
 		$this->parent_page = apply_filters( 'coauthors_guest_author_parent_page', $this->parent_page );
 
@@ -929,7 +932,7 @@ class CoAuthors_Guest_Authors {
 				}
 				// Ensure we aren't doing the lookup by the prefixed value
 				if ( 'user_login' == $key ) {
-					$value = preg_replace( '#^cap\-#', '', $value );
+					$value = preg_replace( '#^cap\-#', '', sanitize_title_for_query( $value ) );
 				}
 				$query   = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value=%s;", $this->get_post_meta_key( $key ), $value );
 				$post_id = $wpdb->get_var( $query ); // phpcs:ignore
@@ -1634,5 +1637,30 @@ class CoAuthors_Guest_Authors {
 			'data' => $data_to_export,
 			'done' => true,
 		);
+	}
+
+	/**
+	 * Filters the guest author menu item attributes
+	 *
+	 * @param array   $atts {
+	 *       The HTML attributes applied to the menu item's `<a>` element, empty strings are ignored.
+	 *
+	 *     @type string $title        Title attribute.
+	 *     @type string $target       Target attribute.
+	 *     @type string $rel          The rel attribute.
+	 *     @type string $href         The href attribute.
+	 *     @type string $aria-current The aria-current attribute.
+	 * }
+	 * @param WP_Post $menu_item The current menu item object.
+	 * @return array
+	 */
+	public function filter_nav_menu_attributes( $atts, $menu_item ) {
+		if ( ! empty( $menu_item->object ) && 'guest-author' === $menu_item->object ) {
+			$author = $this->get_guest_author_by( 'ID', $menu_item->object_id );
+			if ( ! empty( $author->type ) && $author->type === 'guest-author' ) {
+				$atts['href'] = get_author_posts_url( $author->ID, $author->user_nicename );
+			}
+		}
+		return $atts;
 	}
 }

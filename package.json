@@ -10,8 +10,8 @@
     "build": "wp-scripts build",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
-    "format:js": "wp-scripts format-js",
-    "format:js:src": "wp-scripts format-js ./src",
+    "format:js": "wp-scripts format",
+    "format:js:src": "wp-scripts format ./src",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
     "lint:js:src": "wp-scripts lint-js ./src",
@@ -30,7 +30,14 @@
   "devDependencies": {
     "@wordpress/icons": "^2.10.2",
     "@wordpress/scripts": "^24.0.0",
-    "prettier": "npm:wp-prettier@^2.2.1-beta-1"
+    "prettier": "npm:wp-prettier@^2.2.1-beta-1",
+    "prop-types": "^15.8.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@wordpress/api-fetch": "^6.14.0",
+    "@wordpress/components": "^21.0.0",
+    "@wordpress/data": "^7.1.0",
+    "@wordpress/element": "^4.15.0",
+    "@wordpress/i18n": "^4.17.0"
+  }
 }

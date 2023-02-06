@@ -83,6 +83,8 @@ class Yoast {
 		add_filter( 'wpseo_schema_author', [ __CLASS__, 'filter_author_graph' ], 11, 4 );
 		add_filter( 'wpseo_schema_profilepage', [ __CLASS__, 'filter_schema_profilepage' ], 11, 4 );
 		add_filter( 'wpseo_meta_author', [ __CLASS__, 'filter_author_meta' ], 11, 2 );
+		add_filter( 'wpseo_robots_array', [ __CLASS__, 'allow_indexing_guest_author_archive' ], 10, 2 );
+		add_filter( 'wpseo_opengraph_url', [ __CLASS__, 'fix_guest_author_archive_url_presenter' ], 10, 2 );
 	}
 
 	/**
@@ -247,6 +249,57 @@ class Yoast {
 		return $output;
 	}
 
+	/**
+	 * CoAuthors Plus and Yoast are incompatible where the author archives for guest authors are output as noindex.
+	 * This filter will determine if we're on an author archive and reset the robots.txt string properly.
+	 *
+	 * See https://github.com/Yoast/wordpress-seo/issues/9147.
+	 *
+	 * @param string                 $robots       The meta robots directives to be echoed.
+	 * @param Indexable_Presentation $presentation The presentation of an indexable.
+	 */
+	public static function allow_indexing_guest_author_archive( $robots, $presentation ) {
+		if ( ! is_author() ) {
+			return $robots;
+		}
+
+		if ( ! is_a( $presentation, '\Yoast\WP\SEO\Presentations\Indexable_Author_Archive_Presentation' ) ) {
+			return $robots;
+		}
+
+		$post_type = get_post_type( get_queried_object_id() );
+		if ( 'guest-author' !== $post_type ) {
+			return $robots;
+		}
+
+		/*
+		 * If this is a guest author archive and hasn't manually been set to noindex,
+		 * make sure the robots.txt string is set properly.
+		 */
+		if ( empty( $presentation->model->is_robots_noindex ) || 0 === intval( $presentation->model->is_robots_noindex ) ) {
+			if ( ! is_array( $robots ) ) {
+				$robots = [];
+			}
+			$robots['index']  = 'index';
+			$robots['follow'] = 'follow';
+		}
+
+		return $robots;
+	}
+
+	public static function fix_guest_author_archive_url_presenter( $url, $presenter ) {
+		if ( ! is_author() ) {
+			return $url;
+		}
+
+		$user = get_queried_object();
+
+		if ( empty( $user->type ) || $user->type !== 'guest-author' ) {
+			return $url;
+		}
+
+		return get_author_posts_url( $user->ID, $user->user_nicename );
+	}
 }
 
 Yoast::init();

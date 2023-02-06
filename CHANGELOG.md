@@ -1,6 +1,19 @@
 # Changelog for Co-Authors Plus
 
-**3.5.7 (Jan 5, 2022)**
+**3.5.10 (Jan 24, 2023)**
+* Fix: Authors not being updated properly in the editor #920
+
+**3.5.9 (Jan 19, 2023)**
+* Fix: Avoid Fatal errors reported in the Nav menu filters for Guest Authors #917
+
+**3.5.8 (Jan 18, 2023)**
+* Make CoAuthors_Plus::get_coauthor_by() compatible with unicode author usernames #909
+* Yoast: Prevent no-indexing of guest authors' archive pages by @adekbadek #912
+* Refactors Gutenberg Feature #870
+* Fixes guest author menu item to display accurate URL #913
+* Only update authors on Gutenberg post save #914
+
+**3.5.7 (Jan 5, 2023)**
 * Remove Composer autoloader dependency #898
 * Fixes Yoast deprecated warning for get_article_type_options_values() #901
 
