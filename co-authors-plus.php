@@ -1169,7 +1169,7 @@ class CoAuthors_Plus {
 	 */
 	public function fix_author_page( $selection ) {
 
-		global $wp_query, $authordata;
+		global $wp_query, $authordata, $post;
 
 		if ( ! isset( $wp_query ) ) {
 			return;
@@ -1184,7 +1184,12 @@ class CoAuthors_Plus {
 			return;
 		}
 
-		$author = $this->get_coauthor_by( 'user_nicename', $author_name );
+		if ( ! isset( $post->post_author ) ) {
+			$author = $this->get_coauthor_by( 'user_nicename', $author_name );
+		} else {
+			$author = $this->get_coauthor_by( 'id', $post->post_author );
+		}
+
 		if ( is_object( $author ) ) {
 			$authordata = $author; //phpcs:ignore
 			$term       = $this->get_author_term( $authordata );
