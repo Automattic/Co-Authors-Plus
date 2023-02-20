@@ -113,3 +113,6 @@
 .cap-author .cap-author-flex-item:nth-child(2) {
 	min-width: 75px;
 }
+.cap-author .cap-author-flex-item:first-child {
+    overflow-wrap: break-word;
+}
