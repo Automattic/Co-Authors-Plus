@@ -141,6 +141,9 @@ class CoAuthors_Plus {
 
 		// Block editor assets for the sidebar plugin.
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_sidebar_plugin_assets' ) );
+
+		// REST API: Depending on user capabilities, hide author term description.
+		add_action( 'rest_prepare_author', array( $this, 'conditionally_hide_author_term_description' ) );
 	}
 
 	/**
@@ -231,6 +234,8 @@ class CoAuthors_Plus {
 			'sort'         => true,
 			'args'         => array( 'orderby' => 'term_order' ),
 			'show_ui'      => false,
+			'show_in_rest' => true,
+			'rest_base'    => 'coauthors',
 		);
 
 		// If we use the nasty SQL query, we need our custom callback. Otherwise, we still need to flush cache.
@@ -1832,6 +1837,40 @@ class CoAuthors_Plus {
 			}
 		}
 		return $args;
+	}
+
+	/**
+	 * Conditionally Hide Author Term Description
+	 * 
+	 * If the current user does not have the required capability,
+	 * hide the author term description by changing it to an empty string.
+	 *
+	 * @link https://github.com/Automattic/Co-Authors-Plus/issues/930
+	 * @param WP_REST_Response $response Response for an individual author taxonomy term.
+	 * @return WP_REST_Response $response Same response, possibly mutated to eliminate value of description.
+	 */
+	public function conditionally_hide_author_term_description( WP_REST_Response $response ) : WP_REST_Response {
+		$capability = apply_filters(
+			'coauthors_view_author_description_capability',
+			'edit_posts'
+		);
+
+		// Short circuit with empty string to make description publicly accessible.
+		if ( '' === $capability || current_user_can( $capability ) ) {
+			return $response;
+		}
+
+		$data = $response->get_data();
+
+		if ( ! is_array( $data ) || ! array_key_exists( 'description', $data ) ) {
+			return $response;
+		}
+
+		$data['description'] = '';
+
+		$response->set_data( $data );
+
+		return $response;
 	}
 }
 
