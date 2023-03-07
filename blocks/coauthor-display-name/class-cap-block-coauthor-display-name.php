@@ -35,6 +35,10 @@ class CAP_Block_CoAuthor_Display_Name {
 	 * @return string
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
-		return array_key_exists( 'displayName', $block->context ) ? $block->context['displayName'] : '';
+		$display_name = array_key_exists( 'displayName', $block->context ) ? $block->context['displayName'] : '';
+		if ( '' === $display_name ) {
+			return '';
+		}
+		return "<p>{$display_name}</p>";
 	}
 }
