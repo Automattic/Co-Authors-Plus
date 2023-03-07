@@ -1,0 +1,16 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "cap/coauthors",
+	"version": "0.1.0",
+	"title": "Co-Authors",
+	"category": "widgets",
+	"icon": "smiley",
+	"description": "Display the co-authors for a post.",
+	"supports": {
+		"html": false
+	},
+	"usesContext": [ "postId" ],
+	"textdomain": "co-authors-plus",
+	"editorScript": "file:./index.js"
+}
