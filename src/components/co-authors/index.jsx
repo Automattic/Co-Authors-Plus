@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
 import { useDispatch, useSelect, register } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
+import { useDebounce } from '@wordpress/compose';
 
 /**
  * Components
@@ -125,11 +126,12 @@ const CoAuthors = () => {
 	 *
 	 * @param {string} query The text to search.
 	 */
-	const onFilterValueChange = async ( query ) => {
+	const onFilterValueChange = useDebounce( async ( query ) => {
 		let response = 0;
 
 		// Don't kick off search without having at least two characters.
 		if ( query.length < threshold ) {
+			setDropdownOptions( [] );
 			return;
 		}
 
@@ -154,7 +156,7 @@ const CoAuthors = () => {
 			response = 0;
 			console.log( error ); // eslint-disable-line no-console
 		}
-	};
+	}, 500 );
 
 	/**
 	 * Run when authors updates.
