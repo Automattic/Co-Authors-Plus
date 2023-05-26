@@ -1855,8 +1855,7 @@ class CoAuthors_Plus {
 			'edit_posts'
 		);
 
-		// Short circuit with empty string to make description publicly accessible.
-		if ( '' === $capability || current_user_can( $capability ) ) {
+		if ( current_user_can( $capability ) ) {
 			return $response;
 		}
 
@@ -1866,7 +1865,7 @@ class CoAuthors_Plus {
 			return $response;
 		}
 
-		$data['description'] = '';
+		unset( $data['description'] );
 
 		$response->set_data( $data );
 
