@@ -1843,7 +1843,7 @@ class CoAuthors_Plus {
 	 * Conditionally Hide Author Term Description
 	 * 
 	 * If the current user does not have the required capability,
-	 * hide the author term description by changing it to an empty string.
+	 * hide the author term description by unsetting it.
 	 *
 	 * @link https://github.com/Automattic/Co-Authors-Plus/issues/930
 	 * @param WP_REST_Response $response Response for an individual author taxonomy term.
