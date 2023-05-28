@@ -1851,7 +1851,7 @@ class CoAuthors_Plus {
 	 */
 	public function conditionally_hide_author_term_description( WP_REST_Response $response ) : WP_REST_Response {
 		$capability = apply_filters(
-			'coauthors_view_author_description_capability',
+			'coauthors_rest_view_description_cap',
 			'edit_posts'
 		);
 
