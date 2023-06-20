@@ -971,6 +971,7 @@ class CoAuthors_Guest_Authors {
 		// Hack to model the WP_User object
 		$guest_author['user_nicename'] = sanitize_title( $guest_author['user_login'] );
 		$guest_author['type']          = 'guest-author';
+		$guest_author['nickname']      = $guest_author['display_name'] ?? '';
 
 		wp_cache_set( $cache_key, (object) $guest_author, self::$cache_group );
 
