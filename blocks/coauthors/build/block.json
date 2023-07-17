@@ -8,11 +8,53 @@
   "icon": "smiley",
   "description": "Display the co-authors for a post.",
   "supports": {
-    "html": false
+    "html": false,
+    "color": {
+      "link": true,
+      "text": true,
+      "background": true,
+      "__experimentalDefaultControls": {}
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalDefaultControls": {}
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "__experimentalDefaultControls": {
+        "margin": false,
+        "padding": false
+      }
+    }
+  },
+  "attributes": {
+    "separator": {
+      "type": "string",
+      "default": ", "
+    },
+    "lastSeparator": {
+      "type": "string",
+      "default": " and "
+    },
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "inline"
+      }
+    }
   },
   "usesContext": [
     "postId"
   ],
   "textdomain": "co-authors-plus",
-  "editorScript": "file:./index.js"
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css"
 }

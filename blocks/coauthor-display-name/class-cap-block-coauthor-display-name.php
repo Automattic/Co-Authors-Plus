@@ -39,6 +39,7 @@ class CAP_Block_CoAuthor_Display_Name {
 		if ( '' === $display_name ) {
 			return '';
 		}
-		return "<p>{$display_name}</p>";
+		$attributes = get_block_wrapper_attributes();
+		return "<p {$attributes}>{$display_name}</p>";
 	}
 }

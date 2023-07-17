@@ -1,0 +1,4 @@
+.wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor,
+.wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor > * {
+	display: inline;
+}

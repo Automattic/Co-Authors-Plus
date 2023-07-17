@@ -15,6 +15,7 @@ class CAP_Block_CoAuthors {
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register_block' ) );
 	}
+
 	/**
 	 * Register Block
 	 */
@@ -26,6 +27,7 @@ class CAP_Block_CoAuthors {
 			)
 		);
 	}
+
 	/**
 	 * Render Block
 	 * 
@@ -47,17 +49,143 @@ class CAP_Block_CoAuthors {
 			return '';
 		}
 
-		$author_blocks = array_map(
-			self::get_block_wrapper_function('div', 'class="wp-block-cap-coauthor"'),
-			array_map(
-				self::get_template_render_function(
-					self::get_block_as_template( $block )
-				),
-				$authors
-			)
+		$blocks = self::render_coauthor_blocks_with_template(
+			self::get_block_as_template( $block ),
+			$authors
 		);
 
-		return self::get_block_wrapper_function('div', get_block_wrapper_attributes())(implode("\n", $author_blocks));
+		$separators = self::get_separators(
+			count( $blocks ),
+			$attributes
+		);
+
+		$inner_content = self::merge_blocks_with_separators(
+			$blocks,
+			$separators
+		);
+
+		return self::get_block_wrapper_function(
+			'div',
+			get_block_wrapper_attributes(
+				array(
+					'class' => "is-layout-cap-{$attributes['layout']['type']}"
+				)
+			)
+		)( $inner_content );
+	}
+
+	/**
+	 * Get Composed Map Function
+	 * Use array reduce so an unknown array of functions can be used as single array_map callback
+	 * 
+	 * @param array $fns
+	 * @return callable
+	 */
+	public static function get_composed_map_function( ...$fns ) : callable {
+		return function ( $value ) use ( $fns ) {
+			return array_reduce(
+				$fns,
+				fn( $v, callable $f ) => $f($v),
+				$value
+			);
+		};
+	}
+
+	/**
+	 * Render CoAuthor Blocks with Template
+	 * 
+	 * @param array $template
+	 * @param array $authors
+	 * @return array
+	 */
+	public static function render_coauthor_blocks_with_template( array $template, array $authors ) : array {
+		return array_map(
+			self::get_composed_map_function(
+				self::get_template_render_function( $template ),
+				'trim',
+				self::get_block_wrapper_function('div', 'class="wp-block-cap-coauthor"')
+			),
+			$authors
+		);
+	}
+
+	/**
+	 * Merge Blocks with Separators
+	 * 
+	 * @param array $blocks
+	 * @param array $separators
+	 * @return string
+	 */
+	private static function merge_blocks_with_separators( array $blocks, array $separators ) : string {
+		return implode(
+			array_map(
+				fn(...$args) : string => implode($args),
+				$blocks,
+				$separators
+			)
+		);
+	}
+
+	/**
+	 * Get Separators
+	 * 
+	 * @param int $count
+	 * @param array $attributes
+	 */
+	private static function get_separators( int $count, array $attributes ) : array {
+		if ( 1 === $count ) {
+			return array();
+		}
+
+		if ( 'inline' !== $attributes['layout']['type'] ) {
+			return array();
+		}
+
+		$separator      = self::get_separator( $attributes );
+		$last_separator = self::get_last_separator( $attributes, $separator );
+		$separators     = array_fill( 0, $count - 1, $separator );
+
+		if ( ! empty( $separators ) ) {
+			array_splice( $separators, -1, 1, $last_separator );
+		}
+
+		return $separators;
+	}
+
+	/**
+	 * Get Separator
+	 * 
+	 * @param array $attributes
+	 * @return string $separator
+	 */
+	private static function get_separator( array $attributes ) : string {
+		$separator = esc_html(
+			$attributes['separator'] ?? ''
+		);
+
+		if ( '' === $separator ) {
+			return $separator;
+		}
+
+		return "<span class=\"wp-block-cap-coauthor__separator\">{$separator}</span>";
+	}
+
+	/**
+	 * Get Last Separator
+	 * 
+	 * @param array $attributes
+	 * @param string $default
+	 */
+	private static function get_last_separator( array $attributes, string $default ) : string {
+		$last_separator = esc_html(
+			$attributes['lastSeparator'] ?? ''
+		);
+
+		if ( '' === $last_separator ) {
+			return $default;
+		}
+
+		return "<span class=\"wp-block-cap-coauthor__separator\">{$last_separator}</span>";
 	}
 
 	/**

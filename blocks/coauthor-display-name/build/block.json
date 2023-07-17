@@ -7,8 +7,36 @@
   "category": "widgets",
   "icon": "smiley",
   "description": "Display a co-author's preferred name.",
+  "parent": [
+    "cap/coauthors"
+  ],
   "supports": {
-    "html": false
+    "html": false,
+    "color": {
+      "link": true,
+      "text": true,
+      "background": true,
+      "__experimentalDefaultControls": {}
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalDefaultControls": {}
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "__experimentalDefaultControls": {
+        "margin": false,
+        "padding": false
+      }
+    }
   },
   "usesContext": [
     "displayName"
