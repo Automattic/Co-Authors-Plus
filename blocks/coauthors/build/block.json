@@ -52,7 +52,7 @@
     },
     "prefix": {
       "type": "string",
-      "default": "By"
+      "default": "By "
     },
     "suffix": {
       "type": "string",

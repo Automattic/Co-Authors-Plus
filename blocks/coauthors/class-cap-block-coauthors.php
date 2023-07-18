@@ -117,7 +117,7 @@ class CAP_Block_CoAuthors {
 		return self::get_block_wrapper_function(
 			'span',
 			'class="wp-block-cap-coauthor__prefix"'
-		)( wp_kses( $prefix, self::get_allowed_inline_html() ) );
+		)( $prefix );
 	}
 
 	/**
@@ -127,34 +127,13 @@ class CAP_Block_CoAuthors {
 	 * @return string
 	 */
 	public static function render_suffix( string $suffix ) : string {
-		if ( empty( $prefix ) ) {
+		if ( empty( $suffix ) ) {
 			return $suffix;
 		}
 		return self::get_block_wrapper_function(
 			'span',
 			'class="wp-block-cap-coauthor__suffix"'
-		)( wp_kses( $suffix, self::get_allowed_inline_html() ) );
-	}
-
-	/**
-	 * Get Allowed Inline HTML
-	 * HTML elements and attributes allowed in prefix and suffix,
-	 * mirrors ALLOWED_FORMATS in edit.js
-	 * 
-	 * @return array 
-	 */
-	public static function get_allowed_inline_html() : array {
-		return array(
-			'em'     => true,
-			'i'      => true,
-			'strong' => true,
-			'b'      => true,
-			'mark'   => array(
-				'class' => true,
-				'style' => true
-			),
-			's'      => true,
-		);
+		)( $suffix );
 	}
 
 	/**
