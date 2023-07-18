@@ -37,6 +37,8 @@ require_once __DIR__ . '/php/class-coauthors-iterator.php';
 require_once dirname( __FILE__ ) . '/blocks/coauthors/class-cap-block-coauthors.php';
 require_once dirname( __FILE__ ) . '/blocks/coauthor-display-name/class-cap-block-coauthor-display-name.php';
 
+require_once dirname( __FILE__ ) . '/php/api/endpoints/class-coauthor-blocks-controller.php';
+
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once __DIR__ . '/php/class-wp-cli.php';
 }
@@ -44,6 +46,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 global $coauthors_plus;
 $coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
+
+new CoAuthors\API\Endpoints\CoAuthor_Blocks_Controller( $coauthors_plus );
 
 new CAP_Block_CoAuthors();
 new CAP_Block_CoAuthor_Display_Name();

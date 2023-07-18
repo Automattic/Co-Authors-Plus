@@ -39,7 +39,7 @@
     }
   },
   "usesContext": [
-    "displayName"
+    "display_name"
   ],
   "textdomain": "co-authors-plus",
   "editorScript": "file:./index.js",

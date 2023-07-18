@@ -36,7 +36,7 @@
 			}
 		}
 	},
-	"usesContext": [ "displayName" ],
+	"usesContext": [ "display_name" ],
 	"textdomain": "co-authors-plus",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",

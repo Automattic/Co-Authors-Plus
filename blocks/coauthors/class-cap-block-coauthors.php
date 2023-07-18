@@ -256,7 +256,7 @@ class CAP_Block_CoAuthors {
 				new WP_Block(
 					$block_template,
 					array(
-						'displayName' => $author->display_name,
+						'display_name' => $author->display_name,
 					)
 				)
 			)->render( array( 'dynamic' => false ) );

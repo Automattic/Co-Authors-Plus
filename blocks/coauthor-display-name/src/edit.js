@@ -15,10 +15,10 @@ import { useBlockProps } from '@wordpress/block-editor';
  * @return {WPElement} Element to render.
  */
 export default function Edit( { context } ) {
-	const { displayName } = context;
+	const { display_name } = context;
 	return (
 		<p { ...useBlockProps() }>
-			{ displayName }
+			{ display_name }
 		</p>
 	);
 }

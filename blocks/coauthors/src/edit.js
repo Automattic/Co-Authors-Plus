@@ -69,7 +69,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 		const controller = new AbortController();
 
 		apiFetch( {
-			path: `/coauthors/v1/authors/${postId}`,
+			path: `/coauthor-blocks/v1/coauthors/${postId}/`,
 			signal: controller.signal
 		} )
 		.then( setCoAuthors )
@@ -146,12 +146,12 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 				{
 					coAuthors && 
 					coAuthors
-					.map( ( { id, displayName } ) => {
+					.map( ( { id, display_name } ) => {
 						const isHidden = id === ( activeBlockContextId || coAuthors[0]?.id );
 						return (
 							<BlockContextProvider
 								key={ id }
-								value={ { coAuthorId: id, displayName } }
+								value={ { coAuthorId: id, display_name } }
 							>
 								{ isHidden ? (<CoAuthorTemplateInnerBlocks />) : null }
 								<MemoizedCoAuthorTemplateBlockPreview
