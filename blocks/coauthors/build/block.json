@@ -49,6 +49,14 @@
       "default": {
         "type": "inline"
       }
+    },
+    "prefix": {
+      "type": "string",
+      "default": "By"
+    },
+    "suffix": {
+      "type": "string",
+      "default": ""
     }
   },
   "usesContext": [

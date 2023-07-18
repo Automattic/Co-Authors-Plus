@@ -59,10 +59,23 @@ class CAP_Block_CoAuthors {
 			$attributes
 		);
 
-		$inner_content = self::merge_blocks_with_separators(
+		$blocks_with_separators = self::merge_blocks_with_separators(
 			$blocks,
 			$separators
 		);
+
+		if ( 'inline' === $attributes['layout']['type'] ) {
+			array_unshift(
+				$blocks_with_separators,
+				self::render_prefix( $attributes['prefix'] ?? '' )
+			);
+			array_push(
+				$blocks_with_separators,
+				self::render_suffix( $attributes['suffix'] ?? '' )
+			);
+		}
+
+		$inner_content = implode( $blocks_with_separators );
 
 		return self::get_block_wrapper_function(
 			'div',
@@ -92,6 +105,59 @@ class CAP_Block_CoAuthors {
 	}
 
 	/**
+	 * Render Prefix
+	 * 
+	 * @param string $prefix
+	 * @return string
+	 */
+	public static function render_prefix( string $prefix ) : string {
+		if ( empty( $prefix ) ) {
+			return $prefix;
+		}
+		return self::get_block_wrapper_function(
+			'span',
+			'class="wp-block-cap-coauthor__prefix"'
+		)( wp_kses( $prefix, self::get_allowed_inline_html() ) );
+	}
+
+	/**
+	 * Render Suffix
+	 * 
+	 * @param string $suffix
+	 * @return string
+	 */
+	public static function render_suffix( string $suffix ) : string {
+		if ( empty( $prefix ) ) {
+			return $suffix;
+		}
+		return self::get_block_wrapper_function(
+			'span',
+			'class="wp-block-cap-coauthor__suffix"'
+		)( wp_kses( $suffix, self::get_allowed_inline_html() ) );
+	}
+
+	/**
+	 * Get Allowed Inline HTML
+	 * HTML elements and attributes allowed in prefix and suffix,
+	 * mirrors ALLOWED_FORMATS in edit.js
+	 * 
+	 * @return array 
+	 */
+	public static function get_allowed_inline_html() : array {
+		return array(
+			'em'     => true,
+			'i'      => true,
+			'strong' => true,
+			'b'      => true,
+			'mark'   => array(
+				'class' => true,
+				'style' => true
+			),
+			's'      => true,
+		);
+	}
+
+	/**
 	 * Render CoAuthor Blocks with Template
 	 * 
 	 * @param array $template
@@ -114,15 +180,13 @@ class CAP_Block_CoAuthors {
 	 * 
 	 * @param array $blocks
 	 * @param array $separators
-	 * @return string
+	 * @return array
 	 */
-	private static function merge_blocks_with_separators( array $blocks, array $separators ) : string {
-		return implode(
-			array_map(
-				fn(...$args) : string => implode($args),
-				$blocks,
-				$separators
-			)
+	private static function merge_blocks_with_separators( array $blocks, array $separators ) : array {
+		return array_map(
+			fn(...$args) : string => implode($args),
+			$blocks,
+			$separators
 		);
 	}
 

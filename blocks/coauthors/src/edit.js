@@ -10,7 +10,8 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 	store as blockEditorStore,
-	InspectorControls
+	InspectorControls,
+	RichText
 } from '@wordpress/block-editor';
 import { TextControl, ToolbarGroup, PanelBody } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
@@ -33,6 +34,12 @@ function CoAuthorTemplateInnerBlocks () {
 	) } />;
 }
 
+const ALLOWED_FORMATS = [
+	'core/bold',
+	'core/italic',
+	'core/text-color',
+];
+
 /**
  * The edit function describes the structure of your block in the context of the
  * editor. This represents what the editor will render when the block is used.
@@ -41,7 +48,7 @@ function CoAuthorTemplateInnerBlocks () {
  *
  * @return {WPElement} Element to render.
  */
-export default function Edit( { attributes, setAttributes, clientId, context } ) {
+export default function Edit( { attributes, setAttributes, clientId, context, isSelected } ) {
 
 	const { postId } = context;
 	/* Default state for full site editing */
@@ -52,7 +59,7 @@ export default function Edit( { attributes, setAttributes, clientId, context } )
 	const [ activeBlockContextId, setActiveBlockContextId ] = useState();
 	const noticesDispatch = useDispatch('core/notices');
 
-	const { separator, lastSeparator, layout } = attributes;
+	const { separator, lastSeparator, layout, prefix, suffix } = attributes;
 
 	useEffect(()=>{
 		if ( ! postId ) {
@@ -118,6 +125,25 @@ export default function Edit( { attributes, setAttributes, clientId, context } )
 			</BlockControls>
 			<div { ...useBlockProps({className: classnames( [ `is-layout-cap-${layout.type}` ] )}) }>
 				{
+					coAuthors &&
+					'inline' === layout.type &&
+					( isSelected || prefix ) &&
+					(
+						<RichText
+							allowedFormats={ ALLOWED_FORMATS }
+							className="wp-block-cap-coauthor__prefix"
+							multiline={ false }
+							aria-label={ __( 'Prefix' ) }
+							placeholder={ __( 'Prefix' ) + ' ' }
+							value={ prefix }
+							onChange={ ( value ) =>
+								setAttributes( { prefix: value } )
+							}
+							tagName="span"
+						/>
+					)
+				}
+				{
 					coAuthors && 
 					coAuthors
 					.map( ( { id, displayName } ) => {
@@ -152,8 +178,26 @@ export default function Edit( { attributes, setAttributes, clientId, context } )
 						</>
 					))
 				}
+				{
+					coAuthors &&
+					'inline' === layout.type &&
+					( isSelected || suffix ) &&
+					(
+						<RichText
+							allowedFormats={ ALLOWED_FORMATS }
+							className="wp-block-cap-coauthor__suffix"
+							multiline={ false }
+							aria-label={ __( 'Suffix' ) }
+							placeholder={ __( 'Suffix' ) + ' ' }
+							value={ suffix }
+							onChange={ ( value ) =>
+								setAttributes( { suffix: value } )
+							}
+							tagName="span"
+						/>
+					)
+				}
 			</div>
-			
 			<InspectorControls>
 				<PanelBody title={ __( 'CoAuthors Layout' ) }>
 					{
@@ -183,7 +227,6 @@ export default function Edit( { attributes, setAttributes, clientId, context } )
 					}
 				</PanelBody>
 			</InspectorControls>
-				
 		</>
 	);
 }
