@@ -35,12 +35,10 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 	 */
 	public function __construct( CoAuthors_Plus $coauthors_plus ) {
 		$this->coauthors_plus = $coauthors_plus;
-
-		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
 	/**
-	 * Register Rest Route
+	 * Register Rest Routes
 	 */
 	public function register_routes() : void {
 		register_rest_route(
@@ -51,7 +49,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 					'id' => array(
 						'description'       => __( 'Unique identifier for a post.' ),
 						'type'              => 'integer',
-						'validate_callback' => 'is_int'
+						'validate_callback' => fn( $post_id ) => is_int( $post_id )
 					),
 				),
 				array(
@@ -61,6 +59,68 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 				)
 			)
 		);
+
+		register_rest_route(
+			'coauthor-blocks/v1',
+			'/coauthor/(?P<user_nicename>[\d\w-]+)',
+			array(
+				'args' => array(
+					'user_nicename' => array(
+						'description'       => __( 'Nicename / slug for coauthor.' ),
+						'type'              => 'string',
+						'validate_callback' => fn( $slug ) => is_string( $slug ),
+						'sanitize_callback' => fn( $slug ) => sanitize_title( $slug )
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_item' ),
+					'permission_callback' => array( $this, 'get_item_permission_check' ),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Get Item
+	 * 
+	 * 
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_item( $request ) : WP_REST_Response|WP_Error {
+
+		$coauthor = $this->coauthors_plus->get_coauthor_by(
+			'user_nicename',
+			$request->get_param( 'user_nicename' )
+		);
+
+		if ( ! is_object( $coauthor ) ) {
+			return new WP_Error(
+				'rest_not_found',
+				__('Sorry, we could not find that coauthor.'),
+				array( 'status' => 404 )
+			);
+		}
+
+		if ( ! self::is_coauthor( $coauthor ) ) {
+			return new WP_Error(
+				'rest_unusable_data',
+				__('Sorry, an unusable response was produced.'),
+				array( 'status' => 406 )
+			);
+		}
+
+		return self::prepare_item_for_response( $coauthor, $request );
+	}
+
+	/**
+	 * Is Valid CoAuthor
+	 *
+	 * @param WP_User|stdClass $coauthor
+	 */
+	public static function is_coauthor( WP_User|stdClass $coauthor ) : bool {
+		return is_a( $coauthor, 'WP_User' ) || ( property_exists( $coauthor, 'type' ) && 'guest-author' === $coauthor->type );
 	}
 
 	/**
@@ -90,6 +150,25 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 				},
 				$coauthors
 			)
+		);
+	}
+
+	/**
+	 * Get Item Permission Check
+	 * 
+	 * @param WP_REST_Request $request
+	 * @return bool|WP_Error
+	 */
+	public function get_item_permission_check( WP_REST_Request $request ) : bool|WP_Error {
+
+		if ( current_user_can( 'edit_posts' ) ) {
+			return true;
+		}
+
+		return new WP_Error(
+			'rest_cannot_view',
+			__( 'Sorry, you are not allowed to view coauthors.' ),
+			array( 'status' => rest_authorization_required_code() )
 		);
 	}
 
@@ -127,11 +206,21 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 	 */
 	public function prepare_item_for_response( $author, $request ) : WP_REST_Response|WP_Error {
 	
+		if ( is_a( $author, 'WP_User' ) ) {
+			$author = $author->data;
+		}
+
 		$disallowed = array(
 			'ID',
 			'linked_account',
 			'user_email',
-			'user_login'
+			'user_login',
+			'user_pass',
+			'user_registered',
+            'user_activation_key',
+			'user_url',
+			'user_status',
+			'type'
 		);
 
 		$data = array_diff_key(

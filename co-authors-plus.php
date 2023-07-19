@@ -47,7 +47,7 @@ global $coauthors_plus;
 $coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
 
-new CoAuthors\API\Endpoints\CoAuthor_Blocks_Controller( $coauthors_plus );
+
 
 new CAP_Block_CoAuthors();
 new CAP_Block_CoAuthor_Display_Name();
@@ -217,3 +217,13 @@ function cap_get_coauthor_terms_for_post( $post_id ) {
 	global $coauthors_plus;
 	return $coauthors_plus->get_coauthor_terms_for_post( $post_id );
 }
+
+/**
+ * Register CoAuthor Blocks REST API Routes
+ */
+function cap_register_coauthor_blocks_rest_api_routes() : void {
+	global $coauthors_plus;
+	$controller = new CoAuthors\API\Endpoints\CoAuthor_Blocks_Controller( $coauthors_plus );
+	$controller->register_routes();
+}
+add_action( 'rest_api_init', 'cap_register_coauthor_blocks_rest_api_routes' );
