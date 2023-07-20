@@ -27,7 +27,6 @@ export default function Edit( { context, attributes, setAttributes } ) {
 				isLink ? (
 					<a
 						href={link}
-						target={linkTarget}
 						rel={rel}
 						onClick={ ( event ) => event.preventDefault() }
 					>
