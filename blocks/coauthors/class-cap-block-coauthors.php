@@ -257,6 +257,7 @@ class CAP_Block_CoAuthors {
 					$block_template,
 					array(
 						'display_name' => $author->display_name,
+						'link'         => get_author_posts_url( $author->ID, $author->user_nicename )
 					)
 				)
 			)->render( array( 'dynamic' => false ) );
