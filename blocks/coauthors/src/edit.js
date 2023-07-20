@@ -50,16 +50,18 @@ const ALLOWED_FORMATS = [
  */
 export default function Edit( { attributes, setAttributes, clientId, context, isSelected } ) {
 
+	const { separator, lastSeparator, layout, prefix, suffix } = attributes;
 	const { postId } = context;
+
 	/* Default state for full site editing */
 	const [ coAuthors, setCoAuthors ] = useState([{
 		id: 0,
-		displayName: 'CoAuthor Display Name'
+		display_name: 'CoAuthor Display Name',
+		link: ''
 	}]);
+
 	const [ activeBlockContextId, setActiveBlockContextId ] = useState();
 	const noticesDispatch = useDispatch('core/notices');
-
-	const { separator, lastSeparator, layout, prefix, suffix } = attributes;
 
 	useEffect(()=>{
 		if ( ! postId ) {
@@ -146,12 +148,12 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 				{
 					coAuthors && 
 					coAuthors
-					.map( ( { id, display_name } ) => {
+					.map( ( { id, display_name, link } ) => {
 						const isHidden = id === ( activeBlockContextId || coAuthors[0]?.id );
 						return (
 							<BlockContextProvider
 								key={ id }
-								value={ { coAuthorId: id, display_name } }
+								value={ { coAuthorId: id, display_name, link } }
 							>
 								{ isHidden ? (<CoAuthorTemplateInnerBlocks />) : null }
 								<MemoizedCoAuthorTemplateBlockPreview

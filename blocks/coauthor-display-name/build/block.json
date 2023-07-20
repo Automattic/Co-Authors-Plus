@@ -39,8 +39,20 @@
     }
   },
   "usesContext": [
-    "display_name"
+    "display_name",
+    "link"
   ],
+  "attributes": {
+    "isLink": {
+      "type": "boolean",
+      "default": false
+    },
+    "rel": {
+      "type": "string",
+      "attribute": "rel",
+      "default": "author"
+    }
+  },
   "textdomain": "co-authors-plus",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
