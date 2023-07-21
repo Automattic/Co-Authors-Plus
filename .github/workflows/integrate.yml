@@ -5,7 +5,7 @@ on: [push]
 jobs:
   test:
     name: WP ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allowed_failure }}
 
     env:
