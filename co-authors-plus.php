@@ -69,6 +69,11 @@ class CoAuthors_Plus {
 	var $to_be_filtered_caps = array();
 
 	/**
+	 * @var CoAuthors_Guest_Authors
+	 */
+	public $guest_authors;
+
+	/**
 	 * __construct()
 	 */
 	function __construct() {
@@ -1841,7 +1846,7 @@ class CoAuthors_Plus {
 
 	/**
 	 * Conditionally Hide Author Term Description
-	 * 
+	 *
 	 * If the current user does not have the required capability,
 	 * hide the author term description by unsetting it.
 	 *
