@@ -58,11 +58,11 @@
       "bash bin/install-wp-tests.sh wordpress_test root root localhost"
     ],
     "integration": [
-      "@php ./vendor/bin/phpunit --testsuite WP_Tests"
+      "@php ./vendor/bin/phpunit --exclude=ms-required"
     ],
     "integration-ms": [
       "@putenv WP_MULTISITE=1",
-      "@composer integration"
+      "@php ./vendor/bin/phpunit --exclude=ms-excluded"
     ]
   },
   "config": {
