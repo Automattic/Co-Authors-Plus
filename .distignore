@@ -8,6 +8,6 @@
 /package-lock.json
 /composer.json
 /tests
-/phpunit.xml
+/phpunit.xml.dist
 /Makefile
-/phpcs.xml
+/.phpcs.xml.dist
