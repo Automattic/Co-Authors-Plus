@@ -402,7 +402,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			$exception = $e;
 		}
 
-		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringNotContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore $_POST from back up.
 		$_POST = $_post_backup;
@@ -457,7 +457,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			$exception = $e;
 		}
 
-		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringNotContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -511,7 +511,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			$exception = $e;
 		}
 
-		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringNotContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );

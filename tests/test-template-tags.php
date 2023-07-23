@@ -831,8 +831,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$coauthors = coauthors_wp_list_authors( $args );
 
-		$this->assertNotContains( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors );
-		$this->assertNotContains( $this->editor1->display_name, $coauthors );
+		$this->assertStringNotContainsString( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors );
+		$this->assertStringNotContainsString( $this->editor1->display_name, $coauthors );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
@@ -1003,8 +1003,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertNotContains( '<li>', $coauthors );
-		$this->assertNotContains( '</li>', $coauthors );
+		$this->assertStringNotContainsString( '<li>', $coauthors );
+		$this->assertStringNotContainsString( '</li>', $coauthors );
 	}
 
 	/**
