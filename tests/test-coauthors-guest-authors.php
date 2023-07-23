@@ -173,7 +173,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$fields = $guest_author_obj->get_guest_author_fields();
 
 		$this->assertNotEmpty( $fields );
-		$this->assertInternalType( 'array', $fields );
+		$this->assertIsArray( $fields );
 
 		$keys = wp_list_pluck( $fields, 'key' );
 
@@ -253,7 +253,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$linked_account_ids = wp_list_pluck( $linked_accounts, 'ID' );
 
 		$this->assertNotEmpty( $linked_accounts );
-		$this->assertInternalType( 'array', $linked_accounts );
+		$this->assertIsArray( $linked_accounts );
 		$this->assertTrue( in_array( $this->editor1->ID, $linked_account_ids, true ) );
 	}
 
