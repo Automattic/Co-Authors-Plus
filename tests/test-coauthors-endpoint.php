@@ -7,6 +7,8 @@ use CoAuthors\API\Endpoints;
  */
 class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
+	use \DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 	public function set_up() {
 
 		parent::set_up();
