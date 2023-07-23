@@ -2,8 +2,8 @@
 
 class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		$this->admin1  = $this->factory()->user->create(
 			array(
@@ -65,8 +65,8 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$this->author1_page2 = wp_insert_post( $page );
 	}
 
-	public function tearDown() {
-		parent::tearDown();
+	public function tear_down() {
+		parent::tear_down();
 	}
 
 	/**

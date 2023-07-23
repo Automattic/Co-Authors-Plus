@@ -7,9 +7,9 @@ use CoAuthors\API\Endpoints;
  */
 class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
-	public function setUp() {
+	public function set_up() {
 
-		parent::setUp();
+		parent::set_up();
 
 		global $coauthors_plus;
 

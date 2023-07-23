@@ -4,9 +4,9 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
-	public function setUp() {
+	public function set_up() {
 
-		parent::setUp();
+		parent::set_up();
 
 		$this->admin1  = $this->factory()->user->create_and_get(
 			array(

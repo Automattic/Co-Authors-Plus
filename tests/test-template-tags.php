@@ -4,9 +4,9 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
-	public function setUp() {
+	public function set_up() {
 
-		parent::setUp();
+		parent::set_up();
 
 		/**
 		 * When 'coauthors_auto_apply_template_tags' is set to true,

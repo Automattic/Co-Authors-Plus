@@ -2,9 +2,9 @@
 
 class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
-	public function setUp() {
+	public function set_up() {
 
-		parent::setUp();
+		parent::set_up();
 
 		$this->author1 = $this->factory()->user->create_and_get(
 			array(
