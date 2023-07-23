@@ -4,6 +4,10 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
+	private $author1;
+	private $editor1;
+	private $post;
+
 	public function set_up() {
 
 		parent::set_up();
@@ -718,6 +722,15 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 * @covers ::coauthors_links_single()
 	 */
 	public function test_coauthors_links_single_when_url_not_exist() {
+		global $wp_version;
+		if ( PHP_VERSION_ID >= 80100 && version_compare( $wp_version, '6.3.0', '<' ) ) {
+			/*
+			 * Ignoring PHP 8.1 "null to non-nullable" deprecation that is fixed in WP 6.3.
+			 *
+			 * @see https://core.trac.wordpress.org/ticket/58157
+			*/
+			$this->markTestSkipped( 'PHP 8.1 gives a deprecation notice that is fixed in WP 6.3' );
+		}
 
 		global $post, $authordata;
 

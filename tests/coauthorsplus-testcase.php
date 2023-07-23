@@ -5,6 +5,16 @@ use CoAuthors\API\Endpoints;
  * Base unit test class for Co-Authors Plus
  */
 class CoAuthorsPlus_TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
+
+	/**
+	 * @var CoAuthors_Plus
+	 */
+	protected $_cap;
+	/**
+	 * @var Endpoints
+	 */
+	protected $_api;
+
 	public function set_up() {
 		parent::set_up();
 

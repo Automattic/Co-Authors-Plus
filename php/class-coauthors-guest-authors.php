@@ -140,9 +140,6 @@ class CoAuthors_Guest_Authors {
 		);
 		register_post_type( $this->post_type, $args );
 
-		// Some of the common sizes used by get_avatar
-		$this->avatar_sizes = array();
-
 		// Hacky way to remove the title and the editor
 		remove_post_type_support( $this->post_type, 'title' );
 		remove_post_type_support( $this->post_type, 'editor' );

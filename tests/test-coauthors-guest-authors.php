@@ -4,6 +4,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
+	private $admin1;
+	private $author1;
+	private $editor1;
+	private $post;
+
 	public function set_up() {
 
 		parent::set_up();

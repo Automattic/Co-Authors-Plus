@@ -2,6 +2,10 @@
 
 class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
+	private $author1;
+	private $editor1;
+	private $post;
+
 	public function set_up() {
 
 		parent::set_up();

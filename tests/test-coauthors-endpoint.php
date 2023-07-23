@@ -9,6 +9,21 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 	use \DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
+	private $author1;
+	private $author2;
+	private $editor1;
+	private $contributor1;
+	private $subscriber1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $coauthor1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $coauthor2;
+	private $post;
+
 	public function set_up() {
 
 		parent::set_up();

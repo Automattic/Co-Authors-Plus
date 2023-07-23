@@ -2,6 +2,26 @@
 
 class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
+	private $admin1;
+	private $author1;
+	private $editor1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_post1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_post2;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_page1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_page2;
+
 	public function set_up() {
 		parent::set_up();
 
