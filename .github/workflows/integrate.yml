@@ -1,4 +1,4 @@
-name: Run PHPUnit and PHPCS
+name: Integration Tests
 
 on: [push]
 
@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -38,11 +38,14 @@ jobs:
           coverage: ${{ matrix.coverage }}
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@v2
         with:
           composer-options: "${{ matrix.composer-options }}"
 
-      - name: Setup Problem Matchers for PHPUnit
+      - name: Set up problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - name: Set up problem matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Show PHP and PHPUnit version info
@@ -65,6 +68,3 @@ jobs:
 
       - name: Run integration tests (multisite)
         run: composer integration-ms
-
-      - name: Run PHPCS
-        run: composer cs
