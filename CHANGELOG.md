@@ -1,5 +1,16 @@
 # Changelog for Co-Authors Plus
 
+**3.5.11 (Jul 24, 2023)**
+* Author select improvements #924
+* Show author taxonomy in REST API, hide description based on capabilities #931
+  * The author taxonomy was first added to the REST API in CAP 3.5.0, then removed in 3.5.2 over concerns of author email addresses being visible in the description. This adds it back but with the description hidden by default (filterable).
+* Guest Authors: Add labels property #942
+* Define dynamic guest_authors property #947
+* Bump NPM dependencies #927 #933 #943 #944
+* Workflows: Fix runner image and matrix #946
+* CI: Split out CS and update integration tests workflow #948
+* Improve tests setup #949
+
 **3.5.10 (Jan 24, 2023)**
 * Fix: Authors not being updated properly in the editor #920
 
