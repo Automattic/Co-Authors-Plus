@@ -18,14 +18,14 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 		/**
 		 * Set up
 		 */
-		$author1 = $this->factory->user->create( array( 'user_login' => 'msauthor1' ) );
-		$author2 = $this->factory->user->create( array( 'user_login' => 'msauthor2' ) );
-		$blog2   = $this->factory->blog->create( array( 'user_id' => $author1 ) );
+		$author1 = $this->factory()->user->create( array( 'user_login' => 'msauthor1' ) );
+		$author2 = $this->factory()->user->create( array( 'user_login' => 'msauthor2' ) );
+		$blog2   = $this->factory()->blog->create( array( 'user_id' => $author1 ) );
 
 		switch_to_blog( $blog2 );
 		$wp_rewrite->init();
 
-		$blog2_post1 = $this->factory->post->create(
+		$blog2_post1 = $this->factory()->post->create(
 			array(
 				'post_status'  => 'publish',
 				'post_content' => rand_str(),
@@ -83,7 +83,7 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 
 
 	/**
-	 * On author pages, when paginated, 
+	 * On author pages, when paginated,
 	 * if page number is outside the range, throws 404
 	 */
 	function test__author_non_existent_page_throws_404() {
@@ -92,12 +92,12 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 		/**
 		 * Set up
 		 */
-		$author = $this->factory->user->create( array( 'user_login' => 'author' ) );
-		$blog = $this->factory->blog->create( array( 'user_id' => $author ) );
-		
+		$author = $this->factory()->user->create( array( 'user_login' => 'author' ) );
+		$blog = $this->factory()->blog->create( array( 'user_id' => $author ) );
+
 		switch_to_blog($blog);
 		$wp_rewrite->init();
-	
+
 		/**
 		* Author non existent page throws 404
 		*/

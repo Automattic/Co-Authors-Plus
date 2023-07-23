@@ -3,14 +3,14 @@
 class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 
 	public function test__author_arg__user_is_post_author_query_as_post_author() {
-		$author_id = $this->factory->user->create(
+		$author_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'batman',
 			)
 		);
 		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory->post->create(
+		$post_id   = $this->factory()->post->create(
 			array(
 				'post_author' => $author_id,
 				'post_status' => 'publish',
@@ -32,14 +32,14 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test__author_arg__user_is_post_author() {
-		$author_id = $this->factory->user->create(
+		$author_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'batman',
 			)
 		);
 		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory->post->create(
+		$post_id   = $this->factory()->post->create(
 			array(
 				'post_author' => $author_id,
 				'post_status' => 'publish',
@@ -59,14 +59,14 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test__author_name_arg__user_is_post_author() {
-		$author_id = $this->factory->user->create(
+		$author_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'batman',
 			)
 		);
 		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory->post->create(
+		$post_id   = $this->factory()->post->create(
 			array(
 				'post_author' => $author_id,
 				'post_status' => 'publish',
@@ -86,14 +86,14 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test__author_name_arg__user_is_coauthor() {
-		$author1_id = $this->factory->user->create(
+		$author1_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'batman',
 			)
 		);
 		$author1    = get_userdata( $author1_id );
-		$author2_id = $this->factory->user->create(
+		$author2_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'superman',
@@ -101,7 +101,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		);
 		$author2    = get_userdata( $author2_id );
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $author1_id,
 				'post_status' => 'publish',
@@ -121,14 +121,14 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test__author_arg__user_is_coauthor__author_arg() {
-		$author1_id = $this->factory->user->create(
+		$author1_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'batman',
 			)
 		);
 		$author1    = get_userdata( $author1_id );
-		$author2_id = $this->factory->user->create(
+		$author2_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'superman',
@@ -136,7 +136,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		);
 		$author2    = get_userdata( $author2_id );
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $author1_id,
 				'post_status' => 'publish',
@@ -156,14 +156,14 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test__author_name_arg_plus_tax_query__user_is_post_author() {
-		$author_id = $this->factory->user->create(
+		$author_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'batman',
 			)
 		);
 		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory->post->create(
+		$post_id   = $this->factory()->post->create(
 			array(
 				'post_author' => $author_id,
 				'post_status' => 'publish',
@@ -185,14 +185,14 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 	}
 
 	public function tests__author_name_arg_plus_tax_query__is_coauthor() {
-		$author1_id = $this->factory->user->create(
+		$author1_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'batman',
 			)
 		);
 		$author1    = get_userdata( $author1_id );
-		$author2_id = $this->factory->user->create(
+		$author2_id = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'superman',
@@ -200,7 +200,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		);
 		$author2    = get_userdata( $author2_id );
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $author1_id,
 				'post_status' => 'publish',
