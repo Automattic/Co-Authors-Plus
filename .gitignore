@@ -1,6 +1,7 @@
 /node_modules/
 /vendor/
 /.phpcs.xml
+/.phpunit.result.cache
 /composer.lock
 /phpcs.xml
 /phpunit.xml
