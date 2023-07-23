@@ -4,7 +4,7 @@ use CoAuthors\API\Endpoints;
 /**
  * Base unit test class for Co-Authors Plus
  */
-class CoAuthorsPlus_TestCase extends WP_UnitTestCase {
+class CoAuthorsPlus_TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 	public function setUp() {
 		parent::setUp();
 
