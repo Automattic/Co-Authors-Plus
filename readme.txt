@@ -1,9 +1,9 @@
 === Co-Authors Plus ===
 Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
-Tested up to: 6.1
+Tested up to: 6.2
 Requires at least: 4.1
-Stable tag: 3.5.10
+Stable tag: 3.5.11
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -11,9 +11,9 @@ Assign multiple bylines to posts, pages, and custom post types via a search-as-y
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box. Co-authored posts appear on a co-author's archive page and in their feed. Co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
 
-Add writers as bylines without creating WordPress user accounts. Simply [create a guest author profile](http://vip.wordpress.com/documentation/add-guest-bylines-to-your-content-with-co-authors-plus/) for the writer and assign the byline as you normally would.
+Add writers as bylines without creating WordPress user accounts. Simply [create a guest author profile](https://github.com/Automattic/Co-Authors-Plus/wiki/Creating-and-editing-guest-authors) for the writer and assign the byline as you normally would.
 
-On the frontend, use the [Co-Authors Plus template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) to list co-authors anywhere you'd normally list the author.
+On the frontend, use the [Co-Authors Plus template tags](https://github.com/Automattic/Co-Authors-Plus/wiki/Template-tags) to list co-authors anywhere you'd normally list the author.
 
 This plugin is an almost complete rewrite of the [Co-Authors](https://wordpress.org/plugins/co-authors/) plugin originally developed by Weston Ruter (2007). The original plugin was inspired by the '[Multiple Authors](https://txfx.net/2005/08/16/new-plugin-multiple-authors/)' plugin by Mark Jaquith (2005).
 
@@ -21,7 +21,7 @@ This plugin is an almost complete rewrite of the [Co-Authors](https://wordpress.
 
 = How do I add Co-Authors Plus support to my theme? =
 
-If you've just installed Co-Authors Plus, you might notice that the bylines are being added in the backend but aren't appearing on the frontend. You'll need to [add the template tags to your theme](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) before the bylines will appear.
+If you've just installed Co-Authors Plus, you might notice that the bylines are being added in the backend but aren't appearing on the frontend. You'll need to [add the template tags to your theme](https://github.com/Automattic/Co-Authors-Plus/wiki/Template-tags) before the bylines will appear.
 
 = What happens to posts and pages when I delete a user assigned to a post or page as a coauthor? =
 
@@ -51,7 +51,7 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 1. IMPORTANT: Please disable the original Co-Authors plugin (if you are using it) before installing Co-Authors Plus
 2. Extract the coauthors-plus.zip file and upload its contents to the `/wp-content/plugins/` directory. Alternately, you can install directly from the Plugin directory within your WordPress Install.
 3. Activate the plugin through the "Plugins" menu in WordPress.
-4. Place the appropriate [co-authors template tags](http://vip.wordpress.com/documentation/incorporate-co-authors-plus-template-tags-into-your-theme/) in your template.
+4. Place the appropriate [co-authors template tags](https://github.com/Automattic/Co-Authors-Plus/wiki/Template-tags) in your template.
 5. Add co-authors to your posts and pages.
 
 == Screenshots ==
@@ -62,7 +62,14 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 
 == Changelog ==
 
-= 3.5.10 (Jan 24, 2023) =
-* Fix: Authors not being updated properly in the editor #920
+= 3.5.11 (Jul 24, 2023) =
+* Author select improvements #924
+* Show author taxonomy in REST API, hide description based on capabilities #931
+* Guest Authors: Add labels property #942
+* Define dynamic guest_authors property #947
+* Bump NPM dependencies #927 #933 #943 #944
+* Workflows: Fix runner image and matrix #946
+* CI: Split out CS and update integration tests workflow #948
+* Improve tests setup #949
 
 For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
