@@ -7,41 +7,58 @@ use CoAuthors\API\Endpoints;
  */
 class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
-	public function setUp() {
+	use \DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
-		parent::setUp();
+	private $author1;
+	private $author2;
+	private $editor1;
+	private $contributor1;
+	private $subscriber1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $coauthor1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $coauthor2;
+	private $post;
+
+	public function set_up() {
+
+		parent::set_up();
 
 		global $coauthors_plus;
 
-		$this->author1 = $this->factory->user->create_and_get(
+		$this->author1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author1',
 			)
 		);
 
-		$this->author2 = $this->factory->user->create_and_get(
+		$this->author2 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author2',
 			)
 		);
 
-		$this->editor1 = $this->factory->user->create_and_get(
+		$this->editor1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'editor',
 				'user_login' => 'editor1',
 			)
 		);
 
-		$this->contributor1 = $this->factory->user->create_and_get(
+		$this->contributor1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'contributor',
 				'user_login' => 'contributor1',
 			)
 		);
 
-		$this->subscriber1 = $this->factory->user->create_and_get(
+		$this->subscriber1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'subscriber',
 				'user_login' => 'subscriber1',
@@ -62,7 +79,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->post = $this->factory->post->create_and_get(
+		$this->post = $this->factory()->post->create_and_get(
 			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
@@ -210,7 +227,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 * @covers ::get_coauthors()
 	 */
 	public function test_authors_get_coauthors() {
-		$test_post = $this->factory->post->create_and_get(
+		$test_post = $this->factory()->post->create_and_get(
 			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
@@ -241,7 +258,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		wp_set_current_user( $this->editor1->ID );
 
-		$test_post = $this->factory->post->create_and_get(
+		$test_post = $this->factory()->post->create_and_get(
 			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
@@ -267,7 +284,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test_can_edit_coauthors() {
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $this->editor1->ID,
 			)
@@ -296,7 +313,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	public function test_can_edit_coauthors__with_post_param() {
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $this->editor1->ID,
 			)
@@ -334,7 +351,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_remove_author_link() {
 
-		$test_post = $this->factory->post->create_and_get(
+		$test_post = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $this->editor1->ID,
 				'post_status' => 'publish',

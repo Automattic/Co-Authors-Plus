@@ -4,30 +4,35 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
-	public function setUp() {
+	private $admin1;
+	private $author1;
+	private $editor1;
+	private $post;
 
-		parent::setUp();
+	public function set_up() {
 
-		$this->admin1  = $this->factory->user->create_and_get(
+		parent::set_up();
+
+		$this->admin1  = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'administrator',
 				'user_login' => 'admin1',
 			)
 		);
-		$this->author1 = $this->factory->user->create_and_get(
+		$this->author1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author1',
 			)
 		);
-		$this->editor1 = $this->factory->user->create_and_get(
+		$this->editor1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'editor',
 				'user_login' => 'editor1',
 			)
 		);
 
-		$this->post = $this->factory->post->create_and_get(
+		$this->post = $this->factory()->post->create_and_get(
 			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
@@ -145,7 +150,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $guest_author_obj->get_guest_author_thumbnail( $guest_author, 0 ) );
 
-		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/fixtures/dummy-attachment.png' );
+		$attachment_id = $this->factory()->attachment->create_upload_object( __DIR__ . '/fixtures/dummy-attachment.png' );
 
 		set_post_thumbnail( $guest_author->ID, $attachment_id );
 
@@ -173,7 +178,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$fields = $guest_author_obj->get_guest_author_fields();
 
 		$this->assertNotEmpty( $fields );
-		$this->assertInternalType( 'array', $fields );
+		$this->assertIsArray( $fields );
 
 		$keys = wp_list_pluck( $fields, 'key' );
 
@@ -253,7 +258,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$linked_account_ids = wp_list_pluck( $linked_accounts, 'ID' );
 
 		$this->assertNotEmpty( $linked_accounts );
-		$this->assertInternalType( 'array', $linked_accounts );
+		$this->assertIsArray( $linked_accounts );
 		$this->assertTrue( in_array( $this->editor1->ID, $linked_account_ids, true ) );
 	}
 
@@ -402,7 +407,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			$exception = $e;
 		}
 
-		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringNotContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore $_POST from back up.
 		$_POST = $_post_backup;
@@ -457,7 +462,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			$exception = $e;
 		}
 
-		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringNotContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -511,7 +516,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 			$exception = $e;
 		}
 
-		$this->assertNotContains( esc_html( $expected ), $exception->getMessage() );
+		$this->assertStringNotContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore current user from backup.
 		wp_set_current_user( $current_user );
@@ -765,7 +770,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$author2           = $this->factory->user->create_and_get();
+		$author2           = $this->factory()->user->create_and_get();
 		$guest_author_id   = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
 		$guest_author      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 		$guest_author_term = $coauthors_plus->get_author_term( $guest_author );
@@ -789,7 +794,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
 		// Checks when reassign author is not exist.
-		$author2         = $this->factory->user->create_and_get();
+		$author2         = $this->factory()->user->create_and_get();
 		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
 
 		$response = $guest_author_obj->delete( $guest_author_id, 'test' );
@@ -809,7 +814,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$guest_author_obj = $coauthors_plus->guest_authors;
 
-		$author2            = $this->factory->user->create_and_get();
+		$author2            = $this->factory()->user->create_and_get();
 		$guest_author2_id   = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
 		$guest_author2      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author2_id );
 		$guest_author2_term = $coauthors_plus->get_author_term( $guest_author2 );
@@ -835,12 +840,12 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_admin_id = $guest_author_obj->create_guest_author_from_user_id( $this->admin1->ID );
 		$guest_admin    = $guest_author_obj->get_guest_author_by( 'ID', $guest_admin_id );
 
-		$author2            = $this->factory->user->create_and_get();
+		$author2            = $this->factory()->user->create_and_get();
 		$guest_author_id2   = $guest_author_obj->create_guest_author_from_user_id( $author2->ID );
 		$guest_author2      = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id2 );
 		$guest_author_term2 = $coauthors_plus->get_author_term( $guest_author2 );
 
-		$post = $this->factory->post->create_and_get(
+		$post = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $author2->ID,
 			)

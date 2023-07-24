@@ -2,24 +2,28 @@
 
 class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
-	public function setUp() {
+	private $author1;
+	private $editor1;
+	private $post;
 
-		parent::setUp();
+	public function set_up() {
 
-		$this->author1 = $this->factory->user->create_and_get(
+		parent::set_up();
+
+		$this->author1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author1',
 			)
 		);
-		$this->editor1 = $this->factory->user->create_and_get(
+		$this->editor1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'editor',
 				'user_login' => 'editor1',
 			)
 		);
 
-		$this->post = $this->factory->post->create_and_get(
+		$this->post = $this->factory()->post->create_and_get(
 			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
@@ -69,7 +73,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $guest_author_id );
 
 		$this->assertInstanceOf( stdClass::class, $coauthor );
-		$this->assertObjectHasAttribute( 'ID', $coauthor );
+		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
 	}
@@ -94,7 +98,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $user_login );
 
 		$this->assertInstanceOf( stdClass::class, $coauthor );
-		$this->assertObjectHasAttribute( 'ID', $coauthor );
+		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
 	}
@@ -115,26 +119,26 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->author1->ID );
 
 		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertObjectHasAttribute( 'ID', $coauthor );
+		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
 		$this->assertEquals( $this->author1->ID, $coauthor->ID );
 		$this->assertEquals( 'wpuser', $coauthor->type );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $this->author1->user_login );
 
 		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertObjectHasAttribute( 'user_login', $coauthor->data );
+		$this->assertTrue( property_exists( $coauthor->data, 'user_login' ) );
 		$this->assertEquals( $this->author1->user_login, $coauthor->user_login );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $this->author1->user_nicename );
 
 		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertObjectHasAttribute( 'user_nicename', $coauthor->data );
+		$this->assertTrue( property_exists( $coauthor->data, 'user_nicename' ) );
 		$this->assertEquals( $this->author1->user_nicename, $coauthor->user_nicename );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_email', $this->author1->user_email );
 
 		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertObjectHasAttribute( 'user_email', $coauthor->data );
+		$this->assertTrue( property_exists( $coauthor->data, 'user_email' ) );
 		$this->assertEquals( $this->author1->user_email, $coauthor->user_email );
 
 		remove_filter( 'coauthors_guest_authors_enabled', '__return_false' );
@@ -144,7 +148,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->editor1->ID );
 
 		$this->assertInstanceOf( stdClass::class, $coauthor );
-		$this->assertObjectHasAttribute( 'linked_account', $coauthor );
+		$this->assertTrue( property_exists( $coauthor, 'linked_account' ) );
 		$this->assertEquals( $this->editor1->user_login, $coauthor->linked_account );
 	}
 
@@ -217,7 +221,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertTrue( $coauthors_plus->current_user_can_set_authors() );
 
 		// Checks when current user is admin.
-		$admin1 = $this->factory->user->create_and_get(
+		$admin1 = $this->factory()->user->create_and_get(
 			array(
 				'role' => 'administrator',
 			)
@@ -244,7 +248,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$current_user = get_current_user_id();
 
 		// Checking when current user is subscriber and filter is true/false.
-		$subscriber1 = $this->factory->user->create_and_get(
+		$subscriber1 = $this->factory()->user->create_and_get(
 			array(
 				'role' => 'subscriber',
 			)
@@ -283,14 +287,14 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$current_user = get_current_user_id();
 
 		// Set up test post
-		$admin_user = $this->factory->user->create_and_get(
+		$admin_user = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'administrator',
 				'user_login' => 'admin1',
 			)
 		);
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $admin_user->ID,
 				'post_status' => 'publish',
@@ -335,7 +339,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayHasKey( $this->editor1->user_login, $authors );
 
 		// Checks when search term is empty and any subscriber exists.
-		$subscriber1 = $this->factory->user->create_and_get(
+		$subscriber1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'subscriber',
 				'user_login' => 'subscriber1',
@@ -348,7 +352,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey( $subscriber1->user_login, $authors );
 
 		// Checks when search term is empty and any contributor exists.
-		$contributor1 = $this->factory->user->create_and_get(
+		$contributor1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'contributor',
 				'user_login' => 'contributor1',
@@ -406,7 +410,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey( 'admin', $authors );
 
 		// Checks when any subscriber exists using ID but not author.
-		$subscriber1 = $this->factory->user->create_and_get(
+		$subscriber1 = $this->factory()->user->create_and_get(
 			array(
 				'role' => 'subscriber',
 			)
@@ -433,7 +437,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertArrayNotHasKey( $this->author1->user_login, $authors );
 
 		// Checks when ignoring author1 but also exists one more author with similar kind of data.
-		$author2 = $this->factory->user->create_and_get(
+		$author2 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author2',
@@ -469,7 +473,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->assertEmpty( $coauthors_plus->search_authors( $this->author1->ID, $ignored_authors ) );
 
 		// Checks when ignoring author1 but also exists one more author with similar kind of data.
-		$author2 = $this->factory->user->create_and_get(
+		$author2 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author2',

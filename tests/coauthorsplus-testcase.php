@@ -4,9 +4,19 @@ use CoAuthors\API\Endpoints;
 /**
  * Base unit test class for Co-Authors Plus
  */
-class CoAuthorsPlus_TestCase extends WP_UnitTestCase {
-	public function setUp() {
-		parent::setUp();
+class CoAuthorsPlus_TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
+
+	/**
+	 * @var CoAuthors_Plus
+	 */
+	protected $_cap;
+	/**
+	 * @var Endpoints
+	 */
+	protected $_api;
+
+	public function set_up() {
+		parent::set_up();
 
 		global $coauthors_plus;
 		$this->_cap = $coauthors_plus;

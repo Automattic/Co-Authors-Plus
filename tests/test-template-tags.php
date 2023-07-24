@@ -4,9 +4,13 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
-	public function setUp() {
+	private $author1;
+	private $editor1;
+	private $post;
 
-		parent::setUp();
+	public function set_up() {
+
+		parent::set_up();
 
 		/**
 		 * When 'coauthors_auto_apply_template_tags' is set to true,
@@ -15,20 +19,20 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus_template_filters;
 		$coauthors_plus_template_filters = new CoAuthors_Template_Filters();
 
-		$this->author1 = $this->factory->user->create_and_get(
+		$this->author1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author1',
 			)
 		);
-		$this->editor1 = $this->factory->user->create_and_get(
+		$this->editor1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'editor',
 				'user_login' => 'editor1',
 			)
 		);
 
-		$this->post = $this->factory->post->create_and_get(
+		$this->post = $this->factory()->post->create_and_get(
 			array(
 				'post_author'  => $this->author1->ID,
 				'post_status'  => 'publish',
@@ -190,7 +194,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_get_coauthors_when_terms_for_post_not_exists() {
 
-		$post_id = $this->factory->post->create();
+		$post_id = $this->factory()->post->create();
 		$this->assertEmpty( get_coauthors( $post_id ) );
 	}
 
@@ -206,12 +210,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global post.
 		$post_backup = $post;
 
-		$post = $this->factory->post->create_and_get();
+		$post = $this->factory()->post->create_and_get();
 
 		$this->assertEmpty( get_coauthors() );
 
-		$user_id = $this->factory->user->create();
-		$post    = $this->factory->post->create_and_get(
+		$user_id = $this->factory()->user->create();
+		$post    = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $user_id,
 			)
@@ -232,7 +236,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$post_id = $this->factory->post->create();
+		$post_id = $this->factory()->post->create();
 
 		// Checks when no author exist.
 		$this->assertEmpty( get_coauthors( $post_id ) );
@@ -246,7 +250,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( $expected, wp_list_pluck( get_coauthors( $post_id ), 'user_login' ) );
 
 		// Checks coauthors order after modifying.
-		$post_id = $this->factory->post->create();
+		$post_id = $this->factory()->post->create();
 
 		$coauthors_plus->add_coauthors( $post_id, array( $this->editor1->user_login ), true );
 		$coauthors_plus->add_coauthors( $post_id, array( $this->author1->user_login ), true );
@@ -439,12 +443,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Checking when first name is set for user.
 		$first_name = 'Test';
-		$user_id    = $this->factory->user->create(
+		$user_id    = $this->factory()->user->create(
 			array(
 				'first_name' => $first_name,
 			)
 		);
-		$post       = $this->factory->post->create_and_get(
+		$post       = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $user_id,
 			)
@@ -494,12 +498,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Checking when last name is set for user.
 		$last_name = 'Test';
-		$user_id   = $this->factory->user->create(
+		$user_id   = $this->factory()->user->create(
 			array(
 				'last_name' => $last_name,
 			)
 		);
-		$post      = $this->factory->post->create_and_get(
+		$post      = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $user_id,
 			)
@@ -549,12 +553,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		// Checking when nickname is set for user.
 		$nick_name = 'Test';
-		$user_id   = $this->factory->user->create(
+		$user_id   = $this->factory()->user->create(
 			array(
 				'nickname' => $nick_name,
 			)
 		);
-		$post      = $this->factory->post->create_and_get(
+		$post      = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $user_id,
 			)
@@ -602,12 +606,12 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( '<span>' . $this->author1->user_email . '</span><span>' . $this->editor1->user_email . '</span>', $emails );
 
 		$email   = 'test@example.org';
-		$user_id = $this->factory->user->create(
+		$user_id = $this->factory()->user->create(
 			array(
 				'user_email' => $email,
 			)
 		);
-		$post    = $this->factory->post->create_and_get(
+		$post    = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $user_id,
 			)
@@ -688,7 +692,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		// Backing up global author data.
 		$authordata_backup = $authordata;
 
-		$user_id = $this->factory->user->create(
+		$user_id = $this->factory()->user->create(
 			array(
 				'user_url' => 'example.org',
 			)
@@ -718,6 +722,15 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 	 * @covers ::coauthors_links_single()
 	 */
 	public function test_coauthors_links_single_when_url_not_exist() {
+		global $wp_version;
+		if ( PHP_VERSION_ID >= 80100 && version_compare( $wp_version, '6.3.0', '<' ) ) {
+			/*
+			 * Ignoring PHP 8.1 "null to non-nullable" deprecation that is fixed in WP 6.3.
+			 *
+			 * @see https://core.trac.wordpress.org/ticket/58157
+			*/
+			$this->markTestSkipped( 'PHP 8.1 gives a deprecation notice that is fixed in WP 6.3' );
+		}
 
 		global $post, $authordata;
 
@@ -831,8 +844,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$coauthors = coauthors_wp_list_authors( $args );
 
-		$this->assertNotContains( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors );
-		$this->assertNotContains( $this->editor1->display_name, $coauthors );
+		$this->assertStringNotContainsString( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors );
+		$this->assertStringNotContainsString( $this->editor1->display_name, $coauthors );
 
 		$coauthors_plus->add_coauthors( $this->post->ID, array( $this->editor1->user_login ), true );
 
@@ -886,14 +899,14 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
 		$this->assertStringContainsString( $this->author1->display_name, coauthors_wp_list_authors( $args ) );
 
-		$user = $this->factory->user->create_and_get(
+		$user = $this->factory()->user->create_and_get(
 			array(
 				'first_name' => 'First',
 				'last_name'  => 'Last',
 			)
 		);
 
-		$this->factory->post->create(
+		$this->factory()->post->create(
 			array(
 				'post_author' => $user->ID,
 			)
@@ -1003,8 +1016,8 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertNotContains( '<li>', $coauthors );
-		$this->assertNotContains( '</li>', $coauthors );
+		$this->assertStringNotContainsString( '<li>', $coauthors );
+		$this->assertStringNotContainsString( '</li>', $coauthors );
 	}
 
 	/**
@@ -1089,7 +1102,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		);
 
 		$guest_author  = $coauthors_plus->guest_authors->get_guest_author_by( 'id', $guest_author_id );
-		$attachment_id = $this->factory->attachment->create_upload_object( __DIR__ . '/fixtures/dummy-attachment.png', $guest_author_id );
+		$attachment_id = $this->factory()->attachment->create_upload_object( __DIR__ . '/fixtures/dummy-attachment.png', $guest_author_id );
 
 		$this->assertEquals( preg_match( "|^<img alt='[^']*' src='[^']*' srcset='[^']*' class='[^']*' height='[^']*' width='[^']*'( loading='[^']*')?( decoding='[^']*')?/>$|", coauthors_get_avatar( $guest_author ) ), 1 );
 

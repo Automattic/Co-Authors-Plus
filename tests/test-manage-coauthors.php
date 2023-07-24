@@ -2,22 +2,42 @@
 
 class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
-	public function setUp() {
-		parent::setUp();
+	private $admin1;
+	private $author1;
+	private $editor1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_post1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_post2;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_page1;
+	/**
+	 * @var int|WP_Error
+	 */
+	private $author1_page2;
 
-		$this->admin1  = $this->factory->user->create(
+	public function set_up() {
+		parent::set_up();
+
+		$this->admin1  = $this->factory()->user->create(
 			array(
 				'role'       => 'administrator',
 				'user_login' => 'admin1',
 			)
 		);
-		$this->author1 = $this->factory->user->create(
+		$this->author1 = $this->factory()->user->create(
 			array(
 				'role'       => 'author',
 				'user_login' => 'author1',
 			)
 		);
-		$this->editor1 = $this->factory->user->create(
+		$this->editor1 = $this->factory()->user->create(
 			array(
 				'role'       => 'editor',
 				'user_login' => 'editor2',
@@ -65,8 +85,8 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$this->author1_page2 = wp_insert_post( $page );
 	}
 
-	public function tearDown() {
-		parent::tearDown();
+	public function tear_down() {
+		parent::tear_down();
 	}
 
 	/**
@@ -184,7 +204,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $this->author1,
 				'post_type'   => 'attachment',
@@ -239,7 +259,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$user_id = $this->factory->user->create(
+		$user_id = $this->factory()->user->create(
 			array(
 				'user_login'    => 'test_admin',
 				'user_nicename' => 'test_admiи',
@@ -258,7 +278,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 			$user->user_nicename,
 		);
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $user_id,
 			)
@@ -385,7 +405,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $this->author1,
 				'post_type'   => 'attachment',
@@ -414,7 +434,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$admin1  = get_user_by( 'id', $this->admin1 );
 		$author1 = get_user_by( 'id', $this->author1 );
 
-		$post_id = $this->factory->post->create(
+		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $this->admin1,
 			)
@@ -455,7 +475,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 
 		global $coauthors_plus;
 
-		$post_id = $this->factory->post->create();
+		$post_id = $this->factory()->post->create();
 		$post    = get_post( $post_id );
 
 		$coauthors_plus->coauthors_update_post( $post_id, $post );
