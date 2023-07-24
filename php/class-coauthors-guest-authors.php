@@ -1063,21 +1063,6 @@ class CoAuthors_Guest_Authors {
 				'input' => 'url',
 			),
 			array(
-				'key'   => 'aim',
-				'label' => __( 'AIM', 'co-authors-plus' ),
-				'group' => 'contact-info',
-			),
-			array(
-				'key'   => 'yahooim',
-				'label' => __( 'Yahoo IM', 'co-authors-plus' ),
-				'group' => 'contact-info',
-			),
-			array(
-				'key'   => 'jabber',
-				'label' => __( 'Jabber / Google Talk', 'co-authors-plus' ),
-				'group' => 'contact-info',
-			),
-			array(
 				'key'               => 'description',
 				'label'             => __( 'Biographical Info', 'co-authors-plus' ),
 				'group'             => 'about',
