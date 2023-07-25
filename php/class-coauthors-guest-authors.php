@@ -973,7 +973,7 @@ class CoAuthors_Guest_Authors {
 		$guest_author['type']          = 'guest-author';
 
 		if ( ! isset( $guest_author['nickname'] ) ) {
-			$guest_author['nickname'] = $guest_author['display_name'] ?? '';
+			$guest_author['nickname'] = '';
 		}
 
 		wp_cache_set( $cache_key, (object) $guest_author, self::$cache_group );
