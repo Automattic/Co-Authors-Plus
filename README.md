@@ -23,12 +23,8 @@ Refer to our [wiki](https://github.com/Automattic/Co-Authors-Plus/wiki) for deta
 ## Screenshots
 
 1. Multiple authors can be added to a Post, Page, or Custom Post Type using an auto-complete interface.
-2. The order of your co-authors can be changed with drag and drop.
-3. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
+2. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
 
-## Changelog
+## Change Log
 
-**3.5.10 (Jan 24, 2023)**
-* Fix: Authors not being updated properly in the editor #920
-
-For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
+[View the change log](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md.).
