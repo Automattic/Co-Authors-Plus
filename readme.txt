@@ -57,8 +57,7 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 == Screenshots ==
 
 1. Multiple authors can be added to a Post, Page, or Custom Post Type using an auto-complete interface.
-2. The order of your co-authors can be changed by drag and drop.
-3. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
+2. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
 
 == Changelog ==
 
