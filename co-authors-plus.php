@@ -1839,7 +1839,7 @@ class CoAuthors_Plus {
 		$coauthor = $this->get_coauthor_by( 'id', $id );
 		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
-				$args['url'] = get_the_post_thumbnail_url( $id, $this->gravatar_size );
+				$args['url'] = get_the_post_thumbnail_url( $id, array( $args['width'], $args['height'] ) );
 			} elseif ( isset( $coauthor->user_email ) ) {
 				$args['url'] = get_avatar_url( $coauthor->user_email );
 			} else {
