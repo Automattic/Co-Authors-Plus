@@ -83,6 +83,7 @@ class Yoast {
 		add_filter( 'wpseo_schema_author', [ __CLASS__, 'filter_author_graph' ], 11, 4 );
 		add_filter( 'wpseo_schema_profilepage', [ __CLASS__, 'filter_schema_profilepage' ], 11, 4 );
 		add_filter( 'wpseo_meta_author', [ __CLASS__, 'filter_author_meta' ], 11, 2 );
+		add_filter( 'wpseo_enhanced_slack_data', [__CLASS__, 'filter_slack_data'], 10, 2 );
 		add_filter( 'wpseo_robots_array', [ __CLASS__, 'allow_indexing_guest_author_archive' ], 10, 2 );
 		add_filter( 'wpseo_opengraph_url', [ __CLASS__, 'fix_guest_author_archive_url_presenter' ], 10, 2 );
 	}
@@ -239,6 +240,36 @@ class Yoast {
 			return $author_name;
 		}
 
+		return self::get_authors_display_names_output( $author_objects );
+	}
+
+	/**
+	 * Filter the enhanced data for sharing on Slack.
+	 *
+	 * @param array                  $data         The enhanced Slack sharing data.
+	 * @param Indexable_Presentation $presentation The presentation of an indexable.
+	 * @return array The potentially amended enhanced Slack sharing data.
+	 */
+	public static function filter_slack_data( $data, $presentation ) {
+		$author_objects = get_coauthors( $presentation->context->post->id );
+
+		// Fallback in case of error.
+		if ( empty( $author_objects ) ) {
+			return $data;
+		}
+
+		$output = self::get_authors_display_names_output( $author_objects );
+		$data[ \__( 'Written by', 'wordpress-seo' ) ] = $output;
+		return $data;
+	}
+
+	/**
+	 * Returns the list of authors display names separated by commas.
+	 *
+	 * @param WP_User[] $author_objects The list of authors.
+	 * @return string Author display names separated by commas.
+	 */
+	private static function get_authors_display_names_output( $author_objects ) {
 		$output = '';
 		foreach ( $author_objects as $i => $author ) {
 			$output .= $author->display_name;
