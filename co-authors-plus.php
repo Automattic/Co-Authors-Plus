@@ -1841,9 +1841,9 @@ class CoAuthors_Plus {
 			if ( has_post_thumbnail( $id ) ) {
 				$args['url'] = get_the_post_thumbnail_url( $id, array( $args['width'], $args['height'] ) );
 			} elseif ( isset( $coauthor->user_email ) ) {
-				$args['url'] = get_avatar_url( $coauthor->user_email );
+				$args['url'] = get_avatar_url( $coauthor->user_email, $args );
 			} else {
-				$args['url'] = get_avatar_url( '' ); // Fallback to default.
+				$args['url'] = get_avatar_url( '', $args ); // Fallback to default.
 			}
 		}
 		return $args;
