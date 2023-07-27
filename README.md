@@ -27,4 +27,4 @@ Refer to our [wiki](https://github.com/Automattic/Co-Authors-Plus/wiki) for deta
 
 ## Change Log
 
-[View the change log](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md.).
+[View the change log](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md).
