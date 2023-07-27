@@ -240,16 +240,15 @@ class Yoast {
 			return $author_name;
 		}
 
-		$output = self::get_authors_display_names_output( $author_objects );
-		return $output;
+		return self::get_authors_display_names_output( $author_objects );
 	}
 
 	/**
 	 * Filter the enhanced data for sharing on Slack.
 	 *
-	 * @param array $data The enhanced Slack sharing data.
+	 * @param array                  $data         The enhanced Slack sharing data.
 	 * @param Indexable_Presentation $presentation The presentation of an indexable.
-	 * @return array
+	 * @return array The potentially amended enhanced Slack sharing data.
 	 */
 	public static function filter_slack_data( $data, $presentation ) {
 		$author_objects = get_coauthors( $presentation->context->post->id );
@@ -268,8 +267,7 @@ class Yoast {
 	 * Returns the list of authors display names separated by commas.
 	 *
 	 * @param WP_User[] $author_objects The list of authors.
-	 *
-	 * @return string
+	 * @return string Author display names separated by commas.
 	 */
 	private static function get_authors_display_names_output( $author_objects ) {
 		$output = '';
