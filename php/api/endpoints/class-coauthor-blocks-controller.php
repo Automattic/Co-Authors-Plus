@@ -228,8 +228,9 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 			array_flip( $disallowed )
 		);
 
-		$data['id']   = $author->ID;
-		$data['link'] = get_author_posts_url( $author->ID, $author->user_nicename );
+		$data['id']          = $author->ID;
+		$data['link']        = get_author_posts_url( $author->ID, $author->user_nicename );
+		$data['avatar_urls'] = rest_get_avatar_urls( $author->ID );
 
 		$response = rest_ensure_response( $data );
 
