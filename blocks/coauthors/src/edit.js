@@ -148,12 +148,12 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 				{
 					coAuthors && 
 					coAuthors
-					.map( ( { id, display_name, link } ) => {
+					.map( ( { id, display_name, link, avatar_urls } ) => {
 						const isHidden = id === ( activeBlockContextId || coAuthors[0]?.id );
 						return (
 							<BlockContextProvider
 								key={ id }
-								value={ { coAuthorId: id, display_name, link } }
+								value={ { coAuthorId: id, display_name, link, avatar_urls } }
 							>
 								{ isHidden ? (<CoAuthorTemplateInnerBlocks />) : null }
 								<MemoizedCoAuthorTemplateBlockPreview
