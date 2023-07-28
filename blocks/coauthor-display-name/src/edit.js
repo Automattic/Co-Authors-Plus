@@ -36,27 +36,27 @@ export default function Edit( { context, attributes, setAttributes } ) {
 			}
 		</p>
 		<InspectorControls>
-		<PanelBody title={ __( 'Settings' ) }>
-			<ToggleControl
-				__nextHasNoMarginBottom
-				label={ __( 'Make title a link' ) }
-				onChange={ () => setAttributes( { isLink: ! isLink } ) }
-				checked={ isLink }
-			/>
-			{ isLink && (
-				<>
-					<TextControl
-						__nextHasNoMarginBottom
-						label={ __( 'Link rel' ) }
-						value={ rel }
-						onChange={ ( newRel ) =>
-							setAttributes( { rel: newRel } )
-						}
-					/>
-				</>
-			) }
-		</PanelBody>
-	</InspectorControls>
-	</>
+			<PanelBody title={ __( 'Settings' ) }>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					label={ __( 'Make title a link' ) }
+					onChange={ () => setAttributes( { isLink: ! isLink } ) }
+					checked={ isLink }
+				/>
+				{ isLink && (
+					<>
+						<TextControl
+							__nextHasNoMarginBottom
+							label={ __( 'Link rel' ) }
+							value={ rel }
+							onChange={ ( newRel ) =>
+								setAttributes( { rel: newRel } )
+							}
+						/>
+					</>
+				) }
+			</PanelBody>
+		</InspectorControls>
+		</>
 	);
 }
