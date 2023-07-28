@@ -56,8 +56,6 @@ class CoAuthors_Plus {
 	var $coauthors_meta_box_name   = 'coauthorsdiv';
 	var $force_guest_authors       = false;
 
-	var $gravatar_size = 25;
-
 	var $_pages_whitelist = array( 'post.php', 'post-new.php', 'edit.php' );
 
 	var $supported_post_types = array();
@@ -449,7 +447,7 @@ class CoAuthors_Plus {
 					$avatar_url = get_avatar_url( $coauthor->ID );
 					?>
 					<li>
-						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
+						<?php echo get_avatar( $coauthor->ID ); ?>
 						<span id="<?php echo esc_attr( 'coauthor-readonly-' . $count ); ?>" class="coauthor-tag">
 							<input type="text" name="coauthorsinput[]" readonly="readonly" value="<?php echo esc_attr( $coauthor->display_name ); ?>" />
 							<input type="text" name="coauthors[]" value="<?php echo esc_attr( $coauthor->user_login ); ?>" />
