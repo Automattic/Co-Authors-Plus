@@ -446,7 +446,11 @@ class CoAuthors_Plus {
 				<?php
 				foreach ( $coauthors as $coauthor ) :
 					$count++;
-					$avatar_url = get_avatar_url( $coauthor->ID );
+					$user_type = 'guest-user';
+					if ( $coauthor instanceof WP_User ) {
+						$user_type = 'wp-user';
+					}
+					$avatar_url = get_avatar_url( $coauthor->ID, array( 'user_type' => $user_type ) );
 					?>
 					<li>
 						<?php echo get_avatar( $coauthor->ID, $this->gravatar_size ); ?>
@@ -1833,9 +1837,29 @@ class CoAuthors_Plus {
 	 * @return string Avatar URL
 	 */
 	public function filter_pre_get_avatar_data_url( $args, $id ) {
+		global $wp_current_filter;
+
 		if ( ! $id || ! $this->is_guest_authors_enabled() || ! is_numeric( $id ) || isset( $args['url'] ) ) {
 			return $args;
 		}
+		
+		// Do not filter the icon in the admin bar
+		if ( doing_filter( 'admin_bar_menu' ) ) {
+			return $args;
+		} 
+
+		// Do not filter when we have a WordPress user sent from CAP meta box
+		if ( isset( $args['user_type'] ) && 'wp-user' === $args['user_type'] ) {
+			return $args;
+		}
+
+		// Do not filter when on the user screen
+		$current_screen = get_current_screen();
+		if ( isset( $current_screen->parent_base ) && 'users' == $current_screen->parent_base ) {
+			return $args;
+		}
+
+		
 		$coauthor = $this->get_coauthor_by( 'id', $id );
 		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
