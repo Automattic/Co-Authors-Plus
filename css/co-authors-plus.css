@@ -102,6 +102,8 @@
 		}
 		#coauthors-readonly ul li .avatar {
 			float: left;
+			width: 25px;
+			height: 25px;
 		}
 		#coauthors-readonly ul li .coauthor-tag {
 			display:block;
