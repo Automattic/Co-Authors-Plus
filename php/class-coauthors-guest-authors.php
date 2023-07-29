@@ -251,8 +251,7 @@ class CoAuthors_Guest_Authors {
 		// Make sure the guest author actually exists
 		$guest_author = $this->get_guest_author_by( 'ID', (int) $_POST['id'] );
 		if ( ! $guest_author ) {
-			/* translators: Singular name of the guest author post type e.g. Guest Author. */
-			wp_die( esc_html( sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $this->labels['singular'] ) ) );
+			wp_die( esc_html__( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 		}
 
 		// Perform the reassignment if needed
@@ -484,8 +483,7 @@ class CoAuthors_Guest_Authors {
 			// Make sure the guest author actually exists
 			$guest_author = $this->get_guest_author_by( 'ID', (int) $_GET['id'] );
 			if ( ! $guest_author ) {
-				/* translators: Singular name of the guest author post type e.g. Guest Author. */
-				wp_die( esc_html( sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $this->labels['singular'] ) ) );
+				wp_die( esc_html__( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 			}
 
 			// get post count
@@ -494,16 +492,14 @@ class CoAuthors_Guest_Authors {
 
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
-			/* translators: Plural name of the guest author post type e.g. Guest Authors. */
-			echo '<h2>' . esc_html( sprintf( __( 'Delete %s', 'co-authors-plus' ), $this->labels['plural'] ) ) . '</h2>';
-			/* translators: Singular name of the guest author post type e.g. Guest Author. */
-			echo '<p>' . esc_html( sprintf( __( 'You have specified this %s for deletion:', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
+			echo '<h2>' . esc_html__( 'Delete Guest Authors', 'co-authors-plus' ) . '</h2>';
+			echo '<p>' . esc_html__( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';
 			// display wording differently per post count
 			if ( 0 === $count ) {
-				$post_count_message = '<p>' . sprintf( __( 'There are no posts associated with this guest author.', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) . '</p>';
+				$post_count_message = '<p>' . esc_html__( 'There are no posts associated with this guest author.', 'co-authors-plus' ) . '</p>';
 			} else {
-				$note = '<p class="description">' . sprintf( __( "Note: If you'd like to delete the %1\$s and all of their posts, you should delete their posts first and then come back to delete the %2\$s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) . '</p>';
+				$note = '<p class="description">' . __( "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author.", 'co-authors-plus' ) . '</p>';
 				$post_count_message_text = sprintf(
 					/* translators: Count of posts */
 					_n(
