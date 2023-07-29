@@ -17,7 +17,7 @@ import CoAuthors from './components/co-authors';
 const PluginDocumentSettingPanelAuthors = () => (
 	<PluginDocumentSettingPanel
 		name="coauthors-panel"
-		title="Authors"
+		title={ __( 'Authors', 'co-authors-plus' ) }
 		className="coauthors"
 	>
 		<CoAuthors />
