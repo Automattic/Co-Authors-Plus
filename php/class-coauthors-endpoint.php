@@ -110,7 +110,7 @@ class Endpoints {
 							'validate_callback' => array( $this, 'validate_numeric' ),
 						),
 						'new_authors' => array(
-							'description' => __( 'Names of coauthors to save.' ),
+							'description' => __( 'Names of co-authors to save.' ),
 							'type'        => 'string',
 							'required'    => false,
 						),

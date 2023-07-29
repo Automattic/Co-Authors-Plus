@@ -465,7 +465,7 @@ class CoAuthors_Plus {
 				?>
 				</ul>
 				<div class="clear"></div>
-				<p><?php echo wp_kses( __( '<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+				<p><?php echo wp_kses( __( '<strong>Note:</strong> To edit post authors, please enable JavaScript or use a JavaScript-capable browser', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
 			</div>
 			<?php
 		endif;
@@ -1959,7 +1959,7 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 				/* translators: 1: comment author, 2: author IP, 3: author domain */
 				$notify_message .= sprintf( __( 'Author : %1$s (IP: %2$s , %3$s)' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
 				/* translators: Comment author emal address. */
-				$notify_message .= sprintf( __( 'E-mail : %s' ), $comment->comment_author_email ) . "\r\n";
+				$notify_message .= sprintf( __( 'Email : %s' ), $comment->comment_author_email ) . "\r\n";
 				/* translators: Comment author URL. */
 				$notify_message .= sprintf( __( 'URL    : %s' ), $comment->comment_author_url ) . "\r\n";
 				/* translators: Comment author IP address. */
