@@ -257,7 +257,18 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				sleep( 2 );
 			}
 		}
-		WP_CLI::success( sprintf( __( 'All done! %d posts were affected.', 'co-authors-plus' ), $affected ) );
+
+		$success_message = sprintf(
+			/* translators: Count of posts. */
+			_n(
+				'All done! %d post was affected.',
+				'All done! %d posts were affected.',
+				$affected,
+				'co-authors-plus'
+			),
+			number_format_i18n( $affected )
+		);
+		WP_CLI::success( $success_message );
 
 	}
 

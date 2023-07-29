@@ -504,12 +504,17 @@ class CoAuthors_Guest_Authors {
 				$post_count_message = '<p>' . sprintf( __( 'There are no posts associated with this guest author.', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) . '</p>';
 			} else {
 				$note = '<p class="description">' . sprintf( __( "Note: If you'd like to delete the %1\$s and all of their posts, you should delete their posts first and then come back to delete the %2\$s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) . '</p>';
-				if ( 1 === $count ) {
-					$post_count_message = '<p>' . sprintf( __( 'There is %1$d post associated with this guest author. What should be done with the post assigned to this %2$s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
-				} else {
-					$post_count_message = '<p>' . sprintf( __( 'There are %1$d posts associated with this guest author. What should be done with the posts assigned to this %2$s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
-				}
-				$post_count_message .= $note;
+				$post_count_message_text = sprintf(
+					/* translators: Count of posts */
+					_n(
+						'There is %d post associated with this guest author. What should be done with the post assigned to this Guest Author?',
+						'There are %d posts associated with this guest author. What should be done with the posts assigned to this Guest Author?',
+						$count,
+						'co-authors-plus'
+					),
+					number_format_i18n( $count )
+				);
+				$post_count_message = '<p>' . $post_count_message_text . '</p>' . $note;
 			}
 			$allowed_html = array(
 				'p' => array(
