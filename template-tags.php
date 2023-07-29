@@ -470,7 +470,7 @@ function coauthors_links_single( $author ) {
 			'<a href="%s" title="%s" rel="author external">%s</a>',
 			esc_url( get_the_author_meta( 'website' ) ),
 			/* translators: Author display name. */
-			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website', 'co-authors-plus' ), esc_html( get_the_author() ) ) ),
 			esc_html( get_the_author() )
 		);
 	} elseif ( get_the_author_meta( 'url' ) ) {
@@ -478,7 +478,7 @@ function coauthors_links_single( $author ) {
 			'<a href="%s" title="%s" rel="author external">%s</a>',
 			esc_url( get_the_author_meta( 'url' ) ),
 			/* translators: Author's display name. */
-			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), esc_html( get_the_author() ) ) ),
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website', 'co-authors-plus' ), esc_html( get_the_author() ) ) ),
 			esc_html( get_the_author() )
 		);
 	} else {

@@ -179,7 +179,7 @@ class CoAuthors_Guest_Authors {
 				/* translators: Guest author profile preview URL. */
 				__( 'Guest author scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview profile</a>', 'co-authors-plus' ),
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),
+				date_i18n( __( 'M j, Y @ G:i', 'co-authors-plus' ), strtotime( $post->post_date ) ),
 				esc_url( $guest_author_link )
 			),
 			/* translators: Guest author profile preview URL. */
@@ -495,7 +495,7 @@ class CoAuthors_Guest_Authors {
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
 			/* translators: Plural name of the guest author post type e.g. Guest Authors. */
-			echo '<h2>' . esc_html( sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) ) . '</h2>';
+			echo '<h2>' . esc_html( sprintf( __( 'Delete %s', 'co-authors-plus' ), $this->labels['plural'] ) ) . '</h2>';
 			/* translators: Singular name of the guest author post type e.g. Guest Author. */
 			echo '<p>' . esc_html( sprintf( __( 'You have specified this %s for deletion:', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';

@@ -259,7 +259,7 @@ class Yoast {
 		}
 
 		$output = self::get_authors_display_names_output( $author_objects );
-		$data[ \__( 'Written by', 'wordpress-seo' ) ] = $output;
+		$data[ \__( 'Written by', 'co-authors-plus' ) ] = $output;
 		return $data;
 	}
 
