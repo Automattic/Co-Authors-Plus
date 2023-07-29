@@ -241,6 +241,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			if ( ! empty( $coauthors ) ) {
 				WP_CLI::line(
 					sprintf(
+						/* translators: 1: Post ID, 2: Comma-separated list of co-author slugs. */
 						__( 'Skipping - Post #%1$d already has co-authors assigned: %2$s', 'co-authors-plus' ),
 						$post_id,
 						implode( ', ', wp_list_pluck( $coauthors, 'slug' ) )
@@ -884,7 +885,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		if ( $guest_author ) {
-			// translators: Guest Author ID.
+			/* translators: Guest Author ID. */
 			return WP_CLI::warning( sprintf( esc_html__( '-- Author already exists (ID #%s); skipping.', 'co-authors-plus' ), $guest_author->ID ) );
 		}
 
@@ -904,7 +905,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		);
 
 		if ( is_wp_error( $guest_author_id ) ) {
-			// translators: The error message.
+			/* translators: The error message. */
 			return WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
 		}
 
@@ -914,7 +915,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		update_post_meta( $guest_author_id, '_original_author_login', $author['user_login'] );
 
-		// translators: Guest Author ID.
+		/* translators: Guest Author ID. */
 		WP_CLI::success( sprintf( esc_html__( '-- Created as guest author #%s', 'co-authors-plus' ), $guest_author_id ) );
 	}
 
