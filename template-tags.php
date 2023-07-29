@@ -477,7 +477,7 @@ function coauthors_links_single( $author ) {
 		return sprintf(
 			'<a href="%s" title="%s" rel="author external">%s</a>',
 			esc_url( get_the_author_meta( 'url' ) ),
-			/* translators: Author's display name. */
+			/* translators: Author display name. */
 			esc_attr( sprintf( __( 'Visit %s&#8217;s website', 'co-authors-plus' ), esc_html( get_the_author() ) ) ),
 			esc_html( get_the_author() )
 		);
@@ -693,7 +693,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 				$link = $name;
 			}
 		} else {
-			/* translators: Author name. */
+			/* translators: Author display name. */
 			$link = '<a href="' . get_author_posts_url( $author->ID, $author->user_nicename ) . '" title="' . esc_attr( sprintf( __( 'Posts by %s', 'co-authors-plus' ), $name ) ) . '">' . esc_html( $name ) . '</a>';
 
 			if ( ( ! empty( $args['feed_image'] ) ) || ( ! empty( $args['feed'] ) ) ) {
