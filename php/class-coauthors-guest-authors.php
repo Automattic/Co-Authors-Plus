@@ -491,8 +491,7 @@ class CoAuthors_Guest_Authors {
 			$count = $coauthors_plus->get_guest_author_post_count( $guest_author );
 
 			echo '<div class="wrap">';
-			echo '<div class="icon32" id="icon-users"><br/></div>';
-			echo '<h2>' . esc_html__( 'Delete Guest Authors', 'co-authors-plus' ) . '</h2>';
+			echo '<h1>' . esc_html__( 'Delete Guest Authors', 'co-authors-plus' ) . '</h1>';
 			echo '<p>' . esc_html__( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';
 			// display wording differently per post count
@@ -555,20 +554,21 @@ class CoAuthors_Guest_Authors {
 			echo '</form>';
 			echo '</div>';
 		} else {
-			echo '<div class="wrap">';
-			echo '<div class="icon32" id="icon-users"><br/></div>';
-			echo '<h2>' . esc_html( $this->labels['plural'] );
 			// @todo caps check for creating a new user
-			$add_new_link = admin_url( "post-new.php?post_type=$this->post_type" );
-			echo '<a href="' . esc_url( $add_new_link ) . '" class="add-new-h2">' . esc_html__( 'Add New', 'co-authors-plus' ) . '</a>';
-			echo '</h2>';
-			$cap_list_table = new CoAuthors_WP_List_Table();
-			$cap_list_table->prepare_items();
-			echo '<form id="guest-authors-filter" action="" method="GET">';
-			echo '<input type="hidden" name="page" value="view-guest-authors" />';
-			$cap_list_table->display();
-			echo '</form>';
-			echo '</div>';
+			?>
+			<div class="wrap">
+				<h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+				<a href="<?php echo esc_url( admin_url( "post-new.php?post_type={$this->post_type}" ) ); ?>" class="page-title-action"><?php echo esc_html__( 'Add New', 'co-authors-plus' ); ?></a>
+				<form id="guest-authors-filter" action="" method="GET">
+					<input type="hidden" name="page" value="view-guest-authors" />
+					<?php
+					$cap_list_table = new CoAuthors_WP_List_Table();
+					$cap_list_table->prepare_items();
+					$cap_list_table->display();
+					?>
+				</form>
+			</div>
+			<?php
 		}
 
 	}
