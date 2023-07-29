@@ -1930,17 +1930,17 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 
 			// The comment was left by the co-author
 			if ( $comment->user_id == $author->ID ) {
-				return false;
+				continue;
 			}
 
 			// The co-author moderated a comment on his own post
 			if ( $author->ID == get_current_user_id() ) {
-				return false;
+				continue;
 			}
 
 			// If there's no email to send the comment to
 			if ( '' == $author->user_email ) {
-				return false;
+				continue;
 			}
 
 			$comment_author_domain = @gethostbyaddr( $comment->comment_author_IP );
