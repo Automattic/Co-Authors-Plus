@@ -482,7 +482,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		// Back up $_POST.
 		$_post_backup = $_POST;
 
-		$expected = sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $guest_author_obj->labels['singular'] );
+		$expected = __( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' );
 
 		// Back up current user.
 		$current_user = get_current_user_id();

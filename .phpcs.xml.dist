@@ -8,6 +8,13 @@
 	<rule ref="WordPress">
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
 	</rule>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="co-authors-plus"/>
+			</property>
+		</properties>
+	</rule>
 
 	<rule ref="PHPCompatibilityWP"/>
 	<config name="testVersion" value="7.2-"/>

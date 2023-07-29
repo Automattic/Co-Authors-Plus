@@ -228,8 +228,8 @@ class CoAuthors_Plus {
 		$args = array(
 			'hierarchical' => false,
 			'labels'       => array(
-				'name'      => __( 'Authors' ),
-				'all_items' => __( 'All Authors' ),
+				'name'      => __( 'Authors', 'co-authors-plus' ),
+				'all_items' => __( 'All Authors', 'co-authors-plus' ),
 			),
 			'query_var'    => false,
 			'rewrite'      => false,
@@ -465,7 +465,7 @@ class CoAuthors_Plus {
 				?>
 				</ul>
 				<div class="clear"></div>
-				<p><?php echo wp_kses( __( '<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+				<p><?php echo wp_kses( __( '<strong>Note:</strong> To edit post authors, please enable JavaScript or use a JavaScript-capable browser', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
 			</div>
 			<?php
 		endif;
@@ -1795,7 +1795,8 @@ class CoAuthors_Plus {
 		$author_slug = sanitize_user( get_query_var( 'author_name' ) );
 		$author      = $this->get_coauthor_by( 'user_nicename', $author_slug );
 
-		return sprintf( __( 'Author: %s' ), $author->display_name );
+		/* translators: Author display name. */
+		return sprintf( __( 'Author: %s', 'co-authors-plus' ), $author->display_name );
 	}
 
 	/**
@@ -1840,11 +1841,11 @@ class CoAuthors_Plus {
 		if ( ! $id || ! $this->is_guest_authors_enabled() || ! is_numeric( $id ) || isset( $args['url'] ) ) {
 			return $args;
 		}
-		
+
 		// Do not filter the icon in the admin bar
 		if ( doing_filter( 'admin_bar_menu' ) ) {
 			return $args;
-		} 
+		}
 
 		// Do not filter when we have a WordPress user sent from CAP meta box
 		if ( isset( $args['user_type'] ) && 'wp-user' === $args['user_type'] ) {
@@ -1857,7 +1858,7 @@ class CoAuthors_Plus {
 			return $args;
 		}
 
-		
+
 		$coauthor = $this->get_coauthor_by( 'id', $id );
 		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
@@ -1953,43 +1954,55 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 			}
 
 			if ( 'comment' == $comment_type ) {
-				$notify_message = sprintf( __( 'New comment on your post "%s"' ), $post->post_title ) . "\r\n";
+				/* translators: Post title. */
+				$notify_message = sprintf( __( 'New comment on your post "%s"', 'co-authors-plus' ), $post->post_title ) . "\r\n";
 				/* translators: 1: comment author, 2: author IP, 3: author domain */
-				$notify_message .= sprintf( __( 'Author : %1$s (IP: %2$s , %3$s)' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
-				$notify_message .= sprintf( __( 'E-mail : %s' ), $comment->comment_author_email ) . "\r\n";
-				$notify_message .= sprintf( __( 'URL    : %s' ), $comment->comment_author_url ) . "\r\n";
-				$notify_message .= sprintf( __( 'Whois  : http://whois.arin.net/rest/ip/%s' ), $comment->comment_author_IP ) . "\r\n";
-				$notify_message .= __( 'Comment: ' ) . "\r\n" . $comment->comment_content . "\r\n\r\n";
-				$notify_message .= __( 'You can see all comments on this post here: ' ) . "\r\n";
+				$notify_message .= sprintf( __( 'Author : %1$s (IP: %2$s , %3$s)', 'co-authors-plus' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+				/* translators: Comment author emal address. */
+				$notify_message .= sprintf( __( 'Email : %s', 'co-authors-plus' ), $comment->comment_author_email ) . "\r\n";
+				/* translators: Comment author URL. */
+				$notify_message .= sprintf( __( 'URL    : %s', 'co-authors-plus' ), $comment->comment_author_url ) . "\r\n";
+				/* translators: Comment author IP address. */
+				$notify_message .= sprintf( __( 'Whois  : http://whois.arin.net/rest/ip/%s', 'co-authors-plus' ), $comment->comment_author_IP ) . "\r\n";
+				$notify_message .= __( 'Comment: ', 'co-authors-plus' ) . "\r\n" . $comment->comment_content . "\r\n\r\n";
+				$notify_message .= __( 'You can see all comments on this post here: ', 'co-authors-plus' ) . "\r\n";
 				/* translators: 1: blog name, 2: post title */
-				$subject = sprintf( __( '[%1$s] Comment: "%2$s"' ), $blogname, $post->post_title );
+				$subject = sprintf( __( '[%1$s] Comment: "%2$s"', 'co-authors-plus' ), $blogname, $post->post_title );
 			} elseif ( 'trackback' == $comment_type ) {
-				$notify_message = sprintf( __( 'New trackback on your post "%s"' ), $post->post_title ) . "\r\n";
-				/* translators: 1: website name, 2: author IP, 3: author domain */
-				$notify_message .= sprintf( __( 'Website: %1$s (IP: %2$s , %3$s)' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
-				$notify_message .= sprintf( __( 'URL    : %s' ), $comment->comment_author_url ) . "\r\n";
-				$notify_message .= __( 'Excerpt: ' ) . "\r\n" . $comment->comment_content . "\r\n\r\n";
-				$notify_message .= __( 'You can see all trackbacks on this post here: ' ) . "\r\n";
-				/* translators: 1: blog name, 2: post title */
-				$subject = sprintf( __( '[%1$s] Trackback: "%2$s"' ), $blogname, $post->post_title );
-			} elseif ( 'pingback' == $comment_type ) {
-				$notify_message = sprintf( __( 'New pingback on your post "%s"' ), $post->post_title ) . "\r\n";
+				/* translators: Post title. */
+				$notify_message = sprintf( __( 'New trackback on your post "%s"', 'co-authors-plus' ), $post->post_title ) . "\r\n";
 				/* translators: 1: comment author, 2: author IP, 3: author domain */
-				$notify_message .= sprintf( __( 'Website: %1$s (IP: %2$s , %3$s)' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
-				$notify_message .= sprintf( __( 'URL    : %s' ), $comment->comment_author_url ) . "\r\n";
-				$notify_message .= __( 'Excerpt: ' ) . "\r\n" . sprintf( '[...] %s [...]', $comment->comment_content ) . "\r\n\r\n";
-				$notify_message .= __( 'You can see all pingbacks on this post here: ' ) . "\r\n";
+				$notify_message .= sprintf( __( 'Website: %1$s (IP: %2$s , %3$s)', 'co-authors-plus' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+				/* translators: Comment author URL. */
+				$notify_message .= sprintf( __( 'URL    : %s', 'co-authors-plus' ), $comment->comment_author_url ) . "\r\n";
+				$notify_message .= __( 'Excerpt: ', 'co-authors-plus' ) . "\r\n" . $comment->comment_content . "\r\n\r\n";
+				$notify_message .= __( 'You can see all trackbacks on this post here: ', 'co-authors-plus' ) . "\r\n";
 				/* translators: 1: blog name, 2: post title */
-				$subject = sprintf( __( '[%1$s] Pingback: "%2$s"' ), $blogname, $post->post_title );
+				$subject = sprintf( __( '[%1$s] Trackback: "%2$s"', 'co-authors-plus' ), $blogname, $post->post_title );
+			} elseif ( 'pingback' == $comment_type ) {
+				/* translators: Post title. */
+				$notify_message = sprintf( __( 'New pingback on your post "%s"', 'co-authors-plus' ), $post->post_title ) . "\r\n";
+				/* translators: 1: comment author, 2: author IP, 3: author domain */
+				$notify_message .= sprintf( __( 'Website: %1$s (IP: %2$s , %3$s)', 'co-authors-plus' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
+				/* translators: Comment author URL. */
+				$notify_message .= sprintf( __( 'URL    : %s', 'co-authors-plus' ), $comment->comment_author_url ) . "\r\n";
+				$notify_message .= __( 'Excerpt: ', 'co-authors-plus' ) . "\r\n" . sprintf( '[...] %s [...]', $comment->comment_content ) . "\r\n\r\n";
+				$notify_message .= __( 'You can see all pingbacks on this post here: ', 'co-authors-plus' ) . "\r\n";
+				/* translators: 1: blog name, 2: post title */
+				$subject = sprintf( __( '[%1$s] Pingback: "%2$s"', 'co-authors-plus' ), $blogname, $post->post_title );
 			}
 			$notify_message .= get_permalink( $comment->comment_post_ID ) . "#comments\r\n\r\n";
-			$notify_message .= sprintf( __( 'Permalink: %s' ), get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment_id ) . "\r\n";
+			/* translators: Comment URL. */
+			$notify_message .= sprintf( __( 'Permalink: %s', 'co-authors-plus' ), get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment_id ) . "\r\n";
 			if ( EMPTY_TRASH_DAYS ) {
-				$notify_message .= sprintf( __( 'Trash it: %s' ), admin_url( "comment.php?action=trash&c=$comment_id" ) ) . "\r\n";
+				/* translators: URL for trashing a comment. */
+				$notify_message .= sprintf( __( 'Trash it: %s', 'co-authors-plus' ), admin_url( "comment.php?action=trash&c=$comment_id" ) ) . "\r\n";
 			} else {
-				$notify_message .= sprintf( __( 'Delete it: %s' ), admin_url( "comment.php?action=delete&c=$comment_id" ) ) . "\r\n";
+				/* translators: URL for deleting a comment. */
+				$notify_message .= sprintf( __( 'Delete it: %s', 'co-authors-plus' ), admin_url( "comment.php?action=delete&c=$comment_id" ) ) . "\r\n";
 			}
-			$notify_message .= sprintf( __( 'Spam it: %s' ), admin_url( "comment.php?action=spam&c=$comment_id" ) ) . "\r\n";
+			/* translators: URL for marking a comment as spam. */
+			$notify_message .= sprintf( __( 'Spam it: %s', 'co-authors-plus' ), admin_url( "comment.php?action=spam&c=$comment_id" ) ) . "\r\n";
 
 			$wp_email = 'wordpress@' . preg_replace( '#^www\.#', '', strtolower( $_SERVER['SERVER_NAME'] ) ); // phpcs:ignore
 

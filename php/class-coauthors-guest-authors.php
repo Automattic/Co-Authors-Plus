@@ -163,21 +163,26 @@ class CoAuthors_Guest_Authors {
 
 		$messages[ $this->post_type ] = array(
 			0  => '', // Unused. Messages start at index 1.
+			/* translators: Guest author URL */
 			1  => sprintf( __( 'Guest author updated. <a href="%s">View profile</a>', 'co-authors-plus' ), esc_url( $guest_author_link ) ),
 			2  => __( 'Custom field updated.', 'co-authors-plus' ),
 			3  => __( 'Custom field deleted.', 'co-authors-plus' ),
 			4  => __( 'Guest author updated.', 'co-authors-plus' ),
 			/* translators: %s: date and time of the revision */
 			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Guest author restored to revision from %s', 'co-authors-plus' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			/* translators: Guest author URL */
 			6  => sprintf( __( 'Guest author updated. <a href="%s">View profile</a>', 'co-authors-plus' ), esc_url( $guest_author_link ) ),
 			7  => __( 'Guest author saved.', 'co-authors-plus' ),
+			/* translators: Guest author URL */
 			8  => sprintf( __( 'Guest author submitted. <a target="_blank" href="%s">Preview profile</a>', 'co-authors-plus' ), esc_url( add_query_arg( 'preview', 'true', $guest_author_link ) ) ),
 			9  => sprintf(
+				/* translators: Guest author profile preview URL. */
 				__( 'Guest author scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview profile</a>', 'co-authors-plus' ),
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),
+				date_i18n( __( 'M j, Y @ G:i', 'co-authors-plus' ), strtotime( $post->post_date ) ),
 				esc_url( $guest_author_link )
 			),
+			/* translators: Guest author profile preview URL. */
 			10 => sprintf( __( 'Guest author updated. <a target="_blank" href="%s">Preview profile</a>', 'co-authors-plus' ), esc_url( add_query_arg( 'preview', 'true', $guest_author_link ) ) ),
 		);
 		return $messages;
@@ -246,7 +251,7 @@ class CoAuthors_Guest_Authors {
 		// Make sure the guest author actually exists
 		$guest_author = $this->get_guest_author_by( 'ID', (int) $_POST['id'] );
 		if ( ! $guest_author ) {
-			wp_die( esc_html( sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $this->labels['singular'] ) ) );
+			wp_die( esc_html__( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 		}
 
 		// Perform the reassignment if needed
@@ -478,7 +483,7 @@ class CoAuthors_Guest_Authors {
 			// Make sure the guest author actually exists
 			$guest_author = $this->get_guest_author_by( 'ID', (int) $_GET['id'] );
 			if ( ! $guest_author ) {
-				wp_die( esc_html( sprintf( __( "%s can't be deleted because it doesn't exist.", 'co-authors-plus' ), $this->labels['singular'] ) ) );
+				wp_die( esc_html__( "Guest author can't be deleted because it doesn't exist.", 'co-authors-plus' ) );
 			}
 
 			// get post count
@@ -487,20 +492,25 @@ class CoAuthors_Guest_Authors {
 
 			echo '<div class="wrap">';
 			echo '<div class="icon32" id="icon-users"><br/></div>';
-			echo '<h2>' . esc_html( sprintf( __( 'Delete %s', 'co-authors-plus ' ), $this->labels['plural'] ) ) . '</h2>';
-			echo '<p>' . esc_html( sprintf( __( 'You have specified this %s for deletion:', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) ) . '</p>';
+			echo '<h2>' . esc_html__( 'Delete Guest Authors', 'co-authors-plus' ) . '</h2>';
+			echo '<p>' . esc_html__( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';
 			// display wording differently per post count
 			if ( 0 === $count ) {
-				$post_count_message = '<p>' . sprintf( __( 'There are no posts associated with this guest author.', 'co-authors-plus' ), strtolower( $this->labels['singular'] ) ) . '</p>';
+				$post_count_message = '<p>' . esc_html__( 'There are no posts associated with this guest author.', 'co-authors-plus' ) . '</p>';
 			} else {
-				$note = '<p class="description">' . sprintf( __( "Note: If you'd like to delete the %1\$s and all of their posts, you should delete their posts first and then come back to delete the %2\$s.", 'co-authors-plus' ), strtolower( $this->labels['singular'] ), strtolower( $this->labels['singular'] ) ) . '</p>';
-				if ( 1 === $count ) {
-					$post_count_message = '<p>' . sprintf( __( 'There is %1$d post associated with this guest author. What should be done with the post assigned to this %2$s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
-				} else {
-					$post_count_message = '<p>' . sprintf( __( 'There are %1$d posts associated with this guest author. What should be done with the posts assigned to this %2$s?', 'co-authors-plus' ), $count, strtolower( $this->labels['singular'] ) ) . '</p>';
-				}
-				$post_count_message .= $note;
+				$note = '<p class="description">' . __( "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author.", 'co-authors-plus' ) . '</p>';
+				$post_count_message_text = sprintf(
+					/* translators: Count of posts */
+					_n(
+						'There is %d post associated with this guest author. What should be done with the post assigned to this Guest Author?',
+						'There are %d posts associated with this guest author. What should be done with the posts assigned to this Guest Author?',
+						$count,
+						'co-authors-plus'
+					),
+					number_format_i18n( $count )
+				);
+				$post_count_message = '<p>' . $post_count_message_text . '</p>' . $note;
 			}
 			$allowed_html = array(
 				'p' => array(
@@ -524,6 +534,7 @@ class CoAuthors_Guest_Authors {
 				// Leave mapped to a linked account
 				if ( get_user_by( 'login', $guest_author->linked_account ) ) {
 					echo '<li><label for="leave-assigned">';
+					/* translators: Name of a linked user account. */
 					echo '<input type="radio" id="leave-assigned" class="reassign-option" name="reassign" value="leave-assigned" />&nbsp;&nbsp;' . esc_html( sprintf( __( 'Leave posts assigned to the mapped user, %s.', 'co-authors-plus' ), $guest_author->linked_account ) );
 					echo '</label></li>';
 				}
@@ -1240,6 +1251,7 @@ class CoAuthors_Guest_Authors {
 
 			// Make sure required fields are there
 			if ( isset( $field['required'] ) && $field['required'] && empty( $args[ $field['key'] ] ) ) {
+				/* translators: Name of a form field. */
 				return new WP_Error( 'field-required', sprintf( __( '%s is a required field', 'co-authors-plus' ), $field['key'] ) );
 			}
 

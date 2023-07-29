@@ -62,12 +62,12 @@ class Endpoints {
 					'permission_callback' => array( $this, 'can_edit_coauthors' ),
 					'args'                => array(
 						'q'                => array(
-							'description' => __( 'Text to search.' ),
+							'description' => __( 'Text to search.', 'co-authors-plus' ),
 							'required'    => false,
 							'type'        => 'string',
 						),
 						'existing_authors' => array(
-							'description' => __( 'Names of existing coauthors to exclude from search results.' ),
+							'description' => __( 'Names of existing coauthors to exclude from search results.', 'co-authors-plus' ),
 							'type'        => 'string',
 							'required'    => false,
 						),
@@ -110,7 +110,7 @@ class Endpoints {
 							'validate_callback' => array( $this, 'validate_numeric' ),
 						),
 						'new_authors' => array(
-							'description' => __( 'Names of coauthors to save.' ),
+							'description' => __( 'Names of co-authors to save.', 'co-authors-plus' ),
 							'type'        => 'string',
 							'required'    => false,
 						),

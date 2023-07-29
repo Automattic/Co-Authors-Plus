@@ -233,7 +233,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		$post_types = implode( "','", $coauthors_plus->supported_post_types );
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$posts    = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ({$post_types})", $user->ID ) );
 		$affected = 0;
 		foreach ( $posts as $post_id ) {
@@ -241,6 +241,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			if ( ! empty( $coauthors ) ) {
 				WP_CLI::line(
 					sprintf(
+						/* translators: 1: Post ID, 2: Comma-separated list of co-author slugs. */
 						__( 'Skipping - Post #%1$d already has co-authors assigned: %2$s', 'co-authors-plus' ),
 						$post_id,
 						implode( ', ', wp_list_pluck( $coauthors, 'slug' ) )
@@ -250,13 +251,25 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			}
 
 			$coauthors_plus->add_coauthors( $post_id, array( $coauthor->user_login ) );
+			/* translators: 1: Co-author login, 2: Post ID */
 			WP_CLI::line( sprintf( __( "Updating - Adding %1\$s's byline to post #%2\$d", 'co-authors-plus' ), $coauthor->user_login, $post_id ) );
 			$affected++;
 			if ( $affected && 0 === $affected % 100 ) {
 				sleep( 2 );
 			}
 		}
-		WP_CLI::success( sprintf( __( 'All done! %d posts were affected.', 'co-authors-plus' ), $affected ) );
+
+		$success_message = sprintf(
+			/* translators: Count of posts. */
+			_n(
+				'All done! %d post was affected.',
+				'All done! %d posts were affected.',
+				$affected,
+				'co-authors-plus'
+			),
+			number_format_i18n( $affected )
+		);
+		WP_CLI::success( $success_message );
 
 	}
 
@@ -884,7 +897,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		if ( $guest_author ) {
-			// translators: Guest Author ID.
+			/* translators: Guest Author ID. */
 			return WP_CLI::warning( sprintf( esc_html__( '-- Author already exists (ID #%s); skipping.', 'co-authors-plus' ), $guest_author->ID ) );
 		}
 
@@ -904,7 +917,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		);
 
 		if ( is_wp_error( $guest_author_id ) ) {
-			// translators: The error message.
+			/* translators: The error message. */
 			return WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
 		}
 
@@ -914,7 +927,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		update_post_meta( $guest_author_id, '_original_author_login', $author['user_login'] );
 
-		// translators: Guest Author ID.
+		/* translators: Guest Author ID. */
 		WP_CLI::success( sprintf( esc_html__( '-- Created as guest author #%s', 'co-authors-plus' ), $guest_author_id ) );
 	}
 
