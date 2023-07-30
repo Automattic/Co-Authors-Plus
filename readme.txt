@@ -3,7 +3,7 @@ Contributors: batmoo, danielbachhuber, automattic
 Tags: authors, users, multiple authors, coauthors, multi-author, publishing
 Tested up to: 6.2
 Requires at least: 4.1
-Stable tag: 3.5.11
+Stable tag: 3.5.12
 
 Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box
 
@@ -61,14 +61,4 @@ Yep! Guest authors can be disabled entirely through an apt filter. Having the fo
 
 == Changelog ==
 
-= 3.5.11 (Jul 24, 2023) =
-* Author select improvements #924
-* Show author taxonomy in REST API, hide description based on capabilities #931
-* Guest Authors: Add labels property #942
-* Define dynamic guest_authors property #947
-* Bump NPM dependencies #927 #933 #943 #944
-* Workflows: Fix runner image and matrix #946
-* CI: Split out CS and update integration tests workflow #948
-* Improve tests setup #949
-
-For all previous changes, [view the Changelog](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md)
+[View the change log](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md).

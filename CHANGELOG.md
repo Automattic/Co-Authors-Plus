@@ -1,6 +1,41 @@
 # Changelog for Co-Authors Plus
 
-**3.5.11 (Jul 24, 2023)**
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.5.12] - 2023-07-30
+
+### Fixed
+
+* Author archive: ensure queried object ID is an int
+ #966
+* Ensure 'nickname' is created to prevent is_author() PHP notice with Guest Author #939
+* Refreshing meta box nonce after re-authenticating following a wp_auth_check() #670
+* Fix Co-Authors Plus & Elementor Archive Pages conflict #926
+* Fix broken link in readme #957
+* Unable to change avatar image sizes #959
+* Fix avatar id collision between user id and guest-author post type #960
+* Add i18n string for PluginDocumentSettingPanel title ##961
+* Improve I18n strings #963
+* Fix notification to post co-authors #964
+* UI: Fix admin headings #965
+
+### Added
+* Add: List Co Authors Plus authors in the Slack social share #953
+
+### Maintenance
+* Add .gitattributes file #951.
+* Tests: Add previously deleted test back in #967
+* Refresh screenshots, add banner and icon images #956
+
+
+### Removed
+* Removed deprecated social media fields #830
+
+## [3.5.11] - 2023-07-24
+
 * Author select improvements #924
 * Show author taxonomy in REST API, hide description based on capabilities #931
   * The author taxonomy was first added to the REST API in CAP 3.5.0, then removed in 3.5.2 over concerns of author email addresses being visible in the description. This adds it back but with the description hidden by default (filterable).
@@ -11,32 +46,39 @@
 * CI: Split out CS and update integration tests workflow #948
 * Improve tests setup #949
 
-**3.5.10 (Jan 24, 2023)**
+## [3.5.10] - 2023-01-24
+
 * Fix: Authors not being updated properly in the editor #920
 
-**3.5.9 (Jan 19, 2023)**
+## [3.5.9] - 2023-01-19
+
 * Fix: Avoid Fatal errors reported in the Nav menu filters for Guest Authors #917
 
-**3.5.8 (Jan 18, 2023)**
+## [3.5.8] - 2023-01-18
+
 * Make CoAuthors_Plus::get_coauthor_by() compatible with unicode author usernames #909
 * Yoast: Prevent no-indexing of guest authors' archive pages by @adekbadek #912
 * Refactors Gutenberg Feature #870
 * Fixes guest author menu item to display accurate URL #913
 * Only update authors on Gutenberg post save #914
 
-**3.5.7 (Jan 5, 2023)**
+## [3.5.7] - 2023-01-05
+
 * Remove Composer autoloader dependency #898
 * Fixes Yoast deprecated warning for get_article_type_options_values() #901
 
-**3.5.6 (Nov 16, 2022)**
+## [3.5.6] - 2022-11-16
+
 * CI: Add new deployment workflow #890
 * Dependency update #891
 
-**3.5.5 (Nov 16, 2022)**
+## [3.5.5] - 2022-11-16
+
 * Add Yoast integration #877
 * CI: Add WP 6.1 #886 #887
 
-**3.5.4 (Nov 4, 2022)**
+## [3.5.4] - 2022-11-04
+
 * Handle `WP_Error` on failed guest author creation for method `create_guest_author()` #879
 * Only use `pre_handle_404` filter in non-paged result #874
 * Add CLI create-author command #880
@@ -45,20 +87,24 @@
 * Fix tests and add IDE files #882
 * Bump dependencies #866 #865 #864
 
-**3.5.3 (Oct 24, 2022)**
+## [3.5.3] - 2022-10-24
+
 * Add author taxonomy labels #860
 * Add check for empty author in Jetpack Open Graph tags #861
 * Improve performance of search_authors() #872
 * Update WP versions in tests and grant permission to composer-installer packages #863
 
-**3.5.2 (June 1, 2022)**
+## [3.5.2] - 2022-06-01
+
 * Remove the `/wp/v2/coauthors` endpoint #851
 * Remove CSS hack that hides the add author box from core in the block editor #847
 
-**3.5.1 (April 25, 2022)**
+## [3.5.1] - 2022-04-25
+
 * Fix error for undefined `use_block_editor_for_post` #843
 
-**3.5 (April 21, 2022)**
+## [3.5] - 2022-04-21
+
 * Add Block Editor integration #790
 * Fix issues with cache key `id` not being deleted #832
 * Fix broken SQL query caused by wpdb->prepare() escaping quotes #831
@@ -390,3 +436,17 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
+
+[3.5.12]: https://github.com/automattic/co-authors-plus/compare/3.5.11...3.5.12
+[3.5.11]: https://github.com/automattic/co-authors-plus/compare/3.5.10...3.5.11
+[3.5.10]: https://github.com/automattic/co-authors-plus/compare/3.5.9...3.5.10
+[3.5.9]: https://github.com/automattic/co-authors-plus/compare/3.5.8...3.5.9
+[3.5.8]: https://github.com/automattic/co-authors-plus/compare/3.5.7...3.5.8
+[3.5.7]: https://github.com/automattic/co-authors-plus/compare/3.5.6...3.5.7
+[3.5.6]: https://github.com/automattic/co-authors-plus/compare/3.5.5...3.5.6
+[3.5.5]: https://github.com/automattic/co-authors-plus/compare/3.5.4...3.5.5
+[3.5.4]: https://github.com/automattic/co-authors-plus/compare/3.5.3...3.5.4
+[3.5.3]: https://github.com/automattic/co-authors-plus/compare/3.5.2...3.5.3
+[3.5.2]: https://github.com/automattic/co-authors-plus/compare/3.5.1...3.5.2
+[3.5.1]: https://github.com/automattic/co-authors-plus/compare/3.5...3.5.1
+[3.5]: https://github.com/automattic/co-authors-plus/compare/3.4.92...3.5
