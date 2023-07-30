@@ -980,6 +980,10 @@ class CoAuthors_Guest_Authors {
 		$guest_author['user_nicename'] = sanitize_title( $guest_author['user_login'] );
 		$guest_author['type']          = 'guest-author';
 
+		if ( ! isset( $guest_author['nickname'] ) ) {
+			$guest_author['nickname'] = '';
+		}
+
 		wp_cache_set( $cache_key, (object) $guest_author, self::$cache_group );
 
 		return (object) $guest_author;
