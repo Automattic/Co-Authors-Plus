@@ -108,6 +108,9 @@ class CoAuthors_Plus {
 		add_action( 'add_meta_boxes', array( $this, 'add_coauthors_box' ) );
 		add_action( 'add_meta_boxes', array( $this, 'remove_authors_box' ) );
 
+		// Refresh the nonce after the user re-authenticates due to a wp_auth_check() to avoid failing check_admin_referrer()
+		add_action( 'wp_refresh_nonces', array( $this, 'refresh_coauthors_nonce' ), 20, 1 );
+
 		// Removes the co-author dropdown from the post quick edit
 		add_action( 'admin_head', array( $this, 'remove_quick_edit_authors_box' ) );
 
@@ -478,6 +481,15 @@ class CoAuthors_Plus {
 		<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 
 		<?php
+	}
+
+	/**
+	 * Filters the Heartbeat response to refresh the coauthors-nonce
+	 */
+	public function refresh_coauthors_nonce( $response ) {
+		$response['wp-refresh-post-nonces']['replace']['coauthors-nonce']  = wp_create_nonce( 'coauthors-edit' );
+
+		return $response;
 	}
 
 	/**
