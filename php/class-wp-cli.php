@@ -1,6 +1,6 @@
 <?php
 /**
- * Co-Authors Plus commands for the WP-CLI framework
+ * Manage co-authors and guest authors.
  *
  * @package wp-cli
  * @since 3.0
