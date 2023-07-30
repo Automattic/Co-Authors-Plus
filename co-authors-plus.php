@@ -1221,7 +1221,7 @@ class CoAuthors_Plus {
 
 		if ( is_object( $authordata ) || ! empty( $term ) ) {
 			$wp_query->queried_object    = $authordata;
-			$wp_query->queried_object_id = $authordata->ID;
+			$wp_query->queried_object_id = (int) $authordata->ID;
 			if ( ! is_paged() ) {
 				add_filter( 'pre_handle_404', '__return_true' );
 			}
