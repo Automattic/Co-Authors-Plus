@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.13] - 2023-07-31
+
+### Fixed
+* Reverted "Fix Co-Authors Plus & Elementor Archive Pages conflict" #970
+
 ## [3.5.12] - 2023-07-30
 
 ### Fixed
@@ -437,6 +442,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.5.13]: https://github.com/automattic/co-authors-plus/compare/3.5.12...3.5.13
 [3.5.12]: https://github.com/automattic/co-authors-plus/compare/3.5.11...3.5.12
 [3.5.11]: https://github.com/automattic/co-authors-plus/compare/3.5.10...3.5.11
 [3.5.10]: https://github.com/automattic/co-authors-plus/compare/3.5.9...3.5.10
