@@ -147,6 +147,9 @@ class CAP_Block_CoAuthors {
 		return array_map(
 			self::get_composed_map_function(
 				self::get_template_render_function( $template ),
+				// To match JSX from edition, remove line-breaks between blocks.
+				fn( $content ) => str_replace("\n", '', $content ),
+				// To match JSX from edition, trim whitespace around blocks.
 				'trim',
 				self::get_block_wrapper_function('div', 'class="wp-block-cap-coauthor"')
 			),
