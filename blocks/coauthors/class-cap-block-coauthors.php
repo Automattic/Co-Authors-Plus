@@ -43,7 +43,21 @@ class CAP_Block_CoAuthors {
 			return '';
 		}
 
-		$authors = get_coauthors( $post_id );
+		$authors = array_map(
+			function( stdClass|WP_User $author ) : array {
+				return rest_get_server()->dispatch(
+					WP_REST_Request::from_url(
+						home_url(
+							sprintf(
+								'/wp-json/coauthor-blocks/v1/coauthor/%s',
+								$author->user_nicename
+							)
+						)
+					)
+				)->get_data();
+			},
+			get_coauthors( $post_id )
+		);
 
 		if ( ! is_array( $authors ) || empty( $authors ) ) {
 			return '';
@@ -254,17 +268,19 @@ class CAP_Block_CoAuthors {
 	 * @return callable
 	 */
 	private static function get_template_render_function( array $block_template ) : callable {
-		return function( stdClass|WP_User $author ) use ( $block_template ) : string {
+		return function( array $author ) use ( $block_template ) : string {
 			return (
 				new WP_Block(
 					$block_template,
 					array(
-						'display_name' => $author->display_name,
-						'link'         => get_author_posts_url( $author->ID, $author->user_nicename ),
-						'avatar_urls'  => rest_get_avatar_urls( $author->ID ),
+						'cap/author' => $author,
 					)
 				)
-			)->render( array( 'dynamic' => false ) );
+			)->render(
+				array(
+					'dynamic' => false,
+				)
+			);
 		};
 	}
 

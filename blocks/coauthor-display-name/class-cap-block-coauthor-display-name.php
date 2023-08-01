@@ -37,17 +37,11 @@ class CAP_Block_CoAuthor_Display_Name {
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
 
-		$author_name = $block->context['author_name'] ?? '';
+		$author = $block->context['cap/author'] ?? array();
 
-		if ( '' === $author_name ) {
+		if ( empty( $author ) ) {
 			return '';
 		}
-
-		$author = rest_get_server()->dispatch(
-			WP_REST_Request::from_url(
-				home_url( "/wp-json/coauthor-blocks/v1/coauthor/{$author_name}" )
-			)
-		)->get_data();
 
 		$display_name = $author['display_name'] ?? '';
 
@@ -91,9 +85,18 @@ class CAP_Block_CoAuthor_Display_Name {
 		}
 
 		// author if you do an individual piece of a coauthor outside of a coauthor template.
-		if ( 'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ) && ( null === $parent_block || 'core/null' !== $parent_block->name ?? '' ) ) {
+		if ( 'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ) && ( ! array_key_exists( 'cap/author', $context ) || empty( $context['cap/author'] ) ) ) {
 			return array(
-				'author_name' => get_query_var( 'author_name' )
+				'cap/author' => rest_get_server()->dispatch(
+					WP_REST_Request::from_url(
+						home_url(
+							sprintf(
+								'/wp-json/coauthor-blocks/v1/coauthor/%s',
+								get_query_var( 'author_name' )
+							)
+						)
+					)
+				)->get_data()
 			);
 		}
 

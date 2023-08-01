@@ -36,7 +36,7 @@
     }
   },
   "usesContext": [
-    "author_name"
+    "cap/author"
   ],
   "attributes": {
     "isLink": {
