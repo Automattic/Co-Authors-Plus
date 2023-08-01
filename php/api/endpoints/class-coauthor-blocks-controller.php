@@ -75,8 +75,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
-					// 'permission_callback' => array( $this, 'get_item_permission_check' ),
-					'permission_callback' => '__return_true'
+					'permission_callback' => array( $this, 'get_item_permission_check' ),
 				)
 			)
 		);
