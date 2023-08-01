@@ -14,6 +14,7 @@ class CAP_Block_CoAuthor_Display_Name {
 	 */
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register_block' ) );
+		add_action( 'render_block_context', array( __CLASS__, 'provide_author_archive_context' ), 10, 3 );
 	}
 	/**
 	 * Register Block
@@ -36,13 +37,25 @@ class CAP_Block_CoAuthor_Display_Name {
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
 
-		$display_name = $block->context['display_name'] ?? '';
+		$author_name = $block->context['author_name'] ?? '';
+
+		if ( '' === $author_name ) {
+			return '';
+		}
+
+		$author = rest_get_server()->dispatch(
+			WP_REST_Request::from_url(
+				home_url( "/wp-json/coauthor-blocks/v1/coauthor/{$author_name}" )
+			)
+		)->get_data();
+
+		$display_name = $author['display_name'] ?? '';
 
 		if ( '' === $display_name ) {
 			return '';
 		}
 
-		$link    = $block->context['link'] ?? '';
+		$link    = $author['link'] ?? '';
 		$is_link = $attributes['isLink'] ?? false;
 		$rel     = $attributes['rel'] ?? '';
 
@@ -59,5 +72,31 @@ class CAP_Block_CoAuthor_Display_Name {
 		}
 
 		return sprintf( '<p %s>%s</p>', get_block_wrapper_attributes(), $inner_content );
+	}
+	/**
+	 * Provide Author Archive Context
+	 *
+	 * @param array         $context, 
+	 * @param array         $parsed_block
+	 * @param null|WP_Block $parent_block
+	 * @return array
+	 */
+	public static function provide_author_archive_context( array $context, array $parsed_block, ?WP_Block $parent_block ) : array {
+		if ( ! is_author() ) {
+			return $context;
+		}
+
+		if ( null === $parsed_block['blockName'] ) {
+			return $context;
+		}
+
+		// author if you do an individual piece of a coauthor outside of a coauthor template.
+		if ( 'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ) && ( null === $parent_block || 'core/null' !== $parent_block->name ?? '' ) ) {
+			return array(
+				'author_name' => get_query_var( 'author_name' )
+			);
+		}
+
+		return $context;
 	}
 }

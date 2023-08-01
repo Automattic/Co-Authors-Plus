@@ -4,9 +4,10 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps } from '@wordpress/block-editor';
-import { InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { TextControl, PanelBody, ToggleControl } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -18,8 +19,47 @@ import { __ } from '@wordpress/i18n';
  * @return {WPElement} Element to render.
  */
 export default function Edit( { context, attributes, setAttributes } ) {
-	const { display_name, link } = context;
+	const { author_name } = context;
 	const { isLink, rel } = attributes;
+	const [ author, setAuthor ] = useState({
+		link: '#',
+		display_name: 'CoAuthor Name'
+	});
+	const noticesDispatch = useDispatch('core/notices');
+
+	useEffect(() => {
+		if ( ! author_name ) {
+			return;
+		}
+
+		const controller = new AbortController();
+
+		apiFetch( {
+			path: `/coauthor-blocks/v1/coauthor/${author_name}`,
+			signal: controller.signal
+		} )
+		.then( setAuthor )
+		.catch( handleError )
+
+		return () => {
+			controller.abort();
+		}
+	}, [author_name]);
+
+	/**
+	 * Handle Error
+	 * 
+	 * @param {Error}
+	 */
+	function handleError( error ) {
+		if ( 'AbortError' === error.name ) {
+			return;
+		}
+		noticesDispatch.createErrorNotice( error.message, { isDismissible: true } );
+	}
+
+	const { link, display_name } = author;
+
 	return (
 		<>
 		<p { ...useBlockProps() }>
@@ -39,7 +79,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 			<PanelBody title={ __( 'Settings' ) }>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label={ __( 'Make title a link' ) }
+					label={ __( 'Make coauthor name a link' ) }
 					onChange={ () => setAttributes( { isLink: ! isLink } ) }
 					checked={ isLink }
 				/>

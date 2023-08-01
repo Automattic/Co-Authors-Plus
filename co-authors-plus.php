@@ -34,10 +34,10 @@ require_once __DIR__ . '/php/integrations/yoast.php';
 require_once __DIR__ . '/php/class-coauthors-plus.php';
 require_once __DIR__ . '/php/class-coauthors-iterator.php';
 
-require_once dirname( __FILE__ ) . '/blocks/coauthors/class-cap-block-coauthors.php';
-require_once dirname( __FILE__ ) . '/blocks/coauthor-avatar/class-cap-block-coauthor-avatar.php';
-require_once dirname( __FILE__ ) . '/blocks/coauthor-display-name/class-cap-block-coauthor-display-name.php';
+// Blocks
+require_once dirname( __FILE__ ) . '/blocks/blocks.php';
 
+// REST APIs for Blocks
 require_once dirname( __FILE__ ) . '/php/api/endpoints/class-coauthor-blocks-controller.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -47,10 +47,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 global $coauthors_plus;
 $coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
-
-new CAP_Block_CoAuthors();
-new CAP_Block_CoAuthor_Avatar();
-new CAP_Block_CoAuthor_Display_Name();
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**

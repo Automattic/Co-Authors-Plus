@@ -44,13 +44,25 @@ class CAP_Block_CoAuthor_Avatar {
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
 
-		$avatar_urls = $block->context['avatar_urls'] ?? array();
+		$author_name = $block->context['author_name'] ?? '';
+
+		if ( '' === $author_name ) {
+			return '';
+		}
+
+		$author = rest_get_server()->dispatch(
+			WP_REST_Request::from_url(
+				home_url( "/wp-json/coauthor-blocks/v1/coauthor/{$author_name}" )
+			)
+		)->get_data();
+
+		$avatar_urls = $author['avatar_urls'] ?? array();
 
 		if ( empty( $avatar_urls ) ) {
 			return '';
 		}
 
-		$link    = $block->context['link'] ?? '';
+		$link    = $author['link'] ?? '';
 		$is_link = $attributes['isLink'] ?? false;
 		$size    = $attributes['size'] ?? 24;
 		$srcset  = array_map(
@@ -98,5 +110,31 @@ class CAP_Block_CoAuthor_Avatar {
 		return function( string $content ) use ( $element_name, $attributes ) : string {
 			return "<{$element_name} {$attributes}>{$content}</{$element_name}>";
 		};
+	}
+	/**
+	 * Provide Author Archive Context
+	 *
+	 * @param array         $context, 
+	 * @param array         $parsed_block
+	 * @param null|WP_Block $parent_block
+	 * @return array
+	 */
+	public static function provide_author_archive_context( array $context, array $parsed_block, ?WP_Block $parent_block ) : array {
+		if ( ! is_author() ) {
+			return $context;
+		}
+
+		if ( null === $parsed_block['blockName'] ) {
+			return $context;
+		}
+
+		// author if you do an individual piece of a coauthor outside of a coauthor template.
+		if ( 'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ) && ( null === $parent_block || 'core/null' !== $parent_block->name ?? '' ) ) {
+			return array(
+				'author_name' => get_query_var( 'author_name' )
+			);
+		}
+
+		return $context;
 	}
 }

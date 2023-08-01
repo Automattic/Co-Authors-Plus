@@ -3,13 +3,10 @@
   "apiVersion": 2,
   "name": "cap/coauthor-display-name",
   "version": "0.1.0",
-  "title": "Co-Author Display Name",
+  "title": "Co-Author Name",
   "category": "widgets",
   "icon": "smiley",
-  "description": "Display a co-author's preferred name.",
-  "parent": [
-    "cap/coauthors"
-  ],
+  "description": "Display a co-author's name.",
   "supports": {
     "html": false,
     "color": {
@@ -39,8 +36,7 @@
     }
   },
   "usesContext": [
-    "display_name",
-    "link"
+    "author_name"
   ],
   "attributes": {
     "isLink": {

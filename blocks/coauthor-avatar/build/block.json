@@ -11,8 +11,7 @@
     "html": false
   },
   "usesContext": [
-    "avatar_urls",
-    "link"
+    "author_name"
   ],
   "attributes": {
     "size": {
