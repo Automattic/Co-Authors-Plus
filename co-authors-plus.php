@@ -1277,6 +1277,11 @@ class CoAuthors_Plus {
 		}
 
 		foreach ( $authors as $author ) {
+			$user_type = 'guest-user';
+			if ( $author instanceof WP_User ) {
+				$user_type = 'wp-user';
+			}
+			
 			printf(
 				"%s ∣ %s ∣ %s ∣ %s ∣ %s ∣ %s \n",
 				esc_html( $author->ID ),
@@ -1286,7 +1291,7 @@ class CoAuthors_Plus {
 				esc_html( str_replace( '∣', '|', $author->display_name ) ),
 				esc_html( $author->user_email ),
 				esc_html( rawurldecode( $author->user_nicename ) ),
-				esc_url( get_avatar_url( $author->ID ) )
+				esc_url( get_avatar_url( $author->ID,  array( 'user_type' => $user_type ) ) )
 			);
 		}
 
