@@ -11,7 +11,8 @@ import {
 	useInnerBlocksProps,
 	store as blockEditorStore,
 	InspectorControls,
-	RichText
+	RichText,
+	__experimentalGetGapCSSValue
 } from '@wordpress/block-editor';
 import { TextControl, ToolbarGroup, PanelBody } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
@@ -131,7 +132,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 			<BlockControls>
 				<ToolbarGroup controls={ layoutControls } />
 			</BlockControls>
-			<div { ...useBlockProps({className: classnames( [ `is-layout-cap-${layout.type}` ] )}) }>
+			<div { ...useBlockProps({className: classnames( [ `is-layout-cap-${layout.type}` ] ), style: { gap: __experimentalGetGapCSSValue( attributes?.style?.spacing?.blockGap ) } }) }>
 				{
 					coAuthors &&
 					'inline' === layout.type &&
@@ -159,7 +160,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 						return (
 							<BlockContextProvider
 								key={ author.id }
-								value={ { 'cap/author': author } }
+								value={ {'cap/author': author } }
 							>
 								{ isHidden ? (<CoAuthorTemplateInnerBlocks />) : null }
 								<MemoizedCoAuthorTemplateBlockPreview
@@ -207,33 +208,31 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 				}
 			</div>
 			<InspectorControls>
-				<PanelBody title={ __( 'CoAuthors Layout' ) }>
-					{
-						'inline' === layout.type &&
-						(
-							<>
-							<TextControl
-								autoComplete="off"
-								label={ __( 'Separator' ) }
-								value={ separator || '' }
-								onChange={ ( nextValue ) => {
-									setAttributes( { separator: nextValue } );
-								} }
-								help={ __( 'Enter character(s) used to separate authors.' ) }
-							/>
-							<TextControl
-								autoComplete="off"
-								label={ __( 'Last Separator' ) }
-								value={ lastSeparator || '' }
-								onChange={ ( nextValue ) => {
-									setAttributes( { lastSeparator: nextValue } );
-								} }
-								help={ __( 'Enter character(s) used to distinguish the last author.' ) }
-							/>
-							</>
-						)
-					}
-				</PanelBody>
+				{
+					'inline' === layout.type &&
+					(
+						<PanelBody title={ __( 'CoAuthors Layout' ) }>
+						<TextControl
+							autoComplete="off"
+							label={ __( 'Separator' ) }
+							value={ separator || '' }
+							onChange={ ( nextValue ) => {
+								setAttributes( { separator: nextValue } );
+							} }
+							help={ __( 'Enter character(s) used to separate authors.' ) }
+						/>
+						<TextControl
+							autoComplete="off"
+							label={ __( 'Last Separator' ) }
+							value={ lastSeparator || '' }
+							onChange={ ( nextValue ) => {
+								setAttributes( { lastSeparator: nextValue } );
+							} }
+							help={ __( 'Enter character(s) used to distinguish the last author.' ) }
+						/>
+						</PanelBody>
+					)
+				}
 			</InspectorControls>
 		</>
 	);

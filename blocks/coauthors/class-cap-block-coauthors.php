@@ -37,6 +37,7 @@ class CAP_Block_CoAuthors {
 	 * @return string
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
+
 		$post_id = array_key_exists( 'postId', $block->context ) ? absint( $block->context['postId'] ) : 0;
 	
 		if ( 0 === $post_id ) {
@@ -91,11 +92,19 @@ class CAP_Block_CoAuthors {
 
 		$inner_content = implode( $blocks_with_separators );
 
+		if ( 'block' === $attributes['layout']['type'] && $attributes['style']['spacing']['blockGap'] ?? false ) {
+			$gap_value =  self::get_gap_css_value( self::get_normalized_gap_value( $attributes['style']['spacing']['blockGap']));
+			$style = "gap: {$gap_value};";
+		} else {
+			$style = null;
+		}
+
 		return self::get_block_wrapper_function(
 			'div',
 			get_block_wrapper_attributes(
 				array(
-					'class' => "is-layout-cap-{$attributes['layout']['type']}"
+					'class' => "is-layout-cap-{$attributes['layout']['type']}",
+					'style' => $style
 				)
 			)
 		)( $inner_content );
@@ -298,4 +307,94 @@ class CAP_Block_CoAuthors {
 			)
 		);
 	}
+
+	public static function has_gap_attribute( array $attributes ) : bool {
+		return ($attributes['style']['spacing']['blockGap'] ?? false) ? true : false;
+	}
+
+	public static function get_gap_css_value( array $gaps ) : string {
+		return $gaps['row'] === $gaps['column'] ? $gaps['row'] : "{$gaps['row']} {$gaps['column']}";
+	}
+
+	public static function get_normalized_gap_value( string|array $gap ) : array {
+
+		if ( is_array( $gap ) ) {
+			$gap = array_merge(
+				array(
+					'top'  => '0',
+					'left' => '0'
+				),
+				$gap
+			);
+		}
+
+		return array(
+			'row'    => self::get_preset_css_value( is_string( $gap ) ? $gap : $gap['top'] ),
+			'column' => self::get_preset_css_value( is_string( $gap ) ? $gap : $gap['left'] ),
+		);
+	}
+
+	
+
+
+	public static function get_preset_css_value( string $value ) : string {
+		if ( 'var:' !== substr( $value, 0, 4 ) ) {
+			return $value;
+		}
+		return sprintf(
+			'var(--wp--%s)',
+			str_replace( '|', '--', substr( $value, 4 ) )
+		);
+	}
+
+	/**
+	 * Get Block Gap from Block Style Attribute
+	 * Reduce block gap settings into custom proprties we can use in our CSS.
+	 *
+	 * @param array style
+	 * @return string
+	 */
+	public static function get_block_gap_from_block_style_attribute( array $style ) : string {
+
+		if ( ! array_key_exists( 'spacing', $style ) ) {
+			return '';
+		}
+
+		$block_gap = $style['spacing']['blockGap'] ?? '';
+
+		if ( empty( $block_gap ) ) {
+			return '';
+		}
+
+		if ( ! is_array( $block_gap ) ) {
+			$block_gap = array(
+				'top'  => $block_gap,
+				'left' => $block_gap
+			);
+		}
+
+		$directions = array(
+			'top'  => 'row',
+			'left' => 'column'
+		);
+
+		$declarations = array_map(
+			function( string $gap, $key ) use ( $directions ) : string {
+
+				if ( 'var:preset|spacing|' === substr( $gap, 0, 19 ) ) {
+					$slug  = str_replace( '|', '-', substr( $gap, 19 ) );
+					$value = "var(--wp--preset--spacing--{$slug})";
+				} else {
+					$value = $gap;
+				}
+
+				return "{$directions[$key]}-gap:{$value}";
+			},
+			$block_gap,
+			array_keys( $block_gap )
+		);
+
+		return implode( ';', $declarations );
+	}
+
 }
