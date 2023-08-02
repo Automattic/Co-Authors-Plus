@@ -90,26 +90,7 @@ class CAP_Block_CoAuthors {
 			);
 		}
 
-		$inner_content = implode( $blocks_with_separators );
-
-		if ( 'block' === $attributes['layout']['type'] && $attributes['style']['spacing']['blockGap'] ?? false ) {
-			$gap_value = self::get_gap_css_value(
-				self::get_normalized_gap_value($attributes['style']['spacing']['blockGap'])
-			);
-			$style = "gap:{$gap_value};";
-		} else {
-			$style = null;
-		}
-
-		return self::get_block_wrapper_function(
-			'div',
-			get_block_wrapper_attributes(
-				array(
-					'class' => "is-layout-cap-{$attributes['layout']['type']}",
-					'style' => $style
-				)
-			)
-		)( $inner_content );
+		return current( $block->parsed_block['innerContent'] ) . implode( $blocks_with_separators ) . end ($block->parsed_block['innerContent'] );
 	}
 
 	/**
@@ -305,56 +286,9 @@ class CAP_Block_CoAuthors {
 		return array_merge(
 			$block->parsed_block,
 			array(
-				'blockName' => 'core/null'
+				'innerContent' => array_slice( $block->parsed_block['innerContent'], 1, -1 ),
+				'blockName'    => 'core/null'
 			)
-		);
-	}
-
-	/**
-	 * Get Gap CSS Value
-	 * 
-	 * @param array $gaps
-	 * @return string
-	 */
-	public static function get_gap_css_value( array $gaps ) : string {
-		return $gaps['row'] === $gaps['column'] ? $gaps['row'] : "{$gaps['row']} {$gaps['column']}";
-	}
-
-	/**
-	 * Get Normalize Gap Value
-	 * 
-	 * @param string|array $gap
-	 * @return array
-	 */
-	public static function get_normalized_gap_value( string|array $gap ) : array {
-		if ( is_array( $gap ) ) {
-			$gap = array_merge(
-				array(
-					'top'  => '0',
-					'left' => '0'
-				),
-				$gap
-			);
-		}
-		return array(
-			'row'    => self::get_preset_css_value( is_string( $gap ) ? $gap : $gap['top'] ),
-			'column' => self::get_preset_css_value( is_string( $gap ) ? $gap : $gap['left'] ),
-		);
-	}
-
-	/**
-	 * Get Preset CSS Value
-	 * 
-	 * @param string $value
-	 * @return string
-	 */
-	public static function get_preset_css_value( string $value ) : string {
-		if ( 'var:' !== substr( $value, 0, 4 ) ) {
-			return $value;
-		}
-		return sprintf(
-			'var(--wp--%s)',
-			str_replace( '|', '--', substr( $value, 4 ) )
 		);
 	}
 }

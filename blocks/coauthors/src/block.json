@@ -59,6 +59,9 @@
 		"suffix": {
 			"type": "string",
 			"default": ""
+		},
+		"textAlign": {
+			"type": "string"
 		}
 	},
 	"usesContext": [ "postId" ],

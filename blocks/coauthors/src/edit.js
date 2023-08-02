@@ -12,7 +12,8 @@ import {
 	store as blockEditorStore,
 	InspectorControls,
 	RichText,
-	__experimentalGetGapCSSValue
+	__experimentalGetGapCSSValue,
+	AlignmentControl
 } from '@wordpress/block-editor';
 import { TextControl, ToolbarGroup, PanelBody } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
@@ -51,7 +52,7 @@ const ALLOWED_FORMATS = [
  */
 export default function Edit( { attributes, setAttributes, clientId, context, isSelected } ) {
 
-	const { separator, lastSeparator, layout, prefix, suffix } = attributes;
+	const { prefix, separator, lastSeparator, suffix, layout, textAlign } = attributes;
 	const { postId } = context;
 
 	/* Default state for full site editing */
@@ -131,8 +132,23 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 		<>
 			<BlockControls>
 				<ToolbarGroup controls={ layoutControls } />
+				<AlignmentControl
+					value={ textAlign }
+					onChange={ ( nextAlign ) => {
+						setAttributes( { textAlign: nextAlign } );
+					} }
+				/>
 			</BlockControls>
-			<div { ...useBlockProps({className: classnames( [ `is-layout-cap-${layout.type}` ] ), style: { gap: __experimentalGetGapCSSValue( attributes?.style?.spacing?.blockGap ) } }) }>
+			<div { ...useBlockProps({
+					className: classnames( {
+						[`is-layout-cap-${layout.type}`]: layout.type,
+						[`has-text-align-${ textAlign }`]: textAlign,
+					}),
+					style: {
+						gap: __experimentalGetGapCSSValue( attributes?.style?.spacing?.blockGap )
+					}
+				})
+			}>
 				{
 					coAuthors &&
 					'inline' === layout.type &&
