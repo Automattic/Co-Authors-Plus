@@ -1,3 +1,7 @@
+.wp-block-cap-coauthor-avatar :where(img) {
+	display: block;
+}
+
 .wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-avatar :where(img) {
 	vertical-align: middle;
 }
