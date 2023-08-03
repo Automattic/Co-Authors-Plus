@@ -1,8 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { SelectControl, PanelBody, ToggleControl } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
-import { useDispatch } from '@wordpress/data';
 
 /**
  * The edit function describes the structure of your block in the context of the
