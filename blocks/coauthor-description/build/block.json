@@ -38,7 +38,11 @@
   "usesContext": [
     "cap/author"
   ],
-  "attributes": {},
+  "attributes": {
+    "textAlign": {
+      "type": "string"
+    }
+  },
   "textdomain": "co-authors-plus",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css"

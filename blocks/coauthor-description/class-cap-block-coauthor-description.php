@@ -52,9 +52,7 @@ class CAP_Block_CoAuthor_Description {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(
-				array(
-					'class' => 'is-layout-flow'
-				)
+				self::get_custom_block_wrapper_attributes( $attributes )
 			),
 			wp_kses_post( wpautop( wptexturize( $description ) ) )
 		);
@@ -93,5 +91,28 @@ class CAP_Block_CoAuthor_Description {
 		}
 
 		return $context;
+	}
+
+	/**
+	 * Get Custom Block Wrapper Attributes
+	 * 
+	 * @param array $attributes
+	 * @return array
+	 */
+	public static function get_custom_block_wrapper_attributes( array $attributes ) : array {
+
+		$default = array(
+			'class' => 'is-layout-flow',
+		);
+
+		$text_align = $attributes['textAlign'] ?? '';
+
+		if ( empty( $text_align ) ) {
+			return $default;
+		}
+
+		return array(
+			'class' => $default['class'] . ' ' . esc_attr( "has-text-align-{$text_align}" )
+		);
 	}
 }

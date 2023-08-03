@@ -4,11 +4,10 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, AlignmentControl, BlockControls } from '@wordpress/block-editor';
 import { TextControl, PanelBody, ToggleControl } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -20,7 +19,7 @@ import { __ } from '@wordpress/i18n';
  */
 export default function Edit( { context, attributes, setAttributes } ) {
 
-	const { isLink, rel } = attributes;
+	const { isLink, rel, textAlign } = attributes;
 	const author = context['cap/author'] || {
 		id: 0,
 		display_name: 'FirstName LastName',
@@ -36,7 +35,15 @@ export default function Edit( { context, attributes, setAttributes } ) {
 
 	return (
 		<>
-		<p { ...useBlockProps() }>
+		<BlockControls>
+			<AlignmentControl
+				value={ textAlign }
+				onChange={ ( nextAlign ) => {
+					setAttributes( { textAlign: nextAlign } );
+				} }
+			/>
+		</BlockControls>
+		<p { ...useBlockProps({ className: classnames( {[`has-text-align-${ textAlign }`]: textAlign} )}) }>
 			{
 				isLink ? (
 					<a

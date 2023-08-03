@@ -65,7 +65,13 @@ class CAP_Block_CoAuthor_Display_Name {
 			$inner_content = $display_name;
 		}
 
-		return sprintf( '<p %s>%s</p>', get_block_wrapper_attributes(), $inner_content );
+		return sprintf(
+			'<p %s>%s</p>',
+			get_block_wrapper_attributes(
+				self::get_custom_block_wrapper_attributes( $attributes )
+			),
+			$inner_content
+		);
 	}
 	/**
 	 * Provide Author Archive Context
@@ -101,5 +107,23 @@ class CAP_Block_CoAuthor_Display_Name {
 		}
 
 		return $context;
+	}
+
+	/**
+	 * Get Custom Block Wrapper Attributes
+	 * 
+	 * @param array $attributes
+	 * @return array
+	 */
+	public static function get_custom_block_wrapper_attributes( array $attributes ) : array {
+
+		$text_align = $attributes['textAlign'] ?? '';
+
+		if ( empty( $text_align ) ) {
+			return array();
+		}
+		return array(
+			'class' => esc_attr( "has-text-align-{$text_align}" )
+		);
 	}
 }

@@ -4,7 +4,9 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, AlignmentControl, BlockControls } from '@wordpress/block-editor';
+import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 import './editor.css';
 
@@ -16,7 +18,10 @@ import './editor.css';
  *
  * @return {WPElement} Element to render.
  */
-export default function Edit( { context } ) {
+export default function Edit( { context, attributes, setAttributes } ) {
+
+	const { textAlign } = attributes;
+
 	const author = context['cap/author'] || {
 		id: 0,
 		display_name: 'FirstName LastName',
@@ -32,6 +37,26 @@ export default function Edit( { context } ) {
 	const { description } = author;
 
 	return (
-		<div { ...useBlockProps({className:['is-layout-flow']}) } dangerouslySetInnerHTML={ { __html: description } } />
+		<>
+			<BlockControls>
+				<AlignmentControl
+					value={ textAlign }
+					onChange={ ( nextAlign ) => {
+						setAttributes( { textAlign: nextAlign } );
+					} }
+				/>
+			</BlockControls>
+			<div
+				{
+					...useBlockProps({
+						className: classnames({
+							[`has-text-align-${ textAlign }`]: textAlign,
+							'is-layout-flow': true
+						})
+					})
+				}
+				dangerouslySetInnerHTML={ { __html: description } }
+			/>
+		</>
 	);
 }

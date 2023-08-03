@@ -47,6 +47,9 @@
 			"type": "string",
 			"attribute": "rel",
 			"default": "author"
+		},
+		"textAlign": {
+			"type": "string"
 		}
 	},
 	"textdomain": "co-authors-plus",
