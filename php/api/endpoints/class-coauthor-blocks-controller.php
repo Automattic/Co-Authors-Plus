@@ -232,6 +232,12 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 		$data['link']        = get_author_posts_url( $author->ID, $author->user_nicename );
 		$data['avatar_urls'] = rest_get_avatar_urls( $author->ID );
 
+		if ( 'wpuser' === $author->type ) {
+			if ( ! array_key_exists( 'description', $data ) ) {
+				$data['description'] = wp_kses_post( wpautop( wptexturize( get_user_meta( $author->ID, 'description', true ) ) ) );
+			}
+		}
+
 		$response = rest_ensure_response( $data );
 
 		/**

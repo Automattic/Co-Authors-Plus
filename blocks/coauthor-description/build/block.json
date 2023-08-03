@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "cap/coauthor-description",
+  "version": "0.1.0",
+  "title": "Co-Author Description",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "Display a co-author's description.",
+  "supports": {
+    "html": false,
+    "color": {
+      "link": true,
+      "text": true,
+      "background": true,
+      "__experimentalDefaultControls": {}
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalDefaultControls": {}
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "__experimentalDefaultControls": {
+        "margin": false,
+        "padding": false
+      }
+    }
+  },
+  "usesContext": [
+    "cap/author"
+  ],
+  "attributes": {},
+  "textdomain": "co-authors-plus",
+  "editorScript": "file:./index.js"
+}
