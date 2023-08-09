@@ -5,10 +5,8 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-.wp-block-cap-coauthor-feature-image {
-	// background-color: #21759b;
-	// color: #fff;
-	// padding: 2px;
+.wp-block-cap-coauthor-feature-image:where(figure) {
+	margin-block-end: 0;
 }
 
 .wp-block-cap-coauthor-feature-image :where(img,svg) {

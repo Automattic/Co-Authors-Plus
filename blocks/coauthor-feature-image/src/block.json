@@ -16,14 +16,18 @@
 			"__experimentalSelector": "img, .block-editor-media-placeholder, .wp-block-post-featured-image__overlay",
 			"__experimentalSkipSerialization": true,
 			"__experimentalDefaultControls": {
-				"color": true,
-				"radius": true,
-				"width": true
+				"color": false,
+				"radius": false,
+				"width": false
 			}
 		},
 		"spacing": {
 			"margin": true,
-			"padding": true
+			"padding": true,
+			"__experimentalDefaultControls": {
+				"margin": false,
+				"padding": false
+			}
 		}
 	},
 	"usesContext": [

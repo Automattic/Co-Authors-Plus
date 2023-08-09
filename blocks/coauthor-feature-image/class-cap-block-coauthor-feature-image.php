@@ -36,7 +36,58 @@ class CAP_Block_CoAuthor_Feature_Image {
 	 * @return string
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
-		return $content;
+
+		$author = $block->context['cap/author'] ?? array();
+
+		if ( empty( $author ) ) {
+			return '';
+		}
+
+		$featured_media_id = absint( $author['featured_media'] ?? 0 );
+
+		if ( 0 === $featured_media_id ) {
+			return '';
+		}
+
+		$size_slug = isset( $attributes['sizeSlug'] ) ? $attributes['sizeSlug'] : 'thumbnail';
+		$attr      = get_block_core_post_featured_image_border_attributes( $attributes );
+
+		$extra_styles = '';
+
+		// Aspect ratio with a height set needs to override the default width/height.
+		if ( ! empty( $attributes['aspectRatio'] ) ) {
+			$extra_styles .= 'width:100%;height:100%;';
+		} elseif ( ! empty( $attributes['height'] ) ) {
+			$extra_styles .= "height:{$attributes['height']};";
+		}
+
+		if ( ! empty( $attributes['scale'] ) ) {
+			$extra_styles .= "object-fit:{$attributes['scale']};";
+		}
+
+		if ( ! empty( $extra_styles ) ) {
+			$attr['style'] = empty( $attr['style'] ) ? $extra_styles : $attr['style'] . $extra_styles;
+		}
+
+		$featured_image = wp_get_attachment_image( $featured_media_id, $size_slug, false, $attr );
+
+		$aspect_ratio = ! empty( $attributes['aspectRatio'] )
+			? esc_attr( safecss_filter_attr( 'aspect-ratio:' . $attributes['aspectRatio'] ) ) . ';'
+			: '';
+		$width        = ! empty( $attributes['width'] )
+			? esc_attr( safecss_filter_attr( 'width:' . $attributes['width'] ) ) . ';'
+			: '';
+		$height       = ! empty( $attributes['height'] )
+			? esc_attr( safecss_filter_attr( 'height:' . $attributes['height'] ) ) . ';'
+			: '';
+
+		if ( ! $height && ! $width && ! $aspect_ratio ) {
+			$wrapper_attributes = get_block_wrapper_attributes();
+		} else {
+			$wrapper_attributes = get_block_wrapper_attributes( array( 'style' => $aspect_ratio . $width . $height ) );
+		}
+
+		return "<figure {$wrapper_attributes}>{$featured_image}</figure>";
 	}
 	/**
 	 * Provide Author Archive Context

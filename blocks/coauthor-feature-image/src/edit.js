@@ -1,17 +1,25 @@
+import classnames from 'classnames';
 
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, store as blockEditorStore, __experimentalUseBorderProps as useBorderProps } from '@wordpress/block-editor';
-import './editor.scss';
-
+import {
+	useBlockProps,
+	store as blockEditorStore,
+	__experimentalUseBorderProps as useBorderProps
+} from '@wordpress/block-editor';
 import { Placeholder } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
-import { useEntityProp, store as coreStore } from '@wordpress/core-data';
+import './editor.scss';
 
 import DimensionControls from './dimension-controls';
 
-import classnames from 'classnames';
-
+/**
+ * 
+ * @param {Object|undefined} media 
+ * @param {String|undefined} slug 
+ * @return {String|undefined}
+ */
 function getMediaSourceUrlBySizeSlug( media, slug ) {
 	return (
 		media?.media_details?.sizes?.[ slug ]?.source_url || media?.source_url
@@ -36,27 +44,21 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 	};
 
 	const media = useSelect( (select) => {
-		const { getMedia } = select( coreStore );
-		return 0 !== author.featured_media && getMedia( author.featured_media, { context: 'view' } )
+		return 0 !== author.featured_media && select( coreStore ).getMedia( author.featured_media, { context: 'view' } )
 	}, [author.featured_media]);
 
 	const mediaUrl = getMediaSourceUrlBySizeSlug( media, sizeSlug );
 
-	const imageSizes = useSelect(
-		( select ) => select( blockEditorStore ).getSettings().imageSizes,
+	const { imageSizes, imageDimensions } = useSelect(
+		( select ) => select( blockEditorStore ).getSettings(),
 		[]
 	);
-	const imageSizeOptions = imageSizes
-		.filter( ( { slug } ) => {
-			return media?.media_details?.sizes?.[ slug ]?.source_url;
-		} )
-		.map( ( { name, slug } ) => ( {
-			value: slug,
-			label: name,
-		} ) );
+
+	const imageSizeOptions = imageSizes.map(
+		( { name, slug } ) => ( { value: slug, label: name } )
+	);
 	
 	const borderProps = useBorderProps( attributes );
-
 
 	const imageStyles = {
 		...borderProps.style,
@@ -64,6 +66,17 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 		width: !! aspectRatio && '100%',
 		objectFit: !! ( height || aspectRatio ) && scale,
 	};
+
+	const widthFromImageDimensions = imageDimensions[sizeSlug]?.width;
+	const hasWidthOrHeight = width || height;
+
+	const blockProps = useBlockProps( {
+		style: {
+			width: hasWidthOrHeight ? width : widthFromImageDimensions,
+			height,
+			aspectRatio,
+		}
+	} );
 
 	return (
 		<>
@@ -73,8 +86,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 				setAttributes={ setAttributes }
 				imageSizeOptions={ imageSizeOptions }
 			/>
-		
-			<div { ...useBlockProps( { style: { width, height, aspectRatio } } ) }>
+			<figure { ...blockProps }>
 				{
 					media ? (
 						<img
@@ -92,7 +104,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 						/>
 					) : (
 						<Placeholder
-							className={ classnames("block-editor-media-placeholder", borderProps.className ) }
+							className={ classnames('block-editor-media-placeholder', borderProps.className ) }
 							withIllustration={ true }
 							style={ {
 								height: !! aspectRatio && '100%',
@@ -104,7 +116,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 						/>
 					)
 				}
-			</div>
+			</figure>
 		</>
 	);
 }
