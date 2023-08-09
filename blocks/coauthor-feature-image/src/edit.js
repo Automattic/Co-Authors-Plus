@@ -14,6 +14,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import './editor.scss';
 
 import DimensionControls from './dimension-controls';
+import exampleAuthor from '../../modules/example-author';
 
 /**
  * 
@@ -36,13 +37,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 
 	const { isLink, rel, width, height, aspectRatio, sizeSlug, scale } = attributes;
 
-	const author = context['cap/author'] || {
-		id: 0,
-		display_name: 'FirstName LastName',
-		link: '#',
-		avatar_urls: [],
-		featured_media: 0
-	};
+	const author = context['cap/author'] || exampleAuthor;
 
 	const media = useSelect( (select) => {
 		return 0 !== author.featured_media && select( coreStore ).getMedia( author.featured_media, { context: 'view' } )

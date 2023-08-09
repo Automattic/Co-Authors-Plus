@@ -25,14 +25,6 @@ class CAP_Block_CoAuthor_Avatar {
 				'render_callback' => array( __CLASS__, 'render_block' ),
 			)
 		);
-		register_block_style(
-			'cap/coauthor-avatar',
-			array(
-				'name'         => 'rounded',
-				'label'        => __('Rounded'),
-				'inline_style' => '.wp-block-cap-coauthor-avatar.is-style-rounded img { border-radius: 50% }',
-			)
-		);
 	}
 	/**
 	 * Render Block
@@ -65,13 +57,17 @@ class CAP_Block_CoAuthor_Avatar {
 			array_keys( $avatar_urls )
 		);
 
+		$attr = get_block_core_post_featured_image_border_attributes( $attributes );
+
 		$image = sprintf(
-			'<img src="%s" width="%s" height="%s" sizes="%s" srcset="%s">',
+			'<img src="%s" width="%s" height="%s" sizes="%s" srcset="%s" style="%s" class="%s">',
 			$avatar_urls[$size],
 			$size,
 			$size,
 			"{$size}px",
-			implode( ', ', $srcset)
+			implode( ', ', $srcset),
+			$attr['style'] ?? '',
+			$attr['class'] ?? ''
 		);
 
 		$rel = $attributes['rel'] ?? '';

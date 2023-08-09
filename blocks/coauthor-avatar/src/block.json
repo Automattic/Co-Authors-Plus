@@ -8,7 +8,19 @@
 	"icon": "smiley",
 	"description": "Display a co-author's avatar",
 	"supports": {
-		"html": false
+		"html": false,
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"width": true,
+			"__experimentalSelector": "img, .block-editor-media-placeholder",
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"color": false,
+				"radius": false,
+				"width": false
+			}
+		}
 	},
 	"usesContext": [
 		"cap/author"
