@@ -238,6 +238,14 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 			}
 		}
 
+		if ( 'guest-author' === $author->type ) {
+			$data['featured_media'] = absint(
+				get_post_thumbnail_id( $author->ID )
+			);
+		} else {
+			$data['featured_media'] = 0;
+		}
+
 		$response = rest_ensure_response( $data );
 
 		/**
