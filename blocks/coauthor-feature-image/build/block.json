@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cap/coauthor-feature-image",
+  "version": "0.1.0",
+  "title": "Coauthor Feature Image",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "Feature Image from a Guest Author profile.",
+  "supports": {
+    "align": [
+      "left",
+      "right",
+      "center",
+      "wide",
+      "full"
+    ],
+    "__experimentalBorder": {
+      "color": true,
+      "radius": true,
+      "width": true,
+      "__experimentalSelector": "img, .block-editor-media-placeholder, .wp-block-post-featured-image__overlay",
+      "__experimentalSkipSerialization": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "radius": true,
+        "width": true
+      }
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "usesContext": [
+    "cap/author"
+  ],
+  "attributes": {
+    "isLink": {
+      "type": "boolean",
+      "default": false
+    },
+    "rel": {
+      "type": "string",
+      "attribute": "rel"
+    },
+    "aspectRatio": {
+      "type": "string"
+    },
+    "width": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string"
+    },
+    "scale": {
+      "type": "string",
+      "default": "cover"
+    },
+    "sizeSlug": {
+      "type": "string"
+    }
+  },
+  "textdomain": "coauthor-feature-image",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js"
+}

@@ -1,0 +1,1 @@
+console.log("Hello World! (from cap-coauthor-feature-image block)");

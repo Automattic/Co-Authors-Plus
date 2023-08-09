@@ -1,0 +1,5 @@
+{
+	"scripts": {
+		"build": "../../node_modules/.bin/wp-scripts build"
+	}
+}

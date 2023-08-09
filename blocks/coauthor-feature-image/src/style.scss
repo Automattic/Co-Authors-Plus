@@ -1,0 +1,21 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-cap-coauthor-feature-image {
+	// background-color: #21759b;
+	// color: #fff;
+	// padding: 2px;
+}
+
+.wp-block-cap-coauthor-feature-image :where(img,svg) {
+	display: block;
+}
+
+.wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-feature-image {
+	display: inline-flex;
+	vertical-align: middle;
+}
