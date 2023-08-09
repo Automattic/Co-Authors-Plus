@@ -21,10 +21,12 @@
     "isLink": {
       "type": "boolean",
       "default": false
+    },
+    "rel": {
+      "type": "string"
     }
   },
   "textdomain": "coauthor-avatar",
   "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css",
   "style": "file:./style-index.css"
 }

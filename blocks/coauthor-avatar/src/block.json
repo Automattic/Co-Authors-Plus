@@ -21,6 +21,9 @@
 		"isLink": {
 			"type": "boolean",
 			"default": false
+		},
+		"rel": {
+			"type": "string"
 		}
 	},
 	"textdomain": "coauthor-avatar",

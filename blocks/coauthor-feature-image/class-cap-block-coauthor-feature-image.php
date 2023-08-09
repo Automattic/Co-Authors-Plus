@@ -69,7 +69,13 @@ class CAP_Block_CoAuthor_Feature_Image {
 			$attr['style'] = empty( $attr['style'] ) ? $extra_styles : $attr['style'] . $extra_styles;
 		}
 
+		$link    = $author['link'] ?? '';
+		$is_link = '' !== $link && $attributes['isLink'] ?? false;
+		$rel = $attributes['rel'] ?? '';
+
 		$featured_image = wp_get_attachment_image( $featured_media_id, $size_slug, false, $attr );
+
+		$featured_image = $is_link ? self::add_link( $link, $featured_image, $rel ) : $featured_image;
 
 		$aspect_ratio = ! empty( $attributes['aspectRatio'] )
 			? esc_attr( safecss_filter_attr( 'aspect-ratio:' . $attributes['aspectRatio'] ) ) . ';'
@@ -88,6 +94,22 @@ class CAP_Block_CoAuthor_Feature_Image {
 		}
 
 		return "<figure {$wrapper_attributes}>{$featured_image}</figure>";
+	}
+	/**
+	 * Add Link
+	 * 
+	 * @param string $link
+	 * @param string $content
+	 * @param null|string $rel
+	 * @return string
+	 */
+	public static function add_link( string $link, string $content, ?string $rel = '' ) : string {
+		return sprintf(
+			'<a href="%s" rel="%s">%s</a>',
+			$link,
+			$rel,
+			$content
+		);
 	}
 	/**
 	 * Provide Author Archive Context

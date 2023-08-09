@@ -39,8 +39,7 @@
 			"default": false
 		},
 		"rel": {
-			"type": "string",
-			"attribute": "rel"
+			"type": "string"
 		},
 		"aspectRatio": {
 			"type": "string"

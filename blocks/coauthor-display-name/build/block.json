@@ -45,7 +45,6 @@
     },
     "rel": {
       "type": "string",
-      "attribute": "rel",
       "default": "author"
     },
     "textAlign": {

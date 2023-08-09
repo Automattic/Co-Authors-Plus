@@ -57,7 +57,7 @@ class CAP_Block_CoAuthor_Avatar {
 		}
 
 		$link    = $author['link'] ?? '';
-		$is_link = $attributes['isLink'] ?? false;
+		$is_link = '' !== $link && $attributes['isLink'] ?? false;
 		$size    = $attributes['size'] ?? 24;
 		$srcset  = array_map(
 			fn( $url, $size ) => "{$url} {$size}w",
@@ -74,7 +74,9 @@ class CAP_Block_CoAuthor_Avatar {
 			implode( ', ', $srcset)
 		);
 
-		$inner_content = $is_link ? self::add_link( $link, $image ) : $image;
+		$rel = $attributes['rel'] ?? '';
+
+		$inner_content = $is_link ? self::add_link( $link, $image, $rel ) : $image;
 
 		return self::get_block_wrapper_function(
 			'div',
@@ -87,10 +89,16 @@ class CAP_Block_CoAuthor_Avatar {
 	 * 
 	 * @param string $link
 	 * @param string $content
+	 * @param null|string $rel
 	 * @return string
 	 */
-	public static function add_link( string $link, string $content ) : string {
-		return sprintf('<a href="%s">%s</a>', $link, $content);
+	public static function add_link( string $link, string $content, ?string $rel = '' ) : string {
+		return sprintf(
+			'<a href="%s" rel="%s">%s</a>',
+			$link,
+			$rel,
+			$content
+		);
 	}
 
 	/**

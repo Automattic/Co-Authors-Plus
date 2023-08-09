@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { SelectControl, PanelBody, ToggleControl } from '@wordpress/components';
+import { SelectControl, PanelBody, ToggleControl, TextControl } from '@wordpress/components';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -12,7 +12,7 @@ import { SelectControl, PanelBody, ToggleControl } from '@wordpress/components';
  */
 export default function Edit( { context, attributes, setAttributes } ) {
 
-	const { isLink, size } = attributes;
+	const { isLink, rel, size } = attributes;
 	const author = context['cap/author'] || {
 		id: 0,
 		display_name: 'FirstName LastName',
@@ -62,6 +62,16 @@ export default function Edit( { context, attributes, setAttributes } ) {
 					onChange={ () => setAttributes( { isLink: ! isLink } ) }
 					checked={ isLink }
 				/>
+				{ isLink && (
+					<TextControl
+						__nextHasNoMarginBottom
+						label={ __( 'Link rel' ) }
+						value={ rel }
+						onChange={ ( newRel ) =>
+							setAttributes( { rel: newRel } )
+						}
+					/>
+				) }
 				<SelectControl
 					label={ __( 'Avatar size' ) }
 					value={ size }

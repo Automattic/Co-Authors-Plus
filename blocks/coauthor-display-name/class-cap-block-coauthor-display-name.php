@@ -50,10 +50,10 @@ class CAP_Block_CoAuthor_Display_Name {
 		}
 
 		$link    = $author['link'] ?? '';
-		$is_link = $attributes['isLink'] ?? false;
+		$is_link = '' !== $link && $attributes['isLink'] ?? false;
 		$rel     = $attributes['rel'] ?? '';
 
-		if ( $is_link && '' !== $link ) {
+		if ( $is_link ) {
 			$inner_content = sprintf(
 				'<a rel="%s" href="%s" title="%s">%s</a>',
 				$rel,

@@ -4,9 +4,10 @@ import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
 	store as blockEditorStore,
-	__experimentalUseBorderProps as useBorderProps
+	__experimentalUseBorderProps as useBorderProps,
+	InspectorControls,
 } from '@wordpress/block-editor';
-import { Placeholder } from '@wordpress/components';
+import { Placeholder, TextControl, PanelBody, ToggleControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
@@ -33,7 +34,7 @@ function getMediaSourceUrlBySizeSlug( media, slug ) {
  */
 export default function Edit( { attributes, setAttributes, context, clientId } ) {
 
-	const { width, height, aspectRatio, sizeSlug, scale } = attributes;
+	const { isLink, rel, width, height, aspectRatio, sizeSlug, scale } = attributes;
 
 	const author = context['cap/author'] || {
 		id: 0,
@@ -117,6 +118,26 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 					)
 				}
 			</figure>
+			<InspectorControls>
+				<PanelBody title={ __( 'Settings' ) }>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Make feature image a link to author archive.' ) }
+						onChange={ () => setAttributes( { isLink: ! isLink } ) }
+						checked={ isLink }
+					/>
+					{ isLink && (
+						<TextControl
+							__nextHasNoMarginBottom
+							label={ __( 'Link rel' ) }
+							value={ rel }
+							onChange={ ( newRel ) =>
+								setAttributes( { rel: newRel } )
+							}
+						/>
+					) }
+				</PanelBody>
+			</InspectorControls>
 		</>
 	);
 }
