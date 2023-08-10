@@ -26,8 +26,6 @@ import classnames from 'classnames';
 
 import MemoizedCoAuthorTemplateBlockPreview from './modules/memoized-coauthor-template-block-preview';
 
-import exampleAuthor from '../../modules/example-author';
-
 /**
  * CoAuthor Template Inner Blocks
  */
@@ -56,9 +54,8 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 
 	const { prefix, separator, lastSeparator, suffix, layout, textAlign } = attributes;
 	const { postId } = context;
-
-	/* Default state for full site editing */
-	const [ coAuthors, setCoAuthors ] = useState([exampleAuthor]);
+	const settings = useSelect( ( select ) => select( blockEditorStore ).getSettings(), []);
+	const [ coAuthors, setCoAuthors ] = useState([ settings['cap/author-example']]);
 	const [ activeBlockContextId, setActiveBlockContextId ] = useState();
 	const noticesDispatch = useDispatch('core/notices');
 

@@ -4,10 +4,10 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps, AlignmentControl, BlockControls } from '@wordpress/block-editor';
+import { useBlockProps, AlignmentControl, BlockControls, store as blockEditorStore } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
-import exampleAuthor from '../../modules/example-author';
 import './editor.css';
 
 /**
@@ -21,7 +21,8 @@ import './editor.css';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { textAlign } = attributes;
-	const author = context['cap/author'] || exampleAuthor;
+	const settings = useSelect( select => select( blockEditorStore ).getSettings(), []);
+	const author = context['cap/author'] || settings['cap/author-example'];
 	const { description } = author;
 
 	return (

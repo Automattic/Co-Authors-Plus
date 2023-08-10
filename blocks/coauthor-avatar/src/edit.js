@@ -1,10 +1,9 @@
 import classnames from 'classnames';
 
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls, __experimentalUseBorderProps as useBorderProps } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, __experimentalUseBorderProps as useBorderProps, store as blockEditorStore } from '@wordpress/block-editor';
 import { Placeholder, SelectControl, PanelBody, ToggleControl, TextControl } from '@wordpress/components';
-import exampleAuthor from '../../modules/example-author';
-
+import { useSelect } from '@wordpress/data';
 /**
  * The edit function describes the structure of your block in the context of the
  * editor. This represents what the editor will render when the block is used.
@@ -16,7 +15,8 @@ import exampleAuthor from '../../modules/example-author';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { isLink, rel, size } = attributes;
-	const author = context['cap/author'] || exampleAuthor;
+	const settings = useSelect( select => select( blockEditorStore ).getSettings(), []);
+	const author = context['cap/author'] || settings['cap/author-example'];
 	const { avatar_urls } = author;
 
 	if ( ! avatar_urls || 0 === avatar_urls.length ) {

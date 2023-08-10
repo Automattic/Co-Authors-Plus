@@ -4,11 +4,17 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps, InspectorControls, AlignmentControl, BlockControls } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	InspectorControls,
+	AlignmentControl,
+	BlockControls,
+	store as blockEditorStore
+} from '@wordpress/block-editor';
 import { TextControl, PanelBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
-import exampleAuthor from '../../modules/example-author';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -21,7 +27,8 @@ import exampleAuthor from '../../modules/example-author';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { isLink, rel, textAlign } = attributes;
-	const author = context['cap/author'] || exampleAuthor;
+	const settings = useSelect( select => select( blockEditorStore ).getSettings(), []);
+	const author = context['cap/author'] || settings['cap/author-example'];
 	const { link, display_name } = author;
 
 	return (

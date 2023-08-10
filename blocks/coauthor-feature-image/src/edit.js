@@ -14,7 +14,6 @@ import { store as coreStore } from '@wordpress/core-data';
 import './editor.scss';
 
 import DimensionControls from './dimension-controls';
-import exampleAuthor from '../../modules/example-author';
 
 /**
  * 
@@ -37,18 +36,18 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 
 	const { isLink, rel, width, height, aspectRatio, sizeSlug, scale } = attributes;
 
-	const author = context['cap/author'] || exampleAuthor;
+	const { imageSizes, imageDimensions, ...settings } = useSelect(
+		( select ) => select( blockEditorStore ).getSettings(),
+		[]
+	);
+
+	const author = context['cap/author'] || settings['cap/author-example'];
 
 	const media = useSelect( (select) => {
 		return 0 !== author.featured_media && select( coreStore ).getMedia( author.featured_media, { context: 'view' } )
 	}, [author.featured_media]);
 
 	const mediaUrl = getMediaSourceUrlBySizeSlug( media, sizeSlug );
-
-	const { imageSizes, imageDimensions } = useSelect(
-		( select ) => select( blockEditorStore ).getSettings(),
-		[]
-	);
 
 	const imageSizeOptions = imageSizes.map(
 		( { name, slug } ) => ( { value: slug, label: name } )

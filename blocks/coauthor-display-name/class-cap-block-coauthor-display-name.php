@@ -14,7 +14,6 @@ class CAP_Block_CoAuthor_Display_Name {
 	 */
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register_block' ) );
-		add_action( 'render_block_context', array( __CLASS__, 'provide_author_archive_context' ), 10, 3 );
 	}
 	/**
 	 * Register Block
@@ -72,41 +71,6 @@ class CAP_Block_CoAuthor_Display_Name {
 			),
 			$inner_content
 		);
-	}
-	/**
-	 * Provide Author Archive Context
-	 *
-	 * @param array         $context, 
-	 * @param array         $parsed_block
-	 * @param null|WP_Block $parent_block
-	 * @return array
-	 */
-	public static function provide_author_archive_context( array $context, array $parsed_block, ?WP_Block $parent_block ) : array {
-		if ( ! is_author() ) {
-			return $context;
-		}
-
-		if ( null === $parsed_block['blockName'] ) {
-			return $context;
-		}
-
-		// author if you do an individual piece of a coauthor outside of a coauthor template.
-		if ( 'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ) && ( ! array_key_exists( 'cap/author', $context ) || empty( $context['cap/author'] ) ) ) {
-			return array(
-				'cap/author' => rest_get_server()->dispatch(
-					WP_REST_Request::from_url(
-						home_url(
-							sprintf(
-								'/wp-json/coauthor-blocks/v1/coauthor/%s',
-								get_query_var( 'author_name' )
-							)
-						)
-					)
-				)->get_data()
-			);
-		}
-
-		return $context;
 	}
 
 	/**

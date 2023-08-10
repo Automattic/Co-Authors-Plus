@@ -10,3 +10,72 @@ new CAP_Block_CoAuthor_Avatar();
 new CAP_Block_CoAuthor_Description();
 new CAP_Block_CoAuthor_Display_Name();
 new CAP_Block_CoAuthor_Feature_Image();
+
+add_filter(
+	'block_editor_settings_all',
+	function( array $editor_settings ) : array {
+		return array_merge(
+			$editor_settings,
+			array(
+				'cap/author-example' => array(
+					'id'             => 0,
+					'display_name'   => 'FirstName LastName',
+					'description'    => '<p>Placeholder description from Co-Authors block.</p>',
+					'link'           => '#',
+					'featured_media' => 0,
+					'avatar_urls'    => array_map( '__return_empty_string', array_flip( rest_get_avatar_sizes() ) )
+				)
+			)
+		);
+	}
+);
+
+/**
+ * Provide Author Archive Context
+ *
+ * @param array         $context, 
+ * @param array         $parsed_block
+ * @param null|WP_Block $parent_block
+ * @return array
+ */
+function coauthors_blocks_provide_author_archive_context( array $context, array $parsed_block, ?WP_Block $parent_block ) : array {
+	if ( ! is_author() ) {
+		return $context;
+	}
+
+	if ( null === $parsed_block['blockName'] ) {
+		return $context;
+	}
+
+	$uses_author_context = apply_filters(
+		'coauthor_blocks_block_uses_author_context',
+		'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ),
+		$parsed_block['blockName']
+	);
+	
+	$has_author_context = array_key_exists( 'cap/author', $context ) && is_array( $context['cap/author'] );
+
+	if ( ! $uses_author_context || $has_author_context ) {
+		return $context;
+	}
+
+	$author = rest_get_server()->dispatch(
+		WP_REST_Request::from_url(
+			home_url(
+				sprintf(
+					'/wp-json/coauthor-blocks/v1/coauthor/%s',
+					get_query_var( 'author_name' )
+				)
+			)
+		)
+	)->get_data();
+
+	if ( ! is_array( $author ) || ! array_key_exists( 'id', $author ) ) {
+		return $context;
+	}
+
+	return array(
+		'cap/author' => $author
+	);
+}
+add_action( 'render_block_context', 'coauthors_blocks_provide_author_archive_context', 10, 3 );
