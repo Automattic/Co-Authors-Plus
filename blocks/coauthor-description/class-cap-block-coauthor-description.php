@@ -42,7 +42,7 @@ class CAP_Block_CoAuthor_Description {
 			return '';
 		}
 
-		$description = $author['description'] ?? '';
+		$description = $author['description']['raw'] ?? '';
 
 		if ( '' === $description ) {
 			return '';

@@ -198,6 +198,105 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Retrieves the CoAuthor schema, conforming to JSON Schema.
+	 * 
+	 * @return array Item schema data.
+	 */
+	public function get_item_schema() : array {
+
+		if ( $this->schema ) {
+			return $this->add_additional_fields_schema( $this->schema );
+		}
+
+		$schema = array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'coauthor-block',
+			'type'       => 'object',
+			'properties' => array(
+				'id' => array(
+					'description' => __( '', 'co-authors-plus' ),
+					'type'        => 'integer',
+					'context'     => array( 'view' ),
+					'readonly'    => true
+				),
+				'display_name' => array(
+					'description' => __( '', 'co-authors-plus' ),
+					'type'        => 'string',
+					'context'     => array( 'view' ),
+					'readonly'    => true
+				),
+				'description' => array(
+					'description' => __( '', 'co-authors-plus' ),
+					'type'        => 'object',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+					'properties'  => array(
+						'raw'      => array(
+							'description' => __( '', 'co-authors-plus' ),
+							'type'        => 'string',
+							'context'     => array( 'view' ),
+							'readonly'    => true,
+						),
+						'rendered' => array(
+							'description' => __( '', 'co-authors-plus' ),
+							'type'        => 'string',
+							'context'     => array( 'view' ),
+							'readonly'    => true,
+						)
+					)
+				),
+				'user_nicename' => array(
+					'description' => __( '', 'co-authors-plus' ),
+					'type'        => 'string',
+					'context'     => array( 'view' ),
+					'readonly'    => true
+				),
+				'link' => array(
+					'description' => __( 'URL of author archive.', 'co-authors-plus' ),
+					'type'        => 'string',
+					'context'     => array( 'view' ),
+					'readonly'    => true
+				),
+				'avatar_urls' => array(
+					'description' => __( '', 'co-authors-plus' ),
+					'type'        => 'object',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+				),
+				'featured_media' => array(
+					'description' => __( '', 'co-authors-plus' ),
+					'type'        => 'integer',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+				)
+			)
+		);
+
+		// Take a snapshot of which fields are in the schema pre-filtering.
+		$schema_fields = array_keys( $schema['properties'] );
+
+		$schema = apply_filters( 'rest_coauthor-block_item_schema', $schema );
+
+		// Emit a _doing_it_wrong warning if user tries to add new properties using this filter.
+		$new_fields = array_diff( array_keys( $schema['properties'] ), $schema_fields );
+		if ( count( $new_fields ) > 0 ) {
+			_doing_it_wrong(
+				__METHOD__,
+				sprintf(
+					/* translators: %s: register_rest_field */
+					__( 'Please use %s to add new schema properties.' ),
+					'register_rest_field'
+				),
+				'5.4.0'
+			);
+		}
+
+		$this->schema = $schema;
+
+		return $this->add_additional_fields_schema( $this->schema );
+	}
+
+	/**
 	 * Prepare Item For Response
 	 * 
 	 * @param stdClass|WP_User $author
@@ -206,44 +305,49 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 	 */
 	public function prepare_item_for_response( $author, $request ) : WP_REST_Response|WP_Error {
 	
+		$fields = $this->get_fields_for_response( $request );
+
 		if ( is_a( $author, 'WP_User' ) ) {
-			$author = $author->data;
+			$author              = $author->data;
+			$author->description = get_user_meta( $author->ID, 'description', true );
 		}
 
-		$disallowed = array(
-			'ID',
-			'linked_account',
-			'user_email',
-			'user_login',
-			'user_pass',
-			'user_registered',
-            'user_activation_key',
-			'user_url',
-			'user_status',
-			'type'
-		);
+		$data = array();
 
-		$data = array_diff_key(
-			(array) $author,
-			array_flip( $disallowed )
-		);
-
-		$data['id']          = $author->ID;
-		$data['link']        = get_author_posts_url( $author->ID, $author->user_nicename );
-		$data['avatar_urls'] = rest_get_avatar_urls( $author->ID );
-
-		if ( 'wpuser' === $author->type ) {
-			if ( ! array_key_exists( 'description', $data ) ) {
-				$data['description'] = wp_kses_post( wpautop( wptexturize( get_user_meta( $author->ID, 'description', true ) ) ) );
-			}
+		if ( rest_is_field_included( 'id', $fields ) ) {
+			$data['id'] = (int) $author->ID;
 		}
 
-		if ( 'guest-author' === $author->type ) {
-			$data['featured_media'] = absint(
-				get_post_thumbnail_id( $author->ID )
-			);
-		} else {
-			$data['featured_media'] = 0;
+		if ( rest_is_field_included( 'avatar_urls', $fields ) ) {
+			$data['avatar_urls'] = rest_get_avatar_urls( $author->ID );
+		}
+
+		if ( rest_is_field_included( 'description', $fields ) ) {
+			$data['description'] = array();
+		}
+
+		if ( rest_is_field_included( 'description.raw', $fields ) ) {
+			$data['description']['raw'] = (string) $author->description;
+		}
+
+		if ( rest_is_field_included( 'description.rendered', $fields ) ) {
+			$data['description']['rendered'] = wp_kses_post( wpautop( wptexturize( (string) $author->description ) ) );
+		}
+
+		if ( rest_is_field_included( 'display_name', $fields ) ) {
+			$data['display_name'] = (string) $author->display_name;
+		}
+
+		if ( rest_is_field_included( 'link', $fields ) ) {
+			$data['link'] = (string) get_author_posts_url( $author->ID, $author->user_nicename );
+		}
+
+		if ( rest_is_field_included( 'featured_media', $fields ) ) {
+			$data['featured_media'] = (integer) ( 'guest-author' === $author->type ? get_post_thumbnail_id( $author->ID ) : 0 );
+		}
+
+		if ( rest_is_field_included( 'user_nicename', $fields ) ) {
+			$data['user_nicename'] = (string) $author->user_nicename;
 		}
 
 		$response = rest_ensure_response( $data );
@@ -256,6 +360,6 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 		 * @param stdClass|WP_User $author
 		 * @param WP_REST_Request  $request  Request object.
 		 */
-		return apply_filters( "rest_prepare_coauthor_block", $response, $author, $request );
+		return apply_filters( 'rest_prepare_coauthor-block', $response, $author, $request );
 	}
 }
