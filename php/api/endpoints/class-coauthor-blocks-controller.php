@@ -214,19 +214,19 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => array(
 				'id' => array(
-					'description' => __( '', 'co-authors-plus' ),
+					'description' => __( 'Either user id or guest author id.', 'co-authors-plus' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true
 				),
 				'display_name' => array(
-					'description' => __( '', 'co-authors-plus' ),
+					'description' => __( 'Author name for display.', 'co-authors-plus' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true
 				),
 				'description' => array(
-					'description' => __( '', 'co-authors-plus' ),
+					'description' => __( 'Author description.', 'co-authors-plus' ),
 					'type'        => 'object',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
@@ -246,7 +246,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 					)
 				),
 				'user_nicename' => array(
-					'description' => __( '', 'co-authors-plus' ),
+					'description' => __( 'Unique author slug.', 'co-authors-plus' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
 					'readonly'    => true
@@ -258,13 +258,13 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 					'readonly'    => true
 				),
 				'avatar_urls' => array(
-					'description' => __( '', 'co-authors-plus' ),
+					'description' => __( 'URL for author avatar.', 'co-authors-plus' ),
 					'type'        => 'object',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
 				'featured_media' => array(
-					'description' => __( '', 'co-authors-plus' ),
+					'description' => __( 'Id of guest author feature image.', 'co-authors-plus' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
