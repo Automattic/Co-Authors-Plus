@@ -350,6 +350,10 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 			$data['user_nicename'] = (string) $author->user_nicename;
 		}
 
+		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
+		$data    = $this->add_additional_fields_to_object( $data, $request );
+		$data    = $this->filter_response_by_context( $data, $context );
+
 		$response = rest_ensure_response( $data );
 
 		/**
