@@ -15,8 +15,8 @@ import { useSelect } from '@wordpress/data';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { isLink, rel, size } = attributes;
-	const settings = useSelect( select => select( blockEditorStore ).getSettings(), []);
-	const author = context['cap/author'] || settings['cap/author-example'];
+	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
+	const author = context['cap/author'] || authorPlaceholder;
 	const { avatar_urls } = author;
 
 	if ( ! avatar_urls || 0 === avatar_urls.length ) {
