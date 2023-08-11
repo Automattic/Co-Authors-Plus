@@ -21,8 +21,8 @@ import './editor.css';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { textAlign } = attributes;
-	const settings = useSelect( select => select( blockEditorStore ).getSettings(), []);
-	const author = context['cap/author'] || settings['cap/author-example'];
+	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
+	const author = context['cap/author'] || authorPlaceholder;
 	const { description } = author;
 
 	return (
@@ -44,7 +44,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 						})
 					})
 				}
-				dangerouslySetInnerHTML={ { __html: description } }
+				dangerouslySetInnerHTML={ { __html: description.rendered } }
 			/>
 		</>
 	);

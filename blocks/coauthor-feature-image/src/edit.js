@@ -36,12 +36,14 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 
 	const { isLink, rel, width, height, aspectRatio, sizeSlug, scale } = attributes;
 
-	const { imageSizes, imageDimensions, ...settings } = useSelect(
+	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
+
+	const author = context['cap/author'] || authorPlaceholder;
+
+	const { imageSizes, imageDimensions } = useSelect(
 		( select ) => select( blockEditorStore ).getSettings(),
 		[]
 	);
-
-	const author = context['cap/author'] || settings['cap/author-example'];
 
 	const media = useSelect( (select) => {
 		return 0 !== author.featured_media && select( coreStore ).getMedia( author.featured_media, { context: 'view' } )

@@ -54,8 +54,8 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 
 	const { prefix, separator, lastSeparator, suffix, layout, textAlign } = attributes;
 	const { postId } = context;
-	const settings = useSelect( ( select ) => select( blockEditorStore ).getSettings(), []);
-	const [ coAuthors, setCoAuthors ] = useState([ settings['cap/author-example']]);
+	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
+	const [ coAuthors, setCoAuthors ] = useState([authorPlaceholder]);
 	const [ activeBlockContextId, setActiveBlockContextId ] = useState();
 	const noticesDispatch = useDispatch('core/notices');
 

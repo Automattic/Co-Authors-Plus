@@ -1,0 +1,1 @@
+!function(){"use strict";var e=window.wp.data,o=window.wp.hooks;(0,e.register)((0,e.createReduxStore)("cap/blocks",{reducer:function(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:window.coAuthorsBlocks;return e},selectors:{getAuthorPlaceholder:e=>(0,o.applyFilters)("cap.author-placeholder",e.authorPlaceholder)}}))}();
