@@ -257,12 +257,6 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 					'context'     => array( 'view' ),
 					'readonly'    => true
 				),
-				'avatar_urls' => array(
-					'description' => __( 'URL for author avatar.', 'co-authors-plus' ),
-					'type'        => 'object',
-					'context'     => array( 'view' ),
-					'readonly'    => true,
-				),
 				'featured_media' => array(
 					'description' => __( 'Id of guest author feature image.', 'co-authors-plus' ),
 					'type'        => 'integer',
@@ -271,6 +265,15 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 				)
 			)
 		);
+
+		if ( get_option( 'show_avatars' ) ) {
+			$schema['properties']['avatar_urls'] = array(
+				'description' => __( 'URL for author avatar.', 'co-authors-plus' ),
+				'type'        => 'object',
+				'context'     => array( 'view' ),
+				'readonly'    => true,
+			);
+		}
 
 		// Take a snapshot of which fields are in the schema pre-filtering.
 		$schema_fields = array_keys( $schema['properties'] );
