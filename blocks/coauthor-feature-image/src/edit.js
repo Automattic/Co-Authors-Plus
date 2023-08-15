@@ -27,6 +27,64 @@ function getMediaSourceUrlBySizeSlug( media, slug ) {
 	);
 }
 
+function getPlaceholderStyles(media, {width, height, aspectRatio, scale, sizeSlug}, imageDimensions) {
+	const styles = { width, height, objectFit: scale };
+
+	if ( ( width && height ) || ( (width || height) && ( aspectRatio && 'auto' !== aspectRatio ) ) ) {
+		return {
+			width: '100%',
+			height: '100%',
+			objectFit: scale
+		}
+	}
+
+	const keys = Object.keys( imageDimensions )
+	const sizeKey = (! media && 'full' === sizeSlug) ? keys[Math.max(0, keys.length - 1)] : sizeSlug;
+	const size = imageDimensions[sizeKey];
+
+	const newStyles = {};
+
+	if ( size && (! width || ! height )) {
+		if ( true === size.crop ) {
+			newStyles['width']  = `${size.width}px`;
+			if ( ( ! aspectRatio || 'auto' === aspectRatio ) ) {
+				newStyles['aspectRatio'] = `${size.width}/${size.height}`;
+			}
+		} else if ( (size.width >= size.height) && size.width > 0 ) {
+			newStyles['width'] = `${size.width}px`;
+			if ( ! media ) {
+				newStyles['aspectRatio'] = '1/1';
+			}
+		} else if ( size.height > 0 ) {
+			newStyles['height'] = `${size.height}px`;
+			if ( ! media ) {
+				newStyles['aspectRatio'] = '1/1';
+			}
+		}
+	}
+
+	if ( ((! newStyles['width'] || ! newStyles['height'])) && ( aspectRatio && 'auto' !== aspectRatio ) ) {
+		newStyles['aspectRatio'] = aspectRatio;
+	}
+
+	for ( const key in newStyles ) {
+		if ( ! styles[key] ) {
+			styles[key] = newStyles[key];
+		}
+	}
+
+	return styles;
+}
+
+function getContainerStyles( { width, height, aspectRatio } ) {
+
+	if ( ( width || height ) ) {
+		return { width, height, aspectRatio };
+	}
+
+	return {}
+}
+
 /**
  * Edit
  *
@@ -34,46 +92,46 @@ function getMediaSourceUrlBySizeSlug( media, slug ) {
  */
 export default function Edit( { attributes, setAttributes, context, clientId } ) {
 
-	const { isLink, rel, width, height, aspectRatio, sizeSlug, scale } = attributes;
-
 	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
-
 	const author = context['cap/author'] || authorPlaceholder;
-
-	const { imageSizes, imageDimensions } = useSelect(
-		( select ) => select( blockEditorStore ).getSettings(),
-		[]
-	);
-
+	const borderProps = useBorderProps( attributes );
 	const media = useSelect( (select) => {
 		return 0 !== author.featured_media && select( coreStore ).getMedia( author.featured_media, { context: 'view' } )
 	}, [author.featured_media]);
 
+	const { isLink,
+		rel,
+		width,
+		height,
+		aspectRatio,
+		sizeSlug, // AKA "resolution"
+		scale // AKA "object-fit"
+	} = attributes;
+
 	const mediaUrl = getMediaSourceUrlBySizeSlug( media, sizeSlug );
 
-	const imageSizeOptions = imageSizes.map(
-		( { name, slug } ) => ( { value: slug, label: name } )
-	);
-	
-	const borderProps = useBorderProps( attributes );
+	const { imageSizes, imageDimensions } = useSelect( select => select( blockEditorStore ).getSettings(), [] );
 
-	const imageStyles = {
+	const imageSizeOptions = imageSizes.map( ( { name, slug } ) => ( { value: slug, label: name } ) );
+
+	const containerStyles = getContainerStyles( attributes );
+
+	const imageEditStyles = {
 		...borderProps.style,
-		height: aspectRatio ? '100%' : height,
-		width: !! aspectRatio && '100%',
-		objectFit: !! ( height || aspectRatio ) && scale,
+		...getPlaceholderStyles( media, attributes, imageDimensions )
 	};
 
-	const widthFromImageDimensions = imageDimensions[sizeSlug]?.width;
-	const hasWidthOrHeight = width || height;
-
-	const blockProps = useBlockProps( {
-		style: {
-			width: hasWidthOrHeight ? width : widthFromImageDimensions,
-			height,
-			aspectRatio,
-		}
-	} );
+	const placeholderStyles = {
+		padding: 0,
+		minHeight: '100%',
+		minWidth: '100%',
+		...borderProps.style,
+		...getPlaceholderStyles( media, attributes, imageDimensions ),
+	};
+	
+	// don't placehold feature images in a loop where there's no image.
+	// but do placehold them in author archive contexts.
+	const panic = 0 !== author.id && false === media;
 
 	return (
 		<>
@@ -83,37 +141,36 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 				setAttributes={ setAttributes }
 				imageSizeOptions={ imageSizeOptions }
 			/>
-			<figure { ...blockProps }>
-				{
-					media ? (
-						<img
-							src={ mediaUrl }
-							alt={
-								media.alt_text
-									? sprintf(
-											// translators: %s: The image's alt text.
-											__( 'Featured image: %s' ),
-											media.alt_text
-										)
-									: __( 'Featured image' )
-							}
-							style={ imageStyles }
-						/>
-					) : (
-						<Placeholder
-							className={ classnames('block-editor-media-placeholder', borderProps.className ) }
-							withIllustration={ true }
-							style={ {
-								height: !! aspectRatio && '100%',
-								width: !! aspectRatio && '100%',
-								minWidth: 'auto',
-								minHeight: 'auto',
-								...borderProps.style
-							} }
-						/>
-					)
-				}
-			</figure>
+			{
+				panic ? null : (
+					<figure { ...useBlockProps( { style: containerStyles } ) }>
+						{
+							media ? (
+								<img
+									src={ mediaUrl }
+									alt={
+										media.alt_text
+											? sprintf(
+													// translators: %s: The image's alt text.
+													__( 'Featured image: %s' ),
+													media.alt_text
+												)
+											: __( 'Featured image' )
+									}
+									style={ imageEditStyles }
+								/>
+							) : (
+								<Placeholder
+									className={ classnames('block-editor-media-placeholder', borderProps.className ) }
+									withIllustration={ true }
+									style={ placeholderStyles }
+								/>
+							)
+						}
+					</figure>
+				)
+			}
+			
 			<InspectorControls>
 				<PanelBody title={ __( 'Settings' ) }>
 					<ToggleControl
