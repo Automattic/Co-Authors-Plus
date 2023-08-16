@@ -9,8 +9,12 @@
 	margin-block-end: 0;
 }
 
-.wp-block-cap-coauthor-feature-image :where(img,svg) {
+.wp-block-cap-coauthor-feature-image :where(img) {
 	display: block;
+	height: auto;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-feature-image {
