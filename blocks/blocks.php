@@ -61,7 +61,15 @@ function coauthors_blocks_provide_author_archive_context( array $context, array 
 		'cap/author' => $author
 	);
 }
-add_action( 'render_block_context', 'coauthors_blocks_provide_author_archive_context', 10, 3 );
+/**
+ * Need $parent_block which was added in 5.9
+ *
+ * @link https://developer.wordpress.org/reference/hooks/render_block_context/
+ */
+if ( is_wp_version_compatible( '5.9' ) ) {
+	add_action( 'render_block_context', 'coauthors_blocks_provide_author_archive_context', 10, 3 );
+}
+
 
 /**
  * Enqueue Store
