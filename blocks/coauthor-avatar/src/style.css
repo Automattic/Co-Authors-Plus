@@ -1,4 +1,4 @@
-.wp-block-cap-coauthor-avatar :where(img,svg) {
+.wp-block-cap-coauthor-avatar :where(img) {
 	display: block;
 }
 

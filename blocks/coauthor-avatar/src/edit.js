@@ -4,6 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls, __experimentalUseBorderProps as useBorderProps, store as blockEditorStore } from '@wordpress/block-editor';
 import { Placeholder, SelectControl, PanelBody, ToggleControl, TextControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+
+import PlaceholderImage from '../../components/placeholder-image';
+
 /**
  * The edit function describes the structure of your block in the context of the
  * editor. This represents what the editor will render when the block is used.
@@ -36,13 +39,13 @@ export default function Edit( { context, attributes, setAttributes } ) {
 	
 	return (
 		<>
-		<div { ...useBlockProps() }>
+		<figure { ...useBlockProps() }>
 			{
 				'' === src ?
 				(
-					<Placeholder
-					className={ classnames('block-editor-media-placeholder', borderProps.className ) }
-						withIllustration={ true }
+					<PlaceholderImage
+						className={borderProps.className}
+						dimensions={{width: size, height: size}}
 						style={ {
 							height: size,
 							width: size,
@@ -53,10 +56,15 @@ export default function Edit( { context, attributes, setAttributes } ) {
 						} }
 					/>
 				) : (
-					<img style={{...borderProps.style}} width={size} height={size} src={`${avatar_urls[size]}`} />
+					<img
+						style={{...borderProps.style}}
+						width={size}
+						height={size}
+						src={`${avatar_urls[size]}`}
+					/>
 				)
 			}
-		</div>
+		</figure>
 		<InspectorControls>
 			<PanelBody title={ __( 'Avatar Settings' ) }>
 				<ToggleControl

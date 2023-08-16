@@ -75,7 +75,7 @@ class CAP_Block_CoAuthor_Avatar {
 		$inner_content = $is_link ? self::add_link( $link, $image, $rel ) : $image;
 
 		return self::get_block_wrapper_function(
-			'div',
+			'figure',
 			get_block_wrapper_attributes()
 		)( $inner_content );
 	}
