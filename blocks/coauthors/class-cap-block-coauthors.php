@@ -120,10 +120,7 @@ class CAP_Block_CoAuthors {
 		if ( empty( $prefix ) ) {
 			return $prefix;
 		}
-		return self::get_block_wrapper_function(
-			'span',
-			'class="wp-block-cap-coauthor__prefix"'
-		)( $prefix );
+		return Templating::render_element('span', 'class="wp-block-cap-coauthor__prefix"', $prefix);
 	}
 
 	/**
@@ -136,10 +133,7 @@ class CAP_Block_CoAuthors {
 		if ( empty( $suffix ) ) {
 			return $suffix;
 		}
-		return self::get_block_wrapper_function(
-			'span',
-			'class="wp-block-cap-coauthor__suffix"'
-		)( $suffix );
+		return Templating::render_element('span', 'class="wp-block-cap-coauthor__suffix"', $suffix);
 	}
 
 	/**
@@ -157,7 +151,7 @@ class CAP_Block_CoAuthors {
 				fn( $content ) => str_replace("\n", '', $content ),
 				// To match JSX from editor, trim whitespace around blocks.
 				'trim',
-				self::get_block_wrapper_function('div', 'class="wp-block-cap-coauthor"')
+				Templating::get_render_element_function('div', 'class="wp-block-cap-coauthor"')
 			),
 			$authors
 		);
@@ -219,7 +213,11 @@ class CAP_Block_CoAuthors {
 			return $separator;
 		}
 
-		return "<span class=\"wp-block-cap-coauthor__separator\">{$separator}</span>";
+		return Templating::render_element(
+			'span',
+			'class="wp-block-cap-coauthor__separator"',
+			$separator
+		);
 	}
 
 	/**
@@ -237,20 +235,11 @@ class CAP_Block_CoAuthors {
 			return $default;
 		}
 
-		return "<span class=\"wp-block-cap-coauthor__separator\">{$last_separator}</span>";
-	}
-
-	/**
-	 * Get Block Wrapper Function
-	 * 
-	 * @param string $element_name
-	 * @param string $attributes
-	 * @return callable
-	 */
-	private static function get_block_wrapper_function( string $element_name, string $attributes ) : callable {
-		return function( string $content ) use ( $element_name, $attributes ) : string {
-			return "<{$element_name} {$attributes}>{$content}</{$element_name}>";
-		};
+		return Templating::render_element(
+			'span',
+			'class="wp-block-cap-coauthor__separator"',
+			$last_separator
+		);
 	}
 
 	/**

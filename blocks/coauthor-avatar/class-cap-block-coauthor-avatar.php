@@ -47,66 +47,54 @@ class CAP_Block_CoAuthor_Avatar {
 		if ( empty( $avatar_urls ) ) {
 			return '';
 		}
-
+		
+		$display_name = $author['display_name'] ?? '';
 		$link    = $author['link'] ?? '';
 		$is_link = '' !== $link && $attributes['isLink'] ?? false;
-		$size    = $attributes['size'] ?? 24;
-		$srcset  = array_map(
-			fn( $url, $size ) => "{$url} {$size}w",
-			array_values( $avatar_urls ),
-			array_keys( $avatar_urls )
-		);
-
-		$attr = get_block_core_post_featured_image_border_attributes( $attributes );
-
-		$image = sprintf(
-			'<img src="%s" width="%s" height="%s" sizes="%s" srcset="%s" style="%s" class="%s">',
-			$avatar_urls[$size],
-			$size,
-			$size,
-			"{$size}px",
-			implode( ', ', $srcset),
-			$attr['style'] ?? '',
-			$attr['class'] ?? ''
-		);
-
 		$rel = $attributes['rel'] ?? '';
 
-		$inner_content = $is_link ? self::add_link( $link, $image, $rel ) : $image;
-
-		return self::get_block_wrapper_function(
-			'figure',
-			get_block_wrapper_attributes()
-		)( $inner_content );
-	}
-
-	/**
-	 * Add Link
-	 * 
-	 * @param string $link
-	 * @param string $content
-	 * @param null|string $rel
-	 * @return string
-	 */
-	public static function add_link( string $link, string $content, ?string $rel = '' ) : string {
-		return sprintf(
-			'<a href="%s" rel="%s">%s</a>',
-			$link,
-			$rel,
-			$content
+		$size    = $attributes['size'] ?? 24;
+		$srcset  = array_map(
+			fn( $size, $url ) => "{$url} {$size}w",
+			array_keys( $avatar_urls ),
+			array_values( $avatar_urls )
 		);
-	}
 
-	/**
-	 * Get Block Wrapper Function
-	 * 
-	 * @param string $element_name
-	 * @param string $attributes
-	 * @return callable
-	 */
-	private static function get_block_wrapper_function( string $element_name, string $attributes ) : callable {
-		return function( string $content ) use ( $element_name, $attributes ) : string {
-			return "<{$element_name} {$attributes}>{$content}</{$element_name}>";
-		};
+		$image_attributes = Templating::render_attributes(
+			array_merge(
+				get_block_core_post_featured_image_border_attributes( $attributes ),
+				array(
+					'src'    => $avatar_urls[$size],
+					'width'  => $size,
+					'height' => $size,
+					'sizes'  => "{$size}px",
+					'srcset' => implode( ', ', $srcset),
+				)
+			)
+		);
+
+		$image = Templating::render_self_closing_element(
+			'img',
+			$image_attributes
+		);
+
+		if ( $is_link ) {
+			$link_attributes = Templating::render_attributes(
+				array(
+					'href'  => $link,
+					'rel'   => $rel,
+					'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
+				)
+			);
+			$inner_content = Templating::render_element('a', $link_attributes, $image);
+		} else {
+			$inner_content = $image;
+		}
+
+		return Templating::render_element(
+			'figure',
+			get_block_wrapper_attributes(),
+			$inner_content
+		);
 	}
 }

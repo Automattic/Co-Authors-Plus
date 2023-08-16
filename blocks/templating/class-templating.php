@@ -1,0 +1,84 @@
+<?php
+/**
+ * Templating
+ */
+
+/**
+ * Templating
+ */
+class Templating {
+
+	/**
+	 * Render Element
+	 */
+	public static function render_element( string $name, ?string $attributes = '', ?string $content = '' ) : string {
+		return "<{$name} $attributes>{$content}</{$name}>";
+	}
+
+	/**
+	 * Get Render Element Function
+	 * Dependency inject render_element so you can use in array_map or add_filter.
+	 * 
+	 * @param string      $name
+	 * @param null|string $attributes
+	 * @return callable
+	 */
+	public static function get_render_element_function( string $name, ?string $attributes = '' ) : callable {
+		return function( string $content ) use ( $name, $attributes ) : string {
+			return self::render_element( $name, $attributes, $content );
+		};
+	}
+
+	/**
+	 * Render Self Closing Element
+	 * 
+	 * @param string      $name
+	 * @param null|string $attributes
+	 * @return string
+	 */
+	public static function render_self_closing_element( string $name, ?string $attributes = '' ) : string {
+		return "<{$name} $attributes/>";
+	}
+
+	/**
+	 * Render Attribute String
+	 *
+	 * @param string|int $key Attribute key.
+	 * @param mixed      $value Attribute value. For boolean attributes, set value the same as the key.
+	 * @return string
+	 */
+	public static function render_attribute_string( string|int $key, $value ) : string {
+		if ( empty( $value ) ) {
+			return '';
+		}
+		if ( $key === $value ) {
+			return $key;
+		}
+		return sprintf( '%s="%s"', $key, esc_attr( $value ) );
+	}
+
+	/**
+	 * Render Attributes
+	 * 
+	 * @param array $attributes An associative array of attributes and their values.
+	 */
+	public static function render_attributes( array $attributes ) : string {
+		
+		$attribute_strings = array_map(
+			array( __CLASS__, 'render_attribute_string' ),
+			array_keys( $attributes ),
+			array_values( $attributes )
+		);
+
+		$validated_attribute_strings = array_values(
+			array_filter(
+				$attribute_strings,
+				function( $value ) {
+					return is_string( $value ) && '' !== $value;
+				}
+			)
+		);
+
+		return implode( ' ', $validated_attribute_strings );
+	}
+}

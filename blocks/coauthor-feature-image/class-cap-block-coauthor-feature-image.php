@@ -43,6 +43,8 @@ class CAP_Block_CoAuthor_Feature_Image {
 		}
 
 		$featured_media_id = absint( $author['featured_media'] ?? 0 );
+		$display_name      = $author['display_name'] ?? '';
+		$link              = $author['link'] ?? '';
 
 		if ( 0 === $featured_media_id ) {
 			return '';
@@ -65,38 +67,27 @@ class CAP_Block_CoAuthor_Feature_Image {
 			$attributes['width'] = 'auto';
 		}
 
-		$style_attribute_map = array(
-			array(
-				'prop' => 'width',
-				'attr' => 'width'
-			),
-			array(
-				'prop' => 'height',
-				'attr' => 'height'
-			),
-			array(
-				'prop' => 'object-fit',
-				'attr' => 'scale'
-			),
-			array(
-				'prop' => 'aspect-ratio',
-				'attr' => 'aspectRatio'
-			)
+		$style_attribute_key_map = array(
+			'width'       => 'width',
+			'height'      => 'height',
+			'scale'       => 'object-fit',
+			'aspectRatio' => 'aspect-ratio',
 		);
 
 		$styles = array_map(
-			function( $style ) use ( $attributes ) : string {
-				if ( empty( $attributes[$style['attr']] ) ) {
+			function( string $key, string $style ) use ( $attributes ) : string {
+				if ( empty( $attributes[$key] ) ) {
 					return '';
 				}
 				return sprintf(
 					"%s;",
 					safecss_filter_attr(
-						"{$style['prop']}:{$attributes[$style['attr']]}"
+						"{$style}:{$attributes[$key]}"
 					)
 				);
 			},
-			$style_attribute_map
+			array_keys( $style_attribute_key_map ),
+			array_values( $style_attribute_key_map )
 		);
 
 		$image_attributes = array_merge(
@@ -108,31 +99,22 @@ class CAP_Block_CoAuthor_Feature_Image {
 		);
 
 		$image_attributes['style'] .= implode( '', $styles );
-		$wrapper_attributes = get_block_wrapper_attributes();
+
 		$feature_image = wp_get_attachment_image( $featured_media_id, $attributes['sizeSlug'], false, $image_attributes );
 
-		if ( true === $attributes['isLink'] ) {
-			$inner_content = self::add_link( $author['link'], $feature_image, $attributes['rel'] );
+		if ( '' !== $link && true === $attributes['isLink'] ) {
+			$link_attributes = Templating::render_attributes(
+				array(
+					'href'  => $author['link'],
+					'rel'   => $attributes['rel'],
+					'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
+				)
+			);
+			$inner_content = Templating::render_element(  'a', $link_attributes, $feature_image );
 		} else {
 			$inner_content = $feature_image;
 		}
 
-		return "<figure {$wrapper_attributes}>{$inner_content}</figure>";
-	}
-	/**
-	 * Add Link
-	 * 
-	 * @param string $link
-	 * @param string $content
-	 * @param null|string $rel
-	 * @return string
-	 */
-	public static function add_link( string $link, string $content, ?string $rel = '' ) : string {
-		return sprintf(
-			'<a href="%s" rel="%s">%s</a>',
-			$link,
-			$rel,
-			$content
-		);
+		return Templating::render_element( 'figure', get_block_wrapper_attributes(), $inner_content );
 	}
 }

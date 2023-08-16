@@ -48,8 +48,8 @@ class CAP_Block_CoAuthor_Description {
 			return '';
 		}
 
-		return sprintf(
-			'<div %s>%s</div>',
+		return Templating::render_element(
+			'div',
 			get_block_wrapper_attributes(
 				self::get_custom_block_wrapper_attributes( $attributes )
 			),

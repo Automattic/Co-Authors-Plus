@@ -1,4 +1,6 @@
 <?php
+
+require_once dirname( __FILE__ ) . '/templating/class-templating.php';
 require_once dirname( __FILE__ ) . '/coauthors/class-cap-block-coauthors.php';
 require_once dirname( __FILE__ ) . '/coauthor-avatar/class-cap-block-coauthor-avatar.php';
 require_once dirname( __FILE__ ) . '/coauthor-description/class-cap-block-coauthor-description.php';

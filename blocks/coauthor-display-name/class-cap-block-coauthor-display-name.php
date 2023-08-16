@@ -48,24 +48,24 @@ class CAP_Block_CoAuthor_Display_Name {
 			return '';
 		}
 
-		$link    = $author['link'] ?? '';
-		$is_link = '' !== $link && $attributes['isLink'] ?? false;
-		$rel     = $attributes['rel'] ?? '';
+		$link = $author['link'] ?? '';
+		$rel  = $attributes['rel'] ?? '';
 
-		if ( $is_link ) {
-			$inner_content = sprintf(
-				'<a rel="%s" href="%s" title="%s">%s</a>',
-				$rel,
-				$link,
-				sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
-				$display_name
+		if ( '' !== $link && true === $attributes['isLink'] ) {
+			$link_attributes = Templating::render_attributes(
+				array(
+					'href'  => $link,
+					'rel'   => $rel,
+					'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
+				)
 			);
+			$inner_content = Templating::render_element( 'a', $link_attributes, $display_name );
 		} else {
 			$inner_content = $display_name;
 		}
 
-		return sprintf(
-			'<p %s>%s</p>',
+		return Templating::render_element(
+			'p',
 			get_block_wrapper_attributes(
 				self::get_custom_block_wrapper_attributes( $attributes )
 			),
