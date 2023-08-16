@@ -67,7 +67,7 @@ add_action( 'render_block_context', 'coauthors_blocks_provide_author_archive_con
  * Enqueue Store
  */
 function coauthors_blocks_enqueue_store() : void {
-	$asset = require_once dirname( __FILE__ ) . '/store/build/index.asset.php';
+	$asset = require dirname( __FILE__ ) . '/store/build/index.asset.php';
 
 	wp_enqueue_script(
 		'coauthors-blocks-store',
