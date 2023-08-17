@@ -9,7 +9,7 @@ import {
 	__experimentalUseBorderProps as useBorderProps,
 	InspectorControls,
 } from '@wordpress/block-editor';
-import { TextControl, PanelBody, ToggleControl } from '@wordpress/components';
+import { TextControl, PanelBody, ToggleControl, SelectControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 import DimensionControls from './dimension-controls';
@@ -27,7 +27,7 @@ import './editor.scss';
  */
 export default function Edit( { attributes, setAttributes, context, clientId } ) {
 
-	const { aspectRatio, height, isLink, rel, scale, sizeSlug, width  } = attributes;
+	const { aspectRatio, height, isLink, rel, scale, sizeSlug, verticalAlign, width } = attributes;
 
 	// Author
 	const authorPlaceholder = useSelect(
@@ -81,6 +81,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 										height: ! height && width ? 'auto' : height,
 										aspectRatio,
 										objectFit: scale,
+										verticalAlign,
 										...borderProps.style
 									}}
 									width={ dimensions.width }
@@ -95,6 +96,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 										height: ! height && width ? 'auto' : height,
 										aspectRatio,
 										objectFit: scale,
+										verticalAlign,
 										...borderProps.style
 									}}
 								/>
@@ -104,7 +106,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 				)
 			}
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings' ) }>
+				<PanelBody title={ __( 'Feature Image Settings' ) }>
 					<ToggleControl
 						__nextHasNoMarginBottom
 						label={ __( 'Make feature image a link to author archive.' ) }
@@ -122,6 +124,28 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 						/>
 					) }
 				</PanelBody>
+				<PanelBody initialOpen={false} title={__('Coauthors Layout')}>
+				<SelectControl
+					label={ __( 'Vertical align' ) }
+					value={ verticalAlign }
+					options={ [
+						{value: '', label: 'Middle ( Default )'},
+						{value: 'baseline', label: 'Baseline'},
+						{value: 'bottom', label: 'Bottom'},
+						{value: 'sub', label: 'Sub'},
+						{value: 'super', label: 'Super'},
+						{value: 'text-bottom', label: 'Text Bottom'},
+						{value: 'text-top', label: 'Text Top'},
+						{value: 'top', label: 'Top'},
+					] }
+					onChange={ ( value ) => {
+						setAttributes( {
+							verticalAlign: '' === value ? undefined : value
+						} );
+					} }
+					help={ __( 'Vertical alignment applies when displaying coauthors in the "inline" layout.' )}
+				/>
+			</PanelBody>
 			</InspectorControls>
 		</>
 	);

@@ -62,6 +62,9 @@
     },
     "sizeSlug": {
       "type": "string"
+    },
+    "verticalAlign": {
+      "type": "string"
     }
   },
   "textdomain": "coauthor-feature-image",

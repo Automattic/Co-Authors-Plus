@@ -44,6 +44,9 @@
     },
     "rel": {
       "type": "string"
+    },
+    "verticalAlign": {
+      "type": "string"
     }
   },
   "textdomain": "coauthor-avatar",

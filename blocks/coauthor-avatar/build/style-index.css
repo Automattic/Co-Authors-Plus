@@ -1,1 +1,1 @@
-.wp-block-cap-coauthor-avatar :where(img){display:block}.wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-avatar :where(img){vertical-align:middle}
+.wp-block-cap-coauthor-avatar:where(figure){-webkit-margin-after:0;margin-block-end:0}.wp-block-cap-coauthor-avatar :where(img){display:block}.wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-avatar :where(img){vertical-align:middle}

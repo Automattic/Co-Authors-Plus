@@ -18,6 +18,9 @@
 }
 
 .wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-feature-image {
-	display: inline-flex;
+	display: inline;
+}
+
+.wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-feature-image :where(img) {
 	vertical-align: middle;
 }

@@ -17,7 +17,7 @@ import PlaceholderImage from '../../components/placeholder-image';
  */
 export default function Edit( { context, attributes, setAttributes } ) {
 
-	const { isLink, rel, size } = attributes;
+	const { isLink, rel, size, verticalAlign } = attributes;
 	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
 	const author = context['cap/author'] || authorPlaceholder;
 	const { avatar_urls } = author;
@@ -52,12 +52,13 @@ export default function Edit( { context, attributes, setAttributes } ) {
 							minWidth: 'auto',
 							minHeight: 'auto',
 							padding: 0,
+							verticalAlign, 
 							...borderProps.style
 						} }
 					/>
 				) : (
 					<img
-						style={{...borderProps.style}}
+						style={{...borderProps.style, verticalAlign}}
 						width={size}
 						height={size}
 						src={`${avatar_urls[size]}`}
@@ -67,6 +68,16 @@ export default function Edit( { context, attributes, setAttributes } ) {
 		</figure>
 		<InspectorControls>
 			<PanelBody title={ __( 'Avatar Settings' ) }>
+				<SelectControl
+					label={ __( 'Avatar size' ) }
+					value={ size }
+					options={ sizes }
+					onChange={ ( nextSize ) => {
+						setAttributes( {
+							size: Number( nextSize )
+						} );
+					} }
+				/>
 				<ToggleControl
 					label={ __( 'Make avatar a link to author archive.' ) }
 					onChange={ () => setAttributes( { isLink: ! isLink } ) }
@@ -82,15 +93,27 @@ export default function Edit( { context, attributes, setAttributes } ) {
 						}
 					/>
 				) }
+			</PanelBody>
+			<PanelBody initialOpen={false} title={__('Coauthors Layout')}>
 				<SelectControl
-					label={ __( 'Avatar size' ) }
-					value={ size }
-					options={ sizes }
-					onChange={ ( nextSize ) => {
+					label={ __( 'Vertical align' ) }
+					value={ verticalAlign }
+					options={ [
+						{value: '', label: 'Middle ( Default )'},
+						{value: 'baseline', label: 'Baseline'},
+						{value: 'bottom', label: 'Bottom'},
+						{value: 'sub', label: 'Sub'},
+						{value: 'super', label: 'Super'},
+						{value: 'text-bottom', label: 'Text Bottom'},
+						{value: 'text-top', label: 'Text Top'},
+						{value: 'top', label: 'Top'},
+					] }
+					onChange={ ( value ) => {
 						setAttributes( {
-							size: Number( nextSize )
+							verticalAlign: '' === value ? undefined : value
 						} );
 					} }
+					help={ __( 'Vertical alignment applies when displaying coauthors in the "inline" layout.' )}
 				/>
 			</PanelBody>
 		</InspectorControls>

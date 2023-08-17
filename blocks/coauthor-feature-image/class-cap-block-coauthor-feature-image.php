@@ -52,13 +52,14 @@ class CAP_Block_CoAuthor_Feature_Image {
 
 		$attributes = array_merge(
 			array(
-				'width'       => '',
-				'height'      => '',
-				'sizeSlug'    => 'thumbnail',
-				'scale'       => '',
-				'aspectRatio' => '',
-				'isLink'      => false,
-				'rel'         => ''
+				'width'         => '',
+				'height'        => '',
+				'sizeSlug'      => 'thumbnail',
+				'scale'         => '',
+				'aspectRatio'   => '',
+				'isLink'        => false,
+				'rel'           => '',
+				'verticalAlign' => '',
 			),
 			$attributes
 		);
@@ -68,10 +69,11 @@ class CAP_Block_CoAuthor_Feature_Image {
 		}
 
 		$style_attribute_key_map = array(
-			'width'       => 'width',
-			'height'      => 'height',
-			'scale'       => 'object-fit',
-			'aspectRatio' => 'aspect-ratio',
+			'width'         => 'width',
+			'height'        => 'height',
+			'scale'         => 'object-fit',
+			'aspectRatio'   => 'aspect-ratio',
+			'verticalAlign' => 'vertical-align'
 		);
 
 		$styles = array_map(
