@@ -8,6 +8,7 @@
 	"icon": "smiley",
 	"description": "Display a co-author's avatar",
 	"supports": {
+		"align": [ "left", "right", "center" ],
 		"html": false,
 		"__experimentalBorder": {
 			"color": true,
@@ -52,5 +53,4 @@
 	"textdomain": "coauthor-avatar",
 	"editorScript": "file:./index.js",
 	"style": "file:./style-index.css"
-	
 }

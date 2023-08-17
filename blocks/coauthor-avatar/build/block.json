@@ -8,6 +8,11 @@
   "icon": "smiley",
   "description": "Display a co-author's avatar",
   "supports": {
+    "align": [
+      "left",
+      "right",
+      "center"
+    ],
     "html": false,
     "__experimentalBorder": {
       "color": true,

@@ -1,8 +1,6 @@
-import classnames from 'classnames';
-
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls, __experimentalUseBorderProps as useBorderProps, store as blockEditorStore } from '@wordpress/block-editor';
-import { Placeholder, SelectControl, PanelBody, ToggleControl, TextControl } from '@wordpress/components';
+import { SelectControl, PanelBody, ToggleControl, TextControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
 import PlaceholderImage from '../../components/placeholder-image';
@@ -95,13 +93,14 @@ export default function Edit( { context, attributes, setAttributes } ) {
 				) }
 			</PanelBody>
 			<PanelBody initialOpen={false} title={__('Coauthors Layout')}>
-				<SelectControl
+			<SelectControl
 					label={ __( 'Vertical align' ) }
 					value={ verticalAlign }
 					options={ [
-						{value: '', label: 'Middle ( Default )'},
+						{value: '', label: 'Default'},
 						{value: 'baseline', label: 'Baseline'},
 						{value: 'bottom', label: 'Bottom'},
+						{value: 'middle', label: 'Middle'},
 						{value: 'sub', label: 'Sub'},
 						{value: 'super', label: 'Super'},
 						{value: 'text-bottom', label: 'Text Bottom'},
@@ -113,7 +112,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 							verticalAlign: '' === value ? undefined : value
 						} );
 					} }
-					help={ __( 'Vertical alignment applies when displaying coauthors in the "inline" layout.' )}
+					help={ __( 'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.' )}
 				/>
 			</PanelBody>
 		</InspectorControls>

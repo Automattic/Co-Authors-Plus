@@ -16,8 +16,6 @@ import DimensionControls from './dimension-controls';
 import PlaceholderImage from '../../components/placeholder-image';
 import { getAvailableSizeSlug, getMediaSrc, getMediaDimensions, getPlaceholderImageDimensions } from './utils'
 
-import './editor.scss';
-
 /**
  * Edit
  *
@@ -129,9 +127,10 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 					label={ __( 'Vertical align' ) }
 					value={ verticalAlign }
 					options={ [
-						{value: '', label: 'Middle ( Default )'},
+						{value: '', label: 'Default'},
 						{value: 'baseline', label: 'Baseline'},
 						{value: 'bottom', label: 'Bottom'},
+						{value: 'middle', label: 'Middle'},
 						{value: 'sub', label: 'Sub'},
 						{value: 'super', label: 'Super'},
 						{value: 'text-bottom', label: 'Text Bottom'},
@@ -143,7 +142,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 							verticalAlign: '' === value ? undefined : value
 						} );
 					} }
-					help={ __( 'Vertical alignment applies when displaying coauthors in the "inline" layout.' )}
+					help={ __( 'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.' )}
 				/>
 			</PanelBody>
 			</InspectorControls>

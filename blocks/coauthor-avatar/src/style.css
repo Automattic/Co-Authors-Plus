@@ -1,11 +1,33 @@
-.wp-block-cap-coauthor-avatar:where(figure) {
-	margin-block-end: 0;
+/* Default Layout */
+
+.wp-block-cap-coauthor-avatar {
+	margin-bottom: 0;
 }
 
 .wp-block-cap-coauthor-avatar :where(img) {
-	display: block;
+	height: auto;
+	max-width: 100%;
+	vertical-align: bottom;
+}
+
+/* Inline Layout */
+
+.wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-avatar {
+	display: inline;
 }
 
 .wp-block-cap-coauthors.is-layout-cap-inline .wp-block-cap-coauthor-avatar :where(img) {
 	vertical-align: middle;
+}
+
+/* Align wide, full */
+
+.wp-block-cap-coauthor-avatar:is(.alignfull,.alignwide) :where(img) {
+	width: 100%;
+}
+
+/* Align left, right, center */
+
+.wp-block-cap-coauthor-avatar:is(.alignleft,.alignright,.aligncenter) {
+	display: table;
 }
