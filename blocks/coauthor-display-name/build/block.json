@@ -47,6 +47,10 @@
       "type": "string",
       "default": "author"
     },
+    "tagName": {
+      "type": "string",
+      "default": "p"
+    },
     "textAlign": {
       "type": "string"
     }

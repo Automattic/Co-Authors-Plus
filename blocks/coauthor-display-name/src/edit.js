@@ -11,7 +11,7 @@ import {
 	BlockControls,
 	store as blockEditorStore
 } from '@wordpress/block-editor';
-import { TextControl, PanelBody, ToggleControl } from '@wordpress/components';
+import { TextControl, PanelBody, ToggleControl, SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
@@ -26,10 +26,12 @@ import classnames from 'classnames';
  */
 export default function Edit( { context, attributes, setAttributes } ) {
 
-	const { isLink, rel, textAlign } = attributes;
+	const { isLink, rel, tagName, textAlign } = attributes;
 	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
 	const author = context['cap/author'] || authorPlaceholder;
 	const { link, display_name } = author;
+
+	const TagName = tagName;
 
 	return (
 		<>
@@ -41,7 +43,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 				} }
 			/>
 		</BlockControls>
-		<p { ...useBlockProps({ className: classnames( {[`has-text-align-${ textAlign }`]: textAlign} )}) }>
+		<TagName { ...useBlockProps({ className: classnames( {[`has-text-align-${ textAlign }`]: textAlign} )}) }>
 			{
 				isLink ? (
 					<a
@@ -53,7 +55,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 					</a>
 				) : display_name
 			}
-		</p>
+		</TagName>
 		<InspectorControls>
 			<PanelBody title={ __( 'Settings' ) }>
 				<ToggleControl
@@ -75,6 +77,25 @@ export default function Edit( { context, attributes, setAttributes } ) {
 					</>
 				) }
 			</PanelBody>
+		</InspectorControls>
+		<InspectorControls group="advanced">
+			<SelectControl
+				__nextHasNoMarginBottom
+				label={ __( 'HTML element' ) }
+				options={ [
+					{ label: __( 'Default (<p>)' ), value: 'p' },
+					{ label: '<span>', value: 'span' },
+					{ label: '<h1>', value: 'h1' },
+					{ label: '<h2>', value: 'h2' },
+					{ label: '<h3>', value: 'h3' },
+					{ label: '<h4>', value: 'h4' },
+					{ label: '<h5>', value: 'h5' },
+					{ label: '<h6>', value: 'h6' },
+				] }
+				value={ tagName }
+				onChange={ (value) => setAttributes( {tagName: value}) }
+				// help={ htmlElementMessages[ tagName ] }
+			/>
 		</InspectorControls>
 		</>
 	);

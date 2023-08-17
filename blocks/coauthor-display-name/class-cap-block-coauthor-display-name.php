@@ -43,19 +43,27 @@ class CAP_Block_CoAuthor_Display_Name {
 		}
 
 		$display_name = $author['display_name'] ?? '';
+		$link         = $author['link'] ?? '';
 
 		if ( '' === $display_name ) {
 			return '';
 		}
 
-		$link = $author['link'] ?? '';
-		$rel  = $attributes['rel'] ?? '';
+		$attributes = array_merge(
+			array(
+				'isLink'    => false,
+				'rel'       => '',
+				'tagName'   => 'p',
+				'textAlign' => '',
+			),
+			$attributes
+		);
 
 		if ( '' !== $link && true === $attributes['isLink'] ) {
 			$link_attributes = Templating::render_attributes(
 				array(
 					'href'  => $link,
-					'rel'   => $rel,
+					'rel'   => $attributes['rel'],
 					'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
 				)
 			);
@@ -64,13 +72,25 @@ class CAP_Block_CoAuthor_Display_Name {
 			$inner_content = $display_name;
 		}
 
+		$tag_name = self::sanitize_tag_name( $attributes['tagName'] );
+
 		return Templating::render_element(
-			'p',
+			$tag_name,
 			get_block_wrapper_attributes(
 				self::get_custom_block_wrapper_attributes( $attributes )
 			),
 			$inner_content
 		);
+	}
+
+	/**
+	 * Sanitize Tag Name
+	 */
+	public static function sanitize_tag_name( string $tag_name ) : string {
+		if ( in_array( $tag_name, array_keys( wp_kses_allowed_html('post') ), true ) ) {
+			return $tag_name;
+		}
+		return 'p';
 	}
 
 	/**
