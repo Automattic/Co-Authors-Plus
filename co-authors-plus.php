@@ -1860,8 +1860,8 @@ class CoAuthors_Plus {
 		}
 
 		// Do not filter when on the user screen
-		$current_screen = get_current_screen();
-		if ( isset( $current_screen->parent_base ) && 'users' == $current_screen->parent_base ) {
+		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! is_null( $current_screen ) && isset( $current_screen->parent_base ) && 'users' === $current_screen->parent_base ) {
 			return $args;
 		}
 
