@@ -13,19 +13,20 @@ jobs:
 
     strategy:
       matrix:
-        wordpress: [ '5.7', '6.2' ]
+        wordpress: [ '5.7', '6.3' ]
         php: [ '7.1', '7.4', '8.0', '8.2' ]
         allowed_failure: [ false ]
         include:
-          - php: '8.2'
-            extensions: pcov
-            ini-values: pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
-            coverage: pcov
-            allowed_failure: false
+          # Check upcoming WP.
           - php: '8.2'
             wordpress: 'trunk'
             allowed_failure: true
+          # Check upcoming PHP.
+          - php: '8.3'
+            wordpress: 'latest'
+            allowed_failure: true
         exclude:
+          # WordPress 5.7 doesn't support PHP 8.2.
           - php: '8.2'
             wordpress: '5.7'
       fail-fast: false
