@@ -339,6 +339,8 @@ class CoAuthors_Plus {
 				if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
 					$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
 					if ( is_object( $guest_author ) ) {
+						$guest_author->is_wp_user = true; // Important not to lose the fact that this is a WP user.
+						$guest_author->wp_user = $user;
 						$user = $guest_author;
 					}
 				}
@@ -1001,8 +1003,8 @@ class CoAuthors_Plus {
 		if ( empty( $post_author_user )
 			|| ! in_array( $post_author_user->user_login, $coauthors ) ) {
 			foreach ( $coauthor_objects as $coauthor_object ) {
-				if ( 'wpuser' == $coauthor_object->type ) {
-					$new_author = $coauthor_object;
+				if ( isset( $coauthor_object->is_wp_user ) && $coauthor_object->is_wp_user ) {
+					$new_author = $coauthor_object->wp_user;
 					break;
 				}
 			}
