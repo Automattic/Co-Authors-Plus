@@ -1,15 +1,27 @@
 <?php
+/**
+ * Co-Authors Plus
+ *
+ * @package           CoAuthors
+ * @author            Automattic
+ * @copyright         2008-onwards Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter, Automattic, and contributors.
+ * @license           GPL-2.0-or-later
+ *
+ * @wordpress-plugin
+ * Plugin Name:       Co-Authors Plus
+ * Plugin URI:        https://wordpress.org/plugins/co-authors-plus/
+ * Description:       Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
+ * Version:           3.5.13
+ * Requires at least: 4.1
+ * Requires PHP:      5.6
+ * Author:            Mohammad Jangda, Daniel Bachhuber, Automattic
+ * Author URI:        https://automattic.com
+ * Text Domain:       co-authors-plus
+ * License:           GPL v2 or later
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ */
+
 /*
-Plugin Name: Co-Authors Plus
-Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
-Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 3.5.13
-Author: Mohammad Jangda, Daniel Bachhuber, Automattic
-Text Domain: co-authors-plus
-Copyright: 2008-2015 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
-
------------------
-
 Glossary:
 
 User - a WordPress user account
