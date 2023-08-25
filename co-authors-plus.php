@@ -21,15 +21,6 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-/*
-Glossary:
-
-User - a WordPress user account
-Guest author - a CAP-created co-author
-Co-author - in the context of a single post, a guest author or user assigned to the post alongside others
-Author - user with the role of author
-*/
-
 define( 'COAUTHORS_PLUS_VERSION', '3.5.13' );
 
 require_once dirname( __FILE__ ) . '/template-tags.php';
