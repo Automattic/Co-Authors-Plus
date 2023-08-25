@@ -1,37 +1,25 @@
 <?php
-/*
-Plugin Name: Co-Authors Plus
-Plugin URI: http://wordpress.org/extend/plugins/co-authors-plus/
-Description: Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
-Version: 3.5.13
-Author: Mohammad Jangda, Daniel Bachhuber, Automattic
-Text Domain: co-authors-plus
-Copyright: 2008-2015 Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter
-
-GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
------------------
-
-Glossary:
-
-User - a WordPress user account
-Guest author - a CAP-created co-author
-Co-author - in the context of a single post, a guest author or user assigned to the post alongside others
-Author - user with the role of author
-*/
+/**
+ * Co-Authors Plus
+ *
+ * @package           CoAuthors
+ * @author            Automattic
+ * @copyright         2008-onwards Shared and distributed between Mohammad Jangda, Daniel Bachhuber, Weston Ruter, Automattic, and contributors.
+ * @license           GPL-2.0-or-later
+ *
+ * @wordpress-plugin
+ * Plugin Name:       Co-Authors Plus
+ * Plugin URI:        https://wordpress.org/plugins/co-authors-plus/
+ * Description:       Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
+ * Version:           3.5.13
+ * Requires at least: 4.1
+ * Requires PHP:      5.6
+ * Author:            Mohammad Jangda, Daniel Bachhuber, Automattic
+ * Author URI:        https://automattic.com
+ * Text Domain:       co-authors-plus
+ * License:           GPL v2 or later
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ */
 
 define( 'COAUTHORS_PLUS_VERSION', '3.5.13' );
 
