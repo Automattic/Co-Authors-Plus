@@ -1008,8 +1008,15 @@ class CoAuthors_Plus {
 					break;
 				}
 			}
-			// Uh oh, no WP_Users assigned to the post
-			if ( empty( $new_author ) ) {
+
+			/*
+			 * If setting a fresh group of authors for a post, (i.e. $append === false),
+			 * then perhaps one of those authors should be a WP_USER. However,
+			 * if $append === true, and we are perhaps unable to find a
+			 * WP_USER (perhaps none was given), we don't really
+			 * care whether post_author should be updated.
+			 * */
+			if ( false === $append && empty( $new_author ) ) {
 				return false;
 			}
 
