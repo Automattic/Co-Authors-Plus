@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.14] - 2023-08-21
+
+### Fixed
+* Check `get_current_screen()` exists #973
+* Fix Ajax-suggested user and guest author ID collision #974
+* Fix PHP Warnings on accessing `$coauthor` instance #975
+* i18n: Add text domain header #984
+
+### Maintenance
+* CI: Update integration tests environnments #979
+* CLI: Add Behat functional tests #980
+* Create LICENSE file #985
+* Refresh plugin headers #986
+
 ## [3.5.13] - 2023-07-31
 
 ### Fixed
@@ -442,6 +456,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.5.14]: https://github.com/automattic/co-authors-plus/compare/3.5.13...3.5.14
 [3.5.13]: https://github.com/automattic/co-authors-plus/compare/3.5.12...3.5.13
 [3.5.12]: https://github.com/automattic/co-authors-plus/compare/3.5.11...3.5.12
 [3.5.11]: https://github.com/automattic/co-authors-plus/compare/3.5.10...3.5.11
