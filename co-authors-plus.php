@@ -304,51 +304,76 @@ class CoAuthors_Plus {
 		if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
 			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value, $force );
 			if ( is_object( $guest_author ) ) {
+				if ( isset( $guest_author->linked_account ) ) {
+					$user = $this->get_user_by( 'login', $guest_author->linked_account );
+
+					if ( ! is_null( $user ) ) {
+						$guest_author->is_wp_user = true; // Important not to lose the fact that this is a WP user.
+						$guest_author->wp_user = $user;
+					}
+				}
+
 				return $guest_author;
+			} else {
+				// Guest Author was not found, so let's see if we are searching for a WP_User
+				$user = $this->get_user_by( $key, $value );
+
+				if ( is_null( $user ) ) {
+					return false;
+				}
+
+				// At this point we have a valid $user.
+				$user->type = 'wpuser';
+
+				$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
+				if ( is_object( $guest_author ) ) {
+					$guest_author->is_wp_user = true; // Important not to lose the fact that this is a WP user.
+					$guest_author->wp_user = $user;
+					$user = $guest_author;
+				}
+
+				return $user;
 			}
 		}
 
-		switch ( $key ) {
-			case 'id':
-			case 'login':
-			case 'user_login':
-			case 'email':
-			case 'user_nicename':
-			case 'user_email':
-				if ( 'user_login' == $key ) {
-					$key = 'login';
-				}
-				if ( 'user_email' == $key ) {
-					$key = 'email';
-				}
-				if ( 'user_nicename' == $key ) {
-					$key = 'slug';
-				}
-				$user = get_user_by( $key, $value );
-				if ( ! $user && ( 'login' == $key || 'slug' == $key ) ) {
-					// Re-try lookup without prefixed value if no results found.
-					$value = preg_replace( '#^cap\-#', '', $value );
-					$user  = get_user_by( $key, $value );
-				}
-				if ( ! $user ) {
-					return false;
-				}
-				$user->type = 'wpuser';
-				// However, if guest authors are enabled and there's a guest author linked to this
-				// user account, we want to use that instead
-				if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
-					$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
-					if ( is_object( $guest_author ) ) {
-						$guest_author->is_wp_user = true; // Important not to lose the fact that this is a WP user.
-						$guest_author->wp_user = $user;
-						$user = $guest_author;
-					}
-				}
-				return $user;
-				break;
-		}
 		return false;
+	}
 
+	/**
+	 * @param string $key Key to search by, i.e. 'id', 'login', 'user_login', 'email', 'user_email', 'user_nicename'
+	 * @param string $value Value to search for.
+	 *
+	 * @return WP_User|null
+	 */
+	protected function get_user_by( $key, $value ) {
+		$acceptable_keys = [
+			'id'            => 'id',
+			'login'         => 'login',
+			'user_login'    => 'login',
+			'email'         => 'email',
+			'user_email'    => 'email',
+			'user_nicename' => 'slug',
+		];
+
+		if ( ! array_key_exists( $key, $acceptable_keys ) ) {
+			return null;
+		}
+
+		$key = $acceptable_keys[ $key ];
+
+		$user = get_user_by( $key, $value );
+
+		if ( ! $user && ( 'login' == $key || 'slug' == $key ) ) {
+			// Re-try lookup without prefixed value if no results found.
+			$value = preg_replace( '#^cap\-#', '', $value );
+			$user = get_user_by( $key, $value );
+		}
+
+		if ( false === $user ) {
+			return null;
+		}
+
+		return $user;
 	}
 
 	/**
