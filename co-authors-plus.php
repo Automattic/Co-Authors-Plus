@@ -334,9 +334,17 @@ class CoAuthors_Plus {
 
 				return $user;
 			}
-		}
+		} else {
+			$user = $this->get_user_by( $key, $value );
 
-		return false;
+			if ( is_null( $user ) ) {
+				return false;
+			}
+
+			$user->type = 'wpuser';
+
+			return $user;
+		}
 	}
 
 	/**
