@@ -61,7 +61,7 @@ const AuthorsSelection = ( { selectedAuthors, updateAuthors } ) => {
 
 		return (
 			<div key={ value } className="cap-author">
-				<Flex align="flex-start">
+				<Flex align="center">
 					<FlexItem className="cap-author-flex-item">
 						<span>{ display }</span>
 					</FlexItem>
