@@ -1240,7 +1240,7 @@ class CoAuthors_Guest_Authors {
 		foreach ( $fields as $field ) {
 
 			// Make sure required fields are there
-			if ( isset( $field['required'] ) && $field['required'] && empty( $args[ $field['key'] ] ) ) {
+			if ( ! empty( $field['required'] ) && empty( $args[ $field['key'] ] ) ) {
 				/* translators: Name of a form field. */
 				return new WP_Error( 'field-required', sprintf( __( '%s is a required field', 'co-authors-plus' ), $field['key'] ) );
 			}
