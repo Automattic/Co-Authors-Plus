@@ -362,8 +362,7 @@ class CoAuthors_Guest_Authors {
 				$file = home_url( '/' );
 				$link = $file . '?author_name=' . $coauthor->user_login;
 			} else {
-				$link = str_replace( '%author%', $coauthor->user_login, $link );
-				$link = home_url( user_trailingslashit( $link ) );
+				$link = home_url( user_trailingslashit( str_replace( '%author%', $coauthor->user_login, $link ) ) );
 			}
 			wp_safe_redirect( $link );
 			exit;
@@ -1482,8 +1481,7 @@ class CoAuthors_Guest_Authors {
 			global $wp_rewrite;
 			$link = $wp_rewrite->get_author_permastruct();
 			if ( $link ) {
-				$link = str_replace( '%author%', $author_nicename, $link );
-				$link = home_url( user_trailingslashit( $link ) );
+				$link = home_url( user_trailingslashit( str_replace( '%author%', $author_nicename, $link ) ) );
 			} else {
 				$link = add_query_arg( 'author_name', rawurlencode( $author_nicename ), home_url() );
 			}
