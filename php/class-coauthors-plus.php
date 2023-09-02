@@ -1055,7 +1055,7 @@ class CoAuthors_Plus {
 		$raw_coauthors = $wpdb->get_results( $query ); //phpcs:ignore
 		$terms         = array();
 		foreach ( $raw_coauthors as $author ) {
-			if ( true === is_array( $args ) && true === isset( $args['fields'] ) ) {
+			if ( is_array( $args ) && isset( $args['fields'] ) ) {
 				switch ( $args['fields'] ) {
 					case 'names':
 						$terms[] = $author->name;
