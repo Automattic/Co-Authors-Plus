@@ -335,7 +335,7 @@ class CoAuthors_Plus {
 			}
 		}
 
-		return (bool) in_array( $post_type, $this->supported_post_types );
+		return in_array( $post_type, $this->supported_post_types );
 	}
 
 	/**
@@ -1325,7 +1325,7 @@ class CoAuthors_Plus {
 				unset( $found_users[ $key ] );
 			}
 		}
-		return (array) $found_users;
+		return $found_users;
 	}
 
 	/**
@@ -1445,7 +1445,7 @@ class CoAuthors_Plus {
 	public function is_valid_page() {
 		global $pagenow;
 
-		return (bool) in_array( $pagenow, $this->_pages_whitelist );
+		return in_array( $pagenow, $this->_pages_whitelist );
 	}
 
 	/**

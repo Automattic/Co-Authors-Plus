@@ -73,7 +73,7 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 	}
 
 	foreach ( $coauthors as $coauthor ) {
-		if ( ( isset( $coauthor->user_login ) && $user == $coauthor->user_login ) 
+		if ( ( isset( $coauthor->user_login ) && $user == $coauthor->user_login )
 			|| ( isset( $coauthor->linked_account ) && $user == $coauthor->linked_account ) ) {
 			return true;
 		}
@@ -92,7 +92,7 @@ class CoAuthorsIterator {
 		global $post, $authordata, $wpdb;
 		$postID = (int) $postID;
 		if ( ! $postID && $post ) {
-			$postID = (int) $post->ID;
+			$postID = $post->ID;
 		}
 
 		if ( ! $postID ) {
@@ -663,7 +663,7 @@ function coauthors_wp_list_authors( $args = array() ) {
 	$return = '';
 
 	$authors = coauthors_get_users( $args );
-	foreach ( (array) $authors as $author ) {
+	foreach ( $authors as $author ) {
 
 		$link = '';
 

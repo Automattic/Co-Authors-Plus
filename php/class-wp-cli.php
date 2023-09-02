@@ -835,7 +835,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			} else {
 				$row_data    = array_map( 'trim', $data );
 				$author_data = array();
-				foreach ( (array) $row_data as $col_num => $val ) {
+				foreach ( $row_data as $col_num => $val ) {
 						// Don't use the value of the field key isn't set
 					if ( empty( $field_keys[ $col_num ] ) ) {
 						continue;
