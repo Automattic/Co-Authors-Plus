@@ -819,7 +819,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			WP_CLI::error( 'Please specify a valid CSV file with the --file arg.' );
 		}
 
-		$file = fopen( $this->args['file'], 'r' );
+		$file = fopen( $this->args['file'], 'rb' );
 
 		if ( ! $file ) {
 			WP_CLI::error( 'Failed to read file.' );
