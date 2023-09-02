@@ -1,10 +1,10 @@
 ﻿# Co-Authors Plus
 
-* Contributors: batmoo, danielbachhuber, automattic, GaryJones
+* Contributors: batmoo, danielbachhuber, automattic, GaryJ
 * Tags: authors, users, multiple authors, co-authors, multi-author, publishing
 * Requires at least: 4.1
 * Tested up to: 6.3
-* Stable tag: 3.5.14
+* Stable tag: 3.5.15
 * Requires PHP: 5.6
 * License: GPLv2 or later
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html

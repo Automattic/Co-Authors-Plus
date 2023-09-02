@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.5.14] - 2023-08-21
+## [3.5.15] - 2023-08-28
+
+### Fixed
+* Incorrect Contributor name
+* Incorrect change log date
+
+## [3.5.14] - 2023-08-28
 
 ### Fixed
 * Check `get_current_screen()` exists #973
@@ -456,6 +462,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.5.15]: https://github.com/automattic/co-authors-plus/compare/3.5.14...3.5.15
 [3.5.14]: https://github.com/automattic/co-authors-plus/compare/3.5.13...3.5.14
 [3.5.13]: https://github.com/automattic/co-authors-plus/compare/3.5.12...3.5.13
 [3.5.12]: https://github.com/automattic/co-authors-plus/compare/3.5.11...3.5.12
