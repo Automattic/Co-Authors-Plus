@@ -22,6 +22,7 @@
  */
 
 define( 'COAUTHORS_PLUS_VERSION', '3.5.15' );
+const COAUTHORS_PLUS_FILE = __FILE__;
 
 require_once __DIR__ . '/template-tags.php';
 require_once __DIR__ . '/deprecated.php';
@@ -152,7 +153,7 @@ class CoAuthors_Plus {
 
 		// Load the Guest Authors functionality if needed
 		if ( $this->is_guest_authors_enabled() ) {
-			require_once __DIR__ . '/php/class-coauthors-guest-authors.php';
+			require_once dirname( COAUTHORS_PLUS_FILE ) . '/php/class-coauthors-guest-authors.php';
 			$this->guest_authors = new CoAuthors_Guest_Authors();
 			if ( apply_filters( 'coauthors_guest_authors_force', false ) ) {
 				$this->force_guest_authors = true;
@@ -190,18 +191,18 @@ class CoAuthors_Plus {
 	 */
 	public function enqueue_sidebar_plugin_assets() {
 		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
-			$asset = require __DIR__ . '/build/index.asset.php';
+			$asset = require dirname( COAUTHORS_PLUS_FILE ) . '/build/index.asset.php';
 
 			wp_register_script(
 				'coauthors-sidebar-js',
-				plugins_url( 'build/index.js', __FILE__ ),
+				plugins_url( 'build/index.js', COAUTHORS_PLUS_FILE ),
 				$asset['dependencies'],
 				$asset['version']
 			);
 
 			wp_register_style(
 				'coauthors-sidebar-css',
-				plugins_url( 'build/style-index.css', __FILE__ ),
+				plugins_url( 'build/style-index.css', COAUTHORS_PLUS_FILE ),
 				'',
 				$asset['version']
 			);
@@ -1383,8 +1384,8 @@ class CoAuthors_Plus {
 
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
-		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', __FILE__ ), false, COAUTHORS_PLUS_VERSION, 'all' );
-		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', __FILE__ ), array( 'jquery', 'suggest' ), COAUTHORS_PLUS_VERSION, true );
+		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', COAUTHORS_PLUS_FILE ), false, COAUTHORS_PLUS_VERSION, 'all' );
+		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', COAUTHORS_PLUS_FILE ), array( 'jquery', 'suggest' ), COAUTHORS_PLUS_VERSION, true );
 
 		$js_strings = array(
 			'edit_label'      => __( 'Edit', 'co-authors-plus' ),
