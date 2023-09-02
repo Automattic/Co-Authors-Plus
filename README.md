@@ -1,17 +1,25 @@
 ﻿# Co-Authors Plus
 
-* Contributors: batmoo, danielbachhuber, automattic, GaryJ
-* Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-* Requires at least: 4.1
-* Tested up to: 6.3
-* Stable tag: 3.5.15
-* Requires PHP: 5.6
-* License: GPLv2 or later
-* License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Stable tag: 3.5.15  
+Requires at least: 4.1  
+Tested up to: 6.3  
+Requires PHP: 5.6  
+License: GPLv2 or later  
+License URI: https://www.gnu.org/licenses/gpl-2.0.html  
+Tags: authors, users, multiple authors, co-authors, multi-author, publishing  
+Contributors: batmoo, danielbachhuber, automattic, GaryJ
 
 Assign multiple bylines to posts, pages, and custom post types with a search-as-you-type input box.
 
-## Usage
+## Description
+
+Assign multiple bylines to posts, pages, and custom post types via a search-as-you-type input box. Co-authored posts appear on a co-author's archive page and in their feed. Co-authors may edit the posts they are associated with, and co-authors who are contributors may only edit posts if they have not been published (as is core behavior).
+
+Add writers as bylines without creating WordPress user accounts. Simply [create a guest author profile](https://github.com/Automattic/Co-Authors-Plus/wiki/Creating-and-editing-guest-authors) for the writer and assign the byline as you normally would.
+
+On the frontend, use the [Co-Authors Plus template tags](https://github.com/Automattic/Co-Authors-Plus/wiki/Template-tags) to list co-authors anywhere you'd normally list the author.
+
+This plugin is an almost complete rewrite of the [Co-Authors](https://wordpress.org/plugins/co-authors/) plugin originally developed by Weston Ruter (2007). The original plugin was inspired by the '[Multiple Authors](https://txfx.net/2005/08/16/new-plugin-multiple-authors/)' plugin by Mark Jaquith (2005).
 
 Refer to our [wiki](https://github.com/Automattic/Co-Authors-Plus/wiki) for detailed documentation.
 
@@ -27,6 +35,35 @@ Refer to our [wiki](https://github.com/Automattic/Co-Authors-Plus/wiki) for deta
 
 1. Multiple authors can be added to a Post, Page, or Custom Post Type using an auto-complete interface.
 2. Guest authors allow you to assign bylines without creating WordPress user accounts. You can also override existing WordPress account meta by mapping a guest author to a WordPress user.
+
+## Frequently Asked Questions
+
+### How do I add Co-Authors Plus support to my theme?
+
+If you've just installed Co-Authors Plus, you might notice that the bylines are being added in the backend but aren't appearing on the front end. You'll need to [add the template tags to your theme](https://github.com/Automattic/Co-Authors-Plus/wiki/Template-tags) before the bylines will appear.
+
+### What happens to posts and pages when I delete a user assigned to a post or page as a co-author?
+
+When a user is deleted from WordPress, they will be removed from all posts for which they are co-authors. If you reassign their posts to another user, that user will be the co-author instead.
+
+### Can I use Co-Authors Plus with WordPress multisite?
+
+Yes! Co-Authors Plus can be activated on a site-by-site basis or network-activated. If you create guest authors, however, those guest authors will exist on a site-by-site basis.
+
+### Who needs permission to do what?
+
+A WordPress user will need the `edit_others_posts` capability to assign co-authors to posts. This is typically granted to the Editor role but can be altered with the `coauthors_plus_edit_authors` filter.
+
+A WordPress user will need the `list_users` capability to create new guest author profiles. This is typically granted to the Administrator role but can be altered with the `coauthors_guest_author_manage_cap` filter.
+
+### Can I easily create a list of all co-authors?
+
+Yes! A template tag called `coauthors_wp_list_authors()` accepts many of the same arguments as `wp_list_authors()`. Look in `template-tags.php` for more details.
+
+### Can I disable Guest Authors?
+
+Yes! Guest authors can be disabled entirely through a filter. Having the following line load on `init` will do the trick:
+`add_filter( 'coauthors_guest_authors_enabled', '__return_false' )`
 
 ## Change Log
 
