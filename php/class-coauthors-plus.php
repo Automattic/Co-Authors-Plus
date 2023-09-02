@@ -1400,7 +1400,7 @@ class CoAuthors_Plus {
 		} else {
 			$class = '';
 		}
-		$views['mine'] = $view_mine = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
+		$views['mine'] = '<a' . $class . ' href="' . esc_url( add_query_arg( array_map( 'rawurlencode', $mine_args ), admin_url( 'edit.php' ) ) ) . '">' . __( 'Mine', 'co-authors-plus' ) . '</a>';
 
 		$views['all'] = str_replace( $class, '', $all_view );
 		$views        = array_reverse( $views );

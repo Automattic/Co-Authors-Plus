@@ -671,12 +671,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			);
 
 			$posts = new WP_Query( $args );
-			$count = 0;
 			WP_CLI::line( "Now inspecting or updating {$posts->found_posts} Guest Authors." );
 
 			while ( $posts->post_count ) {
 				foreach ( $posts->posts as $guest_author_id ) {
-					$count++;
 
 					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $guest_author_id );
 
