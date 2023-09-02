@@ -182,7 +182,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		} elseif ( 'field' === $type && isset( $i->current_author->$tag ) ) {
 			$author_text = $i->current_author->$tag;
 		} elseif ( 'callback' === $type && is_callable( $tag ) ) {
-			$author_text = call_user_func( $tag, $i->current_author );
+			$author_text = $tag( $i->current_author );
 		}
 
 		// Fallback to user_login if we get something empty
