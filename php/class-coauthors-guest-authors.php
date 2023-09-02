@@ -457,12 +457,12 @@ class CoAuthors_Guest_Authors {
 			// Remove the submitpost metabox because we have our own
 			remove_meta_box( 'submitdiv', $this->post_type, 'side' );
 			remove_meta_box( 'slugdiv', $this->post_type, 'normal' );
-			add_meta_box( 'coauthors-manage-guest-author-save', __( 'Save', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_save' ), $this->post_type, 'side', 'default' );
-			add_meta_box( 'coauthors-manage-guest-author-slug', __( 'Unique Slug', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_slug' ), $this->post_type, 'side', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-save', __( 'Save', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_save' ), $this->post_type, 'side' );
+			add_meta_box( 'coauthors-manage-guest-author-slug', __( 'Unique Slug', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_slug' ), $this->post_type, 'side' );
 			// Our metaboxes with co-author details
-			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_name' ), $this->post_type, 'normal', 'default' );
-			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_contact_info' ), $this->post_type, 'normal', 'default' );
-			add_meta_box( 'coauthors-manage-guest-author-bio', $this->labels['metabox_about'], array( $this, 'metabox_manage_guest_author_bio' ), $this->post_type, 'normal', 'default' );
+			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_name' ), $this->post_type, 'normal' );
+			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_contact_info' ), $this->post_type, 'normal' );
+			add_meta_box( 'coauthors-manage-guest-author-bio', $this->labels['metabox_about'], array( $this, 'metabox_manage_guest_author_bio' ), $this->post_type, 'normal' );
 		}
 	}
 
@@ -547,7 +547,7 @@ class CoAuthors_Guest_Authors {
 			echo '</ul></fieldset>';
 			// disable disabled submit button for 0 post count
 			if ( 0 === $count ) {
-				submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true );
+				submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary' );
 			} else {
 				submit_button( __( 'Confirm Deletion', 'co-authors-plus' ), 'secondary', 'submit', true, array( 'disabled' => 'disabled' ) );
 			}
@@ -882,7 +882,7 @@ class CoAuthors_Guest_Authors {
 		$author      = $this->get_guest_author_by( 'ID', $post_id );
 		$author_term = $coauthors_plus->update_author_term( $author );
 		// Add the author as a post term
-		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy, false );
+		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy );
 
 		// Explicitly clear all caches, to remove negative caches that may have existed prior to this
 		// Guest Author's creation / update
@@ -1295,7 +1295,7 @@ class CoAuthors_Guest_Authors {
 
 		// Make sure the author term exists and that we're assigning it to this post type
 		$author_term = $coauthors_plus->update_author_term( $this->get_guest_author_by( 'ID', $post_id ) );
-		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy, false );
+		wp_set_post_terms( $post_id, array( $author_term->slug ), $coauthors_plus->coauthor_taxonomy );
 
 		// Explicitly clear all caches, to remove negative caches that may have existed prior to this
 		// Guest Author's creation

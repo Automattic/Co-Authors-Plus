@@ -105,7 +105,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 
 		// append = false, overrides existing authors
-		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ), false );
+		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ) );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 
@@ -126,7 +126,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( $this->author1, get_post( $this->author1_post1 )->post_author );
 
 		// append = false, overrides existing post_author
-		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ), false );
+		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ) );
 		$this->assertEquals( $this->editor1, get_post( $this->author1_post1 )->post_author );
 
 	}

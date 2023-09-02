@@ -226,7 +226,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$item_delete_link = add_query_arg( array_map( 'rawurlencode', $args ), menu_page_url( 'view-guest-authors', false ) );
 		$item_view_link   = get_author_posts_url( $item->ID, $item->user_nicename );
 
-		$output = coauthors_get_avatar( $item, 32 );
+		$output = coauthors_get_avatar( $item );
 
 		if ( current_user_can( 'edit_post', $item->ID ) ) {
 			$output .= '<a href="' . esc_url( $item_edit_link ) . '">' . esc_html( $item->display_name ) . '</a>';
@@ -243,7 +243,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		}
 		$actions['view'] = '<a href="' . esc_url( $item_view_link ) . '">' . __( 'View Posts', 'co-authors-plus' ) . '</a>';
 		$actions         = apply_filters( 'coauthors_guest_author_row_actions', $actions, $item );
-		$output         .= $this->row_actions( $actions, false );
+		$output         .= $this->row_actions( $actions );
 
 		return $output;
 	}

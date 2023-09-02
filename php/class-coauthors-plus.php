@@ -66,7 +66,7 @@ class CoAuthors_Plus {
 		add_action( 'add_meta_boxes', array( $this, 'remove_authors_box' ) );
 
 		// Refresh the nonce after the user re-authenticates due to a wp_auth_check() to avoid failing check_admin_referrer()
-		add_action( 'wp_refresh_nonces', array( $this, 'refresh_coauthors_nonce' ), 20, 1 );
+		add_action( 'wp_refresh_nonces', array( $this, 'refresh_coauthors_nonce' ), 20 );
 
 		// Removes the co-author dropdown from the post quick edit
 		add_action( 'admin_head', array( $this, 'remove_quick_edit_authors_box' ) );
@@ -97,7 +97,7 @@ class CoAuthors_Plus {
 		add_action( 'set_object_terms', array( $this, 'clear_cache_on_terms_set' ), 10, 6 );
 
 		// Filter to correct author on author archive page
-		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title' ), 10, 1 );
+		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title' ) );
 
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
@@ -961,7 +961,7 @@ class CoAuthors_Plus {
 				$author_name = $term->slug;
 			}
 		}
-		wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy, false );
+		wp_set_post_terms( $post_id, $coauthors, $this->coauthor_taxonomy );
 
 		// If the original post_author is no longer assigned,
 		// update to the first WP_User $coauthor
@@ -1351,7 +1351,7 @@ class CoAuthors_Plus {
 
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
-		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', COAUTHORS_PLUS_FILE ), false, COAUTHORS_PLUS_VERSION, 'all' );
+		wp_enqueue_style( 'co-authors-plus-css', plugins_url( 'css/co-authors-plus.css', COAUTHORS_PLUS_FILE ), false, COAUTHORS_PLUS_VERSION );
 		wp_enqueue_script( 'co-authors-plus-js', plugins_url( 'js/co-authors-plus.js', COAUTHORS_PLUS_FILE ), array( 'jquery', 'suggest' ), COAUTHORS_PLUS_VERSION, true );
 
 		$js_strings = array(
