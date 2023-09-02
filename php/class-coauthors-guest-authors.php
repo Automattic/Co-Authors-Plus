@@ -278,7 +278,6 @@ class CoAuthors_Guest_Authors {
 				break;
 			default:
 				wp_die( esc_html__( 'Please make sure to pick an option.', 'co-authors-plus' ) );
-				break;
 		}
 
 		$retval = $this->delete( $guest_author->ID, $reassign_to );

@@ -311,7 +311,6 @@ class CoAuthors_Plus {
 					}
 				}
 				return $user;
-				break;
 		}
 		return false;
 
