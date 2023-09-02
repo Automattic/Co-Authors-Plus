@@ -208,7 +208,7 @@ class CoAuthors_Guest_Authors {
 			wp_die( esc_html__( "You don't have permission to perform this action.", 'co-authors-plus' ) );
 		}
 
-		$user_id = intval( $_GET['user_id'] );
+		$user_id = (int) $_GET['user_id'];
 
 		// Create the guest author
 		$post_id = $this->create_guest_author_from_user_id( $user_id );
@@ -834,7 +834,7 @@ class CoAuthors_Guest_Authors {
 			if ( 'linked_account' == $author_field['key'] ) {
 				$linked_account_key = $this->get_post_meta_key( 'linked_account' );
 				if ( ! empty( $_POST[ $linked_account_key ] ) ) {
-					$user_id = intval( $_POST[ $linked_account_key ] );
+					$user_id = (int) $_POST[ $linked_account_key ];
 				} else {
 					continue;
 				}

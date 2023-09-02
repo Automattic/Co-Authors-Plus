@@ -55,7 +55,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$paged    = ( isset( $_REQUEST['paged'] ) ) ? intval( $_REQUEST['paged'] ) : 1;
+		$paged    = ( isset( $_REQUEST['paged'] ) ) ? (int) $_REQUEST['paged'] : 1;
 		$per_page = 20;
 
 		$args = array(

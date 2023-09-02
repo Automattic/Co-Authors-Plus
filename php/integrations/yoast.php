@@ -308,7 +308,7 @@ class Yoast {
 		 * If this is a guest author archive and hasn't manually been set to noindex,
 		 * make sure the robots.txt string is set properly.
 		 */
-		if ( empty( $presentation->model->is_robots_noindex ) || 0 === intval( $presentation->model->is_robots_noindex ) ) {
+		if ( empty( $presentation->model->is_robots_noindex ) || 0 === (int) $presentation->model->is_robots_noindex ) {
 			if ( ! is_array( $robots ) ) {
 				$robots = [];
 			}
