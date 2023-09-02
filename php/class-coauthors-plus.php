@@ -843,7 +843,7 @@ class CoAuthors_Plus {
 		}
 
 		// This action happens when a post is saved while editing a post
-		if ( isset( $_REQUEST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) { // phpcs:ignore
+		if ( isset( $_REQUEST['coauthors-nonce'], $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) { // phpcs:ignore
 
 			// rawurlencode() is for encoding coauthor name with special characters to compare names when getting coauthor.
 			$author = rawurlencode( sanitize_text_field( $_POST['coauthors'][0] ) ); // phpcs:ignore
@@ -892,7 +892,7 @@ class CoAuthors_Plus {
 
 		if ( $this->current_user_can_set_authors() ) {
 			// if current_user_can_set_authors and nonce valid
-			if ( isset( $_POST['coauthors-nonce'] ) && isset( $_POST['coauthors'] ) ) {
+			if ( isset( $_POST['coauthors-nonce'], $_POST['coauthors'] ) ) {
 				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
 
 				$coauthors = (array) $_POST['coauthors'];
