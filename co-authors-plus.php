@@ -1883,7 +1883,7 @@ class CoAuthors_Plus {
 	 * @param WP_REST_Response $response Response for an individual author taxonomy term.
 	 * @return WP_REST_Response $response Same response, possibly mutated to eliminate value of description.
 	 */
-	public function conditionally_hide_author_term_description( WP_REST_Response $response ) : WP_REST_Response {
+	public function conditionally_hide_author_term_description( WP_REST_Response $response ) {
 		$capability = apply_filters(
 			'coauthors_rest_view_description_cap',
 			'edit_posts'
