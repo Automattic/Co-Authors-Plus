@@ -280,7 +280,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$update_response = $this->_api->update_coauthors( $post_request );
 
-		$this->assertEquals( 2, count( $update_response->data ) );
+		$this->assertCount( 2, $update_response->data );
 	}
 
 	public function test_can_edit_coauthors() {

@@ -96,7 +96,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( 1, count( $coauthors ) );
+		$this->assertCount( 1, $coauthors );
 
 		// append = true, should preserve order
 		$editor1 = get_user_by( 'id', $this->editor1 );

@@ -256,7 +256,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNotEmpty( $linked_accounts );
 		$this->assertIsArray( $linked_accounts );
-		$this->assertTrue( in_array( $this->editor1->ID, $linked_account_ids, true ) );
+		$this->assertContains( $this->editor1->ID, $linked_account_ids );
 	}
 
 	/**

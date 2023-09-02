@@ -27,7 +27,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -54,7 +54,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -81,7 +81,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -116,7 +116,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -151,7 +151,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -180,7 +180,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -217,7 +217,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 }
