@@ -9,6 +9,7 @@ use CoAuthors\Integrations\Yoast\CoAuthor;
 use Yoast\WP\SEO\Config\Schema_Types;
 use Yoast\WP\SEO\Context\Meta_Tags_Context;
 use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
+use Yoast\WP\SEO\Presentations\Indexable_Author_Archive_Presentation;
 use WP_User;
 
 /**
@@ -294,7 +295,7 @@ class Yoast {
 			return $robots;
 		}
 
-		if ( ! is_a( $presentation, '\Yoast\WP\SEO\Presentations\Indexable_Author_Archive_Presentation' ) ) {
+		if ( ! is_a( $presentation, Indexable_Author_Archive_Presentation::class ) ) {
 			return $robots;
 		}
 
