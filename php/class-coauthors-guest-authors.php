@@ -1168,7 +1168,7 @@ class CoAuthors_Guest_Authors {
 			$retval = $users;
 			wp_cache_set( $cache_key, $retval, self::$cache_group );
 		}
-		return ( $retval ) ? $retval : array();
+		return ( $retval ) ?: array();
 	}
 
 	/**
