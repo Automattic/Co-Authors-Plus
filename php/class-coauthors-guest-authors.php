@@ -9,16 +9,16 @@
 class CoAuthors_Guest_Authors {
 
 	public $labels;
-	var $post_type              = 'guest-author';
-	var $parent_page            = 'users.php';
-	var $list_guest_authors_cap = 'list_users';
+	public $post_type              = 'guest-author';
+	public $parent_page            = 'users.php';
+	public $list_guest_authors_cap = 'list_users';
 
 	public static $cache_group = 'coauthors-plus-guest-authors';
 
 	/**
 	 * Initialize our Guest Authors class and establish common hooks
 	 */
-	function __construct() {
+	public function __construct() {
 		global $coauthors_plus;
 
 		// Add the guest author management menu
@@ -151,7 +151,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function filter_post_updated_messages( $messages ) {
+	public function filter_post_updated_messages( $messages ) {
 		global $post;
 
 		if ( $this->post_type !== $post->post_type ) {
@@ -194,7 +194,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function handle_create_guest_author_action() {
+	public function handle_create_guest_author_action() {
 
 		if ( ! isset( $_GET['action'], $_GET['nonce'], $_GET['user_id'] ) || 'cap-create-guest-author' !== $_GET['action'] ) {
 			return;
@@ -231,7 +231,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function handle_delete_guest_author_action() {
+	public function handle_delete_guest_author_action() {
 		global $coauthors_plus;
 
 		if ( ! isset( $_POST['action'], $_POST['reassign'], $_POST['_wpnonce'], $_POST['id'] ) || 'delete-guest-author' != $_POST['action'] ) {
@@ -304,7 +304,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function handle_ajax_search_coauthors_to_assign() {
+	public function handle_ajax_search_coauthors_to_assign() {
 		global $coauthors_plus;
 
 		if ( ! current_user_can( $this->list_guest_authors_cap ) ) {
@@ -342,7 +342,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @todo support author ID query vars
 	 */
-	function action_parse_request( $query ) {
+	public function action_parse_request( $query ) {
 
 		if ( ! isset( $query->query_vars['author_name'] ) ) {
 			return $query;
@@ -377,7 +377,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function action_admin_menu() {
+	public function action_admin_menu() {
 
 		add_submenu_page( $this->parent_page, $this->labels['plural'], $this->labels['plural'], $this->list_guest_authors_cap, 'view-guest-authors', array( $this, 'view_guest_authors_list' ) );
 
@@ -388,7 +388,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function action_admin_enqueue_scripts() {
+	public function action_admin_enqueue_scripts() {
 		global $pagenow;
 		// Enqueue our guest author CSS on the related pages
 		if ( $this->parent_page === $pagenow && isset( $_GET['page'] ) && 'view-guest-authors' === $_GET['page'] ) {
@@ -408,7 +408,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0.1
 	 */
-	function change_title_icon() {
+	public function change_title_icon() {
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
@@ -423,7 +423,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function action_admin_notices() {
+	public function action_admin_notices() {
 		global $pagenow;
 
 		if ( $this->parent_page != $pagenow || ! isset( $_REQUEST['message'] ) ) {
@@ -449,7 +449,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function action_add_meta_boxes() {
+	public function action_add_meta_boxes() {
 		global $coauthors_plus;
 
 		if ( get_post_type() == $this->post_type ) {
@@ -470,7 +470,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function view_guest_authors_list() {
+	public function view_guest_authors_list() {
 
 		// Allow guest authors to be deleted
 		if ( isset( $_GET['action'], $_GET['id'], $_GET['_wpnonce'] ) && 'delete' == $_GET['action'] ) {
@@ -577,7 +577,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function metabox_manage_guest_author_save() {
+	public function metabox_manage_guest_author_save() {
 		global $post, $coauthors_plus;
 
 		if ( in_array( $post->post_status, array( 'pending', 'publish', 'draft' ) ) ) {
@@ -597,7 +597,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function metabox_manage_guest_author_slug() {
+	public function metabox_manage_guest_author_slug() {
 		global $post;
 
 		$pm_key        = $this->get_post_meta_key( 'user_login' );
@@ -659,7 +659,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function metabox_manage_guest_author_name() {
+	public function metabox_manage_guest_author_name() {
 		global $post;
 
 		$fields = $this->get_guest_author_fields( 'name' );
@@ -695,7 +695,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function metabox_manage_guest_author_contact_info() {
+	public function metabox_manage_guest_author_contact_info() {
 		global $post;
 
 		$fields = $this->get_guest_author_fields( 'contact-info' );
@@ -731,7 +731,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function metabox_manage_guest_author_bio() {
+	public function metabox_manage_guest_author_bio() {
 		global $post;
 
 		$fields = $this->get_guest_author_fields( 'about' );
@@ -766,7 +766,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function manage_guest_author_filter_post_data( $post_data, $original_args ) {
+	public function manage_guest_author_filter_post_data( $post_data, $original_args ) {
 
 		if ( $post_data['post_type'] != $this->post_type ) {
 			return $post_data;
@@ -821,7 +821,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function manage_guest_author_save_meta_fields( $post_id, $post ) {
+	public function manage_guest_author_save_meta_fields( $post_id, $post ) {
 		global $coauthors_plus;
 
 		if ( $post->post_type != $this->post_type ) {
@@ -898,7 +898,7 @@ class CoAuthors_Guest_Authors {
 	 * @param string       $value Value to search for
 	 * @param object|false $coauthor The guest author on success, false on failure
 	 */
-	function get_guest_author_by( $key, $value, $force = false ) {
+	public function get_guest_author_by( $key, $value, $force = false ) {
 		global $wpdb;
 
 		$cache_key = $this->get_cache_key( $key, $value );
@@ -996,7 +996,7 @@ class CoAuthors_Guest_Authors {
 	 * @param   array|string  Optional. An array or string of additional classes. Default null.
 	 * @return  string        The thumbnail image tag, or null if one doesn't exist.
 	 */
-	function get_guest_author_thumbnail( $guest_author, $size, $class = null ) {
+	public function get_guest_author_thumbnail( $guest_author, $size, $class = null ) {
 		// See if the guest author has an avatar
 		if ( ! has_post_thumbnail( $guest_author->ID ) ) {
 			return null;
@@ -1024,7 +1024,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function get_guest_author_fields( $groups = 'all' ) {
+	public function get_guest_author_fields( $groups = 'all' ) {
 
 		$groups        = (array) $groups;
 		$global_fields = array(
@@ -1100,7 +1100,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function get_post_meta_key( $key ) {
+	public function get_post_meta_key( $key ) {
 
 		if ( 0 !== stripos( $key, 'cap-' ) ) {
 			$key = 'cap-' . $key;
@@ -1117,7 +1117,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @return string The generated cache key
 	 */
-	function get_cache_key( $key, $value ) {
+	public function get_cache_key( $key, $value ) {
 		// Normalize $key and $value
 		switch ( $key ) {
 			case 'post_name':
@@ -1145,7 +1145,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function get_all_linked_accounts( $force = false ) {
+	public function get_all_linked_accounts( $force = false ) {
 		global $wpdb;
 
 		$cache_key = 'all-linked-accounts';
@@ -1176,7 +1176,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function filter_update_post_metadata( $retnull, $object_id, $meta_key, $meta_value, $prev_value ) {
+	public function filter_update_post_metadata( $retnull, $object_id, $meta_key, $meta_value, $prev_value ) {
 
 		if ( $this->post_type != get_post_type( $object_id ) ) {
 			return $retnull;
@@ -1245,7 +1245,7 @@ class CoAuthors_Guest_Authors {
 	 * @since 3.0
 	 * @return int|WP_Error The ID of the created guest author, or a WP_Error object if the author could not be created.
 	 */
-	function create( $args ) {
+	public function create( $args ) {
 		global $coauthors_plus;
 
 		// Validate the arguments that have been passed
@@ -1368,7 +1368,7 @@ class CoAuthors_Guest_Authors {
 	 * @param int $user_id ID for a WordPress user
 	 * @return int|WP_Error $retval ID for the new guest author on success, WP_Error on failure
 	 */
-	function create_guest_author_from_user_id( $user_id ) {
+	public function create_guest_author_from_user_id( $user_id ) {
 
 		$user = get_user_by( 'id', $user_id );
 		if ( ! $user ) {
@@ -1403,7 +1403,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function filter_wp_insert_post_empty_content( $maybe_empty, $postarr ) {
+	public function filter_wp_insert_post_empty_content( $maybe_empty, $postarr ) {
 
 		if ( $this->post_type != $postarr['post_type'] ) {
 			return $maybe_empty;
@@ -1426,7 +1426,7 @@ class CoAuthors_Guest_Authors {
 	 * @param object $user_object A WP_User object
 	 * @return array $actions Modified actions
 	 */
-	function filter_user_row_actions( $actions, $user_object ) {
+	public function filter_user_row_actions( $actions, $user_object ) {
 
 		if ( ! current_user_can( $this->list_guest_authors_cap ) || is_network_admin() ) {
 			return $actions;
@@ -1456,7 +1456,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function filter_get_avatar( $avatar, $id_or_email, $size, $default ) {
+	public function filter_get_avatar( $avatar, $id_or_email, $size, $default ) {
 		if ( is_object( $id_or_email ) || ! is_email( $id_or_email ) ) {
 			return $avatar;
 		}
@@ -1481,7 +1481,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	function filter_author_link( $link, $author_id, $author_nicename ) {
+	public function filter_author_link( $link, $author_id, $author_nicename ) {
 
 		// If we're using this at the top of the loop on author.php,
 		// our queried object should be set correctly

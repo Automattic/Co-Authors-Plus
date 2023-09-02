@@ -82,13 +82,13 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 }
 
 class CoAuthorsIterator {
-	var $position = -1;
-	var $original_authordata;
-	var $current_author;
-	var $authordata_array;
-	var $count;
+	public $position = -1;
+	public $original_authordata;
+	public $current_author;
+	public $authordata_array;
+	public $count;
 
-	function __construct( $postID = 0 ) {
+	public function __construct( $postID = 0 ) {
 		global $post, $authordata, $wpdb;
 		$postID = (int) $postID;
 		if ( ! $postID && $post ) {
@@ -105,7 +105,7 @@ class CoAuthorsIterator {
 		$this->count = count( $this->authordata_array );
 	}
 
-	function iterate() {
+	public function iterate() {
 		global $authordata;
 		$this->position++;
 
@@ -126,22 +126,22 @@ class CoAuthorsIterator {
 		return true;
 	}
 
-	function get_position() {
+	public function get_position() {
 		if ( $this->position === -1 ) {
 			return false;
 		}
 		return $this->position;
 	}
-	function is_last() {
+	public function is_last() {
 		return $this->position === $this->count - 1;
 	}
-	function is_first() {
+	public function is_first() {
 		return $this->position === 0;
 	}
-	function count() {
+	public function count() {
 		return $this->count;
 	}
-	function get_all() {
+	public function get_all() {
 		return $this->authordata_array;
 	}
 }

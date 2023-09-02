@@ -7,21 +7,21 @@ class CoAuthors_Plus {
 
 	// Name for the taxonomy we're using to store relationships
 	// and the post type we're using to store guest authors
-	var $coauthor_taxonomy = 'author';
+	public $coauthor_taxonomy = 'author';
 
-	var $coreauthors_meta_box_name = 'authordiv';
-	var $coauthors_meta_box_name   = 'coauthorsdiv';
-	var $force_guest_authors       = false;
+	public $coreauthors_meta_box_name = 'authordiv';
+	public $coauthors_meta_box_name   = 'coauthorsdiv';
+	public $force_guest_authors       = false;
 
-	var $_pages_whitelist = array( 'post.php', 'post-new.php', 'edit.php' );
+	public $_pages_whitelist = array( 'post.php', 'post-new.php', 'edit.php' );
 
-	var $supported_post_types = array();
+	public $supported_post_types = array();
 
-	var $ajax_search_fields = array( 'display_name', 'first_name', 'last_name', 'user_login', 'ID', 'user_email' );
+	public $ajax_search_fields = array( 'display_name', 'first_name', 'last_name', 'user_login', 'ID', 'user_email' );
 
-	var $having_terms = '';
+	public $having_terms = '';
 
-	var $to_be_filtered_caps = array();
+	public $to_be_filtered_caps = array();
 
 	/**
 	 * @var CoAuthors_Guest_Authors
@@ -31,7 +31,7 @@ class CoAuthors_Plus {
 	/**
 	 * __construct()
 	 */
-	function __construct() {
+	public function __construct() {
 
 		// Register our models
 		add_action( 'init', array( $this, 'action_init' ) );
@@ -451,7 +451,7 @@ class CoAuthors_Plus {
 	/**
 	 * Removes the default 'author' dropdown from quick edit
 	 */
-	function remove_quick_edit_authors_box() {
+	public function remove_quick_edit_authors_box() {
 		global $pagenow;
 
 		if ( 'edit.php' === $pagenow && $this->is_post_type_enabled() ) {
@@ -464,7 +464,7 @@ class CoAuthors_Plus {
 	 *
 	 * @param array $post_columns
 	 */
-	function _filter_manage_posts_columns( $posts_columns ) {
+	public function _filter_manage_posts_columns( $posts_columns ) {
 
 		$new_columns = array();
 		if ( ! $this->is_post_type_enabled() ) {
@@ -489,7 +489,7 @@ class CoAuthors_Plus {
 	 *
 	 * @param string $column_name
 	 */
-	function _filter_manage_posts_custom_column( $column_name ) {
+	public function _filter_manage_posts_custom_column( $column_name ) {
 		if ( 'coauthors' === $column_name ) {
 			global $post;
 			$authors = get_coauthors( $post->ID );
@@ -520,7 +520,7 @@ class CoAuthors_Plus {
 	/**
 	 * Unset the post count column because it's going to be inaccurate and provide our own
 	 */
-	function _filter_manage_users_columns( $columns ) {
+	public function _filter_manage_users_columns( $columns ) {
 
 		$new_columns = array();
 		// Unset and add our column while retaining the order of the columns
@@ -537,7 +537,7 @@ class CoAuthors_Plus {
 	/**
 	 * Provide an accurate count when looking up the number of published posts for a user
 	 */
-	function _filter_manage_users_custom_column( $value, $column_name, $user_id ) {
+	public function _filter_manage_users_custom_column( $value, $column_name, $user_id ) {
 		if ( 'coauthors_post_count' !== $column_name ) {
 			return $value;
 		}
@@ -557,7 +557,7 @@ class CoAuthors_Plus {
 	/**
 	 * Quick Edit co-authors box.
 	 */
-	function _action_quick_edit_custom_box( $column_name, $post_type ) {
+	public function _action_quick_edit_custom_box( $column_name, $post_type ) {
 		if ( 'coauthors' !== $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
 			return;
 		}
@@ -575,7 +575,7 @@ class CoAuthors_Plus {
 	/**
 	 * When we update the terms at all, we should update the published post count for each user
 	 */
-	function _update_users_posts_count( $tt_ids, $taxonomy ) {
+	public function _update_users_posts_count( $tt_ids, $taxonomy ) {
 		global $wpdb;
 
 		$tt_ids   = implode( ', ', array_map( 'intval', $tt_ids ) );
@@ -656,7 +656,7 @@ class CoAuthors_Plus {
 	/**
 	 * Modify the author query posts SQL to include posts co-authored
 	 */
-	function posts_join_filter( $join, $query ) {
+	public function posts_join_filter( $join, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
@@ -701,7 +701,7 @@ class CoAuthors_Plus {
 	 *
 	 * @return string
 	 */
-	function posts_where_filter( $where, $query ) {
+	public function posts_where_filter( $where, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
@@ -807,7 +807,7 @@ class CoAuthors_Plus {
 	/**
 	 * Modify the author query posts SQL to include posts co-authored
 	 */
-	function posts_groupby_filter( $groupby, $query ) {
+	public function posts_groupby_filter( $groupby, $query ) {
 		global $wpdb;
 
 		if ( $query->is_author() ) {
@@ -830,7 +830,7 @@ class CoAuthors_Plus {
 	/**
 	 * Filters post data before saving to db to set post_author
 	 */
-	function coauthors_set_post_author_field( $data, $postarr ) {
+	public function coauthors_set_post_author_field( $data, $postarr ) {
 
 		// Bail on autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -880,7 +880,7 @@ class CoAuthors_Plus {
 	 *
 	 * @param $post_ID
 	 */
-	function coauthors_update_post( $post_id, $post ) {
+	public function coauthors_update_post( $post_id, $post ) {
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
@@ -910,7 +910,7 @@ class CoAuthors_Plus {
 		}
 	}
 
-	function has_author_terms( $post_id ) {
+	public function has_author_terms( $post_id ) {
 		$terms = wp_get_object_terms( $post_id, $this->coauthor_taxonomy, array( 'fields' => 'ids' ) );
 		return ! empty( $terms ) && ! is_wp_error( $terms );
 	}
@@ -992,7 +992,7 @@ class CoAuthors_Plus {
 	 *
 	 * @param delete_id
 	 */
-	function delete_user_action( $delete_id ) {
+	public function delete_user_action( $delete_id ) {
 		global $wpdb;
 
 		$reassign_id = isset( $_POST['reassign_user'] ) ? absint( $_POST['reassign_user'] ) : false; // phpcs:ignore
@@ -1041,7 +1041,7 @@ class CoAuthors_Plus {
 	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
 	 * @props kingkool68, http://wordpress.org/support/topic/plugin-co-authors-plus-making-authors-sortable
 	 */
-	function filter_wp_get_object_terms( $terms, $object_ids, $taxonomies, $args ) {
+	public function filter_wp_get_object_terms( $terms, $object_ids, $taxonomies, $args ) {
 		if ( ! isset( $_REQUEST['bulk_edit'] ) || $this->coauthor_taxonomy !== $taxonomies ) {
 			return $terms;
 		}
@@ -1086,7 +1086,7 @@ class CoAuthors_Plus {
 	 * @param int $user_id WP user ID
 	 * @return int Post count
 	 */
-	function filter_count_user_posts( $count, $user_id ) {
+	public function filter_count_user_posts( $count, $user_id ) {
 		$user     = get_userdata( $user_id );
 		$coauthor = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
@@ -1114,7 +1114,7 @@ class CoAuthors_Plus {
 	/**
 	 * Checks to see if the current user can set co-authors or not
 	 */
-	function current_user_can_set_authors() {
+	public function current_user_can_set_authors() {
 		$current_user = wp_get_current_user();
 		if ( ! $current_user ) {
 			return false;
@@ -1332,7 +1332,7 @@ class CoAuthors_Plus {
 	 *
 	 * @since 3.0
 	 */
-	function filter_terms_clauses( $pieces ) {
+	public function filter_terms_clauses( $pieces ) {
 
 		$pieces['where'] = str_replace( 't.name LIKE', 'tt.description LIKE', $pieces['where'] );
 		return $pieces;
@@ -1341,7 +1341,7 @@ class CoAuthors_Plus {
 	/**
 	 * Functions to add scripts and css
 	 */
-	function enqueue_scripts( $hook_suffix ) {
+	public function enqueue_scripts( $hook_suffix ) {
 		global $pagenow, $post;
 
 		if ( ! $this->is_valid_page() || ! $this->is_post_type_enabled() || ! $this->current_user_can_set_authors() ) {
@@ -1368,7 +1368,7 @@ class CoAuthors_Plus {
 	/**
 	 * load-edit.php is when the screen has been set up
 	 */
-	function load_edit() {
+	public function load_edit() {
 
 		$screen = get_current_screen();
 		if ( in_array( $screen->post_type, $this->supported_post_types ) ) {
@@ -1381,7 +1381,7 @@ class CoAuthors_Plus {
 	 *
 	 * @since 3.0
 	 */
-	function filter_views( $views ) {
+	public function filter_views( $views ) {
 
 		if ( array_key_exists( 'mine', $views ) ) {
 			return $views;
@@ -1478,7 +1478,7 @@ class CoAuthors_Plus {
 	/**
 	 * Allows guest authors to edit the post they're co-authors of
 	 */
-	function filter_user_has_cap( $allcaps, $caps, $args ) {
+	public function filter_user_has_cap( $allcaps, $caps, $args ) {
 
 		$cap     = $args[0];
 		$user_id = isset( $args[1] ) ? $args[1] : 0;
@@ -1599,7 +1599,7 @@ class CoAuthors_Plus {
 	 * @param int   $post_id
 	 * @return array
 	 */
-	function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
+	public function filter_ef_calendar_item_information_fields( $information_fields, $post_id ) {
 
 		// Don't add the author row again if another plugin has removed
 		if ( ! array_key_exists( $this->coauthor_taxonomy, $information_fields ) ) {
@@ -1628,7 +1628,7 @@ class CoAuthors_Plus {
 	 * @param object $parent_term
 	 * @return string
 	 */
-	function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
+	public function filter_ef_story_budget_term_column_value( $column_name, $post, $parent_term ) {
 
 		// We only want to modify the 'author' column
 		if ( $this->coauthor_taxonomy != $column_name ) {
