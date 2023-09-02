@@ -283,17 +283,17 @@ class CoAuthors_Plus {
 			case 'email':
 			case 'user_nicename':
 			case 'user_email':
-				if ( 'user_login' == $key ) {
+				if ( 'user_login' === $key ) {
 					$key = 'login';
 				}
-				if ( 'user_email' == $key ) {
+				if ( 'user_email' === $key ) {
 					$key = 'email';
 				}
-				if ( 'user_nicename' == $key ) {
+				if ( 'user_nicename' === $key ) {
 					$key = 'slug';
 				}
 				$user = get_user_by( $key, $value );
-				if ( ! $user && ( 'login' == $key || 'slug' == $key ) ) {
+				if ( ! $user && ( 'login' === $key || 'slug' === $key ) ) {
 					// Re-try lookup without prefixed value if no results found.
 					$value = preg_replace( '#^cap\-#', '', $value );
 					$user  = get_user_by( $key, $value );
@@ -455,7 +455,7 @@ class CoAuthors_Plus {
 	function remove_quick_edit_authors_box() {
 		global $pagenow;
 
-		if ( 'edit.php' == $pagenow && $this->is_post_type_enabled() ) {
+		if ( 'edit.php' === $pagenow && $this->is_post_type_enabled() ) {
 			remove_post_type_support( get_post_type(), $this->coauthor_taxonomy );
 		}
 	}
@@ -500,7 +500,7 @@ class CoAuthors_Plus {
 				$args = array(
 					'author_name' => $author->user_nicename,
 				);
-				if ( 'post' != $post->post_type ) {
+				if ( 'post' !== $post->post_type ) {
 					$args['post_type'] = $post->post_type;
 				}
 				$author_filter_url = add_query_arg( array_map( 'rawurlencode', $args ), admin_url( 'edit.php' ) );
@@ -526,7 +526,7 @@ class CoAuthors_Plus {
 		$new_columns = array();
 		// Unset and add our column while retaining the order of the columns
 		foreach ( $columns as $column_name => $column_title ) {
-			if ( 'posts' == $column_name ) {
+			if ( 'posts' === $column_name ) {
 				$new_columns['coauthors_post_count'] = __( 'Posts', 'co-authors-plus' );
 			} else {
 				$new_columns[ $column_name ] = $column_title;
@@ -539,7 +539,7 @@ class CoAuthors_Plus {
 	 * Provide an accurate count when looking up the number of published posts for a user
 	 */
 	function _filter_manage_users_custom_column( $value, $column_name, $user_id ) {
-		if ( 'coauthors_post_count' != $column_name ) {
+		if ( 'coauthors_post_count' !== $column_name ) {
 			return $value;
 		}
 		// We filter count_user_posts() so it provides an accurate number
@@ -559,7 +559,7 @@ class CoAuthors_Plus {
 	 * Quick Edit co-authors box.
 	 */
 	function _action_quick_edit_custom_box( $column_name, $post_type ) {
-		if ( 'coauthors' != $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
+		if ( 'coauthors' !== $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
 			return;
 		}
 		?>
@@ -636,7 +636,7 @@ class CoAuthors_Plus {
 		$query .= " LEFT JOIN {$wpdb->term_taxonomy} ON ( {$wpdb->term_relationships}.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
 
 		$having_terms_and_authors = $having_terms = $wpdb->prepare( "{$wpdb->term_taxonomy}.term_id = %d", $term->term_id );
-		if ( 'wpuser' == $coauthor->type ) {
+		if ( 'wpuser' === $coauthor->type ) {
 			$having_terms_and_authors .= $wpdb->prepare( " OR {$wpdb->posts}.post_author = %d", $coauthor->ID );
 		}
 
@@ -785,7 +785,7 @@ class CoAuthors_Plus {
 				if (
 					is_user_logged_in() &&
 					is_author() &&
-					get_queried_object_id() != get_current_user_id()
+					get_queried_object_id() !== get_current_user_id()
 				) {
 					$current_coauthor      = $this->get_coauthor_by( 'user_nicename', wp_get_current_user()->user_nicename );
 					$current_coauthor_term = $this->get_author_term( $current_coauthor );
@@ -853,7 +853,7 @@ class CoAuthors_Plus {
 				$author_data = $this->get_coauthor_by( 'user_nicename', $author );
 				// If it's a guest author and has a linked account, store that information in post_author
 				// because it'll be the valid user ID
-				if ( 'guest-author' == $author_data->type && ! empty( $author_data->linked_account ) ) {
+				if ( 'guest-author' === $author_data->type && ! empty( $author_data->linked_account ) ) {
 					$user = get_user_by( 'login', $author_data->linked_account );
 					if ( is_object( $user ) ) {
 						$data['post_author'] = $user->ID;
@@ -969,7 +969,7 @@ class CoAuthors_Plus {
 		if ( empty( $post_author_user )
 			|| ! in_array( $post_author_user->user_login, $coauthors ) ) {
 			foreach ( $coauthor_objects as $coauthor_object ) {
-				if ( 'wpuser' == $coauthor_object->type ) {
+				if ( 'wpuser' === $coauthor_object->type ) {
 					$new_author = $coauthor_object;
 					break;
 				}
@@ -1201,7 +1201,7 @@ class CoAuthors_Plus {
 
 		$author = get_queried_object();
 
-		if ( $author && 'guest-author' == $author->type ) {
+		if ( $author && 'guest-author' === $author->type ) {
 			unset( $settings['query_args'][ $this->coauthor_taxonomy ] );
 
 			$settings['query_args']['author_name'] = $author->user_nicename;
@@ -1393,7 +1393,7 @@ class CoAuthors_Plus {
 		$mine_args = array(
 			'author_name' => wp_get_current_user()->user_nicename,
 		);
-		if ( 'post' != get_post_type() ) {
+		if ( 'post' !== get_post_type() ) {
 			$mine_args['post_type'] = get_current_screen()->post_type;
 		}
 		if ( ! empty( $_REQUEST['author_name'] ) && wp_get_current_user()->user_nicename == $_REQUEST['author_name'] ) {
@@ -1490,7 +1490,7 @@ class CoAuthors_Plus {
 		}
 
 		$obj = get_post_type_object( get_post_type( $post_id ) );
-		if ( ! $obj || 'revision' == $obj->name ) {
+		if ( ! $obj || 'revision' === $obj->name ) {
 			return $allcaps;
 		}
 
@@ -1512,11 +1512,11 @@ class CoAuthors_Plus {
 		}
 
 		$current_user = wp_get_current_user();
-		if ( 'publish' == get_post_status( $post_id ) &&
-			( isset( $obj->cap->edit_published_posts ) && ! empty( $current_user->allcaps[ $obj->cap->edit_published_posts ] ) ) ) {
+		if ( 'publish' === get_post_status( $post_id ) &&
+		     ( isset( $obj->cap->edit_published_posts ) && ! empty( $current_user->allcaps[ $obj->cap->edit_published_posts ] ) ) ) {
 			$allcaps[ $obj->cap->edit_published_posts ] = true;
-		} elseif ( 'private' == get_post_status( $post_id ) &&
-			( isset( $obj->cap->edit_private_posts ) && ! empty( $current_user->allcaps[ $obj->cap->edit_private_posts ] ) ) ) {
+		} elseif ( 'private' === get_post_status( $post_id ) &&
+		           ( isset( $obj->cap->edit_private_posts ) && ! empty( $current_user->allcaps[ $obj->cap->edit_private_posts ] ) ) ) {
 			$allcaps[ $obj->cap->edit_private_posts ] = true;
 		}
 
