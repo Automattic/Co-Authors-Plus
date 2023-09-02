@@ -190,12 +190,7 @@ class Yoast {
 			}
 		}
 		$schema_types  = new Schema_Types();
-		$article_types = array_map(
-			function( $article_type ) {
-				return $article_type['value'];
-			},
-			$schema_types->get_article_type_options()
-		);
+		$article_types = array_column( $schema_types->get_article_type_options(), 'value' );
 
 		// Change the author reference to reference our multiple authors.
 		$add_to_graph = false;
