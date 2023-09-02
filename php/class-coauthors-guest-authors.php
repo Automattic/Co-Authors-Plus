@@ -907,9 +907,9 @@ class CoAuthors_Guest_Authors {
 			// Properly catch our false condition cache
 			if ( is_object( $retval ) ) {
 				return $retval;
-			} else {
-				return false;
 			}
+
+			return false;
 		}
 
 		switch ( $key ) {

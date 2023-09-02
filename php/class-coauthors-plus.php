@@ -147,9 +147,9 @@ class CoAuthors_Plus {
 		// Pre-5.0 compatibility
 		if ( method_exists( $screen, 'is_block_editor' ) ) {
 			return $screen->is_block_editor();
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	/**

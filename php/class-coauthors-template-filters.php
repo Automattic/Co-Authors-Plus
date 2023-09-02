@@ -31,9 +31,9 @@ class CoAuthors_Template_Filters {
 		$coauthors = (array) get_coauthors();
 		if ( count( $coauthors ) >= 1 && isset( $coauthors[0]->display_name ) ) {
 			return $coauthors[0]->display_name;
-		} else {
-			return $the_author;
 		}
+
+		return $the_author;
 	}
 
 	public function action_add_rss_guest_authors() {
