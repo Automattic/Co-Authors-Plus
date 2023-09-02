@@ -775,7 +775,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'ID'           => $author['author_id'],
 			);
 
-			$guest_author_id = $this->create_guest_author( $guest_author_data );
+			$this->create_guest_author( $guest_author_data );
 		}
 
 		WP_CLI::line( 'All done!' );
@@ -875,7 +875,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$guest_author_data['last_name']  = sanitize_text_field( $author['last_name'] );
 			}
 
-			$guest_author_id = $this->create_guest_author( $guest_author_data );
+			$this->create_guest_author( $guest_author_data );
 		}
 
 		WP_CLI::line( 'All done!' );
