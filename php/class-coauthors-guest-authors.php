@@ -430,14 +430,7 @@ class CoAuthors_Guest_Authors {
 			return;
 		}
 
-		switch ( $_REQUEST['message'] ) {
-			case 'guest-author-deleted':
-				$message = __( 'Guest author deleted.', 'co-authors-plus' );
-				break;
-			default:
-				$message = false;
-				break;
-		}
+		$message = $_REQUEST['message'] === 'guest-author-deleted' ? __( 'Guest author deleted.', 'co-authors-plus' ) : false;
 
 		if ( $message ) {
 			echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
@@ -675,13 +668,10 @@ class CoAuthors_Guest_Authors {
 				$field['input'] = 'text';
 			}
 			$field['input'] = apply_filters( 'coauthors_name_field_type_' . $pm_key, $field['input'] );
-			switch ( $field['input'] ) {
-				case 'checkbox':
-					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"' . checked( '1', $value, false ) . ' value="1"/>';
-					break;
-				default:
-					echo '<input type="' . esc_attr( $field['input'] ) . '" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
-					break;
+			if ( $field['input'] === 'checkbox' ) {
+				echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"' . checked( '1', $value, false ) . ' value="1"/>';
+			} else {
+				echo '<input type="' . esc_attr( $field['input'] ) . '" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			}
 			echo '</td></tr>';
 		}
@@ -711,13 +701,10 @@ class CoAuthors_Guest_Authors {
 				$field['input'] = 'text';
 			}
 			$field['input'] = apply_filters( 'coauthors_name_field_type_' . $pm_key, $field['input'] );
-			switch ( $field['input'] ) {
-				case 'checkbox':
-					echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"' . checked( '1', $value, false ) . ' value="1"/>';
-					break;
-				default:
-					echo '<input type="' . esc_attr( $field['input'] ) . '" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
-					break;
+			if ( $field['input'] === 'checkbox' ) {
+				echo '<input type="checkbox" name="' . esc_attr( $pm_key ) . '"' . checked( '1', $value, false ) . ' value="1"/>';
+			} else {
+				echo '<input type="' . esc_attr( $field['input'] ) . '" name="' . esc_attr( $pm_key ) . '" value="' . esc_attr( $value ) . '" class="regular-text" />';
 			}
 
 			echo '</td></tr>';
