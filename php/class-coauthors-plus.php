@@ -1657,7 +1657,7 @@ class CoAuthors_Plus {
 		if ( is_author() ) {
 			$author = get_queried_object();
 
-			if ( ! empty( $author ) ) {
+			if ( $author !== null ) {
 				$og_tags['og:title']           = $author->display_name;
 				$og_tags['og:url']             = get_author_posts_url( $author->ID, $author->user_nicename );
 				$og_tags['og:description']     = $author->description;
