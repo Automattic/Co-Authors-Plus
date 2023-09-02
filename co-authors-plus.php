@@ -135,7 +135,8 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 			/* translators: URL for marking a comment as spam. */
 			$notify_message .= sprintf( __( 'Spam it: %s', 'co-authors-plus' ), admin_url( "comment.php?action=spam&c=$comment_id" ) ) . "\r\n";
 
-			$wp_email = 'wordpress@' . preg_replace( '#^www\.#', '', strtolower( $_SERVER['SERVER_NAME'] ) ); // phpcs:ignore
+			$domain = strtolower( sanitize_text_field( $_SERVER['SERVER_NAME'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+			$wp_email = 'wordpress@' . preg_replace( '#^www\.#', '', $domain  );
 
 			if ( '' == $comment->comment_author ) {
 				$from = "From: \"$blogname\" <$wp_email>";
