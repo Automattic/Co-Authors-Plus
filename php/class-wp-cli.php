@@ -302,7 +302,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$new_term       = $this->args['new_term'];
 
 		// Get the reassignment data
-		if ( $author_mapping && file_exists( $author_mapping ) ) {
+		if ( $author_mapping && is_file( $author_mapping ) ) {
 			require_once $author_mapping;
 			$authors_to_migrate = $cli_user_map;
 		} elseif ( $author_mapping ) {
