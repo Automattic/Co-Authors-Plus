@@ -156,16 +156,16 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 	$default_between_last = ( defined( 'COAUTHORS_DEFAULT_BETWEEN_LAST' ) ) ? COAUTHORS_DEFAULT_BETWEEN_LAST : __( ' and ', 'co-authors-plus' );
 	$default_after        = ( defined( 'COAUTHORS_DEFAULT_AFTER' ) ) ? COAUTHORS_DEFAULT_AFTER : '';
 
-	if ( ! isset( $separators['before'] ) || null === $separators['before'] ) {
+	if ( ! isset( $separators['before'] ) ) {
 		$separators['before'] = apply_filters( 'coauthors_default_before', $default_before );
 	}
-	if ( ! isset( $separators['between'] ) || null === $separators['between'] ) {
+	if ( ! isset( $separators['between'] ) ) {
 		$separators['between'] = apply_filters( 'coauthors_default_between', $default_between );
 	}
-	if ( ! isset( $separators['betweenLast'] ) || null === $separators['betweenLast'] ) {
+	if ( ! isset( $separators['betweenLast'] ) ) {
 		$separators['betweenLast'] = apply_filters( 'coauthors_default_between_last', $default_between_last );
 	}
-	if ( ! isset( $separators['after'] ) || null === $separators['after'] ) {
+	if ( ! isset( $separators['after'] ) ) {
 		$separators['after'] = apply_filters( 'coauthors_default_after', $default_after );
 	}
 
