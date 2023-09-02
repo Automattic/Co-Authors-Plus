@@ -23,16 +23,16 @@
 
 define( 'COAUTHORS_PLUS_VERSION', '3.5.15' );
 
-require_once dirname( __FILE__ ) . '/template-tags.php';
-require_once dirname( __FILE__ ) . '/deprecated.php';
+require_once __DIR__ . '/template-tags.php';
+require_once __DIR__ . '/deprecated.php';
 
-require_once dirname( __FILE__ ) . '/php/class-coauthors-template-filters.php';
-require_once dirname( __FILE__ ) . '/php/class-coauthors-endpoint.php';
-require_once dirname( __FILE__ ) . '/php/integrations/amp.php';
-require_once dirname( __FILE__ ) . '/php/integrations/yoast.php';
+require_once __DIR__ . '/php/class-coauthors-template-filters.php';
+require_once __DIR__ . '/php/class-coauthors-endpoint.php';
+require_once __DIR__ . '/php/integrations/amp.php';
+require_once __DIR__ . '/php/integrations/yoast.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once dirname( __FILE__ ) . '/php/class-wp-cli.php';
+	require_once __DIR__ . '/php/class-wp-cli.php';
 }
 
 class CoAuthors_Plus {
@@ -152,7 +152,7 @@ class CoAuthors_Plus {
 
 		// Load the Guest Authors functionality if needed
 		if ( $this->is_guest_authors_enabled() ) {
-			require_once dirname( __FILE__ ) . '/php/class-coauthors-guest-authors.php';
+			require_once __DIR__ . '/php/class-coauthors-guest-authors.php';
 			$this->guest_authors = new CoAuthors_Guest_Authors();
 			if ( apply_filters( 'coauthors_guest_authors_force', false ) ) {
 				$this->force_guest_authors = true;
@@ -190,7 +190,7 @@ class CoAuthors_Plus {
 	 */
 	public function enqueue_sidebar_plugin_assets() {
 		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
-			$asset = require dirname( __FILE__ ) . '/build/index.asset.php';
+			$asset = require __DIR__ . '/build/index.asset.php';
 
 			wp_register_script(
 				'coauthors-sidebar-js',

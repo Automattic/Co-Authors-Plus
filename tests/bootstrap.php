@@ -2,12 +2,12 @@
 /**
  * PHPUnit bootstrap file.
  *
- * @package Automattic\LegacyRedirector
+ * @package Automattic\CoAuthorsPlus
  */
 
 use Yoast\WPTestUtils\WPIntegration;
 
-require_once dirname( dirname( __FILE__ ) ) . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
+require_once dirname( __DIR__ ) . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
@@ -34,7 +34,7 @@ require_once "{$_tests_dir}/includes/functions.php";
  */
 function _manually_load_plugin() {
 	// Updated from default (__FILE__), since this bootstrap is an extra level down in tests/Integration/.
-	require dirname( dirname( __FILE__ ) ) . '/co-authors-plus.php';
+	require dirname( __DIR__ ) . '/co-authors-plus.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
