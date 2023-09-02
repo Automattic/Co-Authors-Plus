@@ -12,6 +12,9 @@
 	},
 	"scripts": {
 		"build": "wp-scripts build",
+		"bump:patch": "bump patch --commit 'Version %s.' package.json package-lock.json co-authors-plus.php README.md",
+		"bump:minor": "bump minor --commit 'Version %s.' package.json package-lock.json co-authors-plus.php README.md",
+		"bump:major": "bump major --commit 'Version %s.' package.json package-lock.json co-authors-plus.php README.md",
 		"check-engines": "wp-scripts check-engines",
 		"check-licenses": "wp-scripts check-licenses",
 		"format:js": "wp-scripts format",
