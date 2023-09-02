@@ -160,6 +160,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				foreach ( $existing_coauthors as $existing_coauthor ) {
 					if ( $original_author == $existing_coauthor->user_login ) {
 						$already_associated = true;
+						break;
 					}
 				}
 				if ( $already_associated ) {
