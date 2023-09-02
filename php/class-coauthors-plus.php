@@ -269,7 +269,7 @@ class CoAuthors_Plus {
 	public function get_coauthor_by( $key, $value, $force = false ) {
 
 		// If Guest Authors are enabled, prioritize those profiles
-		if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
+		if ( isset( $this->guest_authors ) && $this->is_guest_authors_enabled() ) {
 			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value, $force );
 			if ( is_object( $guest_author ) ) {
 				return $guest_author;
@@ -304,7 +304,7 @@ class CoAuthors_Plus {
 				$user->type = 'wpuser';
 				// However, if guest authors are enabled and there's a guest author linked to this
 				// user account, we want to use that instead
-				if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
+				if ( isset( $this->guest_authors ) && $this->is_guest_authors_enabled() ) {
 					$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
 					if ( is_object( $guest_author ) ) {
 						$user = $guest_author;
@@ -329,7 +329,7 @@ class CoAuthors_Plus {
 
 		if ( ! $post_type ) {
 			$post_type = get_post_type();
-			if ( is_admin() && ! $post_type ) {
+			if ( ! $post_type && is_admin() ) {
 				$post_type = get_current_screen()->post_type;
 			}
 		}
@@ -1806,7 +1806,7 @@ class CoAuthors_Plus {
 	public function filter_pre_get_avatar_data_url( $args, $id ) {
 		global $wp_current_filter;
 
-		if ( ! $id || ! $this->is_guest_authors_enabled() || ! is_numeric( $id ) || isset( $args['url'] ) ) {
+		if ( isset( $args['url'] ) || ! $id || ! is_numeric( $id ) || ! $this->is_guest_authors_enabled() ) {
 			return $args;
 		}
 

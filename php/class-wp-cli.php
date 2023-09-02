@@ -658,7 +658,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		// And create author terms for any Guest Authors that don't have them
-		if ( $coauthors_plus->is_guest_authors_enabled() && $coauthors_plus->guest_authors instanceof CoAuthors_Guest_Authors ) {
+		if ( $coauthors_plus->guest_authors instanceof CoAuthors_Guest_Authors && $coauthors_plus->is_guest_authors_enabled() ) {
 			$args = array(
 				'order'             => 'ASC',
 				'orderby'           => 'ID',

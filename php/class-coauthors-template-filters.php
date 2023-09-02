@@ -24,7 +24,7 @@ class CoAuthors_Template_Filters {
 	}
 
 	public function filter_the_author_rss( $the_author ) {
-		if ( ! is_feed() || ! function_exists( 'coauthors' ) ) {
+		if ( ! function_exists( 'coauthors' ) || ! is_feed() ) {
 			return $the_author;
 		}
 
