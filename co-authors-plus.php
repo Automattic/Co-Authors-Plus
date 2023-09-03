@@ -131,6 +131,9 @@ class CoAuthors_Plus {
 		// Filter to correct author on author archive page
 		add_filter( 'get_the_archive_title', array( $this, 'filter_author_archive_title' ), 10, 1 );
 
+		// Filter to correct author id on author archive page
+		add_filter( 'the_posts', array( $this, 'filter_author_archive_post_ids' ) );
+
 		// Filter to display author image if exists instead of avatar
 		add_filter( 'pre_get_avatar_data', array( $this, 'filter_pre_get_avatar_data_url' ), 10, 2 );
 
@@ -1798,6 +1801,31 @@ class CoAuthors_Plus {
 
 		/* translators: Author display name. */
 		return sprintf( __( 'Author: %s', 'co-authors-plus' ), $author->display_name );
+	}
+
+	/**
+	 * Filter the posts on author archive pages to correctly display author meta
+	 *
+	 * @param $posts array of post objects
+	 *
+	 * @return array Array of post objects either as they were passed or updated
+	 */
+	public function filter_author_archive_post_ids( $posts ) {
+		
+		// Bail if not an author archive template
+		if ( ! is_author() ) {
+			return $posts;
+		}
+
+		$author_slug = sanitize_user( get_query_var( 'author_name' ) );
+		$author = $this->get_coauthor_by( 'user_nicename', $author_slug );
+
+		// make post author id same as id from slug on author archive
+		foreach( $posts as $post ) {
+			$post->post_author = $author->ID;
+		}
+
+		return $posts;
 	}
 
 	/**
