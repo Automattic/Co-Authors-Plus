@@ -52,7 +52,7 @@ class CoAuthors_Guest_Authors {
 		// Validate new guest authors
 		add_filter( 'wp_insert_post_empty_content', array( $this, 'filter_wp_insert_post_empty_content' ), 10, 2 );
 
-		// Add metaboxes for our guest author management interface
+		// Add meta boxes for our guest author management interface
 		add_action( 'add_meta_boxes', array( $this, 'action_add_meta_boxes' ), 10, 2 );
 		add_action( 'wp_insert_post_data', array( $this, 'manage_guest_author_filter_post_data' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'manage_guest_author_save_meta_fields' ), 10, 2 );
@@ -437,7 +437,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Register the metaboxes used for Guest Authors
+	 * Register the meta boxes used for Guest Authors.
 	 *
 	 * @since 3.0
 	 */
@@ -445,12 +445,12 @@ class CoAuthors_Guest_Authors {
 		global $coauthors_plus;
 
 		if ( get_post_type() == $this->post_type ) {
-			// Remove the submitpost metabox because we have our own
+			// Remove the submitpost meta box because we have our own.
 			remove_meta_box( 'submitdiv', $this->post_type, 'side' );
 			remove_meta_box( 'slugdiv', $this->post_type, 'normal' );
 			add_meta_box( 'coauthors-manage-guest-author-save', __( 'Save', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_save' ), $this->post_type, 'side' );
 			add_meta_box( 'coauthors-manage-guest-author-slug', __( 'Unique Slug', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_slug' ), $this->post_type, 'side' );
-			// Our metaboxes with co-author details
+			// Our meta boxes with co-author details.
 			add_meta_box( 'coauthors-manage-guest-author-name', __( 'Name', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_name' ), $this->post_type, 'normal' );
 			add_meta_box( 'coauthors-manage-guest-author-contact-info', __( 'Contact Info', 'co-authors-plus' ), array( $this, 'metabox_manage_guest_author_contact_info' ), $this->post_type, 'normal' );
 			add_meta_box( 'coauthors-manage-guest-author-bio', $this->labels['metabox_about'], array( $this, 'metabox_manage_guest_author_bio' ), $this->post_type, 'normal' );
@@ -565,7 +565,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Metabox for saving or updating a Guest Author
+	 * Meta box for saving or updating a Guest Author
 	 *
 	 * @since 3.0
 	 */
@@ -585,7 +585,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Metabox for editing this guest author's slug or changing the linked account
+	 * Meta box for editing this guest author's slug or changing the linked account
 	 *
 	 * @since 3.0
 	 */
@@ -647,7 +647,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Metabox to display all of the pertient names for a Guest Author not linked to user account
+	 * Meta box to display all the pertinent names for a Guest Author not linked to user account.
 	 *
 	 * @since 3.0
 	 */
@@ -679,8 +679,8 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Metabox to display all of the pertient contact details for a Guest Author not linked to
-	 * user account
+	 * Meta box to display all the pertinent contact details for a Guest Author not linked to
+	 * user account.
 	 *
 	 * @since 3.0
 	 */
@@ -713,7 +713,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Metabox to edit the bio and other biographical details of the Guest Author
+	 * Meta box to edit the bio and other biographical details of the Guest Author.
 	 *
 	 * @since 3.0
 	 */
@@ -975,7 +975,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Get an thumbnail for a Guest Author object
+	 * Get a thumbnail for a Guest Author object.
 	 *
 	 * @param   object        The Guest Author object for which to retrieve the thumbnail.
 	 * @param   int           The desired image size.
@@ -1006,7 +1006,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Get all of the meta fields that can be associated with a guest author
+	 * Get all the meta fields that can be associated with a guest author
 	 *
 	 * @since 3.0
 	 */
@@ -1127,7 +1127,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Get all of the user accounts that have been linked
+	 * Get all the user accounts that have been linked.
 	 *
 	 * @since 3.0
 	 */
@@ -1184,7 +1184,7 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Delete all of the cache values associated with a guest author
+	 * Delete all the cache values associated with a guest author.
 	 *
 	 * @since 3.0
 	 *
@@ -1263,7 +1263,7 @@ class CoAuthors_Guest_Authors {
 			return $post_id;
 		}
 
-		// Add all of the fields for the new guest author
+		// Add all the fields for the new guest author.
 		foreach ( $fields as $field ) {
 			$key = $field['key'];
 			if ( empty( $args[ $key ] ) ) {
@@ -1340,7 +1340,7 @@ class CoAuthors_Guest_Authors {
 		// Delete the guest author profile
 		wp_delete_post( $guest_author->ID, true );
 
-		// Make sure all of the caches are reset
+		// Make sure all the caches are reset.
 		$this->delete_guest_author_cache( $guest_author );
 		return true;
 	}
@@ -1370,9 +1370,9 @@ class CoAuthors_Guest_Authors {
 				$guest_author[ $key ] = '';
 			}
 		}
-		// Don't need the old user ID
+		// Don't need the old user ID.
 		unset( $guest_author['ID'] );
-		// Retain the user mapping and try to produce an unique user_login based on the name.
+		// Retain the user mapping and try to produce a unique user_login based on the name.
 		$guest_author['linked_account'] = $guest_author['user_login'];
 		if ( ! empty( $guest_author['display_name'] ) && $guest_author['display_name'] != $guest_author['user_login'] ) {
 			$guest_author['user_login'] = sanitize_title( $guest_author['display_name'] );
@@ -1491,13 +1491,13 @@ class CoAuthors_Guest_Authors {
 	}
 
 	/**
-	 * Filter Author Feed Link for non native authors
+	 * Filter Author Feed Link for non-native authors.
 	 *
 	 * @since 3.1
 	 *
 	 * @param string $feed_link Required. Original feed link for the author.
 	 * @param string $feed Required. Type of feed being generated.
-	 * @return string Feed link for the author updated, if needs to be
+	 * @return string Feed link for the author.
 	 */
 	public function filter_author_feed_link( $feed_link, $feed ) {
 		if ( ! is_author() ) {
@@ -1598,7 +1598,7 @@ class CoAuthors_Guest_Authors {
 		 *
 		 * @since 3.3.1
 		 *
-		 * @param array $extra_data A empty array to be populated with extra data
+		 * @param array $extra_data An empty array to be populated with extra data.
 		 * @param int $author->ID The guest author ID
 		 * @param string $email_address The guest author email address
 		 */

@@ -42,7 +42,7 @@ function get_coauthors( $post_id = 0 ) {
 }
 
 /**
- * Checks to see if the the specified user is author of the current global post or post (if specified)
+ * Checks to see if the specified user is author of the current global post or post (if specified).
  *
  * @param object|int $user
  * @param int        $post_id
@@ -514,7 +514,7 @@ function coauthors_ids( $between = null, $betweenLast = null, $before = null, $a
 }
 
 /**
- * Outputs the co-authors Meta Data
+ * Outputs the co-authors metadata.
  *
  * @param string $field Required The user field to retrieve.[login, email, nicename, display_name, url, type]
  * @param string $user_id Optional The user ID for meta
@@ -633,12 +633,12 @@ function coauthors_get_users( $args = array() ) {
 
 /**
  * List all the *co-authors* of the blog, with several options available.
- * optioncount (boolean) (false): Show the count in parenthesis next to the author's name.
+ * optioncount (boolean) (false): Show the count in parentheses next to the author's name.
  * show_fullname (boolean) (false): Show their full names.
  * hide_empty (boolean) (true): Don't show authors without any posts.
  * feed (string) (''): If isn't empty, show links to author's feeds.
  * feed_image (string) (''): If isn't empty, use this image to link to feeds.
- * echo (boolean) (true): Set to false to return the output, instead of echoing.
+ * echo (boolean) (true): False to return the output, true to echo.
  * authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
  *
  * @param array $args The argument array.

@@ -75,7 +75,7 @@ class CoAuthors_Plus {
 		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
 
 		// Make sure we've correctly set data on guest author pages
-		add_action( 'posts_selection', array( $this, 'fix_author_page' ) ); // use posts_selection since it's after WP_Query has built the request and before it's queried any posts
+		add_action( 'posts_selection', array( $this, 'fix_author_page' ) ); // Use posts_selection since it's after WP_Query has built the request, and before it's queried any posts.
 		add_action( 'the_post', array( $this, 'fix_author_page' ) );
 
 		// Support for Edit Flow's calendar and story budget
@@ -184,7 +184,7 @@ class CoAuthors_Plus {
 	 */
 	public function action_init_late() {
 
-		// Register new taxonomy so that we can store all of the relationships
+		// Register new taxonomy so that we can store all the relationships.
 		$args = array(
 			'hierarchical' => false,
 			'labels'       => array(
@@ -317,13 +317,13 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Whether or not Co-Authors Plus is enabled for this post type
+	 * Whether Co-Authors Plus is enabled for this post type.
 	 * Must be called after init
 	 *
 	 * @since 3.0
 	 *
 	 * @param string $post_type The name of the post type we're considering
-	 * @return bool Whether or not it's enabled
+	 * @return bool Whether co-authors are enabled for the post type.
 	 */
 	public function is_post_type_enabled( $post_type = null ) {
 
@@ -382,7 +382,7 @@ class CoAuthors_Plus {
 				}
 			}
 			// If the above block was skipped, or if it failed to find a guest author, use the current
-			// logged in user, so long as force_guest_authors is false. If force_guest_authors = true, we are
+			// logged-in user, so long as force_guest_authors is false. If force_guest_authors = true, we are
 			// OK with having an empty authoring box.
 			if ( ! $coauthors_plus->force_guest_authors && empty( $coauthors ) ) {
 				if ( is_array( $default_user ) ) {
@@ -679,7 +679,7 @@ class CoAuthors_Plus {
 
 			$term_taxonomy_join = " INNER JOIN {$wpdb->term_taxonomy} ON ( tr1.term_taxonomy_id = {$wpdb->term_taxonomy}.term_taxonomy_id )";
 
-			// 4.6+ uses a LEFT JOIN for tax queries so we need to check for both
+			// 4.6+ uses a LEFT JOIN for tax queries, so we need to check for both.
 			if ( false === strpos( $join, trim( $term_relationship_inner_join ) )
 				&& false === strpos( $join, trim( $term_relationship_left_join ) ) ) {
 				$join .= $term_relationship_left_join;
@@ -738,7 +738,7 @@ class CoAuthors_Plus {
 				}
 			}
 
-			// Whether or not to include the original 'post_author' value in the query
+			// Whether to include the original 'post_author' value in the query.
 			// Don't include it if we're forcing guest authors, or it's obvious our query is for a guest author's posts
 			if ( $this->force_guest_authors || stripos( $where, '.post_author = 0)' ) ) {
 				$maybe_both = false;
@@ -760,7 +760,7 @@ class CoAuthors_Plus {
 				// We need to check the query is the main query as a new query object would result in the wrong ID
 				$id = is_author() && $query->is_main_query() ? get_queried_object_id() : '\d+';
 
-				// If we have an ID but it's not a "real" ID that means that this isn't the first time the filter has fired and the object_id has already been replaced by a previous run of this filter. We therefore need to replace the 0
+				// If we have an ID, but it's not a "real" ID that means that this isn't the first time the filter has fired and the object_id has already been replaced by a previous run of this filter. We therefore need to replace the 0
 				// This happens when wp_query::get_posts() is run multiple times.
 				// If previous condition resulted in this being a string there's no point wasting a db query looking for a user.
 				if ( $id !== '\d+' && false === get_user_by( 'id', $id ) ) {
@@ -938,7 +938,7 @@ class CoAuthors_Plus {
 		}
 
 		// A co-author is always required
-		// If no coauthor is provided AND no coauthors are currently set, assign to current user - retain old ones otherwise.
+		// If no co-author is provided AND no co-authors are currently set, assign to current user - retain old ones otherwise.
 		if ( empty( $coauthors ) ) {
 			if ( empty( $existing_coauthors ) ) {
 				$coauthors = array( $current_user->user_login );
@@ -1262,7 +1262,7 @@ class CoAuthors_Plus {
 
 		// Since 2.7, we're searching against the term description for the fields
 		// instead of the user details. If the term is missing, we probably need to
-		// backfill with user details. Let's do this first... easier than running
+		// back-fill with user details. Let's do this first... easier than running
 		// an upgrade script that could break on a lot of users
 		$args        = array(
 			'count_total'    => false,

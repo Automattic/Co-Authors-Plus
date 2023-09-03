@@ -302,7 +302,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Compares data when coauthor is set and it is linked with main wp user.
+	 * Compares data when coauthor is set, and it is linked with main wp user.
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *

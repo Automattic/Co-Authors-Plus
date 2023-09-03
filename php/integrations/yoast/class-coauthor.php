@@ -100,7 +100,7 @@ class CoAuthor extends Author {
 	 * Builds our array of Schema Person data for a given Guest Author.
 	 *
 	 * @param object $guest_author The Guest Author object.
-	 * @param bool   $add_hash Wether or not the person's image url hash should be added to the image id.
+	 * @param bool   $add_hash Whether the person's image url hash should be added to the image id.
 	 *
 	 * @return array An array of Schema Person data.
 	 */

@@ -5,7 +5,7 @@ require_once ABSPATH . 'wp-admin/includes/screen.php';
 require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 
 /**
- * List all of the available Co-Authors within the system
+ * List all the available Co-Authors within the system.
  */
 class CoAuthors_WP_List_Table extends WP_List_Table {
 

@@ -541,7 +541,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * List all of the posts without assigned co-authors terms
+	 * List all the posts without assigned co-authors terms.
 	 *
 	 * @since 3.0
 	 *
@@ -931,7 +931,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Clear all of the caches for memory management
+	 * Clear all the caches for memory management.
 	 */
 	private function stop_the_insanity() {
 		global $wpdb, $wp_object_cache;

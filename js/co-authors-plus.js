@@ -351,7 +351,7 @@ jQuery( document ).ready(function () {
 	function move_loading( $input ) {
 		$coauthors_loading.insertAfter( $input );
 	}
-	// Show laoding cursor for autocomplete ajax requests
+	// Show loading cursor for autocomplete ajax requests
 	jQuery( document ).ajaxSend(function( e, xhr, settings ) {
 		if ( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 ) {
 			// Including existing authors on the AJAX suggest link
@@ -362,7 +362,7 @@ jQuery( document ).ready(function () {
 			show_loading();
 		}
 	});
-	// Hide laoding cursor when autocomplete ajax requests are finished
+	// Hide loading cursor when autocomplete ajax requests are finished
 	jQuery( document ).ajaxComplete(function( e, xhr, settings ) {
 		if ( settings.url.indexOf( coAuthorsPlus_ajax_suggest_link ) != -1 )
 			hide_loading();

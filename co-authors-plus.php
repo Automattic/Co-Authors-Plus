@@ -89,7 +89,7 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 				$notify_message = sprintf( __( 'New comment on your post "%s"', 'co-authors-plus' ), $post->post_title ) . "\r\n";
 				/* translators: 1: comment author, 2: author IP, 3: author domain */
 				$notify_message .= sprintf( __( 'Author : %1$s (IP: %2$s , %3$s)', 'co-authors-plus' ), $comment->comment_author, $comment->comment_author_IP, $comment_author_domain ) . "\r\n";
-				/* translators: Comment author emal address. */
+				/* translators: Comment author email address. */
 				$notify_message .= sprintf( __( 'Email : %s', 'co-authors-plus' ), $comment->comment_author_email ) . "\r\n";
 				/* translators: Comment author URL. */
 				$notify_message .= sprintf( __( 'URL    : %s', 'co-authors-plus' ), $comment->comment_author_url ) . "\r\n";
