@@ -94,7 +94,7 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 				/* translators: Comment author URL. */
 				$notify_message .= sprintf( __( 'URL    : %s', 'co-authors-plus' ), $comment->comment_author_url ) . "\r\n";
 				/* translators: Comment author IP address. */
-				$notify_message .= sprintf( __( 'Whois  : http://whois.arin.net/rest/ip/%s', 'co-authors-plus' ), $comment->comment_author_IP ) . "\r\n";
+				$notify_message .= sprintf( __( 'Whois  : https://whois.arin.net/rest/ip/%s', 'co-authors-plus' ), $comment->comment_author_IP ) . "\r\n";
 				$notify_message .= __( 'Comment: ', 'co-authors-plus' ) . "\r\n" . $comment->comment_content . "\r\n\r\n";
 				$notify_message .= __( 'You can see all comments on this post here: ', 'co-authors-plus' ) . "\r\n";
 				/* translators: 1: blog name, 2: post title */
