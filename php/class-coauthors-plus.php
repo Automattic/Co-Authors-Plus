@@ -264,7 +264,7 @@ class CoAuthors_Plus {
 	 *
 	 * @param string $key Key to search by (slug,email)
 	 * @param string $value Value to search for
-	 * @return object|false $coauthor The co-author on success, false on failure
+	 * @return object|false The co-author on success, false on failure
 	 */
 	public function get_coauthor_by( $key, $value, $force = false ) {
 
@@ -845,7 +845,7 @@ class CoAuthors_Plus {
 		// This action happens when a post is saved while editing a post
 		if ( isset( $_REQUEST['coauthors-nonce'], $_POST['coauthors'] ) && is_array( $_POST['coauthors'] ) ) { // phpcs:ignore
 
-			// rawurlencode() is for encoding coauthor name with special characters to compare names when getting coauthor.
+			// rawurlencode() is for encoding co-author name with special characters to compare names when getting co-author.
 			$author = rawurlencode( sanitize_text_field( $_POST['coauthors'][0] ) ); // phpcs:ignore
 
 			if ( $author ) {
@@ -1090,7 +1090,7 @@ class CoAuthors_Plus {
 		$user     = get_userdata( $user_id );
 		$coauthor = $this->get_coauthor_by( 'user_nicename', $user->user_nicename );
 
-		// Return $count, if no coauthor exists.
+		// Return $count if no co-author exists.
 		if ( ! is_object( $coauthor ) ) {
 			return $count;
 		}
@@ -1688,7 +1688,7 @@ class CoAuthors_Plus {
 	 * cached because it requires `wp_get_object_terms()` to succeed.
 	 *
 	 * @param int $post_id ID of the post for which to retrieve co-authors.
-	 * @return array Array of coauthor WP_Term objects
+	 * @return array Array of co-author WP_Term objects.
 	 */
 	public function get_coauthor_terms_for_post( $post_id ) {
 
@@ -1737,7 +1737,7 @@ class CoAuthors_Plus {
 	 */
 	public function clear_cache_on_terms_set( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
 
-		// We only care about the coauthors taxonomy
+		// We only care about the co-authors taxonomy.
 		if ( $this->coauthor_taxonomy !== $taxonomy ) {
 			return;
 		}

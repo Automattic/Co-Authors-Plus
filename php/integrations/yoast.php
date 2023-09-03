@@ -163,7 +163,7 @@ class Yoast {
 		}
 
 		/**
-		 * Contains the authors from the CoAuthors Plus plugin.
+		 * Contains the authors from the Co-Authors Plus plugin.
 		 *
 		 * @var WP_User[] $author_objects
 		 */
@@ -277,7 +277,7 @@ class Yoast {
 	}
 
 	/**
-	 * CoAuthors Plus and Yoast are incompatible where the author archives for guest authors are output as noindex.
+	 * Co-Authors Plus and Yoast are incompatible where the author archives for guest authors are output as noindex.
 	 * This filter will determine if we're on an author archive and reset the robots.txt string properly.
 	 *
 	 * See https://github.com/Yoast/wordpress-seo/issues/9147.

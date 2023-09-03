@@ -1,6 +1,6 @@
 <?php
 /**
- * The CoAuthor Schema class used by Yoast integration
+ * The Co-Author Schema class used by Yoast integration
  */
 
 namespace CoAuthors\Integrations\Yoast;
@@ -146,7 +146,7 @@ class CoAuthor extends Author {
 	protected function add_guest_author_same_as_urls( $data, $guest_author ) {
 		$same_as_urls = [];
 
-		// Add the "Website" field from CoAuthors' contact info.
+		// Add the "Website" field from co-authors' contact info.
 		if ( ! empty( $guest_author->website ) ) {
 			$same_as_urls[] = $guest_author->website;
 		}
