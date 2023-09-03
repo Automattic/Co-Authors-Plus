@@ -324,7 +324,7 @@ msgid "Guest authors cannot be created without display names."
 msgstr "Gastauteur kan niet worden aangemaakt zonder de beeldschermnaam."
 
 #: php/class-coauthors-guest-authors.php:658
-msgid "Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user instead.
+msgid "Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user instead."
 msgstr "Gastauteur kan niet worden aangemaakt met dezelfde login naam als de gebruiker. Maak inplaats daarvan een profiel aan voor de gebruiker"
 
 #: php/class-coauthors-guest-authors.php:663
