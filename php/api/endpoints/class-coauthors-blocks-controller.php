@@ -19,7 +19,7 @@ use WP_User;
 /**
  * CoAuthor Blocks
  */
-class CoAuthor_Blocks_Controller extends WP_REST_Controller {
+class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Instance of CoAuthors_Plus class
@@ -42,7 +42,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 	 */
 	public function register_routes() : void {
 		register_rest_route(
-			'coauthor-blocks/v1',
+			'coauthors-blocks/v1',
 			'/coauthors/(?P<post_id>[\d]+)',
 			array(
 				'args' => array(
@@ -61,12 +61,12 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 		);
 
 		register_rest_route(
-			'coauthor-blocks/v1',
+			'coauthors-blocks/v1',
 			'/coauthor/(?P<user_nicename>[\d\w-]+)',
 			array(
 				'args' => array(
 					'user_nicename' => array(
-						'description'       => __( 'Nicename / slug for coauthor.' ),
+						'description'       => __( 'Nicename / slug for co-author.' ),
 						'type'              => 'string',
 						'validate_callback' => fn( $slug ) => is_string( $slug ),
 						'sanitize_callback' => fn( $slug ) => sanitize_title( $slug )
@@ -98,7 +98,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 		if ( ! is_object( $coauthor ) ) {
 			return new WP_Error(
 				'rest_not_found',
-				__('Sorry, we could not find that coauthor.'),
+				__('Sorry, we could not find that co-author.'),
 				array( 'status' => 404 )
 			);
 		}
@@ -167,7 +167,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 
 		return new WP_Error(
 			'rest_cannot_view',
-			__( 'Sorry, you are not allowed to view coauthors.' ),
+			__( 'Sorry, you are not allowed to view co-authors.' ),
 			array( 'status' => rest_authorization_required_code() )
 		);
 	}
@@ -192,7 +192,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 
 		return new WP_Error(
 			'rest_cannot_view',
-			__( 'Sorry, you are not allowed to view coauthors of this post.' ),
+			__( 'Sorry, you are not allowed to view co-authors of this post.' ),
 			array( 'status' => rest_authorization_required_code() )
 		);
 	}
@@ -210,7 +210,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 
 		$schema = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'coauthor-block',
+			'title'      => 'coauthors-block',
 			'type'       => 'object',
 			'properties' => array(
 				'id' => array(
@@ -278,7 +278,7 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 		// Take a snapshot of which fields are in the schema pre-filtering.
 		$schema_fields = array_keys( $schema['properties'] );
 
-		$schema = apply_filters( 'rest_coauthor-block_item_schema', $schema );
+		$schema = apply_filters( 'rest_coauthors-block_item_schema', $schema );
 
 		// Emit a _doing_it_wrong warning if user tries to add new properties using this filter.
 		$new_fields = array_diff( array_keys( $schema['properties'] ), $schema_fields );
@@ -367,6 +367,6 @@ class CoAuthor_Blocks_Controller extends WP_REST_Controller {
 		 * @param stdClass|WP_User $author
 		 * @param WP_REST_Request  $request  Request object.
 		 */
-		return apply_filters( 'rest_prepare_coauthor-block', $response, $author, $request );
+		return apply_filters( 'rest_prepare_coauthors-block', $response, $author, $request );
 	}
 }

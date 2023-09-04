@@ -5,10 +5,17 @@
  * @package Co-Authors Plus
  */
 
+namespace CoAuthors\Blocks;
+
+use stdClass;
+use WP_Block;
+use WP_REST_Request;
+use WP_User;
+
 /**
- * CAP Block CoAuthors
+ * Block CoAuthors
  */
-class CAP_Block_CoAuthors {
+class Block_CoAuthors {
 	/**
 	 * Construct
 	 */
@@ -50,7 +57,7 @@ class CAP_Block_CoAuthors {
 					WP_REST_Request::from_url(
 						home_url(
 							sprintf(
-								'/wp-json/coauthor-blocks/v1/coauthor/%s',
+								'/wp-json/coauthors-blocks/v1/coauthor/%s',
 								$author->user_nicename
 							)
 						)
@@ -64,7 +71,7 @@ class CAP_Block_CoAuthors {
 			return '';
 		}
 
-		$blocks = self::render_coauthor_blocks_with_template(
+		$blocks = self::render_coauthors_blocks_with_template(
 			self::get_block_as_template( $block ),
 			$authors
 		);
@@ -120,7 +127,7 @@ class CAP_Block_CoAuthors {
 		if ( empty( $prefix ) ) {
 			return $prefix;
 		}
-		return Templating::render_element('span', 'class="wp-block-cap-coauthor__prefix"', $prefix);
+		return Templating::render_element('span', 'class="wp-block-cap-coauthors__prefix"', $prefix);
 	}
 
 	/**
@@ -133,17 +140,17 @@ class CAP_Block_CoAuthors {
 		if ( empty( $suffix ) ) {
 			return $suffix;
 		}
-		return Templating::render_element('span', 'class="wp-block-cap-coauthor__suffix"', $suffix);
+		return Templating::render_element('span', 'class="wp-block-cap-coauthors__suffix"', $suffix);
 	}
 
 	/**
-	 * Render CoAuthor Blocks with Template
+	 * Render Co-Authors Blocks with Template
 	 * 
 	 * @param array $template
 	 * @param array $authors
 	 * @return array
 	 */
-	public static function render_coauthor_blocks_with_template( array $template, array $authors ) : array {
+	public static function render_coauthors_blocks_with_template( array $template, array $authors ) : array {
 		return array_map(
 			self::get_composed_map_function(
 				self::get_template_render_function( $template ),
@@ -215,7 +222,7 @@ class CAP_Block_CoAuthors {
 
 		return Templating::render_element(
 			'span',
-			'class="wp-block-cap-coauthor__separator"',
+			'class="wp-block-cap-coauthors__separator"',
 			$separator
 		);
 	}
@@ -237,7 +244,7 @@ class CAP_Block_CoAuthors {
 
 		return Templating::render_element(
 			'span',
-			'class="wp-block-cap-coauthor__separator"',
+			'class="wp-block-cap-coauthors__separator"',
 			$last_separator
 		);
 	}

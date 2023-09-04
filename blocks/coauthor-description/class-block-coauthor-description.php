@@ -1,14 +1,18 @@
 <?php
 /**
- * Co-Author Description Block 
+ * Co-Author Description Block
  * 
  * @package Co-Authors Plus
  */
 
+ namespace CoAuthors\Blocks; 
+
+ use WP_Block;
+
 /**
- * CAP Block CoAuthor Description
+ * Block CoAuthor Description
  */
-class CAP_Block_CoAuthor_Description {
+class Block_CoAuthor_Description {
 	/**
 	 * Construct
 	 */

@@ -1,7 +1,11 @@
 <?php
 /**
  * Templating
+ * 
+ * @package Co-Authors Plus
  */
+
+namespace CoAuthors\Blocks;
 
 /**
  * Templating

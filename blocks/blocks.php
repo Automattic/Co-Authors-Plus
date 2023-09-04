@@ -1,17 +1,27 @@
 <?php
+/**
+ * Blocks
+ * 
+ * @package Co-Authors Plus
+ */
+
+namespace CoAuthors\Blocks;
+
+use WP_Block;
+use WP_REST_Request;
 
 require_once dirname( __FILE__ ) . '/templating/class-templating.php';
-require_once dirname( __FILE__ ) . '/coauthors/class-cap-block-coauthors.php';
-require_once dirname( __FILE__ ) . '/coauthor-avatar/class-cap-block-coauthor-avatar.php';
-require_once dirname( __FILE__ ) . '/coauthor-description/class-cap-block-coauthor-description.php';
-require_once dirname( __FILE__ ) . '/coauthor-display-name/class-cap-block-coauthor-display-name.php';
-require_once dirname( __FILE__ ) . '/coauthor-feature-image/class-cap-block-coauthor-feature-image.php';
+require_once dirname( __FILE__ ) . '/coauthors/class-block-coauthors.php';
+require_once dirname( __FILE__ ) . '/coauthor-avatar/class-block-coauthor-avatar.php';
+require_once dirname( __FILE__ ) . '/coauthor-description/class-block-coauthor-description.php';
+require_once dirname( __FILE__ ) . '/coauthor-name/class-block-coauthor-name.php';
+require_once dirname( __FILE__ ) . '/coauthor-featured-image/class-block-coauthor-featured-image.php';
 
-new CAP_Block_CoAuthors();
-new CAP_Block_CoAuthor_Avatar();
-new CAP_Block_CoAuthor_Description();
-new CAP_Block_CoAuthor_Display_Name();
-new CAP_Block_CoAuthor_Feature_Image();
+new Block_CoAuthors();
+new Block_CoAuthor_Avatar();
+new Block_CoAuthor_Description();
+new Block_CoAuthor_Name();
+new Block_CoAuthor_Featured_Image();
 
 /**
  * Provide Author Archive Context
@@ -21,7 +31,7 @@ new CAP_Block_CoAuthor_Feature_Image();
  * @param null|WP_Block $parent_block
  * @return array
  */
-function coauthors_blocks_provide_author_archive_context( array $context, array $parsed_block, ?WP_Block $parent_block ) : array {
+function provide_author_archive_context( array $context, array $parsed_block, ?WP_Block $parent_block ) : array {
 	if ( ! is_author() ) {
 		return $context;
 	}
@@ -31,7 +41,7 @@ function coauthors_blocks_provide_author_archive_context( array $context, array 
 	}
 
 	$uses_author_context = apply_filters(
-		'coauthor_blocks_block_uses_author_context',
+		'coauthors_blocks_block_uses_author_context',
 		'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ),
 		$parsed_block['blockName']
 	);
@@ -46,7 +56,7 @@ function coauthors_blocks_provide_author_archive_context( array $context, array 
 		WP_REST_Request::from_url(
 			home_url(
 				sprintf(
-					'/wp-json/coauthor-blocks/v1/coauthor/%s',
+					'/wp-json/coauthors-blocks/v1/coauthor/%s',
 					get_query_var( 'author_name' )
 				)
 			)
@@ -67,14 +77,13 @@ function coauthors_blocks_provide_author_archive_context( array $context, array 
  * @link https://developer.wordpress.org/reference/hooks/render_block_context/
  */
 if ( is_wp_version_compatible( '5.9' ) ) {
-	add_action( 'render_block_context', 'coauthors_blocks_provide_author_archive_context', 10, 3 );
+	add_action( 'render_block_context', __NAMESPACE__ . '\\provide_author_archive_context', 10, 3 );
 }
-
 
 /**
  * Enqueue Store
  */
-function coauthors_blocks_enqueue_store() : void {
+function enqueue_store() : void {
 	$asset = require dirname( __FILE__ ) . '/store/build/index.asset.php';
 
 	wp_enqueue_script(
@@ -85,7 +94,7 @@ function coauthors_blocks_enqueue_store() : void {
 	);
 
 	$data = apply_filters(
-		'coauthor_blocks_store_data',
+		'coauthors_blocks_store_data',
 		array(
 			'authorPlaceholder' => array(
 				'id'             => 0,
@@ -107,4 +116,4 @@ function coauthors_blocks_enqueue_store() : void {
 		$data
 	);
 }
-add_action( 'enqueue_block_editor_assets', 'coauthors_blocks_enqueue_store' );
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\enqueue_store' );

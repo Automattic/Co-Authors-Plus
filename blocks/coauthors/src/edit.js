@@ -32,7 +32,7 @@ import MemoizedCoAuthorTemplateBlockPreview from './modules/memoized-coauthor-te
 function CoAuthorTemplateInnerBlocks () {
 	return <div { ...useInnerBlocksProps(
 		{ className: 'wp-block-cap-coauthor' },
-		{ template : [['cap/coauthor-display-name']]}
+		{ template : [['cap/coauthor-name']]}
 	) } />;
 }
 
@@ -67,7 +67,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 		const controller = new AbortController();
 
 		apiFetch( {
-			path: `/coauthor-blocks/v1/coauthors/${postId}/`,
+			path: `/coauthors-blocks/v1/coauthors/${postId}/`,
 			signal: controller.signal
 		} )
 		.then( setCoAuthors )
@@ -144,7 +144,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 					(
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
-							className="wp-block-cap-coauthor__prefix"
+							className="wp-block-cap-coauthors__prefix"
 							multiline={ false }
 							aria-label={ __( 'Prefix' ) }
 							placeholder={ __( 'Prefix' ) + ' ' }
@@ -182,7 +182,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 						{
 							'inline' === layout.type &&
 							(
-								<span className="wp-block-cap-coauthor__separator">
+								<span className="wp-block-cap-coauthors__separator">
 									{ ( lastSeparator && index === (all.length - 1) ) ? `${lastSeparator}` : `${separator}` }
 								</span>
 							)	
@@ -198,7 +198,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 					(
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
-							className="wp-block-cap-coauthor__suffix"
+							className="wp-block-cap-coauthors__suffix"
 							multiline={ false }
 							aria-label={ __( 'Suffix' ) }
 							placeholder={ __( 'Suffix' ) + ' ' }

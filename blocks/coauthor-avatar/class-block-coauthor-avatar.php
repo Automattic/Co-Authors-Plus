@@ -5,10 +5,13 @@
  * @package Co-Authors Plus
  */
 
+namespace CoAuthors\Blocks; 
+
+use WP_Block;
 /**
- * CAP Block CoAuthor Avatar
+ * Block CoAuthor Avatar
  */
-class CAP_Block_CoAuthor_Avatar {
+class Block_CoAuthor_Avatar {
 	/**
 	 * Construct
 	 */

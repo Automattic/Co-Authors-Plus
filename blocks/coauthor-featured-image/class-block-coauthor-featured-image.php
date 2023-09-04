@@ -1,14 +1,18 @@
 <?php
 /**
- * Co-Author Display Feature Image
+ * Co-Author Display Featured Image
  * 
  * @package Co-Authors Plus
  */
 
+namespace CoAuthors\Blocks; 
+
+use WP_Block;
+
 /**
- * CAP Block CoAuthor Feature Image
+ * Block CoAuthor Featured Image
  */
-class CAP_Block_CoAuthor_Feature_Image {
+class Block_CoAuthor_Featured_Image {
 	/**
 	 * Construct
 	 */

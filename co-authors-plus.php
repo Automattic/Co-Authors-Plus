@@ -38,7 +38,7 @@ require_once __DIR__ . '/php/class-coauthors-iterator.php';
 require_once dirname( __FILE__ ) . '/blocks/blocks.php';
 
 // REST APIs for Blocks
-require_once dirname( __FILE__ ) . '/php/api/endpoints/class-coauthor-blocks-controller.php';
+require_once dirname( __FILE__ ) . '/php/api/endpoints/class-coauthors-blocks-controller.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once __DIR__ . '/php/class-wp-cli.php';
@@ -217,9 +217,9 @@ function cap_get_coauthor_terms_for_post( $post_id ) {
 /**
  * Register CoAuthor Blocks REST API Routes
  */
-function cap_register_coauthor_blocks_rest_api_routes() : void {
+function cap_register_coauthors_blocks_rest_api_routes() : void {
 	global $coauthors_plus;
-	$controller = new CoAuthors\API\Endpoints\CoAuthor_Blocks_Controller( $coauthors_plus );
+	$controller = new CoAuthors\API\Endpoints\CoAuthors_Blocks_Controller( $coauthors_plus );
 	$controller->register_routes();
 }
-add_action( 'rest_api_init', 'cap_register_coauthor_blocks_rest_api_routes' );
+add_action( 'rest_api_init', 'cap_register_coauthors_blocks_rest_api_routes' );

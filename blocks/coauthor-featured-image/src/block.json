@@ -1,12 +1,12 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "cap/coauthor-feature-image",
+	"name": "cap/coauthor-featured-image",
 	"version": "0.1.0",
-	"title": "Coauthor Feature Image",
+	"title": "Co-Author Featured Image",
 	"category": "widgets",
 	"icon": "smiley",
-	"description": "Feature Image from a Guest Author profile.",
+	"description": "Featured Image from a Guest Author profile.",
 	"supports": {
 		"align": [ "left", "right", "center", "wide", "full" ],
 		"__experimentalBorder": {
