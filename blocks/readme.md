@@ -22,13 +22,13 @@ In author archive templates, the post context is the first post by the author re
 
 If you want to display data about the author on their own archive, use the individual CoAuthor blocks directly without wrapping them in the CoAuthors Block.
 
-The function `coauthors_blocks_provide_author_archive_context` filters the context using the `author_name` query variable to provide the correct author context.
+The function `provide_author_archive_context` filters the context using the `author_name` query variable to provide the correct author context.
 
 ### Extending
 
 If you create a custom block that uses the namespace and prefix `cap/coauthor-`, the author archive context will be updated and will match the REST API response used in the editor.
 
-If you have a differently named custom block, you can use the filter `coauthor_blocks_block_uses_author_context` to opt-in to the author archive context.
+If you have a differently named custom block, you can use the filter `coauthors_blocks_block_uses_author_context` to opt-in to the author archive context.
 
 ## Example Data
 
@@ -36,4 +36,4 @@ When working with Full Site Editing, or in the post editor before the authors ar
 
 ### Extending
 
-If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthor_blocks_store_data` or the client-side using the filter `cap.author-placeholder`
+If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthors_blocks_store_data` or the client-side using the filter `cap.author-placeholder`
