@@ -35,7 +35,7 @@ require_once __DIR__ . '/php/class-coauthors-plus.php';
 require_once __DIR__ . '/php/class-coauthors-iterator.php';
 
 // Blocks
-require_once dirname( __FILE__ ) . '/blocks/blocks.php';
+require_once dirname( __FILE__ ) . '/php/blocks/class-blocks.php';
 
 // REST APIs for Blocks
 require_once dirname( __FILE__ ) . '/php/api/endpoints/class-coauthors-blocks-controller.php';
@@ -47,6 +47,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 global $coauthors_plus;
 $coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
+new CoAuthors\Blocks();
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**
