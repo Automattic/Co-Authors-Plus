@@ -134,9 +134,12 @@ class Blocks {
 
 	/**
 	 * Get CoAuthor with API Schema
-	 * 
-	 * @param false|WP_User|stdClass $author
-	 * @return null|array
+	 *
+	 * Use the global WP_REST_Server to fetch author data,
+	 * so that it matches what a user would see in the editor.
+	 *
+	 * @param false|WP_User|stdClass $author An author object from CoAuthors Plus.
+	 * @return null|array Either an array of data about an author, or null.
 	 */
 	public static function get_author_with_api_schema( $author ) : ?array {
 		if ( ! ( is_a( $author, 'stdClass' ) || is_a( $author, 'WP_User' ) ) ) {
