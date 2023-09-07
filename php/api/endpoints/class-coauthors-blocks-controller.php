@@ -327,7 +327,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		}
 
 		if ( rest_is_field_included( 'featured_media', $fields ) ) {
-			$data['featured_media'] = (integer) ( 'guest-author' === $author->type ? get_post_thumbnail_id( $author->ID ) : 0 );
+			$data['featured_media'] = (int) ( 'guest-author' === $author->type ? get_post_thumbnail_id( $author->ID ) : 0 );
 		}
 
 		if ( rest_is_field_included( 'user_nicename', $fields ) ) {
