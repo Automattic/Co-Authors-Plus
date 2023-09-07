@@ -26,7 +26,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 *
 	 * @var CoAuthors_Plus $coauthors_plus
 	 */
-	public CoAuthors_Plus $coauthors_plus;
+	public $coauthors_plus;
 
 	/**
 	 * Construct
