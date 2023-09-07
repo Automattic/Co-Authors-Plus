@@ -109,3 +109,7 @@ When working with Full Site Editing, or in the post editor before the authors ar
 #### Extending
 
 If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthors_blocks_store_data` or the client-side using the filter `cap.author-placeholder`
+
+### Non-support
+
+To declare a lack of support for Co-Author Plus blocks, use the filter `coauthors_plus_support_blocks` to return `false`.
