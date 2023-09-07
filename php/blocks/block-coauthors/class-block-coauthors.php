@@ -7,10 +7,8 @@
 
 namespace CoAuthors\Blocks;
 
-use stdClass;
 use WP_Block;
 use WP_REST_Request;
-use WP_User;
 
 /**
  * Block CoAuthors
