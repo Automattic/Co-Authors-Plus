@@ -88,7 +88,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_item( $request ) : WP_REST_Response|WP_Error {
+	public function get_item( $request ) {
 
 		$coauthor = $this->coauthors_plus->get_coauthor_by(
 			'user_nicename',
@@ -119,7 +119,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_User|stdClass $coauthor
 	 */
-	public static function is_coauthor( WP_User|stdClass $coauthor ) : bool {
+	public static function is_coauthor( $coauthor ) : bool {
 		return is_a( $coauthor, 'WP_User' ) || ( property_exists( $coauthor, 'type' ) && 'guest-author' === $coauthor->type );
 	}
 
@@ -129,7 +129,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_items( $request ) : WP_REST_Response|WP_Error {
+	public function get_items( $request ) {
 
 		$coauthors = get_coauthors( $request->get_param( 'post_id' ) );
 
@@ -143,7 +143,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 		return rest_ensure_response(
 			array_map(
-				function( stdClass|WP_User $author ) use ( $request ) : array {
+				function( $author ) use ( $request ) : array {
 					return $this->prepare_response_for_collection(
 						$this->prepare_item_for_response( $author, $request )
 					);
@@ -159,7 +159,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return bool|WP_Error
 	 */
-	public function get_item_permission_check( WP_REST_Request $request ) : bool|WP_Error {
+	public function get_item_permission_check( WP_REST_Request $request ) {
 
 		if ( current_user_can( 'edit_posts' ) ) {
 			return true;
@@ -178,7 +178,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return bool|WP_Error
 	 */
-	public function get_items_permission_check( WP_REST_Request $request ) : bool|WP_Error {
+	public function get_items_permission_check( WP_REST_Request $request ) {
 
 		$post_id = $request->get_param( 'post_id' );
 
@@ -306,7 +306,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @param WP_REST_Request  $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function prepare_item_for_response( $author, $request ) : WP_REST_Response|WP_Error {
+	public function prepare_item_for_response( $author, $request ) {
 	
 		$fields = $this->get_fields_for_response( $request );
 

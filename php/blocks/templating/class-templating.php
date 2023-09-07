@@ -51,7 +51,7 @@ class Templating {
 	 * @param mixed      $value Attribute value. For boolean attributes, set value the same as the key.
 	 * @return string
 	 */
-	public static function render_attribute_string( string|int $key, $value ) : string {
+	public static function render_attribute_string( $key, $value ) : string {
 		if ( empty( $value ) ) {
 			return '';
 		}

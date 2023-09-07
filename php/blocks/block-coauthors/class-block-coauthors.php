@@ -45,7 +45,7 @@ class Block_CoAuthors {
 		}
 
 		$authors = array_map(
-			function( stdClass|WP_User $author ) : array {
+			function( $author ) : array {
 				return rest_get_server()->dispatch(
 					WP_REST_Request::from_url(
 						home_url(
