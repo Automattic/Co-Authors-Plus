@@ -268,7 +268,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 				__METHOD__,
 				sprintf(
 					/* translators: %s: register_rest_field */
-					__( 'Please use %s to add new schema properties.' ),
+					esc_html__( 'Please use %s to add new schema properties.' ),
 					'register_rest_field'
 				),
 				'5.4.0'
