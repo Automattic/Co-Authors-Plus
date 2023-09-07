@@ -53,7 +53,9 @@ class Block_CoAuthor_Avatar {
 
 		$size    = $attributes['size'] ?? 24;
 		$srcset  = array_map(
-			fn( $size, $url ) => "{$url} {$size}w",
+			function( $size, $url ) {
+				return "{$url} {$size}w";
+			},
 			array_keys( $avatar_urls ),
 			array_values( $avatar_urls )
 		);

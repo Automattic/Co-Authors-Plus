@@ -104,7 +104,9 @@ class Block_CoAuthors {
 		return function ( $value ) use ( $fns ) {
 			return array_reduce(
 				$fns,
-				fn( $v, callable $f ) => $f($v),
+				function( $v, callable $f ) {
+					return $f($v);
+				},
 				$value
 			);
 		};
@@ -148,7 +150,9 @@ class Block_CoAuthors {
 			self::get_composed_map_function(
 				self::get_template_render_function( $template ),
 				// To match JSX from editor, remove line-breaks between blocks.
-				fn( $content ) => str_replace("\n", '', $content ),
+				function( $content ) {
+					return str_replace("\n", '', $content );
+				},
 				// To match JSX from editor, trim whitespace around blocks.
 				'trim',
 				Templating::get_render_element_function('div', 'class="wp-block-cap-coauthor"')

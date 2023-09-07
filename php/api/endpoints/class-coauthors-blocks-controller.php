@@ -49,7 +49,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 					'id' => array(
 						'description'       => __( 'Unique identifier for a post.' ),
 						'type'              => 'integer',
-						'validate_callback' => fn( $post_id ) => is_int( $post_id )
+						'validate_callback' => 'is_int'
 					),
 				),
 				array(
@@ -68,8 +68,8 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 					'user_nicename' => array(
 						'description'       => __( 'Nicename / slug for co-author.' ),
 						'type'              => 'string',
-						'validate_callback' => fn( $slug ) => is_string( $slug ),
-						'sanitize_callback' => fn( $slug ) => sanitize_title( $slug )
+						'validate_callback' => 'is_string',
+						'sanitize_callback' => 'sanitize_title'
 					),
 				),
 				array(
