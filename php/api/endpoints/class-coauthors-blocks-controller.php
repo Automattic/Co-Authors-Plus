@@ -154,25 +154,6 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get Item Permission Check
-	 * 
-	 * @param WP_REST_Request $request
-	 * @return bool|WP_Error
-	 */
-	public function get_item_permission_check( WP_REST_Request $request ) {
-
-		if ( current_user_can( 'edit_posts' ) ) {
-			return true;
-		}
-
-		return new WP_Error(
-			'rest_cannot_view',
-			__( 'Sorry, you are not allowed to view co-authors.' ),
-			array( 'status' => rest_authorization_required_code() )
-		);
-	}
-
-	/**
 	 * Get Items Permission Check
 	 * 
 	 * @param WP_REST_Request $request
