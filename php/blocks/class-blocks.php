@@ -84,18 +84,9 @@ class Blocks {
 			return $context;
 		}
 
-		$author = rest_get_server()->dispatch(
-			WP_REST_Request::from_url(
-				home_url(
-					sprintf(
-						'/wp-json/coauthors-blocks/v1/coauthor/%s',
-						get_query_var( 'author_name' )
-					)
-				)
-			)
-		)->get_data();
+		$author = self::get_author_with_api_schema( get_queried_object() );
 
-		if ( ! is_array( $author ) || ! array_key_exists( 'id', $author ) ) {
+		if ( ! is_array( $author ) ) {
 			return $context;
 		}
 
@@ -139,5 +130,44 @@ class Blocks {
 			'coAuthorsBlocks',
 			$data
 		);
+	}
+
+	/**
+	 * Get CoAuthor with API Schema
+	 * 
+	 * @param false|WP_User|stdClass $author
+	 * @return null|array
+	 */
+	public static function get_author_with_api_schema( $author ) : ?array {
+		if ( ! ( is_a( $author, 'stdClass' ) || is_a( $author, 'WP_User' ) ) ) {
+			return null;
+		}
+
+		$data = rest_get_server()->dispatch(
+			WP_REST_Request::from_url(
+				home_url(
+					sprintf(
+						'/wp-json/coauthors-blocks/v1/coauthor/%s',
+						$author->user_nicename
+					)
+				)
+			)
+		)->get_data();
+
+		if ( ! is_array( $data ) ) {
+			return null;
+		}
+
+		// Lack of an `id` indicates an author was not found.
+		if ( ! array_key_exists( 'id', $data ) ) {
+			return null;
+		}
+
+		// The presence of `code` indicates this is an error response.
+		if ( array_key_exists( 'code', $data ) ) {
+			return null;
+		}
+
+		return $data;
 	}
 }

@@ -8,7 +8,6 @@
 namespace CoAuthors\Blocks;
 
 use WP_Block;
-use WP_REST_Request;
 
 /**
  * Block CoAuthors
@@ -42,20 +41,16 @@ class Block_CoAuthors {
 			return '';
 		}
 
-		$authors = array_map(
-			function( $author ) : array {
-				return rest_get_server()->dispatch(
-					WP_REST_Request::from_url(
-						home_url(
-							sprintf(
-								'/wp-json/coauthors-blocks/v1/coauthor/%s',
-								$author->user_nicename
-							)
-						)
-					)
-				)->get_data();
-			},
-			get_coauthors( $post_id )
+		$authors = array_values(
+			array_filter(
+				array_map(
+					'CoAuthors\Blocks::get_author_with_api_schema',
+					get_coauthors( $post_id )
+				),
+				function( $author ) : bool {
+					return ! is_null( $author );
+				}
+			)
 		);
 
 		if ( ! is_array( $authors ) || empty( $authors ) ) {
