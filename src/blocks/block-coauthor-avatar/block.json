@@ -50,7 +50,7 @@
 			"type": "string"
 		}
 	},
-	"textdomain": "coauthor-avatar",
+	"textdomain": "co-authors-plus",
 	"editorScript": "file:./index.js",
 	"style": "file:./style-index.css"
 }
