@@ -94,17 +94,17 @@ In author archive templates, the post context is the first post by the author re
 
 If you want to display data about the author on their own archive, use the individual co-author blocks directly without wrapping them in the Co-Authors Block.
 
-The function `CoAuthors\Blocks::provide_author_archive_context` filters the context using the `author_name` query variable to provide the correct author context.
+The function `CoAuthors\Blocks::provide_author_archive_context` filters the context so the correct author is provided.
 
 #### Extending
 
-If you create a custom block that uses the namespace and prefix `cap/coauthor-`, the author archive context will be updated and will match the REST API response used in the editor.
+If you create a custom block that uses the namespace and prefix `cap/coauthor-`, the author archive context will be updated.
 
 If you have a differently named custom block, you can use the filter `coauthors_blocks_block_uses_author_context` to opt-in to the author archive context.
 
 ### Example Data
 
-When working with Full Site Editing, or in the post editor before the authors are loaded, example data is used. The example data provided with the coauthor blocks replicates the standard REST API response.
+When working with Full Site Editing, or in the post editor before the authors are loaded, example data is used. The example data provided with the co-author blocks resembles a response to the `/coauthors-blocks/v1/coauthor/:user-nicename` REST API endpoint.
 
 #### Extending
 
@@ -112,4 +112,4 @@ If you have written a plugin that modifies the REST API response, you can simila
 
 ### Non-support
 
-To declare a lack of support for Co-Author Plus blocks, use the filter `coauthors_plus_support_blocks` to return `false`.
+To declare a lack of support for Co-Author Plus blocks on your site, use the filter `coauthors_plus_support_blocks` to return `false`.
