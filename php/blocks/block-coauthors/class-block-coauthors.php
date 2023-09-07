@@ -170,7 +170,9 @@ class Block_CoAuthors {
 	 */
 	private static function merge_blocks_with_separators( array $blocks, array $separators ) : array {
 		return array_map(
-			fn(...$args) : string => implode($args),
+			function(...$args) : string {
+				return implode($args);
+			},
 			$blocks,
 			$separators
 		);
