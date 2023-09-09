@@ -987,8 +987,14 @@ class CoAuthors_Plus {
 				return false;
 			}
 
-			$wpdb->update( $wpdb->posts, array( 'post_author' => $new_author->ID ), array( 'ID' => $post_id ) );
-			clean_post_cache( $post_id );
+			if ( ! empty( $new_author ) ) {
+				$update = $wpdb->update( $wpdb->posts, array( 'post_author' => $new_author->ID ), array( 'ID' => $post_id ) );
+				clean_post_cache( $post_id );
+
+				if ( is_bool( $update ) ) {
+					return $update;
+				}
+			}
 		}
 		return true;
 
