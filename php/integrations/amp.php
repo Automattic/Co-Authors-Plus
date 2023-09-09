@@ -23,7 +23,7 @@ function cap_update_amp_json_metadata( $metadata, $post ) {
 
 function cap_set_amp_author_meta_template( $file, $type, $post ) {
 	if ( 'meta-author' === $type ) {
-		$file = dirname( __FILE__ ) . '/amp/meta-author.php';
+		$file = __DIR__ . '/amp/meta-author.php';
 	}
 	return $file;
 }
