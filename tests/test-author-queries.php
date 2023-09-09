@@ -27,7 +27,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -54,7 +54,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -81,7 +81,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -116,7 +116,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -151,7 +151,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -171,7 +171,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
-		wp_set_post_terms( $post_id, 'test', 'post_tag' );
+		wp_set_post_terms( $post_id, 'test' );
 
 		$query = new WP_Query(
 			array(
@@ -180,7 +180,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 
@@ -208,7 +208,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
-		wp_set_post_terms( $post_id, 'test', 'post_tag' );
+		wp_set_post_terms( $post_id, 'test' );
 
 		$query = new WP_Query(
 			array(
@@ -217,7 +217,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$this->assertEquals( 1, count( $query->posts ) );
+		$this->assertCount( 1, $query->posts );
 		$this->assertEquals( $post_id, $query->posts[0]->ID );
 	}
 }

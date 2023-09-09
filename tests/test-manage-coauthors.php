@@ -96,7 +96,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		global $coauthors_plus;
 
 		$coauthors = get_coauthors( $this->author1_post1 );
-		$this->assertEquals( 1, count( $coauthors ) );
+		$this->assertCount( 1, $coauthors );
 
 		// append = true, should preserve order
 		$editor1 = get_user_by( 'id', $this->editor1 );
@@ -105,7 +105,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( array( $this->author1, $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 
 		// append = false, overrides existing authors
-		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ), false );
+		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ) );
 		$coauthors = get_coauthors( $this->author1_post1 );
 		$this->assertEquals( array( $this->editor1 ), wp_list_pluck( $coauthors, 'ID' ) );
 
@@ -126,7 +126,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		$this->assertEquals( $this->author1, get_post( $this->author1_post1 )->post_author );
 
 		// append = false, overrides existing post_author
-		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ), false );
+		$coauthors_plus->add_coauthors( $this->author1_post1, array( $editor1->user_login ) );
 		$this->assertEquals( $this->editor1, get_post( $this->author1_post1 )->post_author );
 
 	}
@@ -302,7 +302,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Compares data when coauthor is set and it is linked with main wp user.
+	 * Compares data when coauthor is set, and it is linked with main wp user.
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *

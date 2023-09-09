@@ -6,7 +6,7 @@
 
 class CoAuthors_Template_Filters {
 
-	function __construct() {
+	public function __construct() {
 		add_filter( 'the_author', array( $this, 'filter_the_author' ) );
 		add_filter( 'the_author_posts_link', array( $this, 'filter_the_author_posts_link' ) );
 
@@ -15,28 +15,28 @@ class CoAuthors_Template_Filters {
 		add_action( 'rss2_item', array( $this, 'action_add_rss_guest_authors' ) );
 	}
 
-	function filter_the_author() {
+	public function filter_the_author() {
 		return coauthors( null, null, null, null, false );
 	}
 
-	function filter_the_author_posts_link() {
+	public function filter_the_author_posts_link() {
 		return coauthors_posts_links( null, null, null, null, false );
 	}
 
-	function filter_the_author_rss( $the_author ) {
-		if ( ! is_feed() || ! function_exists( 'coauthors' ) ) {
+	public function filter_the_author_rss( $the_author ) {
+		if ( ! function_exists( 'coauthors' ) || ! is_feed() ) {
 			return $the_author;
 		}
 
 		$coauthors = (array) get_coauthors();
 		if ( count( $coauthors ) >= 1 && isset( $coauthors[0]->display_name ) ) {
 			return $coauthors[0]->display_name;
-		} else {
-			return $the_author;
 		}
+
+		return $the_author;
 	}
 
-	function action_add_rss_guest_authors() {
+	public function action_add_rss_guest_authors() {
 		$coauthors = get_coauthors();
 
 		// remove the first guest author who is added to the first dc:creator element

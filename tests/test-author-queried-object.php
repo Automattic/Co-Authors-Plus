@@ -14,7 +14,7 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 	 *
 	 * @group ms-required
 	 */
-	function test__author_queried_object_fix() {
+	public function test__author_queried_object_fix() {
 
 		global $wp_rewrite, $coauthors_plus;
 
@@ -89,7 +89,7 @@ class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
 	 *
 	 * @group ms-required
 	 */
-	function test__author_non_existent_page_throws_404() {
+	public function test__author_non_existent_page_throws_404() {
 		global $wp_rewrite;
 
 		/**
