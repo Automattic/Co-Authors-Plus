@@ -970,7 +970,10 @@ class CoAuthors_Plus {
 		if ( empty( $post_author_user )
 			|| ! in_array( $post_author_user->user_login, $coauthors ) ) {
 			foreach ( $coauthor_objects as $coauthor_object ) {
-				if ( isset( $coauthor_object->is_wp_user ) && $coauthor_object->is_wp_user ) {
+				if ( $coauthor_object instanceof WP_User ) {
+					$new_author = $coauthor_object;
+					break;
+				} else if ( isset( $coauthor_object->is_wp_user ) && $coauthor_object->is_wp_user ) {
 					$new_author = $coauthor_object->wp_user;
 					break;
 				}
