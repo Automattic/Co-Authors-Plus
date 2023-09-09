@@ -1235,7 +1235,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		);
 		$this->assertTrue( property_exists( $linked_author_1, 'type' ) );
 		$this->assertEquals( 'guest-author', $linked_author_1->type );
-		$this->asserTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
+		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
 		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
