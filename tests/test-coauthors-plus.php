@@ -1233,11 +1233,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'type', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'type' ) );
 		$this->assertEquals( 'guest-author', $linked_author_1->type );
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_1 );
+		$this->asserTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
 		$this->assertEquals( $this->author2->ID, $linked_author_1->wp_user->ID );
 
@@ -1249,11 +1249,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'type', $linked_author_2 );
+		$this->assertTrue( property_exists( $linked_author_2, 'type' ) );
 		$this->assertEquals( 'guest-author', $linked_author_2->type );
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_2 );
+		$this->assertTrue( property_exists(  $linked_author_2, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_2->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_2 );
+		$this->assertTrue( property_exists( $linked_author_2, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_2->wp_user );
 		$this->assertEquals( $this->author3->ID, $linked_author_2->wp_user->ID );
 
@@ -1346,11 +1346,11 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'type', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'type' ) );
 		$this->assertEquals( 'guest-author', $linked_author_1->type );
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
 		$this->assertEquals( $this->author3->ID, $linked_author_1->wp_user->ID );
 
@@ -1556,9 +1556,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
 		$this->assertEquals( $this->author3->ID, $linked_author_1->wp_user->ID );
 
@@ -1655,9 +1655,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
 		$this->assertEquals( $this->author3->ID, $linked_author_1->wp_user->ID );
 
@@ -1752,9 +1752,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
 		$this->assertEquals( $this->author3->ID, $linked_author_1->wp_user->ID );
 
@@ -1849,9 +1849,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
 		$this->assertEquals( $this->author3->ID, $linked_author_1->wp_user->ID );
 
@@ -2007,9 +2007,9 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 				$this->isInstanceOf( WP_User::class )
 			)
 		);
-		$this->assertObjectHasProperty( 'is_wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
-		$this->assertObjectHasProperty( 'wp_user', $linked_author_1 );
+		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
 		$this->assertInstanceOf( WP_User::class, $linked_author_1->wp_user );
 		$this->assertEquals( $this->author3->ID, $linked_author_1->wp_user->ID );
 
