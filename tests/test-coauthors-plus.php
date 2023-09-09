@@ -25,14 +25,14 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$this->author2 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
-				'user_login' => 'author2',
+				'user_login' => 'author20',
 			)
 		);
 
 		$this->author3 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'author',
-				'user_login' => 'author3',
+				'user_login' => 'author30',
 			)
 		);
 
