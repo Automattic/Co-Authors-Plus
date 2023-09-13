@@ -2,7 +2,8 @@
 /**
  * Co-Author Display Featured Image
  * 
- * @package Co-Authors Plus
+ * @package CoAuthors
+ * @since 3.6.0
  */
 
 namespace CoAuthors\Blocks; 
@@ -11,10 +12,14 @@ use WP_Block;
 
 /**
  * Block CoAuthor Featured Image
+ *
+ * @package CoAuthors
  */
 class Block_CoAuthor_Featured_Image {
 	/**
 	 * Register Block
+	 *
+	 * @since 3.6.0
 	 */
 	public static function register_block() : void {
 		register_block_type(
@@ -27,7 +32,8 @@ class Block_CoAuthor_Featured_Image {
 
 	/**
 	 * Render Block
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes
 	 * @param string $content
 	 * @param WP_Block $block

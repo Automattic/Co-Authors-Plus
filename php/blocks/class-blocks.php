@@ -3,6 +3,7 @@
  * Blocks
  * 
  * @package CoAuthors
+ * @since 3.6.0
  */
 
 namespace CoAuthors;
@@ -11,10 +12,14 @@ use WP_REST_Request;
 
 /**
  * Blocks
+ * 
+ * @package CoAuthors
  */
 class Blocks {
 	/**
 	 * Construct
+	 *
+	 * @since 3.6.0
 	 */
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'initialize_blocks' ) );
@@ -22,6 +27,8 @@ class Blocks {
 
 	/**
 	 * Initialize Blocks
+	 *
+	 * @since 3.6.0
 	 */
 	public static function initialize_blocks() : void {
 
@@ -59,6 +66,7 @@ class Blocks {
 	/**
 	 * Provide Author Archive Context
 	 *
+	 * @since 3.6.0
 	 * @param array $context, 
 	 * @param array $parsed_block
 	 * @return array
@@ -72,6 +80,13 @@ class Blocks {
 			return $context;
 		}
 
+		/**
+		 * Block Uses Author Context
+		 * 
+		 * @since 3.6.0
+		 * @param bool
+		 * @param string
+		 */
 		$uses_author_context = apply_filters(
 			'coauthors_blocks_block_uses_author_context',
 			'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ),
@@ -97,6 +112,8 @@ class Blocks {
 
 	/**
 	 * Enqueue Store
+	 *
+	 * @since 3.6.0
 	 */
 	public static function enqueue_store() : void {
 		$asset = require realpath( __DIR__ . '/../..' ) . '/build/blocks-store/index.asset.php';
@@ -138,6 +155,7 @@ class Blocks {
 	 * Use the global WP_REST_Server to fetch author data,
 	 * so that it matches what a user would see in the editor.
 	 *
+	 * @since 3.6.0
 	 * @param false|WP_User|stdClass $author An author object from CoAuthors Plus.
 	 * @return null|array Either an array of data about an author, or null.
 	 */

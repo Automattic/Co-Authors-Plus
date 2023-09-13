@@ -1,8 +1,9 @@
 <?php
 /**
  * CoAuthor Blocks
- * 
- * @package CoAutors_Plus\API
+ *
+ * @package CoAuthors
+ * @since 3.6.0
  */
 
 namespace CoAuthors\API\Endpoints;
@@ -18,19 +19,23 @@ use WP_User;
 
 /**
  * CoAuthor Blocks
+ *
+ * @package CoAuthors
  */
 class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Instance of CoAuthors_Plus class
 	 *
+	 * @since 3.6.0
 	 * @var CoAuthors_Plus $coauthors_plus
 	 */
 	public $coauthors_plus;
 
 	/**
 	 * Construct
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param CoAuthors_Plus $coauthors_plus
 	 */
 	public function __construct( CoAuthors_Plus $coauthors_plus ) {
@@ -39,6 +44,8 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Register Rest Routes
+	 *
+	 * @since 3.6.0
 	 */
 	public function register_routes() : void {
 		register_rest_route(
@@ -89,8 +96,8 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Get Item
-	 * 
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
@@ -123,6 +130,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	/**
 	 * Is Valid CoAuthor
 	 *
+	 * @since 3.6.0
 	 * @param WP_User|stdClass $coauthor
 	 */
 	public static function is_coauthor( $coauthor ) : bool {
@@ -131,7 +139,8 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Get Items
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
@@ -161,7 +170,8 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Get Items Permission Check
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param WP_REST_Request $request
 	 * @return bool|WP_Error
 	 */
@@ -186,7 +196,8 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Retrieves the CoAuthor schema, conforming to JSON Schema.
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @return array Item schema data.
 	 */
 	public function get_item_schema() : array {
@@ -288,7 +299,8 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 	/**
 	 * Prepare Item For Response
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param stdClass|WP_User $author
 	 * @param WP_REST_Request  $request
 	 * @return WP_REST_Response|WP_Error
@@ -349,7 +361,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		/**
 		 * Filters the post data for a REST API response.
 		 *
-		 *
+		 * @since 3.6.0
 		 * @param WP_REST_Response $response The response object.
 		 * @param stdClass|WP_User $author
 		 * @param WP_REST_Request  $request  Request object.

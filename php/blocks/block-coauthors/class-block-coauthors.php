@@ -2,7 +2,8 @@
 /**
  * Co-Authors Block
  * 
- * @package Co-Authors Plus
+ * @package CoAuthors
+ * @since 3.6.0
  */
 
 namespace CoAuthors\Blocks;
@@ -11,10 +12,14 @@ use WP_Block;
 
 /**
  * Block CoAuthors
+ * 
+ * @package CoAuthors
  */
 class Block_CoAuthors {
 	/**
 	 * Register Block
+	 *
+	 * @since 3.6.0
 	 */
 	public static function register_block() : void {
 		register_block_type(
@@ -27,7 +32,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Render Block
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes
 	 * @param string $content
 	 * @param WP_Block $block
@@ -89,7 +95,8 @@ class Block_CoAuthors {
 	/**
 	 * Get Composed Map Function
 	 * Use array reduce so an unknown array of functions can be used as single array_map callback
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $fns
 	 * @return callable
 	 */
@@ -107,7 +114,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Render Prefix
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param string $prefix
 	 * @return string
 	 */
@@ -120,7 +128,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Render Suffix
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param string $suffix
 	 * @return string
 	 */
@@ -133,7 +142,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Render Co-Authors Blocks with Template
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $template
 	 * @param array $authors
 	 * @return array
@@ -156,7 +166,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Merge Blocks with Separators
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $blocks
 	 * @param array $separators
 	 * @return array
@@ -173,7 +184,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Get Separators
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param int $count
 	 * @param array $attributes
 	 */
@@ -199,7 +211,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Get Separator
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes
 	 * @return string $separator
 	 */
@@ -221,7 +234,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Get Last Separator
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes
 	 * @param string $default
 	 */
@@ -243,7 +257,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Get Template Render Function
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $block_template
 	 * @return callable
 	 */
@@ -266,7 +281,8 @@ class Block_CoAuthors {
 
 	/**
 	 * Get Block as Template
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param WP_Block $block
 	 * @return array
 	 */

@@ -1,8 +1,9 @@
 <?php
 /**
  * Co-Author Avatar
- * 
- * @package Co-Authors Plus
+ *
+ * @package CoAuthors
+ * @since 3.6.0
  */
 
 namespace CoAuthors\Blocks; 
@@ -10,11 +11,15 @@ namespace CoAuthors\Blocks;
 use WP_Block;
 /**
  * Block CoAuthor Avatar
+ *
+ * @package CoAuthors
  */
 class Block_CoAuthor_Avatar {
 
 	/**
 	 * Register Block
+	 *
+	 * @since 3.6.0
 	 */
 	public static function register_block() : void {
 		register_block_type(
@@ -26,7 +31,8 @@ class Block_CoAuthor_Avatar {
 	}
 	/**
 	 * Render Block
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes
 	 * @param string $content
 	 * @param WP_Block $block

@@ -2,18 +2,23 @@
 /**
  * Templating
  * 
- * @package Co-Authors Plus
+ * @package CoAuthors
+ * @since 3.6.0
  */
 
 namespace CoAuthors\Blocks;
 
 /**
  * Templating
+ * 
+ * @package CoAuthors
  */
 class Templating {
 
 	/**
 	 * Render Element
+	 * 
+	 * @since 3.6.0
 	 */
 	public static function render_element( string $name, ?string $attributes = '', ?string $content = '' ) : string {
 		return "<{$name} $attributes>{$content}</{$name}>";
@@ -23,6 +28,7 @@ class Templating {
 	 * Get Render Element Function
 	 * Dependency inject render_element so you can use in array_map or add_filter.
 	 * 
+	 * @since 3.6.0
 	 * @param string      $name
 	 * @param null|string $attributes
 	 * @return callable
@@ -35,7 +41,8 @@ class Templating {
 
 	/**
 	 * Render Self Closing Element
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param string      $name
 	 * @param null|string $attributes
 	 * @return string
@@ -47,6 +54,7 @@ class Templating {
 	/**
 	 * Render Attribute String
 	 *
+	 * @since 3.6.0
 	 * @param string|int $key Attribute key.
 	 * @param mixed      $value Attribute value. For boolean attributes, set value the same as the key.
 	 * @return string
@@ -63,7 +71,8 @@ class Templating {
 
 	/**
 	 * Render Attributes
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes An associative array of attributes and their values.
 	 */
 	public static function render_attributes( array $attributes ) : string {

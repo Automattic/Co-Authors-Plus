@@ -2,7 +2,8 @@
 /**
  * Co-Author Name Block
  * 
- * @package Co-Authors Plus
+ * @package CoAuthors
+ * @since 3.6.0
  */
 
 namespace CoAuthors\Blocks; 
@@ -11,10 +12,14 @@ use WP_Block;
 
 /**
  * Block CoAuthor Name
+ * 
+ * @package CoAuthors
  */
 class Block_CoAuthor_Name {
 	/**
 	 * Register Block
+	 *
+	 * @since 3.6.0
 	 */
 	public static function register_block() : void {
 		register_block_type(
@@ -27,7 +32,8 @@ class Block_CoAuthor_Name {
 
 	/**
 	 * Render Block
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes
 	 * @param string $content
 	 * @param WP_Block $block
@@ -84,6 +90,10 @@ class Block_CoAuthor_Name {
 
 	/**
 	 * Sanitize Tag Name
+	 *
+	 * @since 3.6.0
+	 * @param string $tag_name
+	 * @return string
 	 */
 	public static function sanitize_tag_name( string $tag_name ) : string {
 		if ( in_array( $tag_name, array_keys( wp_kses_allowed_html('post') ), true ) ) {
@@ -94,7 +104,8 @@ class Block_CoAuthor_Name {
 
 	/**
 	 * Get Custom Block Wrapper Attributes
-	 * 
+	 *
+	 * @since 3.6.0
 	 * @param array $attributes
 	 * @return array
 	 */
