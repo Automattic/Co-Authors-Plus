@@ -34,8 +34,8 @@ class Block_CoAuthor_Featured_Image {
 	 * Render Block
 	 *
 	 * @since 3.6.0
-	 * @param array $attributes
-	 * @param string $content
+	 * @param array    $attributes
+	 * @param string   $content
 	 * @param WP_Block $block
 	 * @return string
 	 */
@@ -78,16 +78,16 @@ class Block_CoAuthor_Featured_Image {
 			'height'        => 'height',
 			'scale'         => 'object-fit',
 			'aspectRatio'   => 'aspect-ratio',
-			'verticalAlign' => 'vertical-align'
+			'verticalAlign' => 'vertical-align',
 		);
 
 		$styles = array_map(
 			function( string $key, string $style ) use ( $attributes ) : string {
-				if ( empty( $attributes[$key] ) ) {
+				if ( empty( $attributes[ $key ] ) ) {
 					return '';
 				}
 				return sprintf(
-					"%s;",
+					'%s;',
 					safecss_filter_attr(
 						"{$style}:{$attributes[$key]}"
 					)
@@ -100,7 +100,7 @@ class Block_CoAuthor_Featured_Image {
 		$image_attributes = array_merge(
 			array(
 				'class' => '',
-				'style' => ''
+				'style' => '',
 			),
 			get_block_core_post_featured_image_border_attributes( $attributes )
 		);
@@ -117,7 +117,7 @@ class Block_CoAuthor_Featured_Image {
 					'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
 				)
 			);
-			$inner_content = Templating::render_element(  'a', $link_attributes, $feature_image );
+			$inner_content   = Templating::render_element( 'a', $link_attributes, $feature_image );
 		} else {
 			$inner_content = $feature_image;
 		}

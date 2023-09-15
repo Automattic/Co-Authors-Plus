@@ -67,7 +67,7 @@ class Blocks {
 	 * Provide Author Archive Context
 	 *
 	 * @since 3.6.0
-	 * @param array $context, 
+	 * @param array $context
 	 * @param array $parsed_block
 	 * @return array
 	 */
@@ -89,7 +89,7 @@ class Blocks {
 		 */
 		$uses_author_context = apply_filters(
 			'coauthors_blocks_block_uses_author_context',
-			'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13  ),
+			'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13 ),
 			$parsed_block['blockName']
 		);
 		
@@ -106,7 +106,7 @@ class Blocks {
 		}
 
 		return array(
-			'cap/author' => $author
+			'cap/author' => $author,
 		);
 	}
 
@@ -133,12 +133,12 @@ class Blocks {
 					'display_name'   => 'FirstName LastName',
 					'description'    => array(
 						'raw'      => 'Placeholder description from Co-Authors block.',
-						'rendered' => '<p>Placeholder description from Co-Authors block.</p>'
+						'rendered' => '<p>Placeholder description from Co-Authors block.</p>',
 					),
 					'link'           => '#',
 					'featured_media' => 0,
-					'avatar_urls'    => array_map( '__return_empty_string', array_flip( rest_get_avatar_sizes() ) )
-				)
+					'avatar_urls'    => array_map( '__return_empty_string', array_flip( rest_get_avatar_sizes() ) ),
+				),
 			)
 		);
 

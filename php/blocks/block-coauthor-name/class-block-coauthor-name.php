@@ -34,8 +34,8 @@ class Block_CoAuthor_Name {
 	 * Render Block
 	 *
 	 * @since 3.6.0
-	 * @param array $attributes
-	 * @param string $content
+	 * @param array    $attributes
+	 * @param string   $content
 	 * @param WP_Block $block
 	 * @return string
 	 */
@@ -72,7 +72,7 @@ class Block_CoAuthor_Name {
 					'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
 				)
 			);
-			$inner_content = Templating::render_element( 'a', $link_attributes, $display_name );
+			$inner_content   = Templating::render_element( 'a', $link_attributes, $display_name );
 		} else {
 			$inner_content = $display_name;
 		}
@@ -96,7 +96,7 @@ class Block_CoAuthor_Name {
 	 * @return string
 	 */
 	public static function sanitize_tag_name( string $tag_name ) : string {
-		if ( in_array( $tag_name, array_keys( wp_kses_allowed_html('post') ), true ) ) {
+		if ( in_array( $tag_name, array_keys( wp_kses_allowed_html( 'post' ) ), true ) ) {
 			return $tag_name;
 		}
 		return 'p';
@@ -117,7 +117,7 @@ class Block_CoAuthor_Name {
 			return array();
 		}
 		return array(
-			'class' => esc_attr( "has-text-align-{$text_align}" )
+			'class' => esc_attr( "has-text-align-{$text_align}" ),
 		);
 	}
 }

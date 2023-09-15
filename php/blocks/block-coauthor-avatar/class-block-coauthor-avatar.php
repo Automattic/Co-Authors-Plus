@@ -33,8 +33,8 @@ class Block_CoAuthor_Avatar {
 	 * Render Block
 	 *
 	 * @since 3.6.0
-	 * @param array $attributes
-	 * @param string $content
+	 * @param array    $attributes
+	 * @param string   $content
 	 * @param WP_Block $block
 	 * @return string
 	 */
@@ -53,12 +53,12 @@ class Block_CoAuthor_Avatar {
 		}
 		
 		$display_name = $author['display_name'] ?? '';
-		$link    = $author['link'] ?? '';
-		$is_link = '' !== $link && $attributes['isLink'] ?? false;
-		$rel = $attributes['rel'] ?? '';
+		$link         = $author['link'] ?? '';
+		$is_link      = '' !== $link && $attributes['isLink'] ?? false;
+		$rel          = $attributes['rel'] ?? '';
+		$size         = $attributes['size'] ?? 24;
 
-		$size    = $attributes['size'] ?? 24;
-		$srcset  = array_map(
+		$srcset = array_map(
 			function( $size, $url ) {
 				return "{$url} {$size}w";
 			},
@@ -70,11 +70,11 @@ class Block_CoAuthor_Avatar {
 			array_merge(
 				get_block_core_post_featured_image_border_attributes( $attributes ),
 				array(
-					'src'    => $avatar_urls[$size],
+					'src'    => $avatar_urls[ $size ],
 					'width'  => $size,
 					'height' => $size,
 					'sizes'  => "{$size}px",
-					'srcset' => implode( ', ', $srcset),
+					'srcset' => implode( ', ', $srcset ),
 				)
 			)
 		);
@@ -92,7 +92,7 @@ class Block_CoAuthor_Avatar {
 					'title' => sprintf( __( 'Posts by %s', 'co-authors-plus' ), $display_name ),
 				)
 			);
-			$inner_content = Templating::render_element('a', $link_attributes, $image);
+			$inner_content   = Templating::render_element( 'a', $link_attributes, $image );
 		} else {
 			$inner_content = $image;
 		}

@@ -6,9 +6,9 @@
  * @since 3.6.0
  */
 
- namespace CoAuthors\Blocks; 
+namespace CoAuthors\Blocks; 
 
- use WP_Block;
+use WP_Block;
 
 /**
  * Block CoAuthor Description
@@ -34,8 +34,8 @@ class Block_CoAuthor_Description {
 	 * Render Block
 	 *
 	 * @since 3.6.0
-	 * @param array $attributes
-	 * @param string $content
+	 * @param array    $attributes
+	 * @param string   $content
 	 * @param WP_Block $block
 	 * @return string
 	 */
@@ -81,7 +81,7 @@ class Block_CoAuthor_Description {
 		}
 
 		return array(
-			'class' => $default['class'] . ' ' . esc_attr( "has-text-align-{$text_align}" )
+			'class' => $default['class'] . ' ' . esc_attr( "has-text-align-{$text_align}" ),
 		);
 	}
 }
