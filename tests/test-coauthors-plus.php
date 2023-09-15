@@ -488,7 +488,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Checks the author term for a given co-author when passed coauthor is not an object.
+	 * Checks the author term for a given co-author when passed co-author is not an object.
 	 *
 	 * @covers CoAuthors_Plus::get_author_term()
 	 */

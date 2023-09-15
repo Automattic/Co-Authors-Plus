@@ -164,7 +164,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Checks all of the meta fields that can be associated with a guest author.
+	 * Checks all the meta fields that can be associated with a guest author.
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_guest_author_fields()
 	 */
@@ -226,7 +226,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * Checks all of the user accounts that have been linked.
+	 * Checks all the user accounts that have been linked.
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_all_linked_accounts()
 	 */
@@ -256,11 +256,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNotEmpty( $linked_accounts );
 		$this->assertIsArray( $linked_accounts );
-		$this->assertTrue( in_array( $this->editor1->ID, $linked_account_ids, true ) );
+		$this->assertContains( $this->editor1->ID, $linked_account_ids );
 	}
 
 	/**
-	 * Checks all of the user accounts that have been linked using cache.
+	 * Checks all the user accounts that have been linked using cache.
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_all_linked_accounts()
 	 */
@@ -331,7 +331,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
 
-		// Get guest author and check that is should not be removed.
+		// Get guest author and check that it should not be removed.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $_POST['id'] );
 
 		$this->assertNotEmpty( $guest_author );
@@ -342,7 +342,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
 
-		// Get guest author and check that is should not be removed.
+		// Get guest author and check that it should not be removed.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $_POST['id'] );
 
 		$this->assertNotEmpty( $guest_author );
@@ -354,7 +354,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $guest_author_obj->handle_delete_guest_author_action() );
 
-		// Get guest author and check that is should not be removed.
+		// Get guest author and check that it should not be removed.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $_POST['id'] );
 
 		$this->assertNotEmpty( $guest_author );
@@ -724,8 +724,8 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 	/**
 	 * To catch any redirection and throw location and status in Exception.
 	 *
-	 * Note : Destination location can be get from Exception Message and
-	 * status can be get from Exception code.
+	 * Note : Destination location can be got from Exception Message and
+	 * status can be got from Exception code.
 	 *
 	 * @param string $location Redirected location.
 	 * @param int    $status   Status.

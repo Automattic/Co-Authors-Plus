@@ -5,15 +5,15 @@ require_once ABSPATH . 'wp-admin/includes/screen.php';
 require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 
 /**
- * List all of the available Co-Authors within the system
+ * List all the available Co-Authors within the system.
  */
 class CoAuthors_WP_List_Table extends WP_List_Table {
 
-	var $is_search     = false;
-	var $filters       = array();
-	var $active_filter = '';
+	public $is_search     = false;
+	public $filters       = array();
+	public $active_filter = '';
 
-	function __construct() {
+	public function __construct() {
 		if ( ! empty( $_REQUEST['s'] ) ) {
 			$this->is_search = true;
 		}
@@ -28,7 +28,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Perform Co-Authors Query
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 		global $coauthors_plus;
 
 		$columns   = $this->get_columns();
@@ -55,7 +55,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$paged    = ( isset( $_REQUEST['paged'] ) ) ? intval( $_REQUEST['paged'] ) : 1;
+		$paged    = ( isset( $_REQUEST['paged'] ) ) ? (int) $_REQUEST['paged'] : 1;
 		$per_page = 20;
 
 		$args = array(
@@ -148,7 +148,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		);
 	}
 
-	function filter_query_for_search( $where ) {
+	public function filter_query_for_search( $where ) {
 		global $wpdb;
 		if ( isset( $_REQUEST['s'] ) ) {
 			$var    = '%' . sanitize_text_field( $_REQUEST['s'] ) . '%';
@@ -160,14 +160,14 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Either there are no co-authors, or the search doesn't match any
 	 */
-	function no_items() {
+	public function no_items() {
 		esc_html_e( 'No matching co-authors were found.', 'co-authors-plus' );
 	}
 
 	/**
 	 * Generate the columns of information to be displayed on our list table
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = array(
 			'display_name'   => __( 'Display Name', 'co-authors-plus' ),
 			'first_name'     => __( 'First Name', 'co-authors-plus' ),
@@ -184,7 +184,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render a single row
 	 */
-	function single_row( $item ) {
+	public function single_row( $item ) {
 		static $alternate_class = '';
 		$alternate_class        = ( '' === $alternate_class ? ' alternate' : '' );
 		$row_class              = 'guest-author-static' . $alternate_class . '"';
@@ -197,7 +197,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render columns, some are overridden below
 	 */
-	function column_default( $item, $column_name ) {
+	public function column_default( $item, $column_name ) {
 
 		switch ( $column_name ) {
 			case 'first_name':
@@ -215,7 +215,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render display name, e.g. author name
 	 */
-	function column_display_name( $item ) {
+	public function column_display_name( $item ) {
 
 		$item_edit_link   = get_edit_post_link( $item->ID );
 		$args             = array(
@@ -226,9 +226,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		$item_delete_link = add_query_arg( array_map( 'rawurlencode', $args ), menu_page_url( 'view-guest-authors', false ) );
 		$item_view_link   = get_author_posts_url( $item->ID, $item->user_nicename );
 
-		$output = '';
-
-		$output .= coauthors_get_avatar( $item, 32 );
+		$output = coauthors_get_avatar( $item );
 
 		if ( current_user_can( 'edit_post', $item->ID ) ) {
 			$output .= '<a href="' . esc_url( $item_edit_link ) . '">' . esc_html( $item->display_name ) . '</a>';
@@ -245,7 +243,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		}
 		$actions['view'] = '<a href="' . esc_url( $item_view_link ) . '">' . __( 'View Posts', 'co-authors-plus' ) . '</a>';
 		$actions         = apply_filters( 'coauthors_guest_author_row_actions', $actions, $item );
-		$output         .= $this->row_actions( $actions, false );
+		$output         .= $this->row_actions( $actions );
 
 		return $output;
 	}
@@ -253,7 +251,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render linked account
 	 */
-	function column_linked_account( $item ) {
+	public function column_linked_account( $item ) {
 		if ( $item->linked_account ) {
 			$account = get_user_by( 'login', $item->linked_account );
 			if ( $account ) {
@@ -269,7 +267,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render the published post count column
 	 */
-	function column_posts( $item ) {
+	public function column_posts( $item ) {
 		global $coauthors_plus;
 		$count = $coauthors_plus->get_guest_author_post_count( $item );
 
@@ -279,7 +277,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Allow users to filter the guest authors by various criteria
 	 */
-	function extra_tablenav( $which ) {
+	public function extra_tablenav( $which ) {
 
 		?><div class="alignleft actions">
 		<?php
@@ -298,7 +296,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 		<?php
 	}
 
-	function display() {
+	public function display() {
 		global $coauthors_plus;
 		$this->search_box( $coauthors_plus->guest_authors->labels['search_items'], 'guest-authors' );
 		parent::display();
