@@ -36,7 +36,7 @@ class Blocks {
 			return;
 		}
 
-		add_action( 'render_block_context', array( __CLASS__, 'provide_author_archive_context' ), 10, 2 );
+		add_filter( 'render_block_context', array( __CLASS__, 'provide_author_archive_context' ), 10, 2 );
 		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'enqueue_store' ) );
 
 		/**
