@@ -74,7 +74,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 		register_rest_route(
 			'coauthors-blocks/v1',
-			'/coauthor/(?P<user_nicename>[\d\w-]+)',
+			'/coauthor/(?P<user_nicename>[\w-]+)',
 			array(
 				'args' => array(
 					'user_nicename' => array(
