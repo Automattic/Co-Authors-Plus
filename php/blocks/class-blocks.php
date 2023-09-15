@@ -116,7 +116,7 @@ class Blocks {
 	 * @since 3.6.0
 	 */
 	public static function enqueue_store() : void {
-		$asset = require realpath( __DIR__ . '/../..' ) . '/build/blocks-store/index.asset.php';
+		$asset = require dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks-store/index.asset.php';
 
 		wp_enqueue_script(
 			'coauthors-blocks-store',

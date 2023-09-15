@@ -23,7 +23,7 @@ class Block_CoAuthor_Description {
 	 */
 	public static function register_block() : void {
 		register_block_type(
-			realpath( __DIR__ . '/../../..' ) . '/build/blocks/block-coauthor-description',
+			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthor-description',
 			array(
 				'render_callback' => array( __CLASS__, 'render_block' ),
 			)
