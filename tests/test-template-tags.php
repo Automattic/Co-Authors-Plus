@@ -73,14 +73,14 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $multiple_cpl, 'Main author link not found.' );
 		$this->assertStringContainsString( $this->author1->display_name, $multiple_cpl, 'Main author name not found.' );
 
-		// Here we are checking author name should not be more then one time.
+		// Here we are checking author name should not be more than one time.
 		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $multiple_cpl, ">{$this->author1->display_name}<" ) );
 		$this->assertStringContainsString( ' and ', $multiple_cpl, 'Coauthors name separator is not matched.' );
 		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $multiple_cpl, 'Coauthor link not found.' );
 		$this->assertStringContainsString( $this->editor1->display_name, $multiple_cpl, 'Coauthor name not found.' );
 
-		// Here we are checking editor name should not be more then one time.
+		// Here we are checking editor name should not be more than one time.
 		// Asserting ">{$this->editor1->display_name}<" because "$this->editor1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $multiple_cpl, ">{$this->editor1->display_name}<" ) );
 
@@ -399,7 +399,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
 		$this->assertStringContainsString( $this->author1->display_name, $author_link, 'Author name not found.' );
 
-		// Here we are checking author name should not be more then one time.
+		// Here we are checking author name should not be more than one time.
 		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $author_link, ">{$this->author1->display_name}<" ) );
 
@@ -664,7 +664,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertStringContainsString( get_the_author_meta( 'url' ), $author_link, 'Author url not found in link.' );
 		$this->assertStringContainsString( get_the_author(), $author_link, 'Author name not found in link.' );
 
-		// Here we are checking author name should not be more then one time.
+		// Here we are checking author name should not be more than one time.
 		// Asserting ">get_the_author()<" because "get_the_author()" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $author_link, '>' . get_the_author() . '<' ) );
 
@@ -705,7 +705,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertStringContainsString( get_the_author_meta( 'url' ), $author_link, 'Author link not found.' );
 		$this->assertStringContainsString( get_the_author(), $author_link, 'Author name not found.' );
 
-		// Here we are checking author name should not be more then one time.
+		// Here we are checking author name should not be more than one time.
 		// Asserting ">get_the_author()<" because "get_the_author()" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $author_link, '>' . get_the_author() . '<' ) );
 
@@ -854,7 +854,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $coauthors, 'Main author link not found.' );
 		$this->assertStringContainsString( $this->author1->display_name, $coauthors, 'Main author name not found.' );
 
-		// Here we are checking author name should not be more then one time.
+		// Here we are checking author name should not be more than one time.
 		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $coauthors, ">{$this->author1->display_name}<" ) );
 
@@ -862,7 +862,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->editor1->ID, $this->editor1->user_nicename ) . '"', $coauthors, 'Coauthor link not found.' );
 		$this->assertStringContainsString( $this->editor1->display_name, $coauthors, 'Coauthor name not found.' );
 
-		// Here we are checking editor name should not be more then one time.
+		// Here we are checking editor name should not be more than one time.
 		// Asserting ">{$this->editor1->display_name}<" because "$this->editor1->display_name" can be multiple times like in href, title, etc.
 		$this->assertEquals( 1, substr_count( $coauthors, ">{$this->editor1->display_name}<" ) );
 	}

@@ -9,6 +9,7 @@ use CoAuthors\Integrations\Yoast\CoAuthor;
 use Yoast\WP\SEO\Config\Schema_Types;
 use Yoast\WP\SEO\Context\Meta_Tags_Context;
 use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
+use Yoast\WP\SEO\Presentations\Indexable_Author_Archive_Presentation;
 use WP_User;
 
 /**
@@ -39,7 +40,7 @@ class Yoast {
 	 */
 	public static function do_initialization() {
 		if ( self::should_initialize() ) {
-			require_once dirname( __FILE__ ) . '/yoast/class-coauthor.php';
+			require_once __DIR__ . '/yoast/class-coauthor.php';
 			self::register_hooks();
 		}
 	}
@@ -162,7 +163,7 @@ class Yoast {
 		}
 
 		/**
-		 * Contains the authors from the CoAuthors Plus plugin.
+		 * Contains the authors from the Co-Authors Plus plugin.
 		 *
 		 * @var WP_User[] $author_objects
 		 */
@@ -189,12 +190,7 @@ class Yoast {
 			}
 		}
 		$schema_types  = new Schema_Types();
-		$article_types = array_map(
-			function( $article_type ) {
-				return $article_type['value'];
-			},
-			$schema_types->get_article_type_options()
-		);
+		$article_types = array_column( $schema_types->get_article_type_options(), 'value' );
 
 		// Change the author reference to reference our multiple authors.
 		$add_to_graph = false;
@@ -207,7 +203,7 @@ class Yoast {
 		}
 
 		if ( $add_to_graph ) {
-			// Clean all Persons from the schema, as the user stored as post owner might be incorrectly added if the post post has only guest authors as authors.
+			// Clean all Persons from the schema, as the user stored as post owner might be incorrectly added if the post has only guest authors as authors.
 			$data = array_filter(
 				$data,
 				function( $piece ) {
@@ -281,7 +277,7 @@ class Yoast {
 	}
 
 	/**
-	 * CoAuthors Plus and Yoast are incompatible where the author archives for guest authors are output as noindex.
+	 * Co-Authors Plus and Yoast are incompatible where the author archives for guest authors are output as noindex.
 	 * This filter will determine if we're on an author archive and reset the robots.txt string properly.
 	 *
 	 * See https://github.com/Yoast/wordpress-seo/issues/9147.
@@ -294,7 +290,7 @@ class Yoast {
 			return $robots;
 		}
 
-		if ( ! is_a( $presentation, '\Yoast\WP\SEO\Presentations\Indexable_Author_Archive_Presentation' ) ) {
+		if ( ! is_a( $presentation, Indexable_Author_Archive_Presentation::class ) ) {
 			return $robots;
 		}
 
@@ -307,7 +303,7 @@ class Yoast {
 		 * If this is a guest author archive and hasn't manually been set to noindex,
 		 * make sure the robots.txt string is set properly.
 		 */
-		if ( empty( $presentation->model->is_robots_noindex ) || 0 === intval( $presentation->model->is_robots_noindex ) ) {
+		if ( empty( $presentation->model->is_robots_noindex ) || 0 === (int) $presentation->model->is_robots_noindex ) {
 			if ( ! is_array( $robots ) ) {
 				$robots = [];
 			}
