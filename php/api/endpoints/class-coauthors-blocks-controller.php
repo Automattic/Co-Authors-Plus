@@ -61,14 +61,14 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 						},
 						'sanitize_callback' => function( $post_id ) : int {
 							return absint( $post_id );
-						}
+						},
 					),
 				),
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'permission_callback' => array( $this, 'get_items_permission_check' ),
-				)
+				),
 			)
 		);
 
@@ -85,14 +85,14 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 						},
 						'sanitize_callback' => function( $slug ) {
 							return sanitize_title( $slug );
-						}
+						},
 					),
 				),
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
 					'permission_callback' => '__return_true',
-				)
+				),
 			)
 		);
 	}
@@ -114,7 +114,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		if ( ! is_object( $coauthor ) ) {
 			return new WP_Error(
 				'rest_not_found',
-				__('Sorry, we could not find that co-author.'),
+				__( 'Sorry, we could not find that co-author.' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -122,7 +122,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		if ( ! self::is_coauthor( $coauthor ) ) {
 			return new WP_Error(
 				'rest_unusable_data',
-				__('Sorry, an unusable response was produced.'),
+				__( 'Sorry, an unusable response was produced.' ),
 				array( 'status' => 406 )
 			);
 		}
@@ -154,7 +154,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		if ( ! is_array( $coauthors ) ) {
 			return new WP_Error(
 				'rest_unusable_data',
-				__('Sorry, an unusable response was produced.'),
+				__( 'Sorry, an unusable response was produced.' ),
 				array( 'status' => 406 )
 			);
 		}
@@ -214,19 +214,19 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 			'title'      => 'coauthors-block',
 			'type'       => 'object',
 			'properties' => array(
-				'id' => array(
+				'id'             => array(
 					'description' => __( 'Either user id or guest author id.', 'co-authors-plus' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
-					'readonly'    => true
+					'readonly'    => true,
 				),
-				'display_name' => array(
+				'display_name'   => array(
 					'description' => __( 'Author name for display.', 'co-authors-plus' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
-					'readonly'    => true
+					'readonly'    => true,
 				),
-				'description' => array(
+				'description'    => array(
 					'description' => __( 'Author description.', 'co-authors-plus' ),
 					'type'        => 'object',
 					'context'     => array( 'view' ),
@@ -243,28 +243,28 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 							'type'        => 'string',
 							'context'     => array( 'view' ),
 							'readonly'    => true,
-						)
-					)
+						),
+					),
 				),
-				'user_nicename' => array(
+				'user_nicename'  => array(
 					'description' => __( 'Unique author slug.', 'co-authors-plus' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
-					'readonly'    => true
+					'readonly'    => true,
 				),
-				'link' => array(
+				'link'           => array(
 					'description' => __( 'URL of author archive.', 'co-authors-plus' ),
 					'type'        => 'string',
 					'context'     => array( 'view' ),
-					'readonly'    => true
+					'readonly'    => true,
 				),
 				'featured_media' => array(
 					'description' => __( 'Id of guest author feature image.', 'co-authors-plus' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
-				)
-			)
+				),
+			),
 		);
 
 		if ( get_option( 'show_avatars' ) ) {
