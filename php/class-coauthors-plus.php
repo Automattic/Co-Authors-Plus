@@ -1831,6 +1831,11 @@ class CoAuthors_Plus {
 			return $args;
 		}
 
+		// Do not filter the avatar if this is doing a heartbeat request on WP refresh lock
+		if ( wp_doing_ajax() && isset( $_POST['action'] ) &&  'heartbeat' === $_POST['action'] ) {
+			return $args;
+		}
+
 		$coauthor = $this->get_coauthor_by( 'id', $id );
 		if ( false !== $coauthor && isset( $coauthor->type ) && 'guest-author' === $coauthor->type ) {
 			if ( has_post_thumbnail( $id ) ) {
