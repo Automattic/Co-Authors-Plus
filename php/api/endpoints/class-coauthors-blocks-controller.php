@@ -53,12 +53,15 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 			'/coauthors/(?P<post_id>[\d]+)',
 			array(
 				'args' => array(
-					'id' => array(
+					'post_id' => array(
 						'description'       => __( 'Unique identifier for a post.' ),
 						'type'              => 'integer',
 						'validate_callback' => function( $post_id ) : bool {
-							return is_int( $post_id );	
+							return 0 !== absint( $post_id );
 						},
+						'sanitize_callback' => function( $post_id ) : int {
+							return absint( $post_id );
+						}
 					),
 				),
 				array(
