@@ -1,6 +1,8 @@
 <?php
 
-class AuthorQueriesTest extends CoAuthorsPlus_TestCase {
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
+class AuthorQueriesTest extends TestCase {
 
 	public function test__author_arg__user_is_post_author_query_as_post_author() {
 		$author_id = $this->factory()->user->create(

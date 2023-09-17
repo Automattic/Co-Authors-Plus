@@ -1,6 +1,8 @@
 <?php
 
-class TemplateTagsTest extends CoAuthorsPlus_TestCase {
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
+class TemplateTagsTest extends TestCase {
 
 	use \Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 

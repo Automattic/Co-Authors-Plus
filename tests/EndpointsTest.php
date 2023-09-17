@@ -1,11 +1,13 @@
 <?php
 
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
 use CoAuthors\API\Endpoints;
 
 /*
  * @coversDefaultClass \CoAuthors\API\Endpoints
  */
-class EndpointsTest extends CoAuthorsPlus_TestCase {
+class EndpointsTest extends TestCase {
 
 	use \DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 

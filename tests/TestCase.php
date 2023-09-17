@@ -1,10 +1,13 @@
 <?php
+
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
 use CoAuthors\API\Endpoints;
 
 /**
  * Base unit test class for Co-Authors Plus
  */
-class CoAuthorsPlus_TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
+class TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 
 	/**
 	 * @var CoAuthors_Plus

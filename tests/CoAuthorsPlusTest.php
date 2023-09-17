@@ -1,6 +1,8 @@
 <?php
 
-class CoAuthorsPlusTest extends CoAuthorsPlus_TestCase {
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
+class CoAuthorsPlusTest extends TestCase {
 
 	private $author1;
 	private $editor1;

@@ -1,6 +1,8 @@
 <?php
 
-class GuestAuthorsTest extends CoAuthorsPlus_TestCase {
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
+class GuestAuthorsTest extends TestCase {
 
 	use \Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
