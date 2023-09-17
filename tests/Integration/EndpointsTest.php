@@ -93,8 +93,7 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::__construct()
-	 * @covers ::modify_endpoints()
+	 * @covers \CoAuthors\API\Endpoints::__construct
 	 */
 	public function test_construct() {
 
@@ -123,7 +122,7 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::add_endpoints()
+	 * @covers \CoAuthors\API\Endpoints::add_endpoints
 	 */
 	public function test_add_endpoints() {
 
@@ -182,7 +181,7 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::get_coauthors_search_results()
+	 * @covers \CoAuthors\API\Endpoints::get_coauthors_search_results
 	 */
 	public function test_get_coauthors_search_results() {
 
@@ -226,7 +225,7 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::get_coauthors()
+	 * @covers \CoAuthors\API\Endpoints::get_coauthors
 	 */
 	public function test_authors_get_coauthors() {
 		$test_post = $this->factory()->post->create_and_get(
@@ -254,7 +253,7 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::update_coauthors()
+	 * @covers \CoAuthors\API\Endpoints::update_coauthors
 	 */
 	public function test_update_coauthors() {
 
@@ -349,7 +348,7 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::remove_author_link()
+	 * @covers \CoAuthors\API\Endpoints::remove_author_link
 	 */
 	public function test_remove_author_link() {
 
@@ -392,7 +391,7 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::modify_response()
+	 * @covers \CoAuthors\API\Endpoints::modify_responses
 	 */
 	public function test_modify_response() {
 		$this->_api->modify_responses();

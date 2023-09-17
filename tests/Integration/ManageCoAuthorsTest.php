@@ -189,7 +189,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_post_type_is_attachment() {
 
@@ -231,7 +231,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_coauthor_is_not_set() {
 
@@ -255,7 +255,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_coauthor_is_set() {
 
@@ -308,7 +308,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_guest_author_is_linked_with_wp_user() {
 
@@ -352,7 +352,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_post_author_is_not_set() {
 
@@ -390,7 +390,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_update_post()
+	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
 	public function test_coauthors_update_post_when_post_type_is_attachment() {
 
@@ -425,7 +425,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_update_post()
+	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
 	public function test_coauthors_update_post_when_current_user_can_set_authors() {
 
@@ -471,7 +471,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_update_post()
+	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
 	public function test_coauthors_update_post_when_post_has_not_author_terms() {
 
