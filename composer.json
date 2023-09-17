@@ -3,7 +3,7 @@
 	"description": "Multiple bylines and Guest Authors for WordPress",
 	"homepage": "https://wordpress.org/plugins/co-authors-plus/",
 	"type": "wordpress-plugin",
-	"license": "GPL-2.0+",
+	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
 			"name": "Daniel Bachhuber",
