@@ -21,7 +21,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 
 		wp_set_current_user( $author_id );
 
-		$query = new WP_Query(
+		$query = new \WP_Query(
 			array(
 				'author' => $author_id,
 			)
@@ -48,7 +48,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		);
 		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
 
-		$query = new WP_Query(
+		$query = new \WP_Query(
 			array(
 				'author' => $author_id,
 			)
@@ -75,7 +75,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		);
 		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
 
-		$query = new WP_Query(
+		$query = new \WP_Query(
 			array(
 				'author_name' => $author->user_login,
 			)
@@ -110,7 +110,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		);
 		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
 
-		$query = new WP_Query(
+		$query = new \WP_Query(
 			array(
 				'author_name' => $author2->user_login,
 			)
@@ -145,7 +145,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		);
 		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
 
-		$query = new WP_Query(
+		$query = new \WP_Query(
 			array(
 				'author' => $author2_id,
 			)
@@ -173,7 +173,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
 		wp_set_post_terms( $post_id, 'test' );
 
-		$query = new WP_Query(
+		$query = new \WP_Query(
 			array(
 				'author_name' => $author->user_login,
 				'tag'         => 'test',
@@ -210,7 +210,7 @@ class Test_Author_Queries extends CoAuthorsPlus_TestCase {
 		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
 		wp_set_post_terms( $post_id, 'test' );
 
-		$query = new WP_Query(
+		$query = new \WP_Query(
 			array(
 				'author_name' => $author2->user_login,
 				'tag'         => 'test',

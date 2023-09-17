@@ -2,7 +2,7 @@
 
 class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 
-	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
+	use \Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
 	private $author1;
 	private $editor1;
@@ -17,7 +17,7 @@ class Test_Template_Tags extends CoAuthorsPlus_TestCase {
 		 * we need CoAuthors_Template_Filters object to check 'the_author' filter.
 		 */
 		global $coauthors_plus_template_filters;
-		$coauthors_plus_template_filters = new CoAuthors_Template_Filters();
+		$coauthors_plus_template_filters = new \CoAuthors_Template_Filters();
 
 		$this->author1 = $this->factory()->user->create_and_get(
 			array(

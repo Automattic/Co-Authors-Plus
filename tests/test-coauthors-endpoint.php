@@ -184,7 +184,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	 */
 	public function test_get_coauthors_search_results() {
 
-		$get_request = new WP_REST_Request( 'GET' );
+		$get_request = new \WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
 			array(
 				'q'                => 'auth',
@@ -208,7 +208,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			'Failed to assert that coauthors search returns results matching the query.'
 		);
 
-		$not_found_get_request = new WP_REST_Request( 'GET' );
+		$not_found_get_request = new \WP_REST_Request( 'GET' );
 		$not_found_get_request->set_url_params(
 			array(
 				'q' => 'nonexistent',
@@ -239,7 +239,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$test_post_id = $test_post->ID;
 
-		$get_request = new WP_REST_Request( 'GET' );
+		$get_request = new \WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
 			array(
 				'post_id' => $test_post_id,
@@ -270,7 +270,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$test_post_id = $test_post->ID;
 
-		$post_request = new WP_REST_Request( 'POST' );
+		$post_request = new \WP_REST_Request( 'POST' );
 		$post_request->set_url_params(
 			array(
 				'post_id'     => $test_post_id,
@@ -290,7 +290,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$request = new WP_REST_Request(
+		$request = new \WP_REST_Request(
 			'GET',
 			''
 		);
@@ -319,7 +319,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$request = new WP_REST_Request(
+		$request = new \WP_REST_Request(
 			'GET',
 			''
 		);
@@ -359,7 +359,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $test_post->ID );
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/posts/' . $test_post->ID );
 
 		wp_set_current_user( $this->editor1->ID );
 

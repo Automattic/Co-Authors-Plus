@@ -72,7 +72,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $guest_author_id );
 
-		$this->assertInstanceOf( stdClass::class, $coauthor );
+		$this->assertInstanceOf( \stdClass::class, $coauthor );
 		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
@@ -97,7 +97,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $user_login );
 
-		$this->assertInstanceOf( stdClass::class, $coauthor );
+		$this->assertInstanceOf( \stdClass::class, $coauthor );
 		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
@@ -118,26 +118,26 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->author1->ID );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
 		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
 		$this->assertEquals( $this->author1->ID, $coauthor->ID );
 		$this->assertEquals( 'wpuser', $coauthor->type );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $this->author1->user_login );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
 		$this->assertTrue( property_exists( $coauthor->data, 'user_login' ) );
 		$this->assertEquals( $this->author1->user_login, $coauthor->user_login );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $this->author1->user_nicename );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
 		$this->assertTrue( property_exists( $coauthor->data, 'user_nicename' ) );
 		$this->assertEquals( $this->author1->user_nicename, $coauthor->user_nicename );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_email', $this->author1->user_email );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
 		$this->assertTrue( property_exists( $coauthor->data, 'user_email' ) );
 		$this->assertEquals( $this->author1->user_email, $coauthor->user_email );
 
@@ -147,7 +147,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->editor1->ID );
 
-		$this->assertInstanceOf( stdClass::class, $coauthor );
+		$this->assertInstanceOf( \stdClass::class, $coauthor );
 		$this->assertTrue( property_exists( $coauthor, 'linked_account' ) );
 		$this->assertEquals( $this->editor1->user_login, $coauthor->linked_account );
 	}
@@ -519,7 +519,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$author_term        = $coauthors_plus->get_author_term( $this->author1 );
 		$author_term_cached = wp_cache_get( $cache_key, 'co-authors-plus' );
 
-		$this->assertInstanceOf( WP_Term::class, $author_term );
+		$this->assertInstanceOf( \WP_Term::class, $author_term );
 		$this->assertEquals( $author_term, $author_term_cached );
 	}
 
@@ -538,7 +538,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
 
-		$this->assertInstanceOf( WP_Term::class, $author_term );
+		$this->assertInstanceOf( \WP_Term::class, $author_term );
 
 		// Checks when term does not exist or deleted somehow.
 		wp_delete_term( $author_term->term_id, $author_term->taxonomy );
@@ -566,7 +566,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
 
-		$this->assertInstanceOf( WP_Term::class, $author_term );
+		$this->assertInstanceOf( \WP_Term::class, $author_term );
 
 		// Checks when term does not exist or deleted somehow.
 		wp_delete_term( $author_term->term_id, $author_term->taxonomy );

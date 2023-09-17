@@ -333,7 +333,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		);
 
 		// Create guest author with linked account with user.
-		$coauthors_plus->guest_authors = new CoAuthors_Guest_Authors();
+		$coauthors_plus->guest_authors = new \CoAuthors_Guest_Authors();
 		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->author1 );
 
 		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );

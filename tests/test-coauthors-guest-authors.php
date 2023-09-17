@@ -2,7 +2,7 @@
 
 class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
-	use Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
+	use \Yoast\PHPUnitPolyfills\Polyfills\AssertStringContains;
 
 	private $admin1;
 	private $author1;
@@ -87,7 +87,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author        = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 		$guest_author_cached = wp_cache_get( $cache_key, $guest_author_obj::$cache_group );
 
-		$this->assertInstanceOf( stdClass::class, $guest_author );
+		$this->assertInstanceOf( \stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author, $guest_author_cached );
 	}
 
@@ -111,20 +111,20 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		// Checks guest author using ID.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 
-		$this->assertInstanceOf( stdClass::class, $guest_author );
+		$this->assertInstanceOf( \stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author_id, $guest_author->ID );
 		$this->assertEquals( $guest_author_obj->post_type, $guest_author->type );
 
 		// Checks guest author using user_nicename.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'user_nicename', $this->editor1->user_nicename );
 
-		$this->assertInstanceOf( stdClass::class, $guest_author );
+		$this->assertInstanceOf( \stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author_obj->post_type, $guest_author->type );
 
 		// Checks guest author using linked_account.
 		$guest_author = $guest_author_obj->get_guest_author_by( 'linked_account', $this->editor1->user_login );
 
-		$this->assertInstanceOf( stdClass::class, $guest_author );
+		$this->assertInstanceOf( \stdClass::class, $guest_author );
 		$this->assertEquals( $guest_author_obj->post_type, $guest_author->type );
 	}
 
@@ -305,7 +305,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		$guest_author_id = $guest_author_obj->create_guest_author_from_user_id( $this->editor1->ID );
 		$guest_author    = $guest_author_obj->get_guest_author_by( 'ID', $guest_author_id );
 
-		$this->assertInstanceOf( stdClass::class, $guest_author );
+		$this->assertInstanceOf( \stdClass::class, $guest_author );
 	}
 
 	/**
@@ -388,11 +388,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
-		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertInstanceOf( \WPDieException::class, $exception );
 		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Checks when nonce is as expected.
@@ -400,7 +400,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
@@ -440,11 +440,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
-		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertInstanceOf( \WPDieException::class, $exception );
 		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Checks when current user has list_users capability.
@@ -455,7 +455,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
@@ -497,11 +497,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 		// Checks when guest author does not exist.
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
-		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertInstanceOf( \WPDieException::class, $exception );
 		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Checks when guest author exists.
@@ -509,7 +509,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
@@ -552,11 +552,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
-		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertInstanceOf( \WPDieException::class, $exception );
 		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// Restore current user from backup.
@@ -596,7 +596,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 			$guest_author_obj->handle_delete_guest_author_action();
 
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 
 			$this->assertStringContainsString( $guest_author_obj->parent_page, $e->getMessage() );
 			$this->assertStringContainsString( 'page=view-guest-authors', $e->getMessage() );
@@ -643,11 +643,11 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 		try {
 			$guest_author_obj->handle_delete_guest_author_action();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$exception = $e;
 		}
 
-		$this->assertInstanceOf( 'WPDieException', $exception );
+		$this->assertInstanceOf( \WPDieException::class, $exception );
 		$this->assertStringContainsString( esc_html( $expected ), $exception->getMessage() );
 
 		// When coauthor exists.
@@ -659,7 +659,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 			$guest_author_obj->handle_delete_guest_author_action();
 
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 
 			//$this->assertStringContainsString( $guest_author_obj->parent_page, $e->getMessage() );
 			$this->assertStringContainsString( 'page=view-guest-authors', $e->getMessage() );
@@ -705,7 +705,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 
 			$guest_author_obj->handle_delete_guest_author_action();
 
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 
 			$this->assertStringContainsString( $guest_author_obj->parent_page, $e->getMessage() );
 			$this->assertStringContainsString( 'page=view-guest-authors', $e->getMessage() );
@@ -736,7 +736,7 @@ class Test_CoAuthors_Guest_Authors extends CoAuthorsPlus_TestCase {
 	 **/
 	public function catch_redirect_destination( $location, $status ) {
 
-		throw new Exception( $location, $status );
+		throw new \Exception( $location, $status );
 	}
 
 	/**
