@@ -1,11 +1,13 @@
 <?php
 
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
 use CoAuthors\API\Endpoints;
 
 /*
  * @coversDefaultClass \CoAuthors\API\Endpoints
  */
-class Test_Endpoints extends CoAuthorsPlus_TestCase {
+class EndpointsTest extends TestCase {
 
 	use \DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
@@ -91,8 +93,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::__construct()
-	 * @covers ::modify_endpoints()
+	 * @covers \CoAuthors\API\Endpoints::__construct
 	 */
 	public function test_construct() {
 
@@ -121,7 +122,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::add_endpoints()
+	 * @covers \CoAuthors\API\Endpoints::add_endpoints
 	 */
 	public function test_add_endpoints() {
 
@@ -180,11 +181,11 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::get_coauthors_search_results()
+	 * @covers \CoAuthors\API\Endpoints::get_coauthors_search_results
 	 */
 	public function test_get_coauthors_search_results() {
 
-		$get_request = new WP_REST_Request( 'GET' );
+		$get_request = new \WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
 			array(
 				'q'                => 'auth',
@@ -208,7 +209,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			'Failed to assert that coauthors search returns results matching the query.'
 		);
 
-		$not_found_get_request = new WP_REST_Request( 'GET' );
+		$not_found_get_request = new \WP_REST_Request( 'GET' );
 		$not_found_get_request->set_url_params(
 			array(
 				'q' => 'nonexistent',
@@ -224,7 +225,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::get_coauthors()
+	 * @covers \CoAuthors\API\Endpoints::get_coauthors
 	 */
 	public function test_authors_get_coauthors() {
 		$test_post = $this->factory()->post->create_and_get(
@@ -239,7 +240,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$test_post_id = $test_post->ID;
 
-		$get_request = new WP_REST_Request( 'GET' );
+		$get_request = new \WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
 			array(
 				'post_id' => $test_post_id,
@@ -252,7 +253,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::update_coauthors()
+	 * @covers \CoAuthors\API\Endpoints::update_coauthors
 	 */
 	public function test_update_coauthors() {
 
@@ -270,7 +271,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 
 		$test_post_id = $test_post->ID;
 
-		$post_request = new WP_REST_Request( 'POST' );
+		$post_request = new \WP_REST_Request( 'POST' );
 		$post_request->set_url_params(
 			array(
 				'post_id'     => $test_post_id,
@@ -290,7 +291,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$request = new WP_REST_Request(
+		$request = new \WP_REST_Request(
 			'GET',
 			''
 		);
@@ -319,7 +320,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$request = new WP_REST_Request(
+		$request = new \WP_REST_Request(
 			'GET',
 			''
 		);
@@ -347,7 +348,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::remove_author_link()
+	 * @covers \CoAuthors\API\Endpoints::remove_author_link
 	 */
 	public function test_remove_author_link() {
 
@@ -359,7 +360,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 			)
 		);
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $test_post->ID );
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/posts/' . $test_post->ID );
 
 		wp_set_current_user( $this->editor1->ID );
 
@@ -390,7 +391,7 @@ class Test_Endpoints extends CoAuthorsPlus_TestCase {
 	}
 
 	/**
-	 * @covers ::modify_response()
+	 * @covers \CoAuthors\API\Endpoints::modify_responses
 	 */
 	public function test_modify_response() {
 		$this->_api->modify_responses();

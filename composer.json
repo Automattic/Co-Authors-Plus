@@ -49,6 +49,14 @@
 		}
 	},
 	"scripts": {
+		"coverage": [
+			"@putenv WP_MULTISITE=1",
+			"@php ./vendor/bin/phpunit --exclude=ms-excluded --coverage-html ./.phpunit.cache/coverage-html"
+		],
+		"coverage-ci": [
+			"@putenv WP_MULTISITE=1",
+			"@php ./vendor/bin/phpunit --exclude=ms-excluded"
+		],
 		"cs": [
 			"@php ./vendor/bin/phpcs -p -s -v -n . --standard=\"WordPress-VIP-Go\" --extensions=php --ignore=\"/vendor/*,/node_modules/*,/tests/*\""
 		],
@@ -65,11 +73,11 @@
 			"bash bin/install-wp-tests.sh wordpress_test root root localhost"
 		],
 		"integration": [
-			"@php ./vendor/bin/phpunit --exclude=ms-required"
+			"@php ./vendor/bin/phpunit --exclude=ms-required --no-coverage"
 		],
 		"integration-ms": [
 			"@putenv WP_MULTISITE=1",
-			"@php ./vendor/bin/phpunit --exclude=ms-excluded"
+			"@php ./vendor/bin/phpunit --exclude=ms-excluded --no-coverage"
 		],
 		"behat": "run-behat-tests",
 		"behat-rerun": "rerun-behat-tests",
