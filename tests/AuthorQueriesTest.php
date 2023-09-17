@@ -1,6 +1,6 @@
 <?php
 
-class Test_Author_Queries extends CoAuthorsPlus_TestCase {
+class AuthorQueriesTest extends CoAuthorsPlus_TestCase {
 
 	public function test__author_arg__user_is_post_author_query_as_post_author() {
 		$author_id = $this->factory()->user->create(

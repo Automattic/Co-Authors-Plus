@@ -5,7 +5,7 @@ use CoAuthors\API\Endpoints;
 /*
  * @coversDefaultClass \CoAuthors\API\Endpoints
  */
-class Test_Endpoints extends CoAuthorsPlus_TestCase {
+class EndpointsTest extends CoAuthorsPlus_TestCase {
 
 	use \DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 

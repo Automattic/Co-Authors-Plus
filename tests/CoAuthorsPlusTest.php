@@ -1,6 +1,6 @@
 <?php
 
-class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
+class CoAuthorsPlusTest extends CoAuthorsPlus_TestCase {
 
 	private $author1;
 	private $editor1;
