@@ -2,7 +2,7 @@
 /**
  * Co-Author Description Block
  * 
- * @package CoAuthors
+ * @package Automattic\CoAuthorsPlus
  * @since 3.6.0
  */
 

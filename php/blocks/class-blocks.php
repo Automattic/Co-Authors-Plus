@@ -2,7 +2,7 @@
 /**
  * Blocks
  * 
- * @package CoAuthors
+ * @package Automattic\CoAuthorsPlus
  * @since 3.6.0
  */
 
