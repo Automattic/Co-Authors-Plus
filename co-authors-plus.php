@@ -47,7 +47,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 global $coauthors_plus;
 $coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
-new CoAuthors\Blocks();
+CoAuthors\Blocks::run();
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**

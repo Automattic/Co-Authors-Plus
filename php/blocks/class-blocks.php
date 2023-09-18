@@ -17,11 +17,11 @@ use WP_REST_Request;
  */
 class Blocks {
 	/**
-	 * Construct
+	 * Run
 	 *
 	 * @since 3.6.0
 	 */
-	public function __construct() {
+	public static function run(): void {
 		add_action( 'init', array( __CLASS__, 'initialize_blocks' ) );
 	}
 
