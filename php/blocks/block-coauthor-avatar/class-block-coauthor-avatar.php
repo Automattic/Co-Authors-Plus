@@ -21,7 +21,7 @@ class Block_CoAuthor_Avatar {
 	 *
 	 * @since 3.6.0
 	 */
-	public static function register_block() : void {
+	public static function register_block(): void {
 		register_block_type(
 			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthor-avatar',
 			array(
@@ -38,7 +38,7 @@ class Block_CoAuthor_Avatar {
 	 * @param WP_Block $block
 	 * @return string
 	 */
-	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
+	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
 		$author = $block->context['cap/author'] ?? array();
 

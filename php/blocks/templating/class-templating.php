@@ -20,7 +20,7 @@ class Templating {
 	 * 
 	 * @since 3.6.0
 	 */
-	public static function render_element( string $name, ?string $attributes = '', ?string $content = '' ) : string {
+	public static function render_element( string $name, ?string $attributes = '', ?string $content = '' ): string {
 		return "<{$name} $attributes>{$content}</{$name}>";
 	}
 
@@ -33,7 +33,7 @@ class Templating {
 	 * @param null|string $attributes
 	 * @return callable
 	 */
-	public static function get_render_element_function( string $name, ?string $attributes = '' ) : callable {
+	public static function get_render_element_function( string $name, ?string $attributes = '' ): callable {
 		return function( string $content ) use ( $name, $attributes ) : string {
 			return self::render_element( $name, $attributes, $content );
 		};
@@ -47,7 +47,7 @@ class Templating {
 	 * @param null|string $attributes
 	 * @return string
 	 */
-	public static function render_self_closing_element( string $name, ?string $attributes = '' ) : string {
+	public static function render_self_closing_element( string $name, ?string $attributes = '' ): string {
 		return "<{$name} $attributes/>";
 	}
 
@@ -59,7 +59,7 @@ class Templating {
 	 * @param mixed      $value Attribute value. For boolean attributes, set value the same as the key.
 	 * @return string
 	 */
-	public static function render_attribute_string( $key, $value ) : string {
+	public static function render_attribute_string( $key, $value ): string {
 		if ( empty( $value ) ) {
 			return '';
 		}
@@ -75,7 +75,7 @@ class Templating {
 	 * @since 3.6.0
 	 * @param array $attributes An associative array of attributes and their values.
 	 */
-	public static function render_attributes( array $attributes ) : string {
+	public static function render_attributes( array $attributes ): string {
 		
 		$attribute_strings = array_map(
 			array( __CLASS__, 'render_attribute_string' ),

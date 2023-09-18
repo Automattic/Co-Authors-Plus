@@ -21,7 +21,7 @@ class Block_CoAuthor_Name {
 	 *
 	 * @since 3.6.0
 	 */
-	public static function register_block() : void {
+	public static function register_block(): void {
 		register_block_type(
 			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthor-name',
 			array(
@@ -39,7 +39,7 @@ class Block_CoAuthor_Name {
 	 * @param WP_Block $block
 	 * @return string
 	 */
-	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
+	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
 		$author = $block->context['cap/author'] ?? array();
 
@@ -95,7 +95,7 @@ class Block_CoAuthor_Name {
 	 * @param string $tag_name
 	 * @return string
 	 */
-	public static function sanitize_tag_name( string $tag_name ) : string {
+	public static function sanitize_tag_name( string $tag_name ): string {
 		if ( in_array( $tag_name, array_keys( wp_kses_allowed_html( 'post' ) ), true ) ) {
 			return $tag_name;
 		}
@@ -109,7 +109,7 @@ class Block_CoAuthor_Name {
 	 * @param array $attributes
 	 * @return array
 	 */
-	public static function get_custom_block_wrapper_attributes( array $attributes ) : array {
+	public static function get_custom_block_wrapper_attributes( array $attributes ): array {
 
 		$text_align = $attributes['textAlign'] ?? '';
 

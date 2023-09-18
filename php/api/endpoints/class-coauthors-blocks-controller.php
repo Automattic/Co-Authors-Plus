@@ -47,7 +47,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 *
 	 * @since 3.6.0
 	 */
-	public function register_routes() : void {
+	public function register_routes(): void {
 		register_rest_route(
 			'coauthors-blocks/v1',
 			'/coauthors/(?P<post_id>[\d]+)',
@@ -56,10 +56,10 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 					'post_id' => array(
 						'description'       => __( 'Unique identifier for a post.' ),
 						'type'              => 'integer',
-						'validate_callback' => function( $post_id ) : bool {
+						'validate_callback' => function( $post_id ): bool {
 							return 0 !== absint( $post_id );
 						},
-						'sanitize_callback' => function( $post_id ) : int {
+						'sanitize_callback' => function( $post_id ): int {
 							return absint( $post_id );
 						},
 					),
@@ -80,7 +80,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 					'user_nicename' => array(
 						'description'       => __( 'Nicename / slug for co-author.' ),
 						'type'              => 'string',
-						'validate_callback' => function( $slug ) : bool {
+						'validate_callback' => function( $slug ): bool {
 							return is_string( $slug );
 						},
 						'sanitize_callback' => function( $slug ) {
@@ -136,7 +136,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @since 3.6.0
 	 * @param WP_User|stdClass $coauthor
 	 */
-	public static function is_coauthor( $coauthor ) : bool {
+	public static function is_coauthor( $coauthor ): bool {
 		return is_a( $coauthor, 'WP_User' ) || ( property_exists( $coauthor, 'type' ) && 'guest-author' === $coauthor->type );
 	}
 
@@ -203,7 +203,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @since 3.6.0
 	 * @return array Item schema data.
 	 */
-	public function get_item_schema() : array {
+	public function get_item_schema(): array {
 
 		if ( $this->schema ) {
 			return $this->add_additional_fields_schema( $this->schema );

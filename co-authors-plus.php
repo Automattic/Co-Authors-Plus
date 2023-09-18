@@ -218,7 +218,7 @@ function cap_get_coauthor_terms_for_post( $post_id ) {
 /**
  * Register CoAuthor Blocks REST API Routes
  */
-function cap_register_coauthors_blocks_rest_api_routes() : void {
+function cap_register_coauthors_blocks_rest_api_routes(): void {
 	global $coauthors_plus;
 	$controller = new CoAuthors\API\Endpoints\CoAuthors_Blocks_Controller( $coauthors_plus );
 	$controller->register_routes();

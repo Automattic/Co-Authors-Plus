@@ -30,7 +30,7 @@ class Blocks {
 	 *
 	 * @since 3.6.0
 	 */
-	public static function initialize_blocks() : void {
+	public static function initialize_blocks(): void {
 
 		if ( ! apply_filters( 'coauthors_plus_support_blocks', true ) ) {
 			return;
@@ -71,7 +71,7 @@ class Blocks {
 	 * @param array $parsed_block
 	 * @return array
 	 */
-	public static function provide_author_archive_context( array $context, array $parsed_block ) : array {
+	public static function provide_author_archive_context( array $context, array $parsed_block ): array {
 		if ( ! is_author() ) {
 			return $context;
 		}
@@ -115,7 +115,7 @@ class Blocks {
 	 *
 	 * @since 3.6.0
 	 */
-	public static function enqueue_store() : void {
+	public static function enqueue_store(): void {
 		$asset = require dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks-store/index.asset.php';
 
 		wp_enqueue_script(
@@ -159,7 +159,7 @@ class Blocks {
 	 * @param false|WP_User|stdClass $author An author object from CoAuthors Plus.
 	 * @return null|array Either an array of data about an author, or null.
 	 */
-	public static function get_author_with_api_schema( $author ) : ?array {
+	public static function get_author_with_api_schema( $author ): ?array {
 		if ( ! ( is_a( $author, 'stdClass' ) || is_a( $author, 'WP_User' ) ) ) {
 			return null;
 		}

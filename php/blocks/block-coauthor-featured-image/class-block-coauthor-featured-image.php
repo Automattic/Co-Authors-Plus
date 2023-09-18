@@ -21,7 +21,7 @@ class Block_CoAuthor_Featured_Image {
 	 *
 	 * @since 3.6.0
 	 */
-	public static function register_block() : void {
+	public static function register_block(): void {
 		register_block_type(
 			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthor-featured-image',
 			array(
@@ -39,7 +39,7 @@ class Block_CoAuthor_Featured_Image {
 	 * @param WP_Block $block
 	 * @return string
 	 */
-	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
+	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
 		$author = $block->context['cap/author'] ?? array();
 

@@ -21,7 +21,7 @@ class Block_CoAuthors {
 	 *
 	 * @since 3.6.0
 	 */
-	public static function register_block() : void {
+	public static function register_block(): void {
 		register_block_type(
 			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthors',
 			array(
@@ -39,7 +39,7 @@ class Block_CoAuthors {
 	 * @param WP_Block $block
 	 * @return string
 	 */
-	public static function render_block( array $attributes, string $content, WP_Block $block ) : string {
+	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
 		$post_id = array_key_exists( 'postId', $block->context ) ? absint( $block->context['postId'] ) : 0;
 	
@@ -100,7 +100,7 @@ class Block_CoAuthors {
 	 * @param array $fns
 	 * @return callable
 	 */
-	public static function get_composed_map_function( ...$fns ) : callable {
+	public static function get_composed_map_function( ...$fns ): callable {
 		return function ( $value ) use ( $fns ) {
 			return array_reduce(
 				$fns,
@@ -119,7 +119,7 @@ class Block_CoAuthors {
 	 * @param string $prefix
 	 * @return string
 	 */
-	public static function render_prefix( string $prefix ) : string {
+	public static function render_prefix( string $prefix ): string {
 		if ( empty( $prefix ) ) {
 			return $prefix;
 		}
@@ -133,7 +133,7 @@ class Block_CoAuthors {
 	 * @param string $suffix
 	 * @return string
 	 */
-	public static function render_suffix( string $suffix ) : string {
+	public static function render_suffix( string $suffix ): string {
 		if ( empty( $suffix ) ) {
 			return $suffix;
 		}
@@ -148,7 +148,7 @@ class Block_CoAuthors {
 	 * @param array $authors
 	 * @return array
 	 */
-	public static function render_coauthors_blocks_with_template( array $template, array $authors ) : array {
+	public static function render_coauthors_blocks_with_template( array $template, array $authors ): array {
 		return array_map(
 			self::get_composed_map_function(
 				self::get_template_render_function( $template ),
@@ -172,7 +172,7 @@ class Block_CoAuthors {
 	 * @param array $separators
 	 * @return array
 	 */
-	private static function merge_blocks_with_separators( array $blocks, array $separators ) : array {
+	private static function merge_blocks_with_separators( array $blocks, array $separators ): array {
 		return array_map(
 			function( ...$args ) : string {
 				return implode( $args );
@@ -189,7 +189,7 @@ class Block_CoAuthors {
 	 * @param int   $count
 	 * @param array $attributes
 	 */
-	private static function get_separators( int $count, array $attributes ) : array {
+	private static function get_separators( int $count, array $attributes ): array {
 		if ( 1 === $count ) {
 			return array();
 		}
@@ -216,7 +216,7 @@ class Block_CoAuthors {
 	 * @param array $attributes
 	 * @return string $separator
 	 */
-	private static function get_separator( array $attributes ) : string {
+	private static function get_separator( array $attributes ): string {
 		$separator = esc_html(
 			$attributes['separator'] ?? ''
 		);
@@ -239,7 +239,7 @@ class Block_CoAuthors {
 	 * @param array  $attributes
 	 * @param string $default
 	 */
-	private static function get_last_separator( array $attributes, string $default ) : string {
+	private static function get_last_separator( array $attributes, string $default ): string {
 		$last_separator = esc_html(
 			$attributes['lastSeparator'] ?? ''
 		);
@@ -262,8 +262,8 @@ class Block_CoAuthors {
 	 * @param array $block_template
 	 * @return callable
 	 */
-	private static function get_template_render_function( array $block_template ) : callable {
-		return function( array $author ) use ( $block_template ) : string {
+	private static function get_template_render_function( array $block_template ): callable {
+		return function( array $author ) use ( $block_template ): string {
 			return (
 				new WP_Block(
 					$block_template,
@@ -286,7 +286,7 @@ class Block_CoAuthors {
 	 * @param WP_Block $block
 	 * @return array
 	 */
-	private static function get_block_as_template( WP_Block $block ) : array {
+	private static function get_block_as_template( WP_Block $block ): array {
 		return array_merge(
 			$block->parsed_block,
 			array(
