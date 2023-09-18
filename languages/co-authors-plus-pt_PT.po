@@ -8,89 +8,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2023-09-18T17:14:46+00:00\n"
-"PO-Revision-Date: 2023-08-28 08:47:34+0000\n"
-"Language: sv_SE\n"
+"PO-Revision-Date: 2017-11-28 10:18:47+0000\n"
+"Language: pt\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: GlotPress/4.0.0-alpha.7\n"
-
-#: build/index.js:1
-#: src/components/co-authors/index.jsx:189
-msgid "Select An Author"
-msgstr "Välj en författare"
-
-#: build/index.js:1
-#: src/components/author-selection/index.jsx:102
-msgid "Remove Author"
-msgstr "Ta bort författare"
-
-#: build/index.js:1
-#: src/components/author-selection/index.jsx:85
-msgid "Move down"
-msgstr "Flytta ner"
-
-#: build/index.js:1
-#: src/components/author-selection/index.jsx:74
-msgid "Move Up"
-msgstr "Flytta upp"
-
-#: php/integrations/yoast.php:262
-msgid "Written by"
-msgstr "Skriven av"
-
-#. translators: Guest Author ID.
-#: php/class-wp-cli.php:931
-msgid "-- Created as guest author #%s"
-msgstr "-- Skapad som gästförfattare #%s"
-
-#. translators: The error message.
-#: php/class-wp-cli.php:921
-msgid "-- Failed to create guest author: %s"
-msgstr "-- Misslyckades att skapa gästförfattare: %s"
-
-#: php/class-coauthors-guest-authors.php:1589
-msgid "Email"
-msgstr "E-post"
-
-#: php/class-coauthors-guest-authors.php:1587
-msgid "Login Name"
-msgstr "Inloggningsnamn"
-
-#: php/class-coauthors-guest-authors.php:499
-msgid "There are no posts associated with this guest author."
-msgstr "Det finns inga inlägg associerade med denna gästförfattare."
-
-#: php/class-coauthors-guest-authors.php:494
-msgid "Delete Guest Authors"
-msgstr "Ta bort gästförfattare"
-
-#: php/class-coauthors-guest-authors.php:103
-msgid "Remove Avatar"
-msgstr "Ta bort profilbild"
-
-#: php/class-coauthors-guest-authors.php:102
-msgid "Use Avatar"
-msgstr "Använd profilbild"
-
-#: php/class-coauthors-guest-authors.php:101
-msgid "Set Avatar"
-msgstr "Ställ in profilbild"
-
-#: php/class-coauthors-guest-authors.php:100
-msgid "Avatar"
-msgstr "Profilbild"
-
-#. translators: Author display name.
-#: co-authors-plus.php:1800
-msgid "Author: %s"
-msgstr "Författare: %s"
-
-#: co-authors-plus.php:224
-msgid "All Authors"
-msgstr "Alla författare"
-
-#. Author URI of the plugin
-msgid "https://automattic.com"
-msgstr "https://automattic.com"
 
 #. Author of the plugin
 msgid "Mohammad Jangda, Daniel Bachhuber, Automattic"
@@ -98,109 +19,137 @@ msgstr "Mohammad Jangda, Daniel Bachhuber, Automattic"
 
 #. Description of the plugin
 msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
-msgstr "Tillåter att ett inlägg tilldelas flera författare. Detta tillägg är en vidareutvecklad version av \"Co-Authors\"-tillägget skrivet av Weston Ruter."
-
-#. Plugin URI of the plugin
-msgid "https://wordpress.org/plugins/co-authors-plus/"
-msgstr "https://wordpress.org/plugins/co-authors-plus/"
+msgstr "Permite artigos com mais do que um autor. Este plugin é uma versão expandida do plugin Co-Authors, desenvolvido por Weston Ruter."
 
 #. Plugin Name of the plugin
 msgid "Co-Authors Plus"
 msgstr "Co-Authors Plus"
 
 #. translators: Author display name.
-#: template-tags.php:474
-#: template-tags.php:482
-msgid "Visit %s&#8217;s website"
-msgstr "Besök %s&#8217;s webbplats"
-
-#. translators: Author display name.
 #: template-tags.php:304
 #: template-tags.php:698
 msgid "Posts by %s"
-msgstr "Publicerat av %s"
+msgstr "Artigos de %s"
 
 #: template-tags.php:156
 msgid " and "
-msgstr " och "
+msgstr " e "
 
-#: php/class-wp-cli.php:232
-msgid "Please specify a valid co-author login"
-msgstr "Ange ett giltigt medförfattare alias"
+#. translators: Author display name.
+#: template-tags.php:474
+#: template-tags.php:482
+msgid "Visit %s&#8217;s website"
+msgstr "Visitar site de %s"
 
-#: php/class-wp-cli.php:228
-msgid "Please specify a valid user_login"
-msgstr "Specificera en giltig user_login"
+#: php/class-coauthors-guest-authors.php:463
+msgid "Name"
+msgstr "Nome"
 
-#: php/class-coauthors-wp-list-table.php:293
-msgid "Filter"
-msgstr "Filtrera"
-
-#: php/class-coauthors-wp-list-table.php:246
-msgid "View Posts"
-msgstr "Visa inlägg"
+#: php/class-coauthors-guest-authors.php:561
+msgid "Add New"
+msgstr "Adicionar novo"
 
 #: php/class-coauthors-wp-list-table.php:244
 msgid "Delete"
-msgstr "Ta bort"
+msgstr "Apagar"
 
-#: php/class-coauthors-wp-list-table.php:164
-msgid "No matching co-authors were found."
-msgstr "Inga matchande medförfattare hittades."
+#: co-authors-plus.php:1390
+#: php/class-coauthors-wp-list-table.php:241
+msgid "Edit"
+msgstr "Editar"
+
+#: php/class-coauthors-wp-list-table.php:293
+msgid "Filter"
+msgstr "Filtrar"
+
+#: php/class-coauthors-guest-authors.php:1058
+msgid "Slug"
+msgstr "Slug"
+
+#: co-authors-plus.php:1436
+msgid "Mine"
+msgstr "Meu"
+
+#: php/class-coauthors-guest-authors.php:1042
+#: php/class-coauthors-guest-authors.php:1588
+#: php/class-coauthors-wp-list-table.php:172
+msgid "Display Name"
+msgstr "Nome exibido"
+
+#: php/class-coauthors-guest-authors.php:1035
+#: php/class-coauthors-guest-authors.php:1586
+msgid "ID"
+msgstr "ID"
+
+#: php/class-coauthors-guest-authors.php:460
+msgid "Save"
+msgstr "Guardar"
+
+#: php/class-wp-cli.php:232
+msgid "Please specify a valid co-author login"
+msgstr "Por favor especifique um login de co-autor válido"
+
+#: php/class-wp-cli.php:228
+msgid "Please specify a valid user_login"
+msgstr "Por favor especifique um nome de utilizador válido"
+
+#: php/class-coauthors-wp-list-table.php:246
+msgid "View Posts"
+msgstr "Ver artigos"
 
 #: php/class-coauthors-wp-list-table.php:91
 msgid "Without linked account"
-msgstr "Utan länkat konto"
+msgstr "Sem conta ligada"
 
 #: php/class-coauthors-wp-list-table.php:90
 msgid "With linked account"
-msgstr "Med länkat konto"
+msgstr "Com conta ligada"
 
 #: php/class-coauthors-wp-list-table.php:89
 msgid "Show all"
-msgstr "Visa alla"
+msgstr "Mostrar todos"
 
 #: php/class-coauthors-wp-list-table.php:24
 msgid "Co-Author"
-msgstr "Medförfattare"
+msgstr "Co-autor"
 
 #: php/class-coauthors-wp-list-table.php:23
 msgid "Co-Authors"
-msgstr "Medförfattare"
+msgstr "Co-autores"
 
 #: php/class-coauthors-guest-authors.php:1448
 msgid "Create Profile"
-msgstr "Skapa profil"
+msgstr "Criar perfil"
 
 #: php/class-coauthors-guest-authors.php:1439
 msgid "Edit Profile"
-msgstr "Redigera profil"
+msgstr "Editar perfil"
 
 #: php/class-coauthors-guest-authors.php:1376
 msgid "No user exists with that ID"
-msgstr "Ingen användare finns med detta ID."
+msgstr "Nenhum utilizador com essa ID"
 
 #: php/class-coauthors-guest-authors.php:1336
 msgid "Reassignment co-author does not exist"
-msgstr "Tilldelad gästförfattare existerar inte"
+msgstr "Co-autor a re-atribuir não existe"
 
 #: php/class-coauthors-guest-authors.php:1321
 msgid "Guest author does not exist"
-msgstr "Gästförfattare finns inte"
+msgstr "Autor convidado não existe"
 
 #: php/class-coauthors-guest-authors.php:1265
 msgid "user_login cannot duplicate existing guest author or mapped user"
-msgstr "\"user_login\" kan inte vara det samma som en existerande gästförfattare eller kopplad användare"
+msgstr "o user_login não pode duplicar autores convidados ou utilizadores mapeados já existentes"
 
 #. translators: Name of a form field.
 #: php/class-coauthors-guest-authors.php:1259
 msgid "%s is a required field"
-msgstr "%s är ett obligatoriskt fält"
+msgstr "%s é um campo obrigatório"
 
 #: php/class-coauthors-guest-authors.php:1082
 #: php/class-coauthors-guest-authors.php:1596
 msgid "Biographical Info"
-msgstr "Biografisk information"
+msgstr "Informação biográfica"
 
 #: php/class-coauthors-guest-authors.php:1595
 msgid "Jabber / Google Talk"
@@ -208,7 +157,7 @@ msgstr "Jabber/Google Talk"
 
 #: php/class-coauthors-guest-authors.php:1594
 msgid "Yahoo IM"
-msgstr "YahooIM"
+msgstr "Yahoo IM"
 
 #: php/class-coauthors-guest-authors.php:1593
 msgid "AIM"
@@ -217,309 +166,272 @@ msgstr "AIM"
 #: php/class-coauthors-guest-authors.php:1076
 #: php/class-coauthors-guest-authors.php:1592
 msgid "Website"
-msgstr "Webbplats"
+msgstr "Site"
 
 #: php/class-coauthors-guest-authors.php:1071
 #: php/class-coauthors-wp-list-table.php:176
 msgid "Linked Account"
-msgstr "Länkat konto"
+msgstr "Conta ligada"
 
 #: php/class-coauthors-guest-authors.php:1065
 #: php/class-coauthors-wp-list-table.php:175
 msgid "E-mail"
-msgstr "E-post"
-
-#: php/class-coauthors-guest-authors.php:1058
-msgid "Slug"
-msgstr "Slug"
+msgstr "Email"
 
 #: php/class-coauthors-guest-authors.php:1053
 #: php/class-coauthors-guest-authors.php:1591
 #: php/class-coauthors-wp-list-table.php:174
 msgid "Last Name"
-msgstr "Efternamn"
+msgstr "Apelido"
 
 #: php/class-coauthors-guest-authors.php:1048
 #: php/class-coauthors-guest-authors.php:1590
 #: php/class-coauthors-wp-list-table.php:173
 msgid "First Name"
-msgstr "Förnamn"
-
-#: php/class-coauthors-guest-authors.php:1042
-#: php/class-coauthors-guest-authors.php:1588
-#: php/class-coauthors-wp-list-table.php:172
-msgid "Display Name"
-msgstr "Visningsnamn"
-
-#: php/class-coauthors-guest-authors.php:1035
-#: php/class-coauthors-guest-authors.php:1586
-msgid "ID"
-msgstr "ID"
+msgstr "Nome"
 
 #: php/class-coauthors-guest-authors.php:814
 msgid "Display name conflicts with another guest author display name."
-msgstr "Visningsnamn skapar konflikt med en annan gästförfattares visningsnamn."
+msgstr "Mostrar conflictos de nomes com os nomes de outros autore convidados."
 
 #: php/class-coauthors-guest-authors.php:783
 #: php/class-coauthors-guest-authors.php:794
 msgid "Guest authors cannot be created without display names."
-msgstr "Gästförfattare kan inte skapas utan visningsnamn."
+msgstr "Autores convidados não podem ser criados sem nomes públicos."
 
 #: php/class-coauthors-guest-authors.php:633
 msgid "-- Not mapped --"
-msgstr "-- Inte kopplad --"
+msgstr "--Não mapeado--"
 
 #: php/class-coauthors-guest-authors.php:628
 msgid "WordPress User Mapping"
-msgstr "WordPress Användarkoppling"
-
-#: php/class-coauthors-guest-authors.php:561
-msgid "Add New"
-msgstr "Lägg till ny"
+msgstr "Mapeamento de utilizador de WordPress"
 
 #: php/class-coauthors-guest-authors.php:550
 #: php/class-coauthors-guest-authors.php:552
 msgid "Confirm Deletion"
-msgstr "Bekräfta borttagning"
+msgstr "Confirmar eliminação"
 
 #: php/class-coauthors-guest-authors.php:542
 msgid "Remove byline from posts (but leave each post in its current status)."
-msgstr "Ta bort signatur från inlägg (men låt varje inlägg behålla sin nuvarande status)."
+msgstr "Remover crédito dos artigos (deixando os artigos no seu estado actual)."
 
 #. translators: Name of a linked user account.
 #: php/class-coauthors-guest-authors.php:537
 msgid "Leave posts assigned to the mapped user, %s."
-msgstr "Lämna inlägg tilldelade till den kopplade användaren, %s."
+msgstr "Deixar os artigos atribuídos ao autor, %s."
 
 #: php/class-coauthors-guest-authors.php:530
 msgid "Reassign to another co-author:"
-msgstr "Tilldela en annan gästförfattare:"
+msgstr "Atribuir a outro co-autor:"
 
 #: php/class-coauthors-guest-authors.php:501
 msgid "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author."
-msgstr "Observera: Om du vill radera gästförfattaren och alla tillhörande inlägg så borde du först radera inläggen och sedan återvända och radera gästförfattaren."
+msgstr "Nota: se pretende eliminar o autor convidado e todos os seus artigos, deveria eliminar primeiro os artigos e depois voltar aqui para eliminar o autor."
 
 #: php/class-coauthors-guest-authors.php:495
 msgid "You have specified this guest author for deletion:"
-msgstr "Du har inte angivit denna gästförfattare för radering:"
+msgstr "Especificou este autor convidado para ser eliminado:"
 
 #: php/class-coauthors-guest-authors.php:464
 msgid "Contact Info"
-msgstr "Kontaktinformation"
-
-#: php/class-coauthors-guest-authors.php:463
-msgid "Name"
-msgstr "Namn"
+msgstr "Informações de contacto"
 
 #: php/class-coauthors-guest-authors.php:461
 msgid "Unique Slug"
-msgstr "Unik slug"
-
-#: php/class-coauthors-guest-authors.php:460
-msgid "Save"
-msgstr "Spara"
+msgstr "URL única"
 
 #: php/class-coauthors-guest-authors.php:436
 msgid "Guest author deleted."
-msgstr "Gästförfattare borttagen."
+msgstr "Autor convidado eliminado."
 
 #: php/class-coauthors-guest-authors.php:280
 msgid "Please make sure to pick an option."
-msgstr "Se till att välja ett alternativ."
+msgstr "Por favor escolha uma opção."
 
 #: php/class-coauthors-guest-authors.php:270
 msgid "Co-author does not exists. Try again?"
-msgstr "Medförfattare finns inte. Försök igen?"
+msgstr "O co-autor não existe. Tentar novamente?"
 
 #: php/class-coauthors-guest-authors.php:254
 #: php/class-coauthors-guest-authors.php:486
 msgid "Guest author can't be deleted because it doesn't exist."
-msgstr "Gästförfattare kan inte tas bort eftersom den inte finns."
+msgstr "O autor convidado não pode ser eliminado porque não existe."
 
 #: php/class-coauthors-guest-authors.php:208
 #: php/class-coauthors-guest-authors.php:248
 msgid "You don't have permission to perform this action."
-msgstr "Du har inte behörighet att utföra denna åtgärd."
+msgstr "Não tem permissões para executar essa acção."
 
 #: php/class-coauthors-guest-authors.php:204
 #: php/class-coauthors-guest-authors.php:243
 #: php/class-coauthors-guest-authors.php:480
 msgid "Doin' something fishy, huh?"
-msgstr "Nu gör du allt något skumt, eller hur?"
+msgstr "Operação ilegal"
 
 #. translators: Guest author profile preview URL.
 #: php/class-coauthors-guest-authors.php:186
 msgid "Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
-msgstr "Gästförfattare uppdaterad. <a target=\"_blank\" href=\"%s\">Förhandsvisa profil</a>"
+msgstr "Autor convidado actualizado. <a target=\"_blank\" href=\"%s\">Pré-visualizar perfil</a>"
 
 #. translators: Publish box date format, see http://php.net/date
 #: php/class-coauthors-guest-authors.php:182
 msgid "M j, Y @ G:i"
-msgstr "M j, Y @ G:i"
+msgstr "j M, Y @ H:i"
 
 #. translators: Guest author profile preview URL.
 #: php/class-coauthors-guest-authors.php:180
 msgid "Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview profile</a>"
-msgstr "Gästförfattare schemalagd för: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Förhandsvisa profil</a>"
+msgstr "Autor convidado agendado para: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Pré-visualizar perfil</a>"
 
 #. translators: Guest author URL
 #: php/class-coauthors-guest-authors.php:177
 msgid "Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
-msgstr "Gästförfattare inskickad. <a target=\"_blank\" href=\"%s\">Förhandsvisa profil</a>"
+msgstr "Autor convidado submetido. <a target=\"_blank\" href=\"%s\">Pré-visualizar perfil</a>"
 
 #: php/class-coauthors-guest-authors.php:175
 msgid "Guest author saved."
-msgstr "Gästförfattare sparad."
+msgstr "Autor convidado guardado."
 
 #. translators: %s: date and time of the revision
 #: php/class-coauthors-guest-authors.php:172
 msgid "Guest author restored to revision from %s"
-msgstr "Gästförfattare återställd till version från %s"
+msgstr "Autor convidado restaurado da versão %s"
 
 #: php/class-coauthors-guest-authors.php:170
 msgid "Guest author updated."
-msgstr "Gästförfattare uppdaterat."
+msgstr "Autor convidado actualizado."
 
 #: php/class-coauthors-guest-authors.php:169
 msgid "Custom field deleted."
-msgstr "Anpassat fält borttaget."
+msgstr "Campo personalizado excluído."
 
 #: php/class-coauthors-guest-authors.php:168
 msgid "Custom field updated."
-msgstr "Anpassat fält uppdaterat."
+msgstr "Campo personalizado actualizado."
 
 #. translators: Guest author URL
 #: php/class-coauthors-guest-authors.php:167
 #: php/class-coauthors-guest-authors.php:174
 msgid "Guest author updated. <a href=\"%s\">View profile</a>"
-msgstr "Gästförfattare uppdaterad. <a href=\"%s\">Visa profil</a>"
+msgstr "Autor convidado actualizado. <a href=\"%s\">Ver perfil</a>"
 
 #: php/class-coauthors-guest-authors.php:113
 msgctxt "guest author"
 msgid "Add New"
-msgstr "Lägg till ny"
+msgstr "Adicionar novo"
 
 #: php/class-coauthors-guest-authors.php:99
 msgid "About the guest author"
-msgstr "Om gästförfattaren"
+msgstr "Sobre o autor convidado"
 
 #: php/class-coauthors-guest-authors.php:98
 msgid "Update Guest Author"
-msgstr "Uppdatera gästförfattare"
+msgstr "Actualizar autor convidado"
 
 #: php/class-coauthors-guest-authors.php:97
 msgid "No guest authors found in Trash"
-msgstr "Inga gästförfattare hittades i papperskorgen"
+msgstr "Nenhum autor convidado encontrado no lixo"
 
 #: php/class-coauthors-guest-authors.php:96
 msgid "No guest authors found"
-msgstr "Inga gästförfattare hittades"
+msgstr "Nenhum autor convidado encontrado"
 
 #: php/class-coauthors-guest-authors.php:95
 msgid "Search Guest Authors"
-msgstr "Sök gästförfattare"
+msgstr "Pesquisar autores convidados"
 
 #: php/class-coauthors-guest-authors.php:94
 msgid "View Guest Author"
-msgstr "Visa gästförfattare"
+msgstr "Ver autor convidado"
 
 #: php/class-coauthors-guest-authors.php:93
 msgid "New Guest Author"
-msgstr "Ny gästförfattare"
+msgstr "Novo autor convidado"
 
 #: php/class-coauthors-guest-authors.php:92
 msgid "Edit Guest Author"
-msgstr "Redigera gästförfattare"
+msgstr "Editar autor convidado"
 
 #: php/class-coauthors-guest-authors.php:91
 msgid "Add New Guest Author"
-msgstr "Lägg till ny gästförfattare"
+msgstr "Adicionar autor convidado"
 
 #: php/class-coauthors-guest-authors.php:90
 msgid "All Guest Authors"
-msgstr "Alla gästförfattare"
+msgstr "Todos os autors convidados"
 
 #: php/class-coauthors-guest-authors.php:89
 msgid "Guest Authors"
-msgstr "Gästförfattare"
+msgstr "Autores convidados"
 
 #: php/class-coauthors-guest-authors.php:88
 #: php/class-coauthors-guest-authors.php:1556
 #: php/class-coauthors-guest-authors.php:1629
 msgid "Guest Author"
-msgstr "Gästförfattare"
+msgstr "Autor convidado"
 
 #. translators: URL for marking a comment as spam.
 #: co-authors-plus.php:2006
 msgid "Spam it: %s"
-msgstr "Märk som skräppost: %s"
+msgstr "Spam: %s"
 
 #. translators: URL for deleting a comment.
 #: co-authors-plus.php:2003
 msgid "Delete it: %s"
-msgstr "Ta bort det: %s"
+msgstr "Eliminar: %s"
 
 #. translators: URL for trashing a comment.
 #: co-authors-plus.php:2000
 msgid "Trash it: %s"
-msgstr "Lägg i papperskorgen: %s"
+msgstr "Lixo: %s"
 
 #. translators: Comment URL.
 #: co-authors-plus.php:1997
 msgid "Permalink: %s"
-msgstr "Permalänk: %s"
+msgstr "Ligação permanente: %s"
 
 #. translators: 1: blog name, 2: post title
 #: co-authors-plus.php:1993
 msgid "[%1$s] Pingback: \"%2$s\""
-msgstr "[%1$s] Pingback: ”%2$s”"
+msgstr "[%1$s] Pingback: \"%2$s\""
 
 #: co-authors-plus.php:1991
 msgid "You can see all pingbacks on this post here: "
-msgstr "Du kan se alla pingbacks på detta inlägg här: "
-
-#. translators: Post title.
-#: co-authors-plus.php:1985
-msgid "New pingback on your post \"%s\""
-msgstr "Ny pingback på ditt inlägg \"%s\""
+msgstr "Pode visualizar todos os pingbacks para o seu artigo aqui: "
 
 #. translators: 1: blog name, 2: post title
 #: co-authors-plus.php:1982
 msgid "[%1$s] Trackback: \"%2$s\""
-msgstr "[%1$s] Trackback: ”%2$s”"
+msgstr "[%1$s] Trackback: \"%2$s\""
 
 #: co-authors-plus.php:1980
 msgid "You can see all trackbacks on this post here: "
-msgstr "Du kan se alla trackbacks på detta inlägg här: "
+msgstr "Pode visualizar todos os trackbacks para este artigo aqui: "
 
 #: co-authors-plus.php:1979
 #: co-authors-plus.php:1990
 msgid "Excerpt: "
-msgstr "Utdrag: "
+msgstr "Excerto: "
 
 #. translators: 1: comment author, 2: author IP, 3: author domain
 #: co-authors-plus.php:1976
 #: co-authors-plus.php:1987
 msgid "Website: %1$s (IP: %2$s , %3$s)"
-msgstr "Webbplats: %1$s (IP: %2$s, %3$s)"
-
-#. translators: Post title.
-#: co-authors-plus.php:1974
-msgid "New trackback on your post \"%s\""
-msgstr "Ny trackback på ditt inlägg ”%s”"
+msgstr "Site: %1$s (IP: %2$s , %3$s)"
 
 #. translators: 1: blog name, 2: post title
 #: co-authors-plus.php:1971
 msgid "[%1$s] Comment: \"%2$s\""
-msgstr "[%1$s] Kommentar: ”%2$s”"
+msgstr "[%1$s] Comentário: \"%2$s\""
 
 #: co-authors-plus.php:1969
 msgid "You can see all comments on this post here: "
-msgstr "Du kan se alla kommentarer på detta inlägg här: "
+msgstr "Pode visualizar todos os comentários a este artigo aqui: "
 
 #: co-authors-plus.php:1968
 msgid "Comment: "
-msgstr "Kommentar: "
+msgstr "Comentário: "
 
 #. translators: Comment author IP address.
 #: co-authors-plus.php:1967
@@ -533,65 +445,35 @@ msgstr "Whois  : http://whois.arin.net/rest/ip/%s"
 msgid "URL    : %s"
 msgstr "URL    : %s"
 
-#. translators: Comment author emal address.
-#: co-authors-plus.php:1963
-msgid "Email : %s"
-msgstr "E-post: %s"
-
 #. translators: 1: comment author, 2: author IP, 3: author domain
 #: co-authors-plus.php:1961
 msgid "Author : %1$s (IP: %2$s , %3$s)"
-msgstr "Författare : %1$s (IP: %2$s, %3$s)"
-
-#. translators: Post title.
-#: co-authors-plus.php:1959
-msgid "New comment on your post \"%s\""
-msgstr "Ny kommentar till ditt inlägg ”%s”"
-
-#: co-authors-plus.php:1436
-msgid "Mine"
-msgstr "Min"
+msgstr "Autor: %1$s (IP: %2$s , %3$s)"
 
 #: co-authors-plus.php:1394
 msgid "Search for an author"
-msgstr "Sök efter en författare"
+msgstr "Pesquisar um autor"
 
 #: co-authors-plus.php:1393
 msgid "Click to change this author, or drag to change their position"
-msgstr "Klicka för att ändra denna författare, eller drag för att ändra deras position"
+msgstr "Clique para mudar este autor ou arraste-o para mudar a sua posição"
 
 #: co-authors-plus.php:1392
 msgid "Are you sure you want to remove this author?"
-msgstr "Är du säker att du vill ta bort denna författare?"
+msgstr "Tem a certeza de que quer remover este autor?"
 
 #: co-authors-plus.php:1391
 msgid "Remove"
-msgstr "Ta bort"
-
-#: co-authors-plus.php:1390
-#: php/class-coauthors-wp-list-table.php:241
-msgid "Edit"
-msgstr "Redigera"
-
-#: co-authors-plus.php:644
-#: co-authors-plus.php:662
-msgid "No co-author exists for that term"
-msgstr "Ingen medförfattare finns för den termen"
+msgstr "Eliminar"
 
 #: co-authors-plus.php:581
 msgid "View posts by this author"
-msgstr "Visa alla inlägg av denna författare"
+msgstr "Ver artigos deste autor"
 
 #: co-authors-plus.php:562
 #: php/class-coauthors-wp-list-table.php:177
 msgid "Posts"
-msgstr "Inlägg"
-
-#: co-authors-plus.php:467
-#: co-authors-plus.php:601
-#: co-authors-plus.php:1395
-msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
-msgstr "Klicka på författare för att ändra dem. Drag för att ändra ordning på dem. Klicka på <strong>Ta bort</strong> för att ta bort dem."
+msgstr "Artigos"
 
 #: co-authors-plus.php:223
 #: co-authors-plus.php:390
@@ -601,4 +483,30 @@ msgstr "Klicka på författare för att ändra dem. Drag för att ändra ordning
 #: build/index.js:1
 #: src/index.js:20
 msgid "Authors"
-msgstr "Författare"
+msgstr "Autores"
+
+#. translators: Post title.
+#: co-authors-plus.php:1985
+msgid "New pingback on your post \"%s\""
+msgstr "Novo pingback em \"%s\""
+
+#. translators: Post title.
+#: co-authors-plus.php:1959
+msgid "New comment on your post \"%s\""
+msgstr "Novo comentário em \"%s\""
+
+#. translators: Post title.
+#: co-authors-plus.php:1974
+msgid "New trackback on your post \"%s\""
+msgstr "Novo trackback em \"%s\""
+
+#: co-authors-plus.php:467
+#: co-authors-plus.php:601
+#: co-authors-plus.php:1395
+msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
+msgstr "Clique num autor para o mudar. Arraste para mudar a ordem. Clique em <strong>Remover</strong> para o remover."
+
+#: co-authors-plus.php:644
+#: co-authors-plus.php:662
+msgid "No co-author exists for that term"
+msgstr "Nenhum co-autor existe para esse termo"
