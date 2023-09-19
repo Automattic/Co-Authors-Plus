@@ -483,6 +483,7 @@ class CoAuthors_Guest_Authors {
 
 			echo '<div class="wrap">';
 			echo '<h1>' . esc_html__( 'Delete Guest Authors', 'co-authors-plus' ) . '</h1>';
+			echo '<hr class="wp-header-end" />';
 			echo '<p>' . esc_html__( 'You have specified this guest author for deletion:', 'co-authors-plus' ) . '</p>';
 			echo '<p>#' . esc_html( $guest_author->ID . ': ' . $guest_author->display_name ) . '</p>';
 			// display wording differently per post count
@@ -550,6 +551,7 @@ class CoAuthors_Guest_Authors {
 			<div class="wrap">
 				<h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?></h1>
 				<a href="<?php echo esc_url( admin_url( "post-new.php?post_type={$this->post_type}" ) ); ?>" class="page-title-action"><?php echo esc_html__( 'Add New', 'co-authors-plus' ); ?></a>
+				<hr class="wp-header-end" />
 				<form id="guest-authors-filter" action="" method="GET">
 					<input type="hidden" name="page" value="view-guest-authors" />
 					<?php
