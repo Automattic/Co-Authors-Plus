@@ -12,6 +12,7 @@ class CoAuthors_Guest_Authors {
 	public $post_type              = 'guest-author';
 	public $parent_page            = 'users.php';
 	public $list_guest_authors_cap = 'list_users';
+	public $add_guest_author_cap   = 'edit_posts';
 
 	public static $cache_group = 'coauthors-plus-guest-authors';
 
@@ -546,11 +547,15 @@ class CoAuthors_Guest_Authors {
 			echo '</form>';
 			echo '</div>';
 		} else {
-			// @todo caps check for creating a new user
 			?>
 			<div class="wrap">
 				<h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?></h1>
-				<a href="<?php echo esc_url( admin_url( "post-new.php?post_type={$this->post_type}" ) ); ?>" class="page-title-action"><?php echo esc_html__( 'Add New', 'co-authors-plus' ); ?></a>
+				<?php
+				if ( current_user_can( $this->add_guest_author_cap ) ) {
+					$add_new_url = admin_url( "post-new.php?post_type={$this->post_type}" );
+					?><a href="<?php echo esc_url( $add_new_url ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'co-authors-plus' ); ?></a><?php
+				}
+				?>
 				<hr class="wp-header-end" />
 				<form id="guest-authors-filter" action="" method="GET">
 					<input type="hidden" name="page" value="view-guest-authors" />
