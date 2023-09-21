@@ -3,10 +3,15 @@
 	"apiVersion": 2,
 	"name": "cap/coauthor-description",
 	"version": "1.0.0",
-	"title": "Co-Author Description",
+	"title": "Co-Author Biography",
 	"category": "widgets",
 	"icon": "smiley",
-	"description": "Display a co-author's description.",
+	"description": "Display a co-author's biographical description.",
+	"keywords": [
+		"description",
+		"bio",
+		"biography"
+	],
 	"supports": {
 		"html": false,
 		"color": {
