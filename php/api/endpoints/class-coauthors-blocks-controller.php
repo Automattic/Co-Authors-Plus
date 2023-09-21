@@ -54,7 +54,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 			array(
 				'args' => array(
 					'post_id' => array(
-						'description'       => __( 'Unique identifier for a post.' ),
+						'description'       => __( 'Unique identifier for a post.', 'co-authors-plus' ),
 						'type'              => 'integer',
 						'validate_callback' => function( $post_id ): bool {
 							return 0 !== absint( $post_id );
@@ -78,7 +78,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 			array(
 				'args' => array(
 					'user_nicename' => array(
-						'description'       => __( 'Nicename / slug for co-author.' ),
+						'description'       => __( 'Nicename / slug for co-author.', 'co-authors-plus' ),
 						'type'              => 'string',
 						'validate_callback' => function( $slug ): bool {
 							return is_string( $slug );
@@ -114,7 +114,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		if ( ! is_object( $coauthor ) ) {
 			return new WP_Error(
 				'rest_not_found',
-				__( 'Sorry, we could not find that co-author.' ),
+				__( 'Sorry, we could not find that co-author.', 'co-authors-plus' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -122,7 +122,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		if ( ! self::is_coauthor( $coauthor ) ) {
 			return new WP_Error(
 				'rest_unusable_data',
-				__( 'Sorry, an unusable response was produced.' ),
+				__( 'Sorry, an unusable response was produced.', 'co-authors-plus' ),
 				array( 'status' => 406 )
 			);
 		}
@@ -154,7 +154,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		if ( ! is_array( $coauthors ) ) {
 			return new WP_Error(
 				'rest_unusable_data',
-				__( 'Sorry, an unusable response was produced.' ),
+				__( 'Sorry, an unusable response was produced.', 'co-authors-plus' ),
 				array( 'status' => 406 )
 			);
 		}
@@ -192,7 +192,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 		return new WP_Error(
 			'rest_cannot_view',
-			__( 'Sorry, you are not allowed to view co-authors of this post.' ),
+			__( 'Sorry, you are not allowed to view co-authors of this post.', 'co-authors-plus' ),
 			array( 'status' => rest_authorization_required_code() )
 		);
 	}
@@ -215,7 +215,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => array(
 				'id'             => array(
-					'description' => __( 'Either user id or guest author id.', 'co-authors-plus' ),
+					'description' => __( 'Either user ID or guest author ID.', 'co-authors-plus' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
@@ -233,13 +233,13 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 					'readonly'    => true,
 					'properties'  => array(
 						'raw'      => array(
-							'description' => __( '', 'co-authors-plus' ),
+							'description' => __( 'Author description as stored in database.', 'co-authors-plus' ),
 							'type'        => 'string',
 							'context'     => array( 'view' ),
 							'readonly'    => true,
 						),
 						'rendered' => array(
-							'description' => __( '', 'co-authors-plus' ),
+							'description' => __( 'Author description as rendered in HTML content.', 'co-authors-plus' ),
 							'type'        => 'string',
 							'context'     => array( 'view' ),
 							'readonly'    => true,
@@ -259,7 +259,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 					'readonly'    => true,
 				),
 				'featured_media' => array(
-					'description' => __( 'Id of guest author feature image.', 'co-authors-plus' ),
+					'description' => __( 'ID of guest author featured image.', 'co-authors-plus' ),
 					'type'        => 'integer',
 					'context'     => array( 'view' ),
 					'readonly'    => true,
@@ -288,7 +288,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 				__METHOD__,
 				sprintf(
 					/* translators: %s: register_rest_field */
-					esc_html__( 'Please use %s to add new schema properties.' ),
+					esc_html__( 'Please use %s to add new schema properties.', 'co-authors-plus' ),
 					'register_rest_field'
 				),
 				'5.4.0'
