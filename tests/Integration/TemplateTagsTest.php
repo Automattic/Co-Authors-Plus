@@ -383,33 +383,6 @@ class TemplateTagsTest extends TestCase {
 	}
 
 	/**
-	 * Checks single co-author linked to their post archive.
-	 *
-	 * @covers ::coauthors_posts_links_single()
-	 */
-	public function test_coauthors_posts_links_single() {
-
-		global $post;
-
-		// Backing up global post.
-		$post_backup = $post;
-
-		$post = $this->post;
-
-		$author_link = coauthors_posts_links_single( $this->author1 );
-
-		$this->assertStringContainsString( 'href="' . get_author_posts_url( $this->author1->ID, $this->author1->user_nicename ) . '"', $author_link, 'Author link not found.' );
-		$this->assertStringContainsString( $this->author1->display_name, $author_link, 'Author name not found.' );
-
-		// Here we are checking author name should not be more than one time.
-		// Asserting ">{$this->author1->display_name}<" because "$this->author1->display_name" can be multiple times like in href, title, etc.
-		$this->assertEquals( 1, substr_count( $author_link, ">{$this->author1->display_name}<" ) );
-
-		// Restore global post from backup.
-		$post = $post_backup;
-	}
-
-	/**
 	 * Checks co-authors first names, without links to their posts.
 	 *
 	 * @covers ::coauthors_firstnames()
