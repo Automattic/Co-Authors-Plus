@@ -48,6 +48,20 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 * @since 3.6.0
 	 */
 	public function register_routes(): void {
+		$this->register_coauthors_route();
+		$this->register_coauthor_route();
+	}
+
+	/**
+	 * Register Co-Authors Route
+	 *
+	 * Provide a post ID as an integer to retrieve an array of associated co-authors.
+	 *
+	 * Example: `/wp-json/coauthors-blocks/v1/coauthors/11111`
+	 *
+	 * @since 3.6.0
+	 */
+	public function register_coauthors_route(): void {
 		register_rest_route(
 			'coauthors-blocks/v1',
 			'/coauthors/(?P<post_id>[\d]+)',
@@ -71,7 +85,18 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 				),
 			)
 		);
+	}
 
+	/**
+	 * Register Co-Author Route
+	 *
+	 * Provide a user nicename as a hyphen-separated string to retrieve a single co-author.
+	 *
+	 * Example: `/wp-json/coauthors-blocks/v1/coauthor/user-nicename`
+	 *
+	 * @since 3.6.0
+	 */
+	public function register_coauthor_route(): void {
 		register_rest_route(
 			'coauthors-blocks/v1',
 			'/coauthor/(?P<user_nicename>[\w-]+)',
