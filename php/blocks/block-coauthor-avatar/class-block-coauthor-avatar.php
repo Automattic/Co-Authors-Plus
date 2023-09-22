@@ -56,7 +56,7 @@ class Block_CoAuthor_Avatar {
 		$link         = $author['link'] ?? '';
 		$is_link      = '' !== $link && $attributes['isLink'] ?? false;
 		$rel          = $attributes['rel'] ?? '';
-		$size         = $attributes['size'] ?? 24;
+		$size         = $attributes['size'] ?? array_keys( $avatar_urls )[0];
 
 		$srcset = array_map(
 			function( $size, $url ) {
