@@ -5,7 +5,6 @@
   "version": "1.0.0",
   "title": "Co-Authors",
   "category": "widgets",
-  "icon": "smiley",
   "description": "Display the co-authors for a post.",
   "supports": {
     "html": false,

@@ -5,7 +5,6 @@
   "version": "1.0.0",
   "title": "Co-Author Avatar",
   "category": "widgets",
-  "icon": "smiley",
   "description": "Display a co-author's avatar",
   "supports": {
     "align": [

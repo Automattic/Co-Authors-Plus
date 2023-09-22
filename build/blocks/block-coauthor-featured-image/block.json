@@ -5,7 +5,6 @@
   "version": "1.0.0",
   "title": "Co-Author Featured Image",
   "category": "widgets",
-  "icon": "smiley",
   "description": "Featured Image from a Guest Author profile.",
   "supports": {
     "align": [

@@ -4,6 +4,7 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
 import { registerBlockType } from '@wordpress/blocks';
+import { image as icon } from '@wordpress/icons'
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -29,5 +30,6 @@ registerBlockType( metadata.name, {
 	/**
 	 * @see ./edit.js
 	 */
-	edit: Edit
+	edit: Edit,
+	icon
 } );
