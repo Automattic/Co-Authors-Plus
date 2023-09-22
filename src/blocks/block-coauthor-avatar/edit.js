@@ -65,9 +65,9 @@ export default function Edit( { context, attributes, setAttributes } ) {
 			}
 		</figure>
 		<InspectorControls>
-			<PanelBody title={ __( 'Avatar Settings' ) }>
+			<PanelBody title={ __( 'Avatar Settings', 'co-authors-plus' ) }>
 				<SelectControl
-					label={ __( 'Avatar size' ) }
+					label={ __( 'Avatar size', 'co-authors-plus' ) }
 					value={ size }
 					options={ sizes }
 					onChange={ ( nextSize ) => {
@@ -77,14 +77,14 @@ export default function Edit( { context, attributes, setAttributes } ) {
 					} }
 				/>
 				<ToggleControl
-					label={ __( 'Make avatar a link to author archive.' ) }
+					label={ __( 'Make avatar a link to author archive.', 'co-authors-plus' ) }
 					onChange={ () => setAttributes( { isLink: ! isLink } ) }
 					checked={ isLink }
 				/>
 				{ isLink && (
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Link rel' ) }
+						label={ __( 'Link rel', 'co-authors-plus' ) }
 						value={ rel }
 						onChange={ ( newRel ) =>
 							setAttributes( { rel: newRel } )
@@ -92,27 +92,54 @@ export default function Edit( { context, attributes, setAttributes } ) {
 					/>
 				) }
 			</PanelBody>
-			<PanelBody initialOpen={false} title={__('Coauthors Layout')}>
+			<PanelBody initialOpen={false} title={ __( 'Co-authors Layout', 'co-authors-plus' ) }>
 			<SelectControl
-					label={ __( 'Vertical align' ) }
+					label={ __( 'Vertical align', 'co-authors-plus' ) }
 					value={ verticalAlign }
 					options={ [
-						{value: '', label: 'Default'},
-						{value: 'baseline', label: 'Baseline'},
-						{value: 'bottom', label: 'Bottom'},
-						{value: 'middle', label: 'Middle'},
-						{value: 'sub', label: 'Sub'},
-						{value: 'super', label: 'Super'},
-						{value: 'text-bottom', label: 'Text Bottom'},
-						{value: 'text-top', label: 'Text Top'},
-						{value: 'top', label: 'Top'},
+						{
+							value: '',
+							label: __( 'Default', 'co-authors-plus' )
+						},
+						{
+							value: 'baseline',
+							label: __( 'Baseline', 'co-authors-plus' )
+						},
+						{
+							value: 'bottom',
+							label: __( 'Bottom', 'co-authors-plus' )
+						},
+						{
+							value: 'middle',
+							label: __( 'Middle', 'co-authors-plus' )
+						},
+						{
+							value: 'sub',
+							label: __( 'Sub', 'co-authors-plus' )
+						},
+						{
+							value: 'super',
+							label: __( 'Super', 'co-authors-plus' )
+						},
+						{
+							value: 'text-bottom',
+							label: __( 'Text Bottom', 'co-authors-plus' )
+						},
+						{
+							value: 'text-top',
+							label: __( 'Text Top', 'co-authors-plus' )
+						},
+						{
+							value: 'top',
+							label: __( 'Top', 'co-authors-plus' )
+						},
 					] }
 					onChange={ ( value ) => {
 						setAttributes( {
 							verticalAlign: '' === value ? undefined : value
 						} );
 					} }
-					help={ __( 'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.' )}
+					help={ __( 'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.', 'co-authors-plus' )}
 				/>
 			</PanelBody>
 		</InspectorControls>

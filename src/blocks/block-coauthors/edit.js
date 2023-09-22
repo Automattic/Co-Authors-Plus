@@ -103,13 +103,13 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 	const layoutControls = [
 		{
 			icon: list,
-			title: __( 'Inline' ),
+			title: __( 'Inline', 'co-authors-plus' ),
 			onClick: () => setLayout( { type: 'inline' } ),
 			isActive: layout.type === 'inline',
 		},
 		{
 			icon: grid,
-			title: __( 'Block' ),
+			title: __( 'Block', 'co-authors-plus' ),
 			onClick: () =>
 				setLayout( { type: 'block' } ),
 			isActive: layout.type === 'block',
@@ -146,8 +146,8 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 							allowedFormats={ ALLOWED_FORMATS }
 							className="wp-block-cap-coauthors__prefix"
 							multiline={ false }
-							aria-label={ __( 'Prefix' ) }
-							placeholder={ __( 'Prefix' ) + ' ' }
+							aria-label={ __( 'Prefix', 'co-authors-plus' ) }
+							placeholder={ __( 'Prefix', 'co-authors-plus' ) + ' ' }
 							value={ prefix }
 							onChange={ ( value ) =>
 								setAttributes( { prefix: value } )
@@ -215,24 +215,24 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 				{
 					'inline' === layout.type &&
 					(
-						<PanelBody title={ __( 'CoAuthors Layout' ) }>
+						<PanelBody title={ __( 'Co-authors Layout', 'co-authors-plus' ) }>
 						<TextControl
 							autoComplete="off"
-							label={ __( 'Separator' ) }
+							label={ __( 'Separator', 'co-authors-plus' ) }
 							value={ separator || '' }
 							onChange={ ( nextValue ) => {
 								setAttributes( { separator: nextValue } );
 							} }
-							help={ __( 'Enter character(s) used to separate authors.' ) }
+							help={ __( 'Enter character(s) used to separate authors.', 'co-authors-plus' ) }
 						/>
 						<TextControl
 							autoComplete="off"
-							label={ __( 'Last Separator' ) }
+							label={ __( 'Last Separator', 'co-authors-plus' ) }
 							value={ lastSeparator || '' }
 							onChange={ ( nextValue ) => {
 								setAttributes( { lastSeparator: nextValue } );
 							} }
-							help={ __( 'Enter character(s) used to distinguish the last author.' ) }
+							help={ __( 'Enter character(s) used to separate the last author.', 'co-authors-plus' ) }
 						/>
 						</PanelBody>
 					)

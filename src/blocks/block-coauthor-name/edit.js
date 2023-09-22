@@ -57,10 +57,10 @@ export default function Edit( { context, attributes, setAttributes } ) {
 			}
 		</TagName>
 		<InspectorControls>
-			<PanelBody title={ __( 'Settings' ) }>
+			<PanelBody title={ __( 'Settings', 'co-authors-plus' ) }>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label={ __( 'Make coauthor name a link' ) }
+					label={ __( 'Make co-author name a link', 'co-authors-plus' ) }
 					onChange={ () => setAttributes( { isLink: ! isLink } ) }
 					checked={ isLink }
 				/>
@@ -68,7 +68,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 					<>
 						<TextControl
 							__nextHasNoMarginBottom
-							label={ __( 'Link rel' ) }
+							label={ __( 'Link rel', 'co-authors-plus' ) }
 							value={ rel }
 							onChange={ ( newRel ) =>
 								setAttributes( { rel: newRel } )
@@ -81,7 +81,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 		<InspectorControls group="advanced">
 			<SelectControl
 				__nextHasNoMarginBottom
-				label={ __( 'HTML element' ) }
+				label={ __( 'HTML element', 'co-authors-plus' ) }
 				options={ [
 					{ label: __( 'Default (<p>)' ), value: 'p' },
 					{ label: '<span>', value: 'span' },
@@ -94,7 +94,6 @@ export default function Edit( { context, attributes, setAttributes } ) {
 				] }
 				value={ tagName }
 				onChange={ (value) => setAttributes( {tagName: value}) }
-				// help={ htmlElementMessages[ tagName ] }
 			/>
 		</InspectorControls>
 		</>
