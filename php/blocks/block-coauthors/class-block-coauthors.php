@@ -22,10 +22,59 @@ class Block_CoAuthors {
 	 * @since 3.6.0
 	 */
 	public static function register_block(): void {
+
+		add_filter( 'block_type_metadata_settings', array( __CLASS__, 'separator_internationalization' ), 10, 2 );
+
 		register_block_type(
 			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthors',
 			array(
 				'render_callback' => array( __CLASS__, 'render_block' ),
+			)
+		);
+	}
+
+	/**
+	 * Separator Internationalization
+	 * Provide i18n for the default prefix, separators and suffix attributes during block registration.
+	 *
+	 * @param array $settings Array of determined settings for registering a block type.
+	 * @param array $metadata Metadata provided for registering a block type.
+	 * @return array Updated settings that include internationalized attributes.
+	 */
+	public static function separator_internationalization( array $settings, array $metadata ): array {
+
+		if ( ! array_key_exists( 'name', $metadata ) ) {
+			return $settings;
+		}
+
+		if ( 'cap/coauthors' !== $metadata['name'] ) {
+			return $settings;
+		}
+
+		return array_merge(
+			$settings,
+			array(
+				'attributes' => array_merge(
+					$settings['attributes'],
+					array(
+						'prefix'        => array(
+							'type'    => 'string',
+							'default' => apply_filters( 'coauthors_default_before', __( 'By ', 'co-authors-plus' ) ),
+						),
+						'separator'     => array(
+							'type'    => 'string',
+							'default' => apply_filters( 'coauthors_default_between', ', ' ),
+						),
+						'lastSeparator' => array(
+							'type'    => 'string',
+							'default' => apply_filters( 'coauthors_default_between_last', __( ' and ', 'co-authors-plus' ) ),
+						),
+						'suffix'        => array(
+							'type'    => 'string',
+							'default' => apply_filters( 'coauthors_default_after', '' ),
+						),
+					)
+				),
 			)
 		);
 	}

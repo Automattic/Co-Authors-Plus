@@ -40,27 +40,11 @@
     }
   },
   "attributes": {
-    "separator": {
-      "type": "string",
-      "default": ", "
-    },
-    "lastSeparator": {
-      "type": "string",
-      "default": " and "
-    },
     "layout": {
       "type": "object",
       "default": {
         "type": "inline"
       }
-    },
-    "prefix": {
-      "type": "string",
-      "default": "By "
-    },
-    "suffix": {
-      "type": "string",
-      "default": ""
     },
     "textAlign": {
       "type": "string"
