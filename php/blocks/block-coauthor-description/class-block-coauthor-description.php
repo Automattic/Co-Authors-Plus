@@ -81,7 +81,7 @@ class Block_CoAuthor_Description {
 		}
 
 		return array(
-			'class' => $default['class'] . ' ' . esc_attr( "has-text-align-{$text_align}" ),
+			'class' => $default['class'] . ' ' . sanitize_html_class( "has-text-align-{$text_align}" ),
 		);
 	}
 }

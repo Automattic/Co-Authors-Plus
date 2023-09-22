@@ -117,7 +117,7 @@ class Block_CoAuthor_Name {
 			return array();
 		}
 		return array(
-			'class' => esc_attr( "has-text-align-{$text_align}" ),
+			'class' => sanitize_html_class( "has-text-align-{$text_align}" ),
 		);
 	}
 }
