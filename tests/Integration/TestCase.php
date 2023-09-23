@@ -2,8 +2,6 @@
 
 namespace Automattic\CoAuthorsPlus\Tests\Integration;
 
-use CoAuthors\API\Endpoints;
-
 /**
  * Base unit test class for Co-Authors Plus
  */
@@ -21,6 +19,24 @@ class TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 		$this->_cap = $coauthors_plus;
 	}
 
+	protected function create_subscriber( $user_login = 'subscriber' ) {
+		return $this->factory()->user->create_and_get(
+			array(
+				'role'       => 'subscriber',
+				'user_login' => $user_login,
+			)
+		);
+	}
+
+	protected function create_contributor( $user_login = 'contributor' ) {
+		return $this->factory()->user->create_and_get(
+			array(
+				'role'       => 'contributor',
+				'user_login' => $user_login,
+			)
+		);
+	}
+
 	protected function create_author( $user_login = 'author' ) {
 		return $this->factory()->user->create_and_get(
 			array(
@@ -35,6 +51,16 @@ class TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 			array(
 				'role'       => 'editor',
 				'user_login' => $user_login,
+			)
+		);
+	}
+
+	protected function create_guest_author( $user_login = 'guest_author' ) {
+		global $coauthors_plus;
+		return $coauthors_plus->guest_authors->create(
+			array(
+				'display_name' => $user_login,
+				'user_login'   => $user_login,
 			)
 		);
 	}
