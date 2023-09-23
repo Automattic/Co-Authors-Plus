@@ -208,14 +208,7 @@ class CoAuthors_Plus {
 			add_action( 'edited_term_taxonomy', array( $this, 'action_edited_term_taxonomy_flush_cache' ), 10, 2 );
 		}
 
-		$post_types_with_authors = array_values( get_post_types() );
-		foreach ( $post_types_with_authors as $key => $name ) {
-			if ( ! post_type_supports( $name, $this->coauthor_taxonomy ) || in_array( $name, array( 'revision', 'attachment' ) ) ) {
-				unset( $post_types_with_authors[ $key ] );
-			}
-		}
-		$this->supported_post_types = apply_filters( 'coauthors_supported_post_types', $post_types_with_authors );
-		register_taxonomy( $this->coauthor_taxonomy, $this->supported_post_types, $args );
+		register_taxonomy( $this->coauthor_taxonomy, $this->supported_post_types(), $args );
 	}
 
 	/**
@@ -373,7 +366,7 @@ class CoAuthors_Plus {
 			}
 		}
 
-		return in_array( $post_type, $this->supported_post_types );
+		return in_array( $post_type, $this->supported_post_types() );
 	}
 
 	/**
@@ -1410,7 +1403,7 @@ class CoAuthors_Plus {
 	public function load_edit() {
 
 		$screen = get_current_screen();
-		if ( in_array( $screen->post_type, $this->supported_post_types ) ) {
+		if ( in_array( $screen->post_type, $this->supported_post_types() ) ) {
 			add_filter( 'views_' . $screen->id, array( $this, 'filter_views' ) );
 		}
 	}
@@ -1496,11 +1489,11 @@ class CoAuthors_Plus {
 	 * @return array caps that CAP should filter
 	 */
 	public function get_to_be_filtered_caps() {
-		if ( ! empty( $this->supported_post_types ) && empty( $this->to_be_filtered_caps ) ) {
+		if ( ! empty( $this->supported_post_types() ) && empty( $this->to_be_filtered_caps ) ) {
 			$this->to_be_filtered_caps[] = 'edit_post'; // Need to filter this too, unfortunately: http://core.trac.wordpress.org/ticket/22415
 			$this->to_be_filtered_caps[] = 'read_post';
 
-			foreach ( $this->supported_post_types as $single ) {
+			foreach ( $this->supported_post_types() as $single ) {
 				$obj = get_post_type_object( $single );
 
 				$this->to_be_filtered_caps[] = $obj->cap->edit_post;

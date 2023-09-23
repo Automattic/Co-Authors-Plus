@@ -396,7 +396,7 @@ class EndpointsTest extends TestCase {
 	public function test_modify_response() {
 		$this->_api->modify_responses();
 
-		foreach ( $this->_cap->supported_post_types as $post_type ) {
+		foreach ( $this->_cap->supported_post_types() as $post_type ) {
 			$this->assertEquals(
 				10,
 				has_filter(
