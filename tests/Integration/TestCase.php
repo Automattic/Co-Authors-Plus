@@ -34,4 +34,13 @@ class TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 			)
 		);
 	}
+
+	protected function create_editor( $user_login = 'editor' ) {
+		return $this->factory()->user->create_and_get(
+			array(
+				'role'       => 'editor',
+				'user_login' => $user_login,
+			)
+		);
+	}
 }
