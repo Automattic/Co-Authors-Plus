@@ -247,6 +247,45 @@ class CoAuthors_Plus {
 	}
 
 	/**
+	 * Get the list of supported post types.
+	 *
+	 * By default, this is the built-in and custom post types that have authors.
+	 *
+	 * @since 3.5.16
+	 *
+	 * @return array Supported post types.
+	 */
+	public function supported_post_types() {
+		$post_types = array_values( get_post_types() );
+
+		$excluded_built_in = array(
+			'revision',
+			'attachment',
+			'customize_changeset',
+			'wp_template',
+			'wp_template_part',
+		);
+
+		foreach ( $post_types as $key => $name ) {
+			if ( ! post_type_supports( $name, 'author' ) || in_array( $name, $excluded_built_in, true ) ) {
+				unset( $post_types[ $key ] );
+			}
+		}
+
+		/**
+		 * Filter the list of supported post types.
+		 *
+		 * @param array $post_types Post types.
+		 */
+		$supported_post_types = (array) apply_filters( 'coauthors_supported_post_types', $post_types );
+
+		// Set class property for back-compat.
+		$this->supported_post_types = $supported_post_types;
+
+		return $supported_post_types;
+	}
+
+	/**
 	 * Check whether the guest authors functionality is enabled or not
 	 * Guest authors can be disabled entirely with:
 	 *     add_filter( 'coauthors_guest_authors_enabled', '__return_false' )
