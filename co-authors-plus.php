@@ -32,6 +32,7 @@ require_once __DIR__ . '/php/class-coauthors-endpoint.php';
 require_once __DIR__ . '/php/integrations/amp.php';
 require_once __DIR__ . '/php/integrations/yoast.php';
 require_once __DIR__ . '/php/class-coauthors-plus.php';
+require_once __DIR__ . '/php/class-coauthors-iterator.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once __DIR__ . '/php/class-wp-cli.php';
