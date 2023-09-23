@@ -13,17 +13,12 @@ class TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 	 * @var CoAuthors_Plus
 	 */
 	protected $_cap;
-	/**
-	 * @var Endpoints
-	 */
-	protected $_api;
 
 	public function set_up() {
 		parent::set_up();
 
 		global $coauthors_plus;
 		$this->_cap = $coauthors_plus;
-		$this->_api = new Endpoints( $coauthors_plus );
 	}
 
 	protected function create_author( $user_login = 'author' ) {
