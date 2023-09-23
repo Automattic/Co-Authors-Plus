@@ -732,4 +732,57 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertNull( $wp_meta_boxes, 'Failed to assert the coauthors metabox is not added when the block editor is loaded.' );
 
 	}
+
+	/**
+	 * Test the expected default supported post types.
+	 */
+	public function test_default_supported_post_types() {
+		$supported_post_types = (new \CoAuthors_Plus())->supported_post_types();
+		$expected = array(
+			'post',
+			'page',
+		);
+		$this->assertEquals( array_values( $expected ), array_values( $supported_post_types ) );
+	}
+
+	/**
+	 * Test whether the supported post types can be filtered.
+	 */
+	public function test_can_filter_supported_post_types() {
+		// This should be detected.
+		$post_type_with_author = register_post_type(
+			'foo',
+			array(
+				'supports' => array( 'author' ),
+			)
+		);
+
+		// This doesn't support the author, so should not be detected.
+		$post_type_without_author = register_post_type(
+			'bar',
+			array(
+				'supports' => array( 'title' ),
+			)
+		);
+
+		$callback = function( $post_types ) {
+			$key = array_search( 'page', $post_types, true );
+			unset( $post_types[ $key ] );
+
+			return $post_types;
+		};
+		add_filter( 'coauthors_supported_post_types', $callback );
+
+		$supported_post_types = ( new \CoAuthors_Plus() )->supported_post_types();
+
+		$expected = array(
+			'post',
+			'foo',
+		);
+		$this->assertEquals( array_values( $expected ), array_values( $supported_post_types ) );
+
+		// Clean up.
+		remove_filter( 'coauthors_supported_post_types', $callback );
+		unregister_post_type( 'foo' );
+	}
 }

@@ -239,7 +239,7 @@ class Endpoints {
 	 */
 	public function modify_responses() {
 
-		$post_types = $this->coauthors->supported_post_types;
+		$post_types = $this->coauthors->supported_post_types();
 
 		if ( empty( $post_types ) || ! is_array( $post_types ) ) {
 			return;
