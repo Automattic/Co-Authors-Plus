@@ -36,7 +36,7 @@
 		"wp-cli/extension-command": "^2.0",
 		"wp-cli/wp-cli-tests": "^3",
 		"wp-coding-standards/wpcs": "^2.3.0",
-		"yoast/wp-test-utils": "^1.1"
+		"yoast/wp-test-utils": "dev-JRF/update-for-phpunit-polyfills-1.1.0"
 	},
 	"autoload": {
 		"classmap": [

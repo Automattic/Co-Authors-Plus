@@ -75,7 +75,8 @@ class CoAuthorsPlusTest extends TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $guest_author_id );
 
 		$this->assertInstanceOf( \stdClass::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+//		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
 	}
