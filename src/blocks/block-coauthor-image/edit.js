@@ -29,10 +29,10 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 
 	// Author
 	const authorPlaceholder = useSelect(
-		select => select( 'cap/blocks' ).getAuthorPlaceholder(),
+		select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(),
 		[]
 	);
-	const author = context['cap/author'] || authorPlaceholder;
+	const author = context['co-authors-plus/author'] || authorPlaceholder;
 
 	// Media
 	const media = useSelect(
@@ -104,7 +104,7 @@ export default function Edit( { attributes, setAttributes, context, clientId } )
 				)
 			}
 			<InspectorControls>
-				<PanelBody title={ __( 'Featured Image Settings', 'co-authors-plus' ) }>
+				<PanelBody title={ __( 'Image Settings', 'co-authors-plus' ) }>
 					<ToggleControl
 						__nextHasNoMarginBottom
 						label={ __( 'Make featured image a link to author archive.', 'co-authors-plus' ) }

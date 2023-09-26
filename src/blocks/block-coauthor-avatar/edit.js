@@ -16,8 +16,8 @@ import PlaceholderImage from '../components/placeholder-image';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { isLink, rel, size, verticalAlign } = attributes;
-	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
-	const author = context['cap/author'] || authorPlaceholder;
+	const authorPlaceholder = useSelect( select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(), []);
+	const author = context['co-authors-plus/author'] || authorPlaceholder;
 	const { avatar_urls } = author;
 
 	if ( ! avatar_urls || 0 === avatar_urls.length ) {

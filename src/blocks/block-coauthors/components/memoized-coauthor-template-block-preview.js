@@ -14,7 +14,7 @@ function CoAuthorTemplateBlockPreview({
 	const blockPreviewProps = useBlockPreview( {
 		blocks,
 		props: {
-			className: 'wp-block-cap-coauthor',
+			className: 'wp-block-co-authors-plus-coauthor',
 		},
 	} );
 

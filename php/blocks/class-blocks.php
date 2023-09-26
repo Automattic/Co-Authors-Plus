@@ -9,6 +9,7 @@
 namespace CoAuthors;
 
 use WP_REST_Request;
+use WP_Block_Type_Registry;
 
 /**
  * Blocks
@@ -59,8 +60,8 @@ class Blocks {
 		require_once __DIR__ . '/block-coauthor-name/class-block-coauthor-name.php';
 		Blocks\Block_CoAuthor_Name::register_block();
 
-		require_once __DIR__ . '/block-coauthor-featured-image/class-block-coauthor-featured-image.php';
-		Blocks\Block_CoAuthor_Featured_Image::register_block();
+		require_once __DIR__ . '/block-coauthor-image/class-block-coauthor-image.php';
+		Blocks\Block_CoAuthor_Image::register_block();
 	}
 
 	/**
@@ -80,20 +81,8 @@ class Blocks {
 			return $context;
 		}
 
-		/**
-		 * Block Uses Author Context
-		 * 
-		 * @since 3.6.0
-		 * @param bool
-		 * @param string
-		 */
-		$uses_author_context = apply_filters(
-			'coauthors_blocks_block_uses_author_context',
-			'cap/coauthor-' === substr( $parsed_block['blockName'], 0, 13 ),
-			$parsed_block['blockName']
-		);
-		
-		$has_author_context = array_key_exists( 'cap/author', $context ) && is_array( $context['cap/author'] );
+		$uses_author_context = self::block_uses_author_context( $parsed_block['blockName'] );
+		$has_author_context  = array_key_exists( 'co-authors-plus/author', $context ) && is_array( $context['co-authors-plus/author'] );
 
 		if ( ! $uses_author_context || $has_author_context ) {
 			return $context;
@@ -106,8 +95,24 @@ class Blocks {
 		}
 
 		return array(
-			'cap/author' => $author,
+			'co-authors-plus/author' => $author,
 		);
+	}
+
+	/**
+	 * Block Uses Author Context
+	 * 
+	 * @param string $block_name Block name to check for use of author context.
+	 * @return bool Whether the `uses_context` property of the registered block type includes `'co-authors-plus/author'`
+	 */
+	public static function block_uses_author_context( string $block_name ): bool {
+		$block = WP_Block_Type_Registry::get_instance()->get_registered( $block_name );
+
+		if ( ! is_a( $block, 'WP_Block_Type' ) ) {
+			return false;
+		}
+
+		return in_array( 'co-authors-plus/author', $block->uses_context, true );
 	}
 
 	/**

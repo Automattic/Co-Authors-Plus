@@ -2,12 +2,12 @@ import { createReduxStore, register } from '@wordpress/data';
 import { applyFilters } from '@wordpress/hooks';
 
 register(
-	createReduxStore( 'cap/blocks', {
+	createReduxStore( 'co-authors-plus/blocks', {
 		reducer: ( state = window.coAuthorsBlocks ) => {
 			return state;
 		},
 		selectors: {
-			getAuthorPlaceholder: ( state ) => applyFilters( 'cap.author-placeholder', state.authorPlaceholder ),
+			getAuthorPlaceholder: ( state ) => applyFilters( 'co-authors-plus.author-placeholder', state.authorPlaceholder ),
 		},
 	} )
 );

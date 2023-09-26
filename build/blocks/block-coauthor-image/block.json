@@ -1,7 +1,7 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "cap/coauthor-featured-image",
+  "name": "co-authors-plus/image",
   "version": "1.0.0",
   "title": "Co-Author Featured Image",
   "category": "widgets",
@@ -36,7 +36,7 @@
     }
   },
   "usesContext": [
-    "cap/author"
+    "co-authors-plus/author"
   ],
   "attributes": {
     "isLink": {

@@ -31,8 +31,8 @@ import MemoizedCoAuthorTemplateBlockPreview from './components/memoized-coauthor
  */
 function CoAuthorTemplateInnerBlocks () {
 	return <div { ...useInnerBlocksProps(
-		{ className: 'wp-block-cap-coauthor' },
-		{ template : [['cap/coauthor-name']]}
+		{ className: 'wp-block-co-authors-plus-coauthor' },
+		{ template : [['co-authors-plus/name']]}
 	) } />;
 }
 
@@ -54,7 +54,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 
 	const { prefix, separator, lastSeparator, suffix, layout, textAlign } = attributes;
 	const { postId } = context;
-	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
+	const authorPlaceholder = useSelect( select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(), []);
 	const [ coAuthors, setCoAuthors ] = useState([authorPlaceholder]);
 	const [ activeBlockContextId, setActiveBlockContextId ] = useState();
 	const noticesDispatch = useDispatch('core/notices');
@@ -144,7 +144,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 					(
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
-							className="wp-block-cap-coauthors__prefix"
+							className="wp-block-co-authors-plus-coauthors__prefix"
 							multiline={ false }
 							aria-label={ __( 'Prefix', 'co-authors-plus' ) }
 							placeholder={ __( 'Prefix', 'co-authors-plus' ) + ' ' }
@@ -164,7 +164,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 						return (
 							<BlockContextProvider
 								key={ author.id }
-								value={ {'cap/author': author } }
+								value={ {'co-authors-plus/author': author } }
 							>
 								{ isHidden ? (<CoAuthorTemplateInnerBlocks />) : null }
 								<MemoizedCoAuthorTemplateBlockPreview
@@ -182,7 +182,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 						{
 							'inline' === layout.type &&
 							(
-								<span className="wp-block-cap-coauthors__separator">
+								<span className="wp-block-co-authors-plus-coauthors__separator">
 									{ ( lastSeparator && index === (all.length - 1) ) ? `${lastSeparator}` : `${separator}` }
 								</span>
 							)	
@@ -198,7 +198,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 					(
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
-							className="wp-block-cap-coauthors__suffix"
+							className="wp-block-co-authors-plus-coauthors__suffix"
 							multiline={ false }
 							aria-label={ __( 'Suffix' ) }
 							placeholder={ __( 'Suffix' ) + ' ' }

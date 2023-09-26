@@ -40,7 +40,7 @@ class Block_CoAuthor_Avatar {
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
-		$author = $block->context['cap/author'] ?? array();
+		$author = $block->context['co-authors-plus/author'] ?? array();
 
 		if ( empty( $author ) ) {
 			return '';

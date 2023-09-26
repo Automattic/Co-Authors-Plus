@@ -98,9 +98,14 @@ The function `CoAuthors\Blocks::provide_author_archive_context` filters the cont
 
 #### Extending
 
-If you create a custom block that uses the namespace and prefix `cap/coauthor-`, the author archive context will be updated.
+If you make a custom block and want to use the author context on the author archive, add `co-authors-plus/author` to the `usesContext` property in your block.json file.
 
-If you have a differently named custom block, you can use the filter `coauthors_blocks_block_uses_author_context` to opt-in to the author archive context.
+Example:
+```json
+{
+	"usesContext": ['co-authors-plus/author']
+}
+```
 
 ### Example Data
 
@@ -108,7 +113,7 @@ When working with Full Site Editing, or in the post editor before the authors ar
 
 #### Extending
 
-If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthors_blocks_store_data` or the client-side using the filter `cap.author-placeholder`
+If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthors_blocks_store_data` or the client-side using the filter `co-authors-plus.author-placeholder`
 
 ### Non-support
 

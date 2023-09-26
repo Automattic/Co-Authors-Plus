@@ -1,6 +1,6 @@
 <?php
 /**
- * Co-Author Display Featured Image
+ * Co-Author Image
  * 
  * @package Automattic\CoAuthorsPlus
  * @since 3.6.0
@@ -11,11 +11,11 @@ namespace CoAuthors\Blocks;
 use WP_Block;
 
 /**
- * Block CoAuthor Featured Image
+ * Block CoAuthor Image
  *
  * @package CoAuthors
  */
-class Block_CoAuthor_Featured_Image {
+class Block_CoAuthor_Image {
 	/**
 	 * Register Block
 	 *
@@ -23,7 +23,7 @@ class Block_CoAuthor_Featured_Image {
 	 */
 	public static function register_block(): void {
 		register_block_type(
-			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthor-featured-image',
+			dirname( COAUTHORS_PLUS_FILE ) . '/build/blocks/block-coauthor-image',
 			array(
 				'render_callback' => array( __CLASS__, 'render_block' ),
 			)
@@ -41,7 +41,7 @@ class Block_CoAuthor_Featured_Image {
 	 */
 	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
-		$author = $block->context['cap/author'] ?? array();
+		$author = $block->context['co-authors-plus/author'] ?? array();
 
 		if ( empty( $author ) ) {
 			return '';

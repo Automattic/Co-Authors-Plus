@@ -21,8 +21,8 @@ import './editor.css';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { textAlign } = attributes;
-	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
-	const author = context['cap/author'] || authorPlaceholder;
+	const authorPlaceholder = useSelect( select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(), []);
+	const author = context['co-authors-plus/author'] || authorPlaceholder;
 	const { description } = author;
 
 	return (

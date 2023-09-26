@@ -1,8 +1,8 @@
-.wp-block-cap-coauthors.is-layout-cap-inline :where(*) {
+.wp-block-co-authors-plus-coauthors.is-layout-cap-inline :where(*) {
 	display: inline;
 }
 
-.wp-block-cap-coauthors.is-layout-cap-block {
+.wp-block-co-authors-plus-coauthors.is-layout-cap-block {
 	display: flex;
 	flex-direction: column;
 }

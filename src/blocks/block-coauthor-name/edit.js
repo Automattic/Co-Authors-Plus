@@ -27,8 +27,8 @@ import classnames from 'classnames';
 export default function Edit( { context, attributes, setAttributes } ) {
 
 	const { isLink, rel, tagName, textAlign } = attributes;
-	const authorPlaceholder = useSelect( select => select( 'cap/blocks' ).getAuthorPlaceholder(), []);
-	const author = context['cap/author'] || authorPlaceholder;
+	const authorPlaceholder = useSelect( select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(), []);
+	const author = context['co-authors-plus/author'] || authorPlaceholder;
 	const { link, display_name } = author;
 
 	const TagName = tagName;

@@ -47,7 +47,7 @@ class Block_CoAuthors {
 			return $settings;
 		}
 
-		if ( 'cap/coauthors' !== $metadata['name'] ) {
+		if ( 'co-authors-plus/coauthors' !== $metadata['name'] ) {
 			return $settings;
 		}
 
@@ -172,7 +172,7 @@ class Block_CoAuthors {
 		if ( empty( $prefix ) ) {
 			return $prefix;
 		}
-		return Templating::render_element( 'span', 'class="wp-block-cap-coauthors__prefix"', $prefix );
+		return Templating::render_element( 'span', 'class="wp-block-co-authors-plus-coauthors__prefix"', $prefix );
 	}
 
 	/**
@@ -186,7 +186,7 @@ class Block_CoAuthors {
 		if ( empty( $suffix ) ) {
 			return $suffix;
 		}
-		return Templating::render_element( 'span', 'class="wp-block-cap-coauthors__suffix"', $suffix );
+		return Templating::render_element( 'span', 'class="wp-block-co-authors-plus-coauthors__suffix"', $suffix );
 	}
 
 	/**
@@ -207,7 +207,7 @@ class Block_CoAuthors {
 				},
 				// To match JSX from editor, trim whitespace around blocks.
 				'trim',
-				Templating::get_render_element_function( 'div', 'class="wp-block-cap-coauthor"' )
+				Templating::get_render_element_function( 'div', 'class="wp-block-co-authors-plus-coauthor"' )
 			),
 			$authors
 		);
@@ -276,7 +276,7 @@ class Block_CoAuthors {
 
 		return Templating::render_element(
 			'span',
-			'class="wp-block-cap-coauthors__separator"',
+			'class="wp-block-co-authors-plus-coauthors__separator"',
 			$separator
 		);
 	}
@@ -299,7 +299,7 @@ class Block_CoAuthors {
 
 		return Templating::render_element(
 			'span',
-			'class="wp-block-cap-coauthors__separator"',
+			'class="wp-block-co-authors-plus-coauthors__separator"',
 			$last_separator
 		);
 	}
@@ -317,7 +317,7 @@ class Block_CoAuthors {
 				new WP_Block(
 					$block_template,
 					array(
-						'cap/author' => $author,
+						'co-authors-plus/author' => $author,
 					)
 				)
 			)->render(
