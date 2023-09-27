@@ -143,11 +143,11 @@ Example:
 
 ## Block Example Data
 
-When working with Full Site Editing, or in the post editor before the authors are loaded, example data is used. The example data provided with the co-author blocks resembles a response to the `/coauthors-blocks/v1/coauthor/:user-nicename` REST API endpoint.
+When working with Full Site Editing, or in the post editor before the authors are loaded, example data is used. The example data provided with the co-author blocks resembles a response to the `/coauthors/v1/coauthor/:user-nicename` REST API endpoint.
 
 ### Extending
 
-If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthors_blocks_store_data` or the client-side using the filter `co-authors-plus.author-placeholder`
+If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthors_blocks_store_data` or the client-side using the filter `co-authors-plus.author-placeholder`.
 
 ## Block Non-support
 

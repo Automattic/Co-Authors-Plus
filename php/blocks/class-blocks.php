@@ -173,7 +173,7 @@ class Blocks {
 			WP_REST_Request::from_url(
 				home_url(
 					sprintf(
-						'/wp-json/coauthors-blocks/v1/coauthor/%s',
+						'/wp-json/coauthors/v1/coauthor/%s',
 						$author->user_nicename
 					)
 				)

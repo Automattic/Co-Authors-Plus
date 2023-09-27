@@ -1,6 +1,6 @@
 <?php
 /**
- * CoAuthor Blocks
+ * CoAuthors Controller
  *
  * @package Automattic\CoAuthorsPlus
  * @since 3.6.0
@@ -18,11 +18,11 @@ use WP_REST_Server;
 use WP_User;
 
 /**
- * CoAuthor Blocks
+ * CoAuthors Controller
  *
  * @package CoAuthors
  */
-class CoAuthors_Blocks_Controller extends WP_REST_Controller {
+class CoAuthors_Controller extends WP_REST_Controller {
 
 	/**
 	 * Instance of CoAuthors_Plus class
@@ -57,19 +57,20 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 *
 	 * Provide a post ID as an integer to retrieve an array of associated co-authors.
 	 *
-	 * Example: `/wp-json/coauthors-blocks/v1/coauthors/11111`
+	 * Example: `/wp-json/coauthors/v1/coauthors?post_id=11111`
 	 *
 	 * @since 3.6.0
 	 */
 	public function register_coauthors_route(): void {
 		register_rest_route(
-			'coauthors-blocks/v1',
-			'/coauthors/(?P<post_id>[\d]+)',
+			'coauthors/v1',
+			'/coauthors',
 			array(
 				'args' => array(
 					'post_id' => array(
 						'description'       => __( 'Unique identifier for a post.', 'co-authors-plus' ),
 						'type'              => 'integer',
+						'required'          => true,
 						'validate_callback' => function( $post_id ): bool {
 							return 0 !== absint( $post_id );
 						},
@@ -92,19 +93,20 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 	 *
 	 * Provide a user nicename as a hyphen-separated string to retrieve a single co-author.
 	 *
-	 * Example: `/wp-json/coauthors-blocks/v1/coauthor/user-nicename`
+	 * Example: `/wp-json/coauthors/v1/coauthor/user-nicename`
 	 *
 	 * @since 3.6.0
 	 */
 	public function register_coauthor_route(): void {
 		register_rest_route(
-			'coauthors-blocks/v1',
+			'coauthors/v1',
 			'/coauthor/(?P<user_nicename>[\w-]+)',
 			array(
 				'args' => array(
 					'user_nicename' => array(
 						'description'       => __( 'Nicename / slug for co-author.', 'co-authors-plus' ),
 						'type'              => 'string',
+						'required'          => true,
 						'validate_callback' => function( $slug ): bool {
 							return is_string( $slug );
 						},
@@ -236,7 +238,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 
 		$schema = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'coauthors-block',
+			'title'      => 'coauthor',
 			'type'       => 'object',
 			'properties' => array(
 				'id'             => array(
@@ -304,7 +306,7 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		// Take a snapshot of which fields are in the schema pre-filtering.
 		$schema_fields = array_keys( $schema['properties'] );
 
-		$schema = apply_filters( 'rest_coauthors-block_item_schema', $schema );
+		$schema = apply_filters( 'rest_coauthors_item_schema', $schema );
 
 		// Emit a _doing_it_wrong warning if user tries to add new properties using this filter.
 		$new_fields = array_diff( array_keys( $schema['properties'] ), $schema_fields );
@@ -394,6 +396,6 @@ class CoAuthors_Blocks_Controller extends WP_REST_Controller {
 		 * @param stdClass|WP_User $author
 		 * @param WP_REST_Request  $request  Request object.
 		 */
-		return apply_filters( 'rest_prepare_coauthors-block', $response, $author, $request );
+		return apply_filters( 'rest_prepare_coauthor', $response, $author, $request );
 	}
 }

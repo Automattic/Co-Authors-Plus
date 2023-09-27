@@ -67,7 +67,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 		const controller = new AbortController();
 
 		apiFetch( {
-			path: `/coauthors-blocks/v1/coauthors/${postId}/`,
+			path: `/coauthors/v1/coauthors?post_id=${postId}`,
 			signal: controller.signal
 		} )
 		.then( setCoAuthors )
