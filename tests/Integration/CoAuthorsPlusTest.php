@@ -75,7 +75,7 @@ class CoAuthorsPlusTest extends TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $guest_author_id );
 
 		$this->assertInstanceOf( \stdClass::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
 	}
@@ -100,7 +100,7 @@ class CoAuthorsPlusTest extends TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $user_login );
 
 		$this->assertInstanceOf( \stdClass::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
 	}
@@ -121,26 +121,26 @@ class CoAuthorsPlusTest extends TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->author1->ID );
 
 		$this->assertInstanceOf( \WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $this->author1->ID, $coauthor->ID );
 		$this->assertEquals( 'wpuser', $coauthor->type );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $this->author1->user_login );
 
 		$this->assertInstanceOf( \WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor->data, 'user_login' ) );
+		$this->assertObjectHasProperty( 'user_login', $coauthor->data );
 		$this->assertEquals( $this->author1->user_login, $coauthor->user_login );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $this->author1->user_nicename );
 
 		$this->assertInstanceOf( \WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor->data, 'user_nicename' ) );
+		$this->assertObjectHasProperty( 'user_nicename', $coauthor->data );
 		$this->assertEquals( $this->author1->user_nicename, $coauthor->user_nicename );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_email', $this->author1->user_email );
 
 		$this->assertInstanceOf( \WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor->data, 'user_email' ) );
+		$this->assertObjectHasProperty( 'user_email', $coauthor->data );
 		$this->assertEquals( $this->author1->user_email, $coauthor->user_email );
 
 		remove_filter( 'coauthors_guest_authors_enabled', '__return_false' );
@@ -150,7 +150,7 @@ class CoAuthorsPlusTest extends TestCase {
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->editor1->ID );
 
 		$this->assertInstanceOf( \stdClass::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'linked_account' ) );
+		$this->assertObjectHasProperty( 'linked_account', $coauthor );
 		$this->assertEquals( $this->editor1->user_login, $coauthor->linked_account );
 	}
 
