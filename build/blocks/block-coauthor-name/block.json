@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "title": "Co-Author Name",
   "category": "widgets",
-  "description": "Display a co-author's name.",
+  "description": "Displays a co-author's display name and optionally links to their author archive.",
   "supports": {
     "html": false,
     "color": {

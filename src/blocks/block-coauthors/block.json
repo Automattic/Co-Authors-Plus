@@ -5,7 +5,7 @@
 	"version": "1.0.0",
 	"title": "Co-Authors",
 	"category": "widgets",
-	"description": "Display the co-authors for a post.",
+	"description": "Displays the co-authors of a post by using blocks to create a template. Start with co-author name and add any other co-author blocks.",
 	"supports": {
 		"html": false,
 		"color": {

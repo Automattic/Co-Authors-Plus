@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "title": "Co-Author Biography",
   "category": "widgets",
-  "description": "Display a co-author's biographical description.",
+  "description": "Displays a co-author's biographical description.",
   "keywords": [
     "description",
     "bio",
