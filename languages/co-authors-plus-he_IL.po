@@ -1,593 +1,661 @@
-# Copyright (C) 2014 Co-Authors Plus
-# This file is distributed under the same license as the Co-Authors Plus package.
 msgid ""
 msgstr ""
 "Project-Id-Version: Co-Authors Plus 3.1-beta\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/co-authors-plus\n"
-"POT-Creation-Date: 2014-03-17 15:59:18+00:00\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2014-03-17 15:59:18+00:00\n"
 "PO-Revision-Date: 2019-01-07 16:19+0200\n"
-"Language-Team: \n"
-"X-Generator: Poedit 2.1.1\n"
-"Last-Translator: \n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
-"2 : 3);\n"
 "Language: he_IL\n"
+"X-Generator: Poedit 2.1.1\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? 2 : 3);\n"
 
-#: co-authors-plus.php:300 co-authors-plus.php:401 co-authors-plus.php:487
-#: co-authors-plus.php:1290
+#: php/class-coauthors-plus.php:197
+#: php/class-coauthors-plus.php:395
+#: php/class-coauthors-plus.php:515
+#: php/class-coauthors-plus.php:604
+#: php/class-coauthors-plus.php:1649
+#: build/index.js:1
+#: src/index.js:20
 msgid "Authors"
 msgstr "מחברים"
 
-#: co-authors-plus.php:362
-msgid ""
-"<strong>Note:</strong> To edit post authors, please enable javascript or use "
-"a javascript-capable browser"
-msgstr ""
-"<strong>שימו לב:</strong> כדי לערוך את מחברי הפוסט יש לאפשר שימוש "
-"Javascript בדפדפן."
+#: php/class-coauthors-plus.php:472
+#: php/class-coauthors-plus.php:606
+#: php/class-coauthors-plus.php:1400
+msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
+msgstr "לחצו על מחבר כדי לשנות אותו. גררו מחברים כדי לשנות את הסדר שלהם. לחצו על <strong>הסרה</strong> כדי למחוק אותם."
 
-#: co-authors-plus.php:369 co-authors-plus.php:489 co-authors-plus.php:1095
-msgid ""
-"Click on an author to change them. Drag to change their order. Click on "
-"<strong>Remove</strong> to remove them."
-msgstr ""
-"לחצו על מחבר כדי לשנות אותו. גררו מחברים כדי לשנות את הסדר שלהם. לחצו על "
-"<strong>הסרה</strong> כדי למחוק אותם."
-
-#: co-authors-plus.php:449 php/class-coauthors-wp-list-table.php:148
+#: php/class-coauthors-plus.php:567
+#: php/class-coauthors-wp-list-table.php:177
 msgid "Posts"
 msgstr "פוסטים"
 
-#: co-authors-plus.php:466
+#: php/class-coauthors-plus.php:586
 msgid "View posts by this author"
 msgstr "הצגת פוסטים לפי מחבר"
 
-#: co-authors-plus.php:531 co-authors-plus.php:548
+#: php/class-coauthors-plus.php:649
+#: php/class-coauthors-plus.php:667
 msgid "No co-author exists for that term"
 msgstr "לא נמצאו מחברים"
 
-#: co-authors-plus.php:1090 php/class-coauthors-wp-list-table.php:212
+#: php/class-coauthors-plus.php:1395
+#: php/class-coauthors-wp-list-table.php:239
 msgid "Edit"
 msgstr "עריכה"
 
-#: co-authors-plus.php:1091
+#: php/class-coauthors-plus.php:1396
 msgid "Remove"
 msgstr "הסרה"
 
-#: co-authors-plus.php:1092
+#: php/class-coauthors-plus.php:1397
 msgid "Are you sure you want to remove this author?"
 msgstr "האם באמת להסיר את המחבר הזה?"
 
-#: co-authors-plus.php:1093
+#: php/class-coauthors-plus.php:1398
 msgid "Click to change this author, or drag to change their position"
 msgstr "לחצו לעריכת המחבר, או גררו לשינוי המיקום שלו"
 
-#: co-authors-plus.php:1094
+#: php/class-coauthors-plus.php:1399
 msgid "Search for an author"
 msgstr "חיפוש מחברים"
 
-#: co-authors-plus.php:1132
+#: php/class-coauthors-plus.php:1441
 msgid "Mine"
 msgstr "שלי"
 
-#: co-authors-plus.php:1402
+#. translators: Post title.
+#: co-authors-plus.php:90
 msgid "New comment on your post \"%s\""
 msgstr "תגובות חדשות על הפוסט שלך \"%s\""
 
 #. translators: 1: comment author, 2: author IP, 3: author domain
-#: co-authors-plus.php:1404 co-authors-plus.php:1521
+#: co-authors-plus.php:92
 msgid "Author : %1$s (IP: %2$s , %3$s)"
 msgstr "מחבר : %1$s (IP: %2$s , %3$s)"
 
-#: co-authors-plus.php:1405 co-authors-plus.php:1522
-msgid "E-mail : %s"
-msgstr "אימייל: %s"
-
-#: co-authors-plus.php:1406 co-authors-plus.php:1416 co-authors-plus.php:1425
-#: co-authors-plus.php:1508 co-authors-plus.php:1515 co-authors-plus.php:1523
+#. translators: Comment author URL.
+#: co-authors-plus.php:96
+#: co-authors-plus.php:109
+#: co-authors-plus.php:120
 msgid "URL    : %s"
 msgstr "כתובת URL: %s"
 
-#: co-authors-plus.php:1407 co-authors-plus.php:1524
-msgid "Whois  : http://whois.arin.net/rest/ip/%s"
-msgstr ""
-
-#: co-authors-plus.php:1408 co-authors-plus.php:1525
+#: co-authors-plus.php:99
 msgid "Comment: "
 msgstr "תגובה:"
 
-#: co-authors-plus.php:1409
+#: co-authors-plus.php:100
 msgid "You can see all comments on this post here: "
 msgstr "כאן ניתן לראות את כל התגובות לפוסט זה:"
 
 #. translators: 1: blog name, 2: post title
-#: co-authors-plus.php:1411
+#: co-authors-plus.php:102
 msgid "[%1$s] Comment: \"%2$s\""
 msgstr "[%1$s] תגובות: \"%2$s\""
 
-#: co-authors-plus.php:1413
+#. translators: Post title.
+#: co-authors-plus.php:105
 msgid "New trackback on your post \"%s\""
 msgstr "טראקבקים חדשים על הפוסט שלך \" %s\""
 
-#. translators: 1: website name, 2: author IP, 3: author domain
 #. translators: 1: comment author, 2: author IP, 3: author domain
-#: co-authors-plus.php:1415 co-authors-plus.php:1424
+#: co-authors-plus.php:107
+#: co-authors-plus.php:118
 msgid "Website: %1$s (IP: %2$s , %3$s)"
 msgstr "אתר:%1$s (IP:%2$s,%3$s)"
 
-#: co-authors-plus.php:1417 co-authors-plus.php:1426
+#: co-authors-plus.php:110
+#: co-authors-plus.php:121
 msgid "Excerpt: "
 msgstr "תקציר:"
 
-#: co-authors-plus.php:1418
+#: co-authors-plus.php:111
 msgid "You can see all trackbacks on this post here: "
 msgstr "כאן ניתן לראות את כל הטראקבקים לפוסט זה:"
 
 #. translators: 1: blog name, 2: post title
-#: co-authors-plus.php:1420
+#: co-authors-plus.php:113
 msgid "[%1$s] Trackback: \"%2$s\""
 msgstr "[%1$s] טראקבקים: \"%2$s\""
 
-#: co-authors-plus.php:1422
+#. translators: Post title.
+#: co-authors-plus.php:116
 msgid "New pingback on your post \"%s\""
 msgstr "פינגבק חדש בפוסט שלך \" %s\""
 
-#: co-authors-plus.php:1427
+#: co-authors-plus.php:122
 msgid "You can see all pingbacks on this post here: "
 msgstr "כאן ניתן לראות את כל הפינגבקים לפוסט זה:"
 
 #. translators: 1: blog name, 2: post title
-#: co-authors-plus.php:1429
+#: co-authors-plus.php:124
 msgid "[%1$s] Pingback: \"%2$s\""
 msgstr "[%1$s] פינגבקים: \"%2$s\""
 
-#: co-authors-plus.php:1432
+#. translators: Comment URL.
+#: co-authors-plus.php:128
 msgid "Permalink: %s"
 msgstr "קישור: %s"
 
-#: co-authors-plus.php:1434 co-authors-plus.php:1531
+#. translators: URL for trashing a comment.
+#: co-authors-plus.php:131
 msgid "Trash it: %s"
 msgstr "אשפה: %s"
 
-#: co-authors-plus.php:1436 co-authors-plus.php:1533
+#. translators: URL for deleting a comment.
+#: co-authors-plus.php:134
 msgid "Delete it: %s"
 msgstr "מחיקה: %s"
 
-#: co-authors-plus.php:1437 co-authors-plus.php:1534
+#. translators: URL for marking a comment as spam.
+#: co-authors-plus.php:137
 msgid "Spam it: %s"
 msgstr "ספאם: %s"
 
-#: co-authors-plus.php:1505
-msgid "A new trackback on the post \"%s\" is waiting for your approval"
-msgstr "טראקבק חדש על הפוסט \"%s\" מחכה לאישורך"
-
-#: co-authors-plus.php:1507 co-authors-plus.php:1514
-msgid "Website : %1$s (IP: %2$s , %3$s)"
-msgstr "אתר : %1$s (IP: %2$s , %3$s)"
-
-#: co-authors-plus.php:1509
-msgid "Trackback excerpt: "
-msgstr "תקציר הטראקבק:"
-
-#: co-authors-plus.php:1512
-msgid "A new pingback on the post \"%s\" is waiting for your approval"
-msgstr "פינגבק חדש על הפוסט \"%s\" מחכה לאישורך"
-
-#: co-authors-plus.php:1516
-msgid "Pingback excerpt: "
-msgstr "תקציר הפינגבק:"
-
-#: co-authors-plus.php:1519
-msgid "A new comment on the post \"%s\" is waiting for your approval"
-msgstr "תגובה חדשה על הפוסט \"%s\" מחכה לאישורך"
-
-#: co-authors-plus.php:1529
-msgid "Approve it: %s"
-msgstr "אישור: %s"
-
-#: co-authors-plus.php:1536
-msgid ""
-"Currently %s comment is waiting for approval. Please visit the moderation "
-"panel:"
-msgid_plural ""
-"Currently %s comments are waiting for approval. Please visit the moderation "
-"panel:"
-msgstr[0] "ישנה תגובה אחת המחכה לאישורך. עברו לפאנל הניהול:"
-msgstr[1] "ישנן %s תגובות המחכות לאישורך. עברו לפאנל הניהול:"
-msgstr[2] ""
-msgstr[3] ""
-
-#: co-authors-plus.php:1540
-msgid "[%1$s] Please moderate: \"%2$s\""
-msgstr "[%1$s] נא לבדוק ולאשר: \"%2$s\""
-
-#: php/class-coauthors-guest-authors.php:80
+#: php/class-coauthors-guest-authors.php:89
+#: php/class-coauthors-guest-authors.php:1547
+#: php/class-coauthors-guest-authors.php:1620
 msgid "Guest Author"
 msgstr "מחבר אורח"
 
-#: php/class-coauthors-guest-authors.php:81
+#: php/class-coauthors-guest-authors.php:90
 msgid "Guest Authors"
 msgstr "מחברים אורחים"
 
-#: php/class-coauthors-guest-authors.php:82
+#: php/class-coauthors-guest-authors.php:91
 msgid "All Guest Authors"
 msgstr "כל המחברים האורחים"
 
-#: php/class-coauthors-guest-authors.php:83
+#: php/class-coauthors-guest-authors.php:92
 msgid "Add New Guest Author"
 msgstr "הוספת מחבר אורח"
 
-#: php/class-coauthors-guest-authors.php:84
+#: php/class-coauthors-guest-authors.php:93
 msgid "Edit Guest Author"
 msgstr "עריכת מחבר אורח"
 
-#: php/class-coauthors-guest-authors.php:85
+#: php/class-coauthors-guest-authors.php:94
 msgid "New Guest Author"
 msgstr "מחבר אורח חדש"
 
-#: php/class-coauthors-guest-authors.php:86
+#: php/class-coauthors-guest-authors.php:95
 msgid "View Guest Author"
 msgstr "צפיה במחבר אורח"
 
-#: php/class-coauthors-guest-authors.php:87
+#: php/class-coauthors-guest-authors.php:96
 msgid "Search Guest Authors"
 msgstr "חיפוש מחברים אורחים"
 
-#: php/class-coauthors-guest-authors.php:88
+#: php/class-coauthors-guest-authors.php:97
 msgid "No guest authors found"
 msgstr "לא נמצאו מחברים אורחים"
 
-#: php/class-coauthors-guest-authors.php:89
+#: php/class-coauthors-guest-authors.php:98
 msgid "No guest authors found in Trash"
 msgstr "לא נמצאו מחברים אורחים באשפה"
 
-#: php/class-coauthors-guest-authors.php:90
+#: php/class-coauthors-guest-authors.php:99
 msgid "Update Guest Author"
 msgstr "עדכון מחבר אורח"
 
-#: php/class-coauthors-guest-authors.php:91
+#: php/class-coauthors-guest-authors.php:100
 msgid "About the guest author"
 msgstr "אודות המחבר"
 
-#: php/class-coauthors-guest-authors.php:100
+#: php/class-coauthors-guest-authors.php:114
 msgctxt "guest author"
 msgid "Add New"
 msgstr "חדש"
 
-#: php/class-coauthors-guest-authors.php:156
-#: php/class-coauthors-guest-authors.php:162
+#. translators: Guest author URL
+#: php/class-coauthors-guest-authors.php:168
+#: php/class-coauthors-guest-authors.php:175
 msgid "Guest author updated. <a href=\"%s\">View profile</a>"
 msgstr "מחבר אורח עודכן בהצלחה. <a href=\"%s\">צפייה בפרופיל</a>"
 
-#: php/class-coauthors-guest-authors.php:157
+#: php/class-coauthors-guest-authors.php:169
 msgid "Custom field updated."
 msgstr "שדה מותאם עודכן בהצלחה."
 
-#: php/class-coauthors-guest-authors.php:158
+#: php/class-coauthors-guest-authors.php:170
 msgid "Custom field deleted."
 msgstr "שדה מותאם נמחק."
 
-#: php/class-coauthors-guest-authors.php:159
+#: php/class-coauthors-guest-authors.php:171
 msgid "Guest author updated."
 msgstr "מחבר אורח עודכן בהצלחה."
 
 #. translators: %s: date and time of the revision
-#: php/class-coauthors-guest-authors.php:161
+#: php/class-coauthors-guest-authors.php:173
 msgid "Guest author restored to revision from %s"
 msgstr "מחבר אורח שיחזר לעותק שמור מ-%s"
 
-#: php/class-coauthors-guest-authors.php:163
+#: php/class-coauthors-guest-authors.php:176
 msgid "Guest author saved."
 msgstr "מחבר אורח נשמר."
 
-#: php/class-coauthors-guest-authors.php:164
-msgid ""
-"Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+#. translators: Guest author URL
+#: php/class-coauthors-guest-authors.php:178
+msgid "Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
 msgstr "מחבר אורח נשמר. <a target=\"_blank\" href=\"%s\">תצוגה מקדימה</a>"
 
-#: php/class-coauthors-guest-authors.php:165
-msgid ""
-"Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href="
-"\"%2$s\">Preview profile</a>"
-msgstr ""
-"מחבר אורח מתוזמן ל: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s"
-"\">תצוגה מקדימה</a>"
+#. translators: Guest author profile preview URL.
+#: php/class-coauthors-guest-authors.php:181
+msgid "Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview profile</a>"
+msgstr "מחבר אורח מתוזמן ל: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">תצוגה מקדימה</a>"
 
-#. translators: Publish box date format, see http:php.net/date
-#: php/class-coauthors-guest-authors.php:167
+#. translators: Publish box date format, see http://php.net/date
+#: php/class-coauthors-guest-authors.php:183
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: php/class-coauthors-guest-authors.php:168
-msgid ""
-"Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+#. translators: Guest author profile preview URL.
+#: php/class-coauthors-guest-authors.php:187
+msgid "Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
 msgstr "מחבר אורח עודכן. <a target=\"_blank\" href=\"%s\">תצוגה מקדימה</a>"
 
-#: php/class-coauthors-guest-authors.php:185
-#: php/class-coauthors-guest-authors.php:218
-#: php/class-coauthors-guest-authors.php:437
+#: php/class-coauthors-guest-authors.php:205
+#: php/class-coauthors-guest-authors.php:244
+#: php/class-coauthors-guest-authors.php:472
 msgid "Doin' something fishy, huh?"
 msgstr "מה אתה זומם הא?"
 
-#: php/class-coauthors-guest-authors.php:188
-#: php/class-coauthors-guest-authors.php:222
+#: php/class-coauthors-guest-authors.php:209
+#: php/class-coauthors-guest-authors.php:249
 msgid "You don't have permission to perform this action."
 msgstr "אין לך הרשאה לבצע פעולה זו."
 
-#: php/class-coauthors-guest-authors.php:227
-#: php/class-coauthors-guest-authors.php:442
+#: php/class-coauthors-guest-authors.php:255
+#: php/class-coauthors-guest-authors.php:478
 msgid "Guest author can't be deleted because it doesn't exist."
 msgstr "המחבר-אורח לא קיים ולכן לא ניתן למחוק אותו."
 
-#: php/class-coauthors-guest-authors.php:241
+#: php/class-coauthors-guest-authors.php:271
 msgid "Co-author does not exists. Try again?"
 msgstr "מחבר-אורח לא קיים. לנסות שוב?"
 
-#: php/class-coauthors-guest-authors.php:249
+#: php/class-coauthors-guest-authors.php:281
 msgid "Please make sure to pick an option."
 msgstr "נא לבחור אפשרות."
 
-#: php/class-coauthors-guest-authors.php:393
+#: php/class-coauthors-guest-authors.php:433
 msgid "Guest author deleted."
 msgstr "מחבר-אורח נמחק."
 
-#: php/class-coauthors-guest-authors.php:417
+#: php/class-coauthors-guest-authors.php:452
 msgid "Save"
 msgstr "שמירה"
 
-#: php/class-coauthors-guest-authors.php:418
+#: php/class-coauthors-guest-authors.php:453
 msgid "Unique Slug"
 msgstr "כינוי ייחודי"
 
-#: php/class-coauthors-guest-authors.php:420
+#: php/class-coauthors-guest-authors.php:455
 msgid "Name"
 msgstr "שם"
 
-#: php/class-coauthors-guest-authors.php:421
+#: php/class-coauthors-guest-authors.php:456
 msgid "Contact Info"
 msgstr "יצירת קשר"
 
-#: php/class-coauthors-guest-authors.php:446
-msgid "Delete %s"
-msgstr "מחיקת %s"
-
-#: php/class-coauthors-guest-authors.php:447
+#: php/class-coauthors-guest-authors.php:488
 msgid "You have specified this guest author for deletion:"
 msgstr "המחבר האורח הבא מיועד למחיקה:"
 
-#: php/class-coauthors-guest-authors.php:449
-msgid "What should be done with posts assigned to this guest author?"
-msgstr "מה לעשות עם פוסטים המשוייכים למחבר-אורח הזה?"
+#: php/class-coauthors-guest-authors.php:494
+msgid "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author."
+msgstr "שימו לב: על מנת למחוק את המחבר-אורח וכל הפוסטים שלו, יש קודם כל למחוק את כל הפוסטים שלו, ואז לחזור לכן ולמחוק את המחבר-אורח"
 
-#: php/class-coauthors-guest-authors.php:450
-msgid ""
-"Note: If you'd like to delete the guest author and all of their posts, you "
-"should delete their posts first and then come back to delete the guest "
-"author."
-msgstr ""
-"שימו לב: על מנת למחוק את המחבר-אורח וכל הפוסטים שלו, יש קודם כל למחוק את כל "
-"הפוסטים שלו, ואז לחזור לכן ולמחוק את המחבר-אורח"
-
-#: php/class-coauthors-guest-authors.php:459
+#: php/class-coauthors-guest-authors.php:523
 msgid "Reassign to another co-author:"
 msgstr "שיוך למחבר-אורח אחר:"
 
-#: php/class-coauthors-guest-authors.php:465
+#. translators: Name of a linked user account.
+#: php/class-coauthors-guest-authors.php:530
 msgid "Leave posts assigned to the mapped user, %s."
 msgstr "השאר פוסטים משוייכים למשתמש מקושר, %s"
 
-#: php/class-coauthors-guest-authors.php:470
+#: php/class-coauthors-guest-authors.php:535
 msgid "Remove byline from posts (but leave each post in its current status)."
 msgstr "הסרת שותפויות מהפוסט (הפוסט ישמור על הסטטוס שלו)"
 
-#: php/class-coauthors-guest-authors.php:473
+#: php/class-coauthors-guest-authors.php:543
+#: php/class-coauthors-guest-authors.php:545
 msgid "Confirm Deletion"
 msgstr "אישור מחיקה"
 
-#: php/class-coauthors-guest-authors.php:482
+#: php/class-coauthors-guest-authors.php:556
 msgid "Add New"
 msgstr "חדש"
 
-#: php/class-coauthors-guest-authors.php:543
+#: php/class-coauthors-guest-authors.php:626
 msgid "WordPress User Mapping"
 msgstr "קישור משתמשים"
 
-#: php/class-coauthors-guest-authors.php:545
+#: php/class-coauthors-guest-authors.php:631
 msgid "-- Not mapped --"
 msgstr "-- לא מקושר --"
 
-#: php/class-coauthors-guest-authors.php:679
-#: php/class-coauthors-guest-authors.php:688
+#: php/class-coauthors-guest-authors.php:775
+#: php/class-coauthors-guest-authors.php:786
 msgid "Guest authors cannot be created without display names."
 msgstr "מחבר-אורח לא יכול להיות ללא שם תצוגה."
 
-#: php/class-coauthors-guest-authors.php:697
-msgid ""
-"Guest authors cannot be created with the same user_login value as a user. "
-"Try creating a profile from the user on the Manage Users listing instead."
-msgstr ""
-"מחבר-אורח לא יכול להיות עם אותו כינוי ייחודי כמו משתמש אמיתי. אפשר במקום זה "
-"ליצור פרופיל חדש בניהול המשתמשים. "
-
-#: php/class-coauthors-guest-authors.php:702
+#: php/class-coauthors-guest-authors.php:806
 msgid "Display name conflicts with another guest author display name."
 msgstr "שם תצוגה מתנגש עם שם תצוגה של מחבר-אורח אחר."
 
-#: php/class-coauthors-guest-authors.php:896
+#: php/class-coauthors-guest-authors.php:1027
+#: php/class-coauthors-guest-authors.php:1577
 msgid "ID"
 msgstr ""
 
-#: php/class-coauthors-guest-authors.php:903
-#: php/class-coauthors-wp-list-table.php:143
+#: php/class-coauthors-guest-authors.php:1034
+#: php/class-coauthors-guest-authors.php:1579
+#: php/class-coauthors-wp-list-table.php:172
 msgid "Display Name"
 msgstr "שם תצוגה"
 
-#: php/class-coauthors-guest-authors.php:909
-#: php/class-coauthors-wp-list-table.php:144
+#: php/class-coauthors-guest-authors.php:1040
+#: php/class-coauthors-guest-authors.php:1581
+#: php/class-coauthors-wp-list-table.php:173
 msgid "First Name"
 msgstr "שם פרטי"
 
-#: php/class-coauthors-guest-authors.php:914
-#: php/class-coauthors-wp-list-table.php:145
+#: php/class-coauthors-guest-authors.php:1045
+#: php/class-coauthors-guest-authors.php:1582
+#: php/class-coauthors-wp-list-table.php:174
 msgid "Last Name"
 msgstr "שם משפחה"
 
-#: php/class-coauthors-guest-authors.php:919
+#: php/class-coauthors-guest-authors.php:1050
 msgid "Slug"
 msgstr "כינוי ייחודי (slug)"
 
-#: php/class-coauthors-guest-authors.php:926
-#: php/class-coauthors-wp-list-table.php:146
+#: php/class-coauthors-guest-authors.php:1057
+#: php/class-coauthors-wp-list-table.php:175
 msgid "E-mail"
 msgstr "דוא\\\"ל"
 
-#: php/class-coauthors-guest-authors.php:932
-#: php/class-coauthors-wp-list-table.php:147
+#: php/class-coauthors-guest-authors.php:1063
+#: php/class-coauthors-wp-list-table.php:176
 msgid "Linked Account"
 msgstr "חשבון מקושר"
 
-#: php/class-coauthors-guest-authors.php:937
+#: php/class-coauthors-guest-authors.php:1068
+#: php/class-coauthors-guest-authors.php:1583
 msgid "Website"
 msgstr "אתר"
 
-#: php/class-coauthors-guest-authors.php:943
+#: php/class-coauthors-guest-authors.php:1584
 msgid "AIM"
 msgstr ""
 
-#: php/class-coauthors-guest-authors.php:948
+#: php/class-coauthors-guest-authors.php:1585
 msgid "Yahoo IM"
 msgstr ""
 
-#: php/class-coauthors-guest-authors.php:953
+#: php/class-coauthors-guest-authors.php:1586
 msgid "Jabber / Google Talk"
 msgstr ""
 
-#: php/class-coauthors-guest-authors.php:958
+#: php/class-coauthors-guest-authors.php:1074
+#: php/class-coauthors-guest-authors.php:1587
 msgid "Biographical Info"
 msgstr "מידע ביוגרפי"
 
-#: php/class-coauthors-guest-authors.php:1122
+#. translators: Name of a form field.
+#: php/class-coauthors-guest-authors.php:1251
 msgid "%s is a required field"
 msgstr "%s הוא שדה חובה."
 
-#: php/class-coauthors-guest-authors.php:1128
+#: php/class-coauthors-guest-authors.php:1257
 msgid "user_login cannot duplicate existing guest author or mapped user"
-msgstr ""
-"כינוי חייב להיות ייחודי ולא להיות זהה לשם-משתמש שקושר או למחבר-אורח אחר."
+msgstr "כינוי חייב להיות ייחודי ולא להיות זהה לשם-משתמש שקושר או למחבר-אורח אחר."
 
-#: php/class-coauthors-guest-authors.php:1173
+#: php/class-coauthors-guest-authors.php:1313
 msgid "Guest author does not exist"
 msgstr "מחבר אורח לא קיים"
 
-#: php/class-coauthors-guest-authors.php:1185
+#: php/class-coauthors-guest-authors.php:1328
 msgid "Reassignment co-author does not exist"
 msgstr "מחבר אורח משוייך לא קיים"
 
-#: php/class-coauthors-guest-authors.php:1217
+#: php/class-coauthors-guest-authors.php:1368
 msgid "No user exists with that ID"
 msgstr "לא קיים משתמש עם ID  זה"
 
-#: php/class-coauthors-guest-authors.php:1275
+#: php/class-coauthors-guest-authors.php:1431
 msgid "Edit Profile"
 msgstr "עריכת פרופיל"
 
-#: php/class-coauthors-guest-authors.php:1284
+#: php/class-coauthors-guest-authors.php:1440
 msgid "Create Profile"
 msgstr "יצירת פרופיל"
 
-#: php/class-coauthors-wp-list-table.php:19
+#: php/class-coauthors-wp-list-table.php:23
 msgid "Co-Authors"
 msgstr "מחברים שותפים"
 
-#: php/class-coauthors-wp-list-table.php:20
+#: php/class-coauthors-wp-list-table.php:24
 msgid "Co-Author"
 msgstr "מחבר שותף"
 
-#: php/class-coauthors-wp-list-table.php:81
+#: php/class-coauthors-wp-list-table.php:89
 msgid "Show all"
 msgstr "הצג הכל"
 
-#: php/class-coauthors-wp-list-table.php:82
+#: php/class-coauthors-wp-list-table.php:90
 msgid "With linked account"
 msgstr "עם חשבונות מקושרים"
 
-#: php/class-coauthors-wp-list-table.php:83
+#: php/class-coauthors-wp-list-table.php:91
 msgid "Without linked account"
 msgstr "ללא חשבונות מקושרים"
 
-#: php/class-coauthors-wp-list-table.php:135
-msgid "No matching guest authors were found."
-msgstr "לא נמצאו מחברים-אורחים מתאימים."
-
-#: php/class-coauthors-wp-list-table.php:215
+#: php/class-coauthors-wp-list-table.php:242
 msgid "Delete"
 msgstr "מחיקה"
 
-#: php/class-coauthors-wp-list-table.php:217
+#: php/class-coauthors-wp-list-table.php:244
 msgid "View Posts"
 msgstr "הצגת פוסטים"
 
-#: php/class-coauthors-wp-list-table.php:267
+#: php/class-coauthors-wp-list-table.php:291
 msgid "Filter"
 msgstr "סינון"
 
-#: php/class-wp-cli.php:220
+#: php/class-wp-cli.php:231
 msgid "Please specify a valid user_login"
 msgstr "שם משתמש לא תקין"
 
-#: php/class-wp-cli.php:223
+#: php/class-wp-cli.php:235
 msgid "Please specify a valid co-author login"
 msgstr "מחבר אורח לא תקין"
 
-#: php/class-wp-cli.php:230
-msgid "Skipping - Post #%d already has co-authors assigned: %s"
-msgstr "מדלג - לפוסט מספר #%d כבר משוייך מחבר אורח: %s"
-
-#: php/class-wp-cli.php:235
-msgid "Updating - Adding %s's byline to post #%d"
-msgstr "מעדכן - מוסיף את %s לפוסט מספר #%d"
-
-#: php/class-wp-cli.php:240
-msgid "All done! %d posts were affected."
-msgstr "בוצע! %d פוסטים הושפעו."
-
-#: template-tags.php:79
-msgid ""
-"No post ID provided for CoAuthorsIterator constructor. Are you not in a loop "
-"or is $post not set?"
-msgstr ""
-
-#: template-tags.php:133
+#: template-tags.php:91
 msgid " and "
 msgstr " ו"
 
-#: template-tags.php:233 template-tags.php:468
+#. translators: Author display name.
+#: template-tags.php:239
+#: template-tags.php:635
 msgid "Posts by %s"
 msgstr "כתבות מאת %s"
 
-#: template-tags.php:350
+#. translators: Author display name.
+#: template-tags.php:409
+#: template-tags.php:419
 msgid "Visit %s&#8217;s website"
 msgstr "מעבר לאתר של %s"
 
-#. Plugin Name of the plugin/theme
+#. Plugin Name of the plugin
 msgid "Co-Authors Plus"
 msgstr "מחברים שותפים פלוס"
 
-#. Plugin URI of the plugin/theme
-msgid "http://wordpress.org/extend/plugins/co-authors-plus/"
-msgstr ""
+#. Description of the plugin
+msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
+msgstr "מאפשר שיוך מספר מחברים לכל פוסט. התוסף הוא שדרוג של התוסף הישן Co-Authors מאתר Weston Ruter."
 
-#. Description of the plugin/theme
-msgid ""
-"Allows multiple authors to be assigned to a post. This plugin is an extended "
-"version of the Co-Authors plugin developed by Weston Ruter."
-msgstr ""
-"מאפשר שיוך מספר מחברים לכל פוסט. התוסף הוא שדרוג של התוסף הישן Co-Authors "
-"מאתר Weston Ruter."
-
-#. Author of the plugin/theme
+#. Author of the plugin
 msgid "Mohammad Jangda, Daniel Bachhuber, Automattic"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/co-authors-plus/"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://automattic.com"
+msgstr ""
+
+#. translators: Comment author email address.
+#: co-authors-plus.php:94
+msgid "Email : %s"
+msgstr ""
+
+#. translators: Comment author IP address.
+#: co-authors-plus.php:98
+msgid "Whois  : https://whois.arin.net/rest/ip/%s"
+msgstr ""
+
+#: php/class-coauthors-endpoint.php:65
+msgid "Text to search."
+msgstr ""
+
+#: php/class-coauthors-endpoint.php:70
+msgid "Names of existing co-authors to exclude from search results."
+msgstr ""
+
+#: php/class-coauthors-endpoint.php:113
+msgid "Names of co-authors to save."
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:101
+msgid "Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:102
+msgid "Set Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:103
+msgid "Use Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:104
+msgid "Remove Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:486
+msgid "Delete Guest Authors"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:492
+msgid "There are no posts associated with this guest author."
+msgstr ""
+
+#. translators: Count of posts
+#: php/class-coauthors-guest-authors.php:497
+msgid "There is %d post associated with this guest author. What should be done with the post assigned to this Guest Author?"
+msgid_plural "There are %d posts associated with this guest author. What should be done with the posts assigned to this Guest Author?"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: php/class-coauthors-guest-authors.php:800
+msgid "There is a WordPress user with the same username as this guest author, please go back and link them in order to update."
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:1578
+msgid "Login Name"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:1580
+msgid "Email"
+msgstr ""
+
+#: php/class-coauthors-plus.php:198
+msgid "All Authors"
+msgstr ""
+
+#: php/class-coauthors-plus.php:465
+msgid "<strong>Note:</strong> To edit post authors, please enable JavaScript or use a JavaScript-capable browser"
+msgstr ""
+
+#. translators: Author display name.
+#: php/class-coauthors-plus.php:1805
+msgid "Author: %s"
+msgstr ""
+
+#: php/class-coauthors-wp-list-table.php:164
+msgid "No matching co-authors were found."
+msgstr ""
+
+#. translators: 1: Post ID, 2: Comma-separated list of co-author slugs.
+#: php/class-wp-cli.php:248
+msgid "Skipping - Post #%1$d already has co-authors assigned: %2$s"
+msgstr ""
+
+#. translators: 1: Co-author login, 2: Post ID
+#: php/class-wp-cli.php:258
+msgid "Updating - Adding %1$s's byline to post #%2$d"
+msgstr ""
+
+#. translators: Count of posts.
+#: php/class-wp-cli.php:267
+msgid "All done! %d post was affected."
+msgid_plural "All done! %d posts were affected."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#. translators: Guest Author ID.
+#: php/class-wp-cli.php:902
+msgid "-- Author already exists (ID #%s); skipping."
+msgstr ""
+
+#: php/class-wp-cli.php:905
+msgid "-- Not found; creating profile."
+msgstr ""
+
+#. translators: The error message.
+#: php/class-wp-cli.php:922
+msgid "-- Failed to create guest author: %s"
+msgstr ""
+
+#. translators: Guest Author ID.
+#: php/class-wp-cli.php:932
+msgid "-- Created as guest author #%s"
+msgstr ""
+
+#: php/integrations/yoast.php:258
+msgid "Written by"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/author-selection/index.jsx:74
+msgid "Move Up"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/author-selection/index.jsx:85
+msgid "Move down"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/author-selection/index.jsx:102
+msgid "Remove Author"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/co-authors/index.jsx:189
+msgid "Select An Author"
 msgstr ""
