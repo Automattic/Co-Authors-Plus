@@ -174,6 +174,12 @@ class CoAuthors_Plus {
 				$asset['version']
 			);
 
+			wp_set_script_translations(
+				'coauthors-sidebar-js',
+				'co-authors-plus',
+				dirname( COAUTHORS_PLUS_FILE ) . '/languages'
+			);
+
 			wp_enqueue_script( 'coauthors-sidebar-js' );
 			wp_enqueue_style( 'coauthors-sidebar-css' );
 		}
