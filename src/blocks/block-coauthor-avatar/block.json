@@ -4,7 +4,7 @@
 	"name": "co-authors-plus/avatar",
 	"version": "1.0.0",
 	"title": "Co-Author Avatar",
-	"category": "widgets",
+	"category": "theme",
 	"description": "Displays a small scale version of a co-author's avatar. Utilizes fallbacks from Gravatar so everyone has an avatar.",
 	"supports": {
 		"align": [ "left", "right", "center" ],

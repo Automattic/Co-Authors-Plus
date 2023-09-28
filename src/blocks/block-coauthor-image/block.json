@@ -4,7 +4,7 @@
 	"name": "co-authors-plus/image",
 	"version": "1.0.0",
 	"title": "Co-Author Featured Image",
-	"category": "widgets",
+	"category": "theme",
 	"description": "Uses your theme's image sizes to display a scalable avatar for a co-author with a guest author profile. Does not fallback to Gravatar images.",
 	"supports": {
 		"align": [ "left", "right", "center", "wide", "full" ],
