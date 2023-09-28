@@ -143,7 +143,7 @@ Example:
 
 ## Block Example Data
 
-When working with Full Site Editing, or in the post editor before the authors are loaded, example data is used. The example data provided with the co-author blocks resembles a response to the `/coauthors/v1/coauthor/:user-nicename` REST API endpoint.
+When working with Full Site Editing, or in the post editor before the authors are loaded, example data is used. The example data provided with the co-author blocks resembles a response to the `/coauthors/v1/coauthors/:user-nicename` REST API endpoint.
 
 ### Extending
 

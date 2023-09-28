@@ -93,14 +93,14 @@ class CoAuthors_Controller extends WP_REST_Controller {
 	 *
 	 * Provide a user nicename as a hyphen-separated string to retrieve a single co-author.
 	 *
-	 * Example: `/wp-json/coauthors/v1/coauthor/user-nicename`
+	 * Example: `/wp-json/coauthors/v1/coauthors/user-nicename`
 	 *
 	 * @since 3.6.0
 	 */
 	public function register_coauthor_route(): void {
 		register_rest_route(
 			'coauthors/v1',
-			'/coauthor/(?P<user_nicename>[\w-]+)',
+			'/coauthors/(?P<user_nicename>[\w-]+)',
 			array(
 				'args' => array(
 					'user_nicename' => array(
