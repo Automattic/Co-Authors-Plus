@@ -26,15 +26,7 @@ class CoauthorsPostsLinksTest extends TestCase {
 	 */
 	public function test_coauthors_posts_links_for_single_author() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		$GLOBALS['post'] = $post;
 
 		$coauthors_posts_links = coauthors_posts_links( null, null, null, null, false );
@@ -54,15 +46,7 @@ class CoauthorsPostsLinksTest extends TestCase {
 
 		$author = $this->create_author();
 		$editor = $this->create_editor();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		$GLOBALS['post'] = $post;
 		$coauthors_plus->add_coauthors( $post->ID, array( $editor->user_login ), true );
 
@@ -84,15 +68,7 @@ class CoauthorsPostsLinksTest extends TestCase {
 		$author1 = $this->create_author( 'author1' );
 		$author2 = $this->create_author( 'author2' );
 		$editor = $this->create_editor();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author1->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author1 );
 		$GLOBALS['post'] = $post;
 		$coauthors_plus->add_coauthors( $post->ID, array( $author2->user_login, $editor->user_login ), true );
 

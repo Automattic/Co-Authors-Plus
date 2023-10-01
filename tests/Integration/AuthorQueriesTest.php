@@ -10,13 +10,7 @@ class AuthorQueriesTest extends TestCase {
 	 */
 	public function test_get_post_by_user_login_when_single_author_is_set_as_post_author() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $author->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
 
 		$query = new \WP_Query(
@@ -35,13 +29,7 @@ class AuthorQueriesTest extends TestCase {
 	 */
 	public function test_get_post_by_user_ID_when_single_author_is_set_as_post_author_but_current_user_is_admin() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $author->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
 
 		$query = new \WP_Query(
@@ -60,13 +48,7 @@ class AuthorQueriesTest extends TestCase {
 	 */
 	public function test_get_post_by_user_ID_when_single_author_is_set_as_post_author_but_current_user_is_author() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $author->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
 
 		wp_set_current_user( $author->ID ); // This is the only difference to the last test.
@@ -88,13 +70,7 @@ class AuthorQueriesTest extends TestCase {
 	public function test_get_post_by_user_ID_when_queried_author_is_set_as_post_author() {
 		$author1 = $this->create_author( 'author1' );
 		$author2 = $this->create_author( 'author2' );
-		$post    = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $author1->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $author1 );
 		$this->_cap->add_coauthors( $post->ID, array( $author1->user_login, $author2->user_login ) );
 
 		$query = new \WP_Query(
@@ -115,13 +91,7 @@ class AuthorQueriesTest extends TestCase {
 	public function test_get_post_by_user_ID_when_queried_author_is_not_set_as_post_author() {
 		$author1 = $this->create_author( 'author1' );
 		$author2 = $this->create_author( 'author2' );
-		$post    = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $author1->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $author1 );
 		$this->_cap->add_coauthors( $post->ID, array( $author1->user_login, $author2->user_login ) );
 
 		$query = new \WP_Query(
@@ -136,13 +106,7 @@ class AuthorQueriesTest extends TestCase {
 
 	public function test_get_post_by_user_ID_when_queried_author_is_set_as_post_author_but_there_is_a_tag() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $author->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
 		wp_set_post_terms( $post->ID, 'test' );
 
@@ -160,13 +124,7 @@ class AuthorQueriesTest extends TestCase {
 	public function test_get_post_by_user_ID_when_queried_author_is_not_set_as_post_author_and_there_is_a_tag() {
 		$author1 = $this->create_author( 'author1' );
 		$author2 = $this->create_author( 'author2' );
-		$post    = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $author1->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $author1 );
 		$this->_cap->add_coauthors( $post->ID, array( $author1->user_login, $author2->user_login ) );
 		wp_set_post_terms( $post->ID, 'test' );
 

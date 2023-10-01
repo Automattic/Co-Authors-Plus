@@ -14,15 +14,7 @@ class IsCoauthorForPostTest extends TestCase {
 	 */
 	public function test_return_false_when_user_is_not_valid() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		$user = new \WP_User();
 
 		$this->assertFalse( is_coauthor_for_post( 1234, $post->ID ), 'User ID should not exist.' );
@@ -35,15 +27,7 @@ class IsCoauthorForPostTest extends TestCase {
 	 */
 	public function test_return_false_when_post_does_not_exist() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 
 		$this->assertFalse( is_coauthor_for_post( $author->ID, '1234' ) );
 	}
@@ -65,15 +49,7 @@ class IsCoauthorForPostTest extends TestCase {
 	public function test_is_coauthor_for_post_when_user_numeric_or_user_login_set_but_not_coauthor() {
 		$author = $this->create_author();
 		$editor = $this->create_editor();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 
 		$this->assertFalse( is_coauthor_for_post( $editor->ID, $post->ID ) );
 		$this->assertFalse( is_coauthor_for_post( $editor, $post->ID ) );
@@ -85,15 +61,7 @@ class IsCoauthorForPostTest extends TestCase {
 	public function test_is_coauthor_for_post_when_user_is_coauthor() {
 		$author = $this->create_author();
 		$editor = $this->create_editor();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 
 		global $coauthors_plus;
 

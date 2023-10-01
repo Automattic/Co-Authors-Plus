@@ -64,4 +64,19 @@ class TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 			)
 		);
 	}
+
+	protected function create_post( \WP_User $author = null ) {
+		if ( null === $author ) {
+			$author = $this->create_author();
+		}
+		return $this->factory()->post->create_and_get(
+			array(
+				'post_author'  => $author->ID,
+				'post_status'  => 'publish',
+				'post_content' => rand_str(),
+				'post_title'   => rand_str(),
+				'post_type'    => 'post',
+			)
+		);
+	}
 }

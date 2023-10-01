@@ -22,15 +22,7 @@ class GetCoauthorsTest extends TestCase {
 	public function test_get_coauthors_when_post_exists() {
 		$author = $this->create_author();
 		$editor = $this->create_editor();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 
 		global $coauthors_plus;
 

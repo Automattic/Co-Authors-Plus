@@ -167,15 +167,7 @@ class EndpointsTest extends TestCase {
 	 */
 	public function test_authors_get_coauthors() {
 		$author = $this->create_author();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 
 		$get_request = new \WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
@@ -195,15 +187,7 @@ class EndpointsTest extends TestCase {
 		$author       = $this->create_author();
 		$editor       = $this->create_editor();
 		$guest_author = $this->create_guest_author();
-		$post = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $author->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$post   = $this->create_post( $author );
 		wp_set_current_user( $editor->ID );
 
 		$post_request = new \WP_REST_Request( 'POST' );
@@ -258,13 +242,7 @@ class EndpointsTest extends TestCase {
 	 */
 	public function test_remove_author_link() {
 		$editor = $this->create_editor();
-		$post   = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $editor->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$post   = $this->create_post( $editor );
 
 		$request = new \WP_REST_Request( 'GET', '/wp/v2/posts/' . $post->ID );
 
