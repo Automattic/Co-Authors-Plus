@@ -4,113 +4,74 @@ namespace Automattic\CoAuthorsPlus\Tests\Integration;
 
 class AuthorQueriesTest extends TestCase {
 
-	public function test__author_arg__user_is_post_author_query_as_post_author() {
-		$author_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'batman',
-			)
-		);
-		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory()->post->create(
-			array(
-				'post_author' => $author_id,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
-
-		wp_set_current_user( $author_id );
+	/**
+	 * Test a simple query that a post is returned after setting a co-author on it.
+	 * The focus is the query by user login instead of ID.
+	 */
+	public function test_get_post_by_user_login_when_single_author_is_set_as_post_author() {
+		$author = $this->create_author();
+		$post   = $this->create_post( $author );
+		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
 
 		$query = new \WP_Query(
 			array(
-				'author' => $author_id,
+				'author_name' => $author->user_login, // This is the change.
 			)
 		);
 
 		$this->assertCount( 1, $query->posts );
-		$this->assertEquals( $post_id, $query->posts[0]->ID );
+		$this->assertEquals( $post->ID, $query->posts[0]->ID );
 	}
 
-	public function test__author_arg__user_is_post_author() {
-		$author_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'batman',
-			)
-		);
-		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory()->post->create(
-			array(
-				'post_author' => $author_id,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
+	/**
+	 * Test a simple query that a post is returned after setting a co-author on it.
+	 * This test is run as the default administrator user.
+	 */
+	public function test_get_post_by_user_ID_when_single_author_is_set_as_post_author_but_current_user_is_admin() {
+		$author = $this->create_author();
+		$post   = $this->create_post( $author );
+		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
 
 		$query = new \WP_Query(
 			array(
-				'author' => $author_id,
+				'author' => $author->ID,
 			)
 		);
 
 		$this->assertCount( 1, $query->posts );
-		$this->assertEquals( $post_id, $query->posts[0]->ID );
+		$this->assertEquals( $post->ID, $query->posts[0]->ID );
 	}
 
-	public function test__author_name_arg__user_is_post_author() {
-		$author_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'batman',
-			)
-		);
-		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory()->post->create(
-			array(
-				'post_author' => $author_id,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
+	/**
+	 * Test a simple query that a post is returned after setting a co-author on it.
+	 * This test is run as the author user. This is to ensure that the logic works for non-administrator roles. See #508.
+	 */
+	public function test_get_post_by_user_ID_when_single_author_is_set_as_post_author_but_current_user_is_author() {
+		$author = $this->create_author();
+		$post   = $this->create_post( $author );
+		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
+
+		wp_set_current_user( $author->ID ); // This is the only difference to the last test.
 
 		$query = new \WP_Query(
 			array(
-				'author_name' => $author->user_login,
+				'author' => $author->ID,
 			)
 		);
 
 		$this->assertCount( 1, $query->posts );
-		$this->assertEquals( $post_id, $query->posts[0]->ID );
+		$this->assertEquals( $post->ID, $query->posts[0]->ID );
 	}
 
-	public function test__author_name_arg__user_is_coauthor() {
-		$author1_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'batman',
-			)
-		);
-		$author1    = get_userdata( $author1_id );
-		$author2_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'superman',
-			)
-		);
-		$author2    = get_userdata( $author2_id );
-
-		$post_id = $this->factory()->post->create(
-			array(
-				'post_author' => $author1_id,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
+	/**
+	 * Test a simple user_login query that a post is returned after setting multiple co-authors for it.
+	 * The post_author is set as the first co-author.
+	 */
+	public function test_get_post_by_user_ID_when_queried_author_is_set_as_post_author() {
+		$author1 = $this->create_author( 'author1' );
+		$author2 = $this->create_author( 'author2' );
+		$post   = $this->create_post( $author1 );
+		$this->_cap->add_coauthors( $post->ID, array( $author1->user_login, $author2->user_login ) );
 
 		$query = new \WP_Query(
 			array(
@@ -119,61 +80,35 @@ class AuthorQueriesTest extends TestCase {
 		);
 
 		$this->assertCount( 1, $query->posts );
-		$this->assertEquals( $post_id, $query->posts[0]->ID );
+		$this->assertEquals( $post->ID, $query->posts[0]->ID );
 	}
 
-	public function test__author_arg__user_is_coauthor__author_arg() {
-		$author1_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'batman',
-			)
-		);
-		$author1    = get_userdata( $author1_id );
-		$author2_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'superman',
-			)
-		);
-		$author2    = get_userdata( $author2_id );
-
-		$post_id = $this->factory()->post->create(
-			array(
-				'post_author' => $author1_id,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
+	/**
+	 * Test a simple user_login query that a post is returned after setting multiple co-authors for it.
+	 * The post_author is set as the first co-author, but we're querying by the second co-author, so
+	 * this is magic working now.
+	 */
+	public function test_get_post_by_user_ID_when_queried_author_is_not_set_as_post_author() {
+		$author1 = $this->create_author( 'author1' );
+		$author2 = $this->create_author( 'author2' );
+		$post   = $this->create_post( $author1 );
+		$this->_cap->add_coauthors( $post->ID, array( $author1->user_login, $author2->user_login ) );
 
 		$query = new \WP_Query(
 			array(
-				'author' => $author2_id,
+				'author' => $author2->ID,
 			)
 		);
 
 		$this->assertCount( 1, $query->posts );
-		$this->assertEquals( $post_id, $query->posts[0]->ID );
+		$this->assertEquals( $post->ID, $query->posts[0]->ID );
 	}
 
-	public function test__author_name_arg_plus_tax_query__user_is_post_author() {
-		$author_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'batman',
-			)
-		);
-		$author    = get_userdata( $author_id );
-		$post_id   = $this->factory()->post->create(
-			array(
-				'post_author' => $author_id,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-		$this->_cap->add_coauthors( $post_id, array( $author->user_login ) );
-		wp_set_post_terms( $post_id, 'test' );
+	public function test_get_post_by_user_ID_when_queried_author_is_set_as_post_author_but_there_is_a_tag() {
+		$author = $this->create_author();
+		$post   = $this->create_post( $author );
+		$this->_cap->add_coauthors( $post->ID, array( $author->user_login ) );
+		wp_set_post_terms( $post->ID, 'test' );
 
 		$query = new \WP_Query(
 			array(
@@ -183,34 +118,15 @@ class AuthorQueriesTest extends TestCase {
 		);
 
 		$this->assertCount( 1, $query->posts );
-		$this->assertEquals( $post_id, $query->posts[0]->ID );
+		$this->assertEquals( $post->ID, $query->posts[0]->ID );
 	}
 
-	public function tests__author_name_arg_plus_tax_query__is_coauthor() {
-		$author1_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'batman',
-			)
-		);
-		$author1    = get_userdata( $author1_id );
-		$author2_id = $this->factory()->user->create(
-			array(
-				'role'       => 'author',
-				'user_login' => 'superman',
-			)
-		);
-		$author2    = get_userdata( $author2_id );
-
-		$post_id = $this->factory()->post->create(
-			array(
-				'post_author' => $author1_id,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-		$this->_cap->add_coauthors( $post_id, array( $author1->user_login, $author2->user_login ) );
-		wp_set_post_terms( $post_id, 'test' );
+	public function test_get_post_by_user_ID_when_queried_author_is_not_set_as_post_author_and_there_is_a_tag() {
+		$author1 = $this->create_author( 'author1' );
+		$author2 = $this->create_author( 'author2' );
+		$post   = $this->create_post( $author1 );
+		$this->_cap->add_coauthors( $post->ID, array( $author1->user_login, $author2->user_login ) );
+		wp_set_post_terms( $post->ID, 'test' );
 
 		$query = new \WP_Query(
 			array(
@@ -220,6 +136,6 @@ class AuthorQueriesTest extends TestCase {
 		);
 
 		$this->assertCount( 1, $query->posts );
-		$this->assertEquals( $post_id, $query->posts[0]->ID );
+		$this->assertEquals( $post->ID, $query->posts[0]->ID );
 	}
 }

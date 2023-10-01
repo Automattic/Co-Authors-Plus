@@ -3,28 +3,19 @@
 namespace Automattic\CoAuthorsPlus\Tests\Integration;
 
 use CoAuthors\API\Endpoints;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 /*
  * @coversDefaultClass \CoAuthors\API\Endpoints
  */
 class EndpointsTest extends TestCase {
 
-	use \DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+	use ArraySubsetAsserts;
 
-	private $author1;
-	private $author2;
-	private $editor1;
-	private $contributor1;
-	private $subscriber1;
 	/**
-	 * @var int|WP_Error
+	 * @var Endpoints
 	 */
-	private $coauthor1;
-	/**
-	 * @var int|WP_Error
-	 */
-	private $coauthor2;
-	private $post;
+	private $_api;
 
 	public function set_up() {
 
@@ -32,64 +23,7 @@ class EndpointsTest extends TestCase {
 
 		global $coauthors_plus;
 
-		$this->author1 = $this->factory()->user->create_and_get(
-			array(
-				'role'       => 'author',
-				'user_login' => 'author1',
-			)
-		);
-
-		$this->author2 = $this->factory()->user->create_and_get(
-			array(
-				'role'       => 'author',
-				'user_login' => 'author2',
-			)
-		);
-
-		$this->editor1 = $this->factory()->user->create_and_get(
-			array(
-				'role'       => 'editor',
-				'user_login' => 'editor1',
-			)
-		);
-
-		$this->contributor1 = $this->factory()->user->create_and_get(
-			array(
-				'role'       => 'contributor',
-				'user_login' => 'contributor1',
-			)
-		);
-
-		$this->subscriber1 = $this->factory()->user->create_and_get(
-			array(
-				'role'       => 'subscriber',
-				'user_login' => 'subscriber1',
-			)
-		);
-
-		$this->coauthor1 = $coauthors_plus->guest_authors->create(
-			array(
-				'user_login'   => 'coauthor1',
-				'display_name' => 'coauthor1',
-			)
-		);
-
-		$this->coauthor2 = $coauthors_plus->guest_authors->create(
-			array(
-				'user_login'   => 'coauthor2',
-				'display_name' => 'coauthor2',
-			)
-		);
-
-		$this->post = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $this->author1->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
+		$this->_api = new Endpoints( $coauthors_plus );
 	}
 
 	/**
@@ -184,12 +118,16 @@ class EndpointsTest extends TestCase {
 	 * @covers \CoAuthors\API\Endpoints::get_coauthors_search_results
 	 */
 	public function test_get_coauthors_search_results() {
+		$author1 = $this->create_author( 'author1' );
+		$author2 = $this->create_author( 'author2' );
+		$guest_author1 = $this->create_guest_author( 'guest_author1' );
+		$guest_author2 = $this->create_guest_author( 'guest_author2' );
 
 		$get_request = new \WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
 			array(
 				'q'                => 'auth',
-				'existing_authors' => 'author1,coauthor2',
+				'existing_authors' => 'author1,guest_author2',
 			)
 		);
 
@@ -201,7 +139,7 @@ class EndpointsTest extends TestCase {
 					'displayName' => 'author2',
 				),
 				array(
-					'displayName' => 'coauthor1',
+					'displayName' => 'guest_author1',
 				),
 			),
 			$get_response->data,
@@ -228,54 +166,35 @@ class EndpointsTest extends TestCase {
 	 * @covers \CoAuthors\API\Endpoints::get_coauthors
 	 */
 	public function test_authors_get_coauthors() {
-		$test_post = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $this->author1->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
-
-		$test_post_id = $test_post->ID;
+		$author = $this->create_author();
+		$post   = $this->create_post( $author );
 
 		$get_request = new \WP_REST_Request( 'GET' );
 		$get_request->set_url_params(
 			array(
-				'post_id' => $test_post_id,
+				'post_id' => $post->ID,
 			)
 		);
 
 		$get_response = $this->_api->get_coauthors( $get_request );
-		$this->assertEquals( 'author1', $get_response->data[0]['userNicename'] );
-
+		$this->assertEquals( 'author', $get_response->data[0]['userNicename'] );
 	}
 
 	/**
 	 * @covers \CoAuthors\API\Endpoints::update_coauthors
 	 */
 	public function test_update_coauthors() {
-
-		wp_set_current_user( $this->editor1->ID );
-
-		$test_post = $this->factory()->post->create_and_get(
-			array(
-				'post_author'  => $this->author1->ID,
-				'post_status'  => 'publish',
-				'post_content' => rand_str(),
-				'post_title'   => rand_str(),
-				'post_type'    => 'post',
-			)
-		);
-
-		$test_post_id = $test_post->ID;
+		$author       = $this->create_author();
+		$editor       = $this->create_editor();
+		$guest_author = $this->create_guest_author();
+		$post   = $this->create_post( $author );
+		wp_set_current_user( $editor->ID );
 
 		$post_request = new \WP_REST_Request( 'POST' );
 		$post_request->set_url_params(
 			array(
-				'post_id'     => $test_post_id,
-				'new_authors' => $this->author1->user_nicename . ',coauthor2',
+				'post_id'     => $post->ID,
+				'new_authors' => $author->user_nicename . ',guest_author',
 			)
 		);
 
@@ -284,91 +203,56 @@ class EndpointsTest extends TestCase {
 		$this->assertCount( 2, $update_response->data );
 	}
 
-	public function test_can_edit_coauthors() {
-		$post_id = $this->factory()->post->create(
-			array(
-				'post_author' => $this->editor1->ID,
-			)
+	public function data_only_editor_role_can_edit_coauthors() {
+		return array(
+			'Subscriber' => array(
+				'subscriber',
+				false
+			),
+			'Contributor' => array(
+				'contributor',
+				false
+			),
+			'Author' => array(
+				'author',
+				false
+			),
+			'Editor' => array(
+				'editor',
+				true
+			),
 		);
-
-		$request = new \WP_REST_Request(
-			'GET',
-			''
-		);
-
-		wp_set_current_user( $this->editor1->ID );
-
-		$this->assertTrue( $this->_api->can_edit_coauthors() );
-
-		wp_set_current_user( $this->author1->ID );
-
-		$this->assertFalse( $this->_api->can_edit_coauthors() );
-
-		wp_set_current_user( $this->contributor1->ID );
-
-		$this->assertFalse( $this->_api->can_edit_coauthors() );
-
-		wp_set_current_user( $this->subscriber1->ID );
-
-		$this->assertFalse( $this->_api->can_edit_coauthors() );
 	}
 
-	public function test_can_edit_coauthors__with_post_param() {
-		$post_id = $this->factory()->post->create(
-			array(
-				'post_author' => $this->editor1->ID,
-			)
-		);
-
-		$request = new \WP_REST_Request(
-			'GET',
-			''
-		);
-		$request->set_default_params(
-			array(
-				'post_id' => $post_id,
-			)
-		);
-
-		wp_set_current_user( $this->editor1->ID );
-
-		$this->assertTrue( $this->_api->can_edit_coauthors() );
-
-		wp_set_current_user( $this->author1->ID );
-
-		$this->assertFalse( $this->_api->can_edit_coauthors() );
-
-		wp_set_current_user( $this->contributor1->ID );
-
-		$this->assertFalse( $this->_api->can_edit_coauthors() );
-
-		wp_set_current_user( $this->subscriber1->ID );
-
-		$this->assertFalse( $this->_api->can_edit_coauthors() );
+	/**
+	 * @dataProvider data_only_editor_role_can_edit_coauthors
+	 * @param $role_name
+	 * @param $outcome
+	 *
+	 * @return void
+	 */
+	public function test_which_role_can_edit_coauthors( $role_name, $outcome ) {
+		$role = $this->{"create_$role_name"}();
+		wp_set_current_user( $role->ID );
+		$this->assertEquals( $outcome, $this->_api->can_edit_coauthors() );
 	}
 
 	/**
 	 * @covers \CoAuthors\API\Endpoints::remove_author_link
 	 */
 	public function test_remove_author_link() {
+		$editor = $this->create_editor();
+		$post   = $this->create_post( $editor );
 
-		$test_post = $this->factory()->post->create_and_get(
-			array(
-				'post_author' => $this->editor1->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/posts/' . $post->ID );
 
-		$request = new \WP_REST_Request( 'GET', '/wp/v2/posts/' . $test_post->ID );
-
-		wp_set_current_user( $this->editor1->ID );
+		wp_set_current_user( $editor->ID );
 
 		$request->set_param( 'context', 'edit' );
 
 		$response = rest_do_request( $request );
 
-		$this->_api->remove_author_link( $response, $test_post, $request );
+		$this->_api->remove_author_link( $response, $post, $request );
 
 		$this->assertArrayNotHasKey(
 			Endpoints::SUPPORT_LINK,
@@ -380,14 +264,13 @@ class EndpointsTest extends TestCase {
 
 		$response = rest_do_request( $request );
 
-		$this->_api->remove_author_link( $response, $test_post, $request );
+		$this->_api->remove_author_link( $response, $post, $request );
 
 		$this->assertArrayHasKey(
 			Endpoints::SUPPORT_LINK,
 			$response->get_links(),
 			'Failed to assert that links are unchanged when block editor is disabled.'
 		);
-
 	}
 
 	/**
@@ -408,6 +291,5 @@ class EndpointsTest extends TestCase {
 				)
 			);
 		}
-
 	}
 }
