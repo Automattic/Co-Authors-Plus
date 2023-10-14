@@ -7,7 +7,7 @@
 
 use Yoast\WPTestUtils\WPIntegration;
 
-require_once dirname( __DIR__ ) . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
+require_once dirname( dirname( __DIR__ ) ) . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
@@ -34,7 +34,7 @@ require_once "{$_tests_dir}/includes/functions.php";
  */
 function _manually_load_plugin() {
 	// Updated from default (__FILE__), since this bootstrap is an extra level down in tests/Integration/.
-	require dirname( __DIR__ ) . '/co-authors-plus.php';
+	require dirname( dirname( __DIR__ ) ) . '/co-authors-plus.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
@@ -54,4 +54,4 @@ require "{$_tests_dir}/includes/bootstrap.php";
 WPIntegration\register_mockobject_autoloader();
 
 // Add custom test case.
-require __DIR__ . '/coauthorsplus-testcase.php';
+require __DIR__ . '/TestCase.php';

@@ -1,6 +1,8 @@
 <?php
 
-class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
+class ManageCoAuthorsTest extends TestCase {
 
 	private $admin1;
 	private $author1;
@@ -187,7 +189,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_post_type_is_attachment() {
 
@@ -229,7 +231,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_coauthor_is_not_set() {
 
@@ -253,7 +255,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_coauthor_is_set() {
 
@@ -306,7 +308,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_guest_author_is_linked_with_wp_user() {
 
@@ -333,7 +335,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 		);
 
 		// Create guest author with linked account with user.
-		$coauthors_plus->guest_authors = new CoAuthors_Guest_Authors();
+		$coauthors_plus->guest_authors = new \CoAuthors_Guest_Authors();
 		$coauthors_plus->guest_authors->create_guest_author_from_user_id( $this->author1 );
 
 		$new_data = $coauthors_plus->coauthors_set_post_author_field( $data, $post_array );
@@ -350,7 +352,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_set_post_author_field()
+	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
 	public function test_coauthors_set_post_author_field_when_post_author_is_not_set() {
 
@@ -388,7 +390,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_update_post()
+	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
 	public function test_coauthors_update_post_when_post_type_is_attachment() {
 
@@ -423,7 +425,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_update_post()
+	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
 	public function test_coauthors_update_post_when_current_user_can_set_authors() {
 
@@ -469,7 +471,7 @@ class Test_Manage_CoAuthors extends CoAuthorsPlus_TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/198
 	 *
-	 * @covers ::coauthors_update_post()
+	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
 	public function test_coauthors_update_post_when_post_has_not_author_terms() {
 

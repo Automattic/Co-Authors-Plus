@@ -1,6 +1,8 @@
 <?php
 
-class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
+class CoAuthorsPlusTest extends TestCase {
 
 	private $author1;
 
@@ -92,8 +94,8 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $guest_author_id );
 
-		$this->assertInstanceOf( stdClass::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+		$this->assertInstanceOf( \stdClass::class, $coauthor );
+		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
 	}
@@ -117,8 +119,8 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $user_login );
 
-		$this->assertInstanceOf( stdClass::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+		$this->assertInstanceOf( \stdClass::class, $coauthor );
+		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $guest_author_id, $coauthor->ID );
 		$this->assertEquals( 'guest-author', $coauthor->type );
 	}
@@ -138,27 +140,27 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->author1->ID );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'ID' ) );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $this->author1->ID, $coauthor->ID );
 		$this->assertEquals( 'wpuser', $coauthor->type );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $this->author1->user_login );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor->data, 'user_login' ) );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertObjectHasProperty( 'user_login', $coauthor->data );
 		$this->assertEquals( $this->author1->user_login, $coauthor->user_login );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $this->author1->user_nicename );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor->data, 'user_nicename' ) );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertObjectHasProperty( 'user_nicename', $coauthor->data );
 		$this->assertEquals( $this->author1->user_nicename, $coauthor->user_nicename );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_email', $this->author1->user_email );
 
-		$this->assertInstanceOf( WP_User::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor->data, 'user_email' ) );
+		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertObjectHasProperty( 'user_email', $coauthor->data );
 		$this->assertEquals( $this->author1->user_email, $coauthor->user_email );
 
 		remove_filter( 'coauthors_guest_authors_enabled', '__return_false' );
@@ -167,8 +169,8 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->editor1->ID );
 
-		$this->assertInstanceOf( stdClass::class, $coauthor );
-		$this->assertTrue( property_exists( $coauthor, 'linked_account' ) );
+		$this->assertInstanceOf( \stdClass::class, $coauthor );
+		$this->assertObjectHasProperty( 'linked_account', $coauthor );
 		$this->assertEquals( $this->editor1->user_login, $coauthor->linked_account );
 	}
 
@@ -539,7 +541,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 		$author_term        = $coauthors_plus->get_author_term( $this->author1 );
 		$author_term_cached = wp_cache_get( $cache_key, 'co-authors-plus' );
 
-		$this->assertInstanceOf( WP_Term::class, $author_term );
+		$this->assertInstanceOf( \WP_Term::class, $author_term );
 		$this->assertEquals( $author_term, $author_term_cached );
 	}
 
@@ -558,7 +560,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
 
-		$this->assertInstanceOf( WP_Term::class, $author_term );
+		$this->assertInstanceOf( \WP_Term::class, $author_term );
 
 		// Checks when term does not exist or deleted somehow.
 		wp_delete_term( $author_term->term_id, $author_term->taxonomy );
@@ -586,7 +588,7 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$author_term = $coauthors_plus->get_author_term( $coauthor );
 
-		$this->assertInstanceOf( WP_Term::class, $author_term );
+		$this->assertInstanceOf( \WP_Term::class, $author_term );
 
 		// Checks when term does not exist or deleted somehow.
 		wp_delete_term( $author_term->term_id, $author_term->taxonomy );
@@ -2177,5 +2179,58 @@ class Test_CoAuthors_Plus extends CoAuthorsPlus_TestCase {
 
 		$this->assertNull( $wp_meta_boxes, 'Failed to assert the coauthors metabox is not added when the block editor is loaded.' );
 
+	}
+
+	/**
+	 * Test the expected default supported post types.
+	 */
+	public function test_default_supported_post_types() {
+		$supported_post_types = (new \CoAuthors_Plus())->supported_post_types();
+		$expected = array(
+			'post',
+			'page',
+		);
+		$this->assertEquals( array_values( $expected ), array_values( $supported_post_types ) );
+	}
+
+	/**
+	 * Test whether the supported post types can be filtered.
+	 */
+	public function test_can_filter_supported_post_types() {
+		// This should be detected.
+		$post_type_with_author = register_post_type(
+			'foo',
+			array(
+				'supports' => array( 'author' ),
+			)
+		);
+
+		// This doesn't support the author, so should not be detected.
+		$post_type_without_author = register_post_type(
+			'bar',
+			array(
+				'supports' => array( 'title' ),
+			)
+		);
+
+		$callback = function( $post_types ) {
+			$key = array_search( 'page', $post_types, true );
+			unset( $post_types[ $key ] );
+
+			return $post_types;
+		};
+		add_filter( 'coauthors_supported_post_types', $callback );
+
+		$supported_post_types = ( new \CoAuthors_Plus() )->supported_post_types();
+
+		$expected = array(
+			'post',
+			'foo',
+		);
+		$this->assertEquals( array_values( $expected ), array_values( $supported_post_types ) );
+
+		// Clean up.
+		remove_filter( 'coauthors_supported_post_types', $callback );
+		unregister_post_type( 'foo' );
 	}
 }

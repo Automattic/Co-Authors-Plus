@@ -3,7 +3,9 @@
  * Test Co-Authors Plus' modifications of author queries
  */
 
-class Test_Author_Queried_Object extends CoAuthorsPlus_TestCase {
+namespace Automattic\CoAuthorsPlus\Tests\Integration;
+
+class AuthorQueriedObjectTest extends TestCase {
 
 	/**
 	 * On author pages, the queried object should only be set
