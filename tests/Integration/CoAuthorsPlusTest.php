@@ -750,7 +750,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 1, $post_author_terms );
 		$this->assertInstanceOf( WP_Term::class, $post_author_terms[0] );
 		$this->assertEquals( 'cap-' . $this->author3->user_login, $post_author_terms[0]->slug );
@@ -763,7 +763,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 1, $post_author_terms );
 		$this->assertInstanceOf( WP_Term::class, $post_author_terms[0] );
 		$this->assertEquals( 'cap-' . $this->author2->user_login, $post_author_terms[0]->slug );
@@ -797,7 +797,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 2, $post_author_terms );
 
 		$author_slugs = array(
@@ -848,7 +848,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1121,7 +1121,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 2, $post_author_terms );
 
 		$author_slugs = array(
@@ -1200,7 +1200,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1297,7 +1297,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 2, $post_author_terms );
 
 		$author_slugs = array(
@@ -1395,7 +1395,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1488,7 +1488,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1606,7 +1606,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1702,7 +1702,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1799,7 +1799,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1897,7 +1897,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
@@ -1913,7 +1913,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$guest_author_term = wp_get_post_terms( $linked_author_1->ID, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $guest_author_term ) );
+		$this->assertIsArray( $guest_author_term );
 		$this->assertCount( 1, $guest_author_term );
 		$this->assertEquals( 'cap-' . $linked_author_1->user_login, $guest_author_term[0]->slug );
 	}
@@ -2026,7 +2026,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_1_author_terms = wp_get_post_terms( $post_id_1, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_1_author_terms ) );
+		$this->assertIsArray( $post_1_author_terms );
 		$this->assertCount( 1, $post_1_author_terms );
 		$this->assertEquals( 'cap-' . $guest_author_1->user_login, $post_1_author_terms[0]->slug );
 
@@ -2079,7 +2079,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id_1, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 2, $post_author_terms );
 
 		$author_slugs = array(
@@ -2114,7 +2114,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$post_author_terms = wp_get_post_terms( $post_id_2, $this->_cap->coauthor_taxonomy );
 
-		$this->assertTrue( is_array( $post_author_terms ) );
+		$this->assertIsArray( $post_author_terms );
 		$this->assertCount( 3, $post_author_terms );
 
 		$author_slugs = array(
