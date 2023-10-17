@@ -332,9 +332,8 @@ class CoAuthors_Plus {
 
 				$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
 				if ( is_object( $guest_author ) ) {
-					$guest_author->is_wp_user = true; // Important not to lose the fact that this is a WP user.
 					$guest_author->wp_user = $user;
-					$user = $guest_author;
+					$user                  = $guest_author;
 				}
 
 				return $user;
@@ -1044,7 +1043,7 @@ class CoAuthors_Plus {
 				if ( $coauthor_object instanceof WP_User ) {
 					$new_author = $coauthor_object;
 					break;
-				} else if ( isset( $coauthor_object->is_wp_user ) && $coauthor_object->is_wp_user ) {
+				} elseif ( isset( $coauthor_object->wp_user ) && $coauthor_object->wp_user instanceof WP_User ) {
 					$new_author = $coauthor_object->wp_user;
 					break;
 				}
