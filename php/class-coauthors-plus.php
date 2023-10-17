@@ -320,7 +320,7 @@ class CoAuthors_Plus {
 
 				return $guest_author;
 			} else {
-				// Guest Author was not found, so let's see if we are searching for a WP_User
+				// Guest Author was not found, so let's see if we are searching for a WP_User.
 				$user = $this->get_user_by( $key, $value );
 
 				if ( null === $user ) {
@@ -352,7 +352,10 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * @param string $key Key to search by, i.e. 'id', 'login', 'user_login', 'email', 'user_email', 'user_nicename'
+	 * Searches for authors by way of the WP_User table using a specific list of data points. If login or slug
+	 * are provided as search parameters, this function will remove `cap-` from the search value, if present.
+	 *
+	 * @param string $key Key to search by, i.e. 'id', 'login', 'user_login', 'email', 'user_email', 'user_nicename'.
 	 * @param string $value Value to search for.
 	 *
 	 * @return WP_User|null
@@ -375,10 +378,10 @@ class CoAuthors_Plus {
 
 		$user = get_user_by( $key, $value );
 
-		if ( ! $user && ( 'login' == $key || 'slug' == $key ) ) {
+		if ( ! $user && ( 'login' === $key || 'slug' === $key ) ) {
 			// Re-try lookup without prefixed value if no results found.
 			$value = preg_replace( '#^cap\-#', '', $value );
-			$user = get_user_by( $key, $value );
+			$user  = get_user_by( $key, $value );
 		}
 
 		if ( false === $user ) {

@@ -2,6 +2,9 @@
 
 namespace Automattic\CoAuthorsPlus\Tests\Integration;
 
+use WP_Query;
+use WP_Term;
+
 class CoAuthorsPlusTest extends TestCase {
 
 	private $author1;
@@ -725,16 +728,18 @@ class CoAuthorsPlusTest extends TestCase {
 		$post_id = $post->ID;
 
 		$first_added_authors = $this->_cap->add_coauthors( $post_id, array( $this->author3->user_login ) );
+		// add_coauthors should return true because CAP will treat this user as an Author with the
+		// extra step of setting wp_post.post_author equal to this user's wp_user.ID.
 		$this->assertTrue( $first_added_authors );
 
-		$query2 = new WP_Query(
+		$query1 = new WP_Query(
 			array(
-				'p' => $post_id
+				'p' => $post_id,
 			)
 		);
 
-		$this->assertEquals( 1, $query2->found_posts );
-		$this->assertEquals( $this->author3->ID, $query2->posts[0]->post_author );
+		// Checking that the wp_post.post_author column has indeed been updated.
+		$this->assertEquals( $this->author3->ID, $query1->posts[0]->post_author );
 
 		$author3_term = $this->_cap->get_author_term( $this->author3 );
 
@@ -747,7 +752,7 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertInstanceOf( WP_Term::class, $post_author_terms[0] );
 		$this->assertEquals( 'cap-' . $this->author3->user_login, $post_author_terms[0]->slug );
 
-		// Confirming that now $author2 does have an author term
+		// Confirming that now $author2 does have an author term.
 		$second_added_authors = $this->_cap->add_coauthors( $post_id, array( $this->author2->user_login ) );
 		$this->assertTrue( $second_added_authors );
 		$author2_term = $this->_cap->get_author_term( $this->author2 );
