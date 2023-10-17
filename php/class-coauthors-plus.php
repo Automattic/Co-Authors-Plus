@@ -313,8 +313,7 @@ class CoAuthors_Plus {
 				if ( isset( $guest_author->linked_account ) ) {
 					$user = $this->get_user_by( 'login', $guest_author->linked_account );
 
-					if ( ! is_null( $user ) ) {
-						$guest_author->is_wp_user = true; // Important not to lose the fact that this is a WP user.
+					if ( null !== $user ) {
 						$guest_author->wp_user = $user;
 					}
 				}
@@ -324,7 +323,7 @@ class CoAuthors_Plus {
 				// Guest Author was not found, so let's see if we are searching for a WP_User
 				$user = $this->get_user_by( $key, $value );
 
-				if ( is_null( $user ) ) {
+				if ( null === $user ) {
 					return false;
 				}
 
@@ -343,7 +342,7 @@ class CoAuthors_Plus {
 		} else {
 			$user = $this->get_user_by( $key, $value );
 
-			if ( is_null( $user ) ) {
+			if ( null === $user ) {
 				return false;
 			}
 
