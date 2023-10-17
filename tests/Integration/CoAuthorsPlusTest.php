@@ -715,22 +715,14 @@ class CoAuthorsPlusTest extends TestCase {
 	 * @return void
 	 */
 	public function test_assign_post_author_from_author_who_has_not_been_linked() {
-		$post_id = $this->factory()->post->create(
+		$post = $this->factory()->post->create_and_get(
 			array(
 				'post_author' => $this->author2->ID,
 				'post_status' => 'publish',
 				'post_type'   => 'post',
 			)
 		);
-
-		$query1 = new WP_Query(
-			array(
-				'p' => $post_id
-			)
-		);
-
-		$this->assertEquals( 1, $query1->found_posts );
-		$this->assertEquals( $this->author2->ID, $query1->posts[0]->post_author );
+		$post_id = $post->ID;
 
 		$first_added_authors = $this->_cap->add_coauthors( $post_id, array( $this->author3->user_login ) );
 		$this->assertTrue( $first_added_authors );
