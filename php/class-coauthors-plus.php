@@ -1831,7 +1831,7 @@ class CoAuthors_Plus {
 			return $args;
 		}
 
-		// Do not filter the avatar if this is doing a heartbeat request on WP refresh lock
+		// Do not filter the avatar if this is doing a heartbeat request on WP refresh lock.
 		if ( wp_doing_ajax() && isset( $_POST['action'] ) &&  'heartbeat' === $_POST['action'] ) {
 			return $args;
 		}
