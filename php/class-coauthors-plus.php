@@ -1826,7 +1826,7 @@ class CoAuthors_Plus {
 			return $args;
 		}
 
-		// do not filter on the post list screen, profile screen and post takeover pop-up
+		// Do not filter on the post list screen, profile screen, and post takeover pop-up.
 		if ( isset( $current_screen->base ) && ( 'post' === $current_screen->base || 'profile' === $current_screen->base || 'edit' === $current_screen->base ) ) {
 			return $args;
 		}
