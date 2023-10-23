@@ -6,7 +6,7 @@
 	"title": "Co-Author Biography",
 	"category": "theme",
 	"description": "Displays a co-author's biographical description.",
-	"keywords": [ "description", "bio", "biography" ],
+	"keywords": [ "coauthors", "description", "bio", "biography" ],
 	"supports": {
 		"html": false,
 		"color": {

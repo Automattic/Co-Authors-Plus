@@ -6,6 +6,9 @@
   "title": "Co-Author Name",
   "category": "theme",
   "description": "Displays a co-author's display name and optionally links to their author archive.",
+  "keywords": [
+    "coauthors"
+  ],
   "supports": {
     "html": false,
     "color": {

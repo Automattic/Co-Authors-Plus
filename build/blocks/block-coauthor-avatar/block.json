@@ -6,6 +6,9 @@
   "title": "Co-Author Avatar",
   "category": "theme",
   "description": "Displays a small scale version of a co-author's avatar. Utilizes fallbacks from Gravatar so everyone has an avatar.",
+  "keywords": [
+    "coauthors"
+  ],
   "supports": {
     "align": [
       "left",

@@ -6,6 +6,9 @@
   "title": "Co-Author Featured Image",
   "category": "theme",
   "description": "Uses your theme's image sizes to display a scalable avatar for a co-author with a guest author profile. Does not fallback to Gravatar images.",
+  "keywords": [
+    "coauthors"
+  ],
   "supports": {
     "align": [
       "left",
