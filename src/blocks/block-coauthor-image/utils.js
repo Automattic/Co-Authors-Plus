@@ -11,22 +11,22 @@ export function getMediaDimensions( media, imageDimensions, sizeSlug ) {
 		return {};
 	}
 
-	const mediaSize = media.media_details.sizes[sizeSlug];
-	
+	const mediaSize = media.media_details.sizes[ sizeSlug ];
+
 	if ( 'full' === sizeSlug ) {
 		return {
 			width: mediaSize.width,
-			height: mediaSize.height
-		}
+			height: mediaSize.height,
+		};
 	}
 
-	const imageSize = imageDimensions[sizeSlug];
+	const imageSize = imageDimensions[ sizeSlug ];
 
 	if ( true === imageSize.crop || imageSize.width === imageSize.height ) {
 		return {
 			width: imageSize.width,
-			height: imageSize.height
-		}
+			height: imageSize.height,
+		};
 	}
 
 	const mediaAspectRatio = mediaSize.width / mediaSize.height;
@@ -34,14 +34,14 @@ export function getMediaDimensions( media, imageDimensions, sizeSlug ) {
 	if ( imageSize.width > imageSize.height ) {
 		return {
 			width: imageSize.width,
-			height: imageSize.width / mediaAspectRatio
-		}
+			height: imageSize.width / mediaAspectRatio,
+		};
 	}
 
 	return {
 		width: imageSize.height * mediaAspectRatio,
-		height: imageSize.height
-	}
+		height: imageSize.height,
+	};
 }
 
 /**
@@ -52,7 +52,7 @@ export function getMediaDimensions( media, imageDimensions, sizeSlug ) {
  * @return {string}
  */
 export function getMediaSrc( media, sizeSlug ) {
-	return media?.media_details?.sizes[sizeSlug]?.source_url;
+	return media?.media_details?.sizes[ sizeSlug ]?.source_url;
 }
 
 /**
@@ -63,67 +63,68 @@ export function getMediaSrc( media, sizeSlug ) {
  * @return {Object} {width,height}
  */
 export function getPlaceholderImageDimensions( imageDimensions, sizeSlug ) {
-	
-	const size = imageDimensions[sizeSlug];
+	const size = imageDimensions[ sizeSlug ];
 
 	if ( true === size.crop || size.width === size.height ) {
 		return {
 			width: size.width,
-			height: size.height
-		}
+			height: size.height,
+		};
 	}
 
 	if ( size.width > size.height ) {
 		return {
 			width: size.width,
-			height: size.width
-		}
+			height: size.width,
+		};
 	}
 
 	return {
 		width: size.height,
-		height: size.height
-	}
+		height: size.height,
+	};
 }
 
 /**
  * Get Size Keys Intersection
- * 
+ *
  * @param {Object} media
  * @param {Object} imageDimensions
  * @return {Array}
  */
 export function getSizeKeysIntersection( media, imageDimensions ) {
-
 	if ( ! media ) {
 		return Object.keys( imageDimensions );
 	}
 
 	const mediaKeys = Object.keys( media.media_details.sizes );
-	const sizeKeys  = Object.keys( imageDimensions );
-	
-	return Array.from( new Set([...mediaKeys.filter( ( key ) => sizeKeys.includes(key) )]))
+	const sizeKeys = Object.keys( imageDimensions );
+
+	return Array.from(
+		new Set( [
+			...mediaKeys.filter( ( key ) => sizeKeys.includes( key ) ),
+		] )
+	);
 }
 
 /**
  * Get Available Size Slug
- * 
+ *
  * @param {Object} media
  * @param {Object} imageDimensions
  * @param {string} sizeSlug
  * @return {string}
  */
 export function getAvailableSizeSlug( media, imageDimensions, sizeSlug ) {
-
 	if ( media && 'full' === sizeSlug ) {
 		return sizeSlug;
 	}
 
 	const keys = getSizeKeysIntersection( media, imageDimensions );
-	
+
 	if ( sizeSlug && keys.includes( sizeSlug ) ) {
 		return sizeSlug;
 	}
 
-	return keys[Math.max(0, keys.length - 1)];
+	return keys[ Math.max( 0, keys.length - 1 ) ];
 }

@@ -1,6 +1,16 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls, __experimentalUseBorderProps as useBorderProps, store as blockEditorStore } from '@wordpress/block-editor';
-import { SelectControl, PanelBody, ToggleControl, TextControl } from '@wordpress/components';
+import {
+	useBlockProps,
+	InspectorControls,
+	__experimentalUseBorderProps as useBorderProps,
+	store as blockEditorStore,
+} from '@wordpress/block-editor';
+import {
+	SelectControl,
+	PanelBody,
+	ToggleControl,
+	TextControl,
+} from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
 import PlaceholderImage from '../components/placeholder-image';
@@ -14,135 +24,143 @@ import PlaceholderImage from '../components/placeholder-image';
  * @return {WPElement} Element to render.
  */
 export default function Edit( { context, attributes, setAttributes } ) {
-
 	const { isLink, rel, size, verticalAlign } = attributes;
-	const authorPlaceholder = useSelect( select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(), []);
-	const author = context['co-authors-plus/author'] || authorPlaceholder;
+	const authorPlaceholder = useSelect(
+		( select ) => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(),
+		[]
+	);
+	const author = context[ 'co-authors-plus/author' ] || authorPlaceholder;
 	const { avatar_urls } = author;
 
 	if ( ! avatar_urls || 0 === avatar_urls.length ) {
 		return null;
 	}
 
-	const sizes = Object.keys( avatar_urls ).map( (size) => {
+	const sizes = Object.keys( avatar_urls ).map( ( size ) => {
 		return {
 			value: size,
-			label: `${ size } x ${ size }`
+			label: `${ size } x ${ size }`,
 		};
-	});
+	} );
 
 	const borderProps = useBorderProps( attributes );
 
-	const src = avatar_urls[size] ?? '';
-	
+	const src = avatar_urls[ size ] ?? '';
+
 	return (
 		<>
-		<figure { ...useBlockProps() }>
-			{
-				'' === src ?
-				(
+			<figure { ...useBlockProps() }>
+				{ '' === src ? (
 					<PlaceholderImage
-						className={borderProps.className}
-						dimensions={{width: size, height: size}}
+						className={ borderProps.className }
+						dimensions={ { width: size, height: size } }
 						style={ {
 							height: size,
 							width: size,
 							minWidth: 'auto',
 							minHeight: 'auto',
 							padding: 0,
-							verticalAlign, 
-							...borderProps.style
+							verticalAlign,
+							...borderProps.style,
 						} }
 					/>
 				) : (
 					<img
-						style={{...borderProps.style, verticalAlign}}
-						width={size}
-						height={size}
-						src={`${avatar_urls[size]}`}
-					/>
-				)
-			}
-		</figure>
-		<InspectorControls>
-			<PanelBody title={ __( 'Avatar Settings', 'co-authors-plus' ) }>
-				<SelectControl
-					label={ __( 'Avatar size', 'co-authors-plus' ) }
-					value={ size }
-					options={ sizes }
-					onChange={ ( nextSize ) => {
-						setAttributes( {
-							size: Number( nextSize )
-						} );
-					} }
-				/>
-				<ToggleControl
-					label={ __( 'Make avatar a link to author archive.', 'co-authors-plus' ) }
-					onChange={ () => setAttributes( { isLink: ! isLink } ) }
-					checked={ isLink }
-				/>
-				{ isLink && (
-					<TextControl
-						__nextHasNoMarginBottom
-						label={ __( 'Link rel', 'co-authors-plus' ) }
-						value={ rel }
-						onChange={ ( newRel ) =>
-							setAttributes( { rel: newRel } )
-						}
+						style={ { ...borderProps.style, verticalAlign } }
+						width={ size }
+						height={ size }
+						src={ `${ avatar_urls[ size ] }` }
 					/>
 				) }
-			</PanelBody>
-			<PanelBody initialOpen={false} title={ __( 'Co-authors Layout', 'co-authors-plus' ) }>
-			<SelectControl
-					label={ __( 'Vertical align', 'co-authors-plus' ) }
-					value={ verticalAlign }
-					options={ [
-						{
-							value: '',
-							label: __( 'Default', 'co-authors-plus' )
-						},
-						{
-							value: 'baseline',
-							label: __( 'Baseline', 'co-authors-plus' )
-						},
-						{
-							value: 'bottom',
-							label: __( 'Bottom', 'co-authors-plus' )
-						},
-						{
-							value: 'middle',
-							label: __( 'Middle', 'co-authors-plus' )
-						},
-						{
-							value: 'sub',
-							label: __( 'Sub', 'co-authors-plus' )
-						},
-						{
-							value: 'super',
-							label: __( 'Super', 'co-authors-plus' )
-						},
-						{
-							value: 'text-bottom',
-							label: __( 'Text Bottom', 'co-authors-plus' )
-						},
-						{
-							value: 'text-top',
-							label: __( 'Text Top', 'co-authors-plus' )
-						},
-						{
-							value: 'top',
-							label: __( 'Top', 'co-authors-plus' )
-						},
-					] }
-					onChange={ ( value ) => {
-						setAttributes( {
-							verticalAlign: '' === value ? undefined : value
-						} );
-					} }
-					help={ __( 'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.', 'co-authors-plus' )}
-				/>
-			</PanelBody>
-		</InspectorControls>
+			</figure>
+			<InspectorControls>
+				<PanelBody title={ __( 'Avatar Settings', 'co-authors-plus' ) }>
+					<SelectControl
+						label={ __( 'Avatar size', 'co-authors-plus' ) }
+						value={ size }
+						options={ sizes }
+						onChange={ ( nextSize ) => {
+							setAttributes( {
+								size: Number( nextSize ),
+							} );
+						} }
+					/>
+					<ToggleControl
+						label={ __(
+							'Make avatar a link to author archive.',
+							'co-authors-plus'
+						) }
+						onChange={ () => setAttributes( { isLink: ! isLink } ) }
+						checked={ isLink }
+					/>
+					{ isLink && (
+						<TextControl
+							__nextHasNoMarginBottom
+							label={ __( 'Link rel', 'co-authors-plus' ) }
+							value={ rel }
+							onChange={ ( newRel ) =>
+								setAttributes( { rel: newRel } )
+							}
+						/>
+					) }
+				</PanelBody>
+				<PanelBody
+					initialOpen={ false }
+					title={ __( 'Co-authors Layout', 'co-authors-plus' ) }
+				>
+					<SelectControl
+						label={ __( 'Vertical align', 'co-authors-plus' ) }
+						value={ verticalAlign }
+						options={ [
+							{
+								value: '',
+								label: __( 'Default', 'co-authors-plus' ),
+							},
+							{
+								value: 'baseline',
+								label: __( 'Baseline', 'co-authors-plus' ),
+							},
+							{
+								value: 'bottom',
+								label: __( 'Bottom', 'co-authors-plus' ),
+							},
+							{
+								value: 'middle',
+								label: __( 'Middle', 'co-authors-plus' ),
+							},
+							{
+								value: 'sub',
+								label: __( 'Sub', 'co-authors-plus' ),
+							},
+							{
+								value: 'super',
+								label: __( 'Super', 'co-authors-plus' ),
+							},
+							{
+								value: 'text-bottom',
+								label: __( 'Text Bottom', 'co-authors-plus' ),
+							},
+							{
+								value: 'text-top',
+								label: __( 'Text Top', 'co-authors-plus' ),
+							},
+							{
+								value: 'top',
+								label: __( 'Top', 'co-authors-plus' ),
+							},
+						] }
+						onChange={ ( value ) => {
+							setAttributes( {
+								verticalAlign: '' === value ? undefined : value,
+							} );
+						} }
+						help={ __(
+							'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.',
+							'co-authors-plus'
+						) }
+					/>
+				</PanelBody>
+			</InspectorControls>
 		</>
 	);
 }

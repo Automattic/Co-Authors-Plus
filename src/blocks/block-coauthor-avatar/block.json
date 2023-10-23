@@ -30,11 +30,9 @@
 			}
 		}
 	},
-	"usesContext": [
-		"co-authors-plus/author"
-	],
+	"usesContext": [ "co-authors-plus/author" ],
 	"attributes": {
-		"size" : {
+		"size": {
 			"type": "number",
 			"default": 24
 		},

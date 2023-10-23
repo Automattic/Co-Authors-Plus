@@ -6,11 +6,7 @@
 	"title": "Co-Author Biography",
 	"category": "theme",
 	"description": "Displays a co-author's biographical description.",
-	"keywords": [
-		"description",
-		"bio",
-		"biography"
-	],
+	"keywords": [ "description", "bio", "biography" ],
 	"supports": {
 		"html": false,
 		"color": {
@@ -39,9 +35,7 @@
 			}
 		}
 	},
-	"usesContext": [
-		"co-authors-plus/author"
-	],
+	"usesContext": [ "co-authors-plus/author" ],
 	"attributes": {
 		"textAlign": {
 			"type": "string"

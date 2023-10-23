@@ -29,9 +29,7 @@
 			}
 		}
 	},
-	"usesContext": [
-		"co-authors-plus/author"
-	],
+	"usesContext": [ "co-authors-plus/author" ],
 	"attributes": {
 		"isLink": {
 			"type": "boolean",

@@ -34,5 +34,5 @@ registerBlockType( metadata.name, {
 	 */
 	save,
 
-	icon
+	icon,
 } );

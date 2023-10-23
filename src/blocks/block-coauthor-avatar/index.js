@@ -27,5 +27,5 @@ registerBlockType( metadata.name, {
 	 * @see ./edit.js
 	 */
 	edit: Edit,
-	icon
+	icon,
 } );

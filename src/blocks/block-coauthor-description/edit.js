@@ -4,7 +4,12 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps, AlignmentControl, BlockControls, store as blockEditorStore } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	AlignmentControl,
+	BlockControls,
+	store as blockEditorStore,
+} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
@@ -19,10 +24,12 @@ import './editor.css';
  * @return {WPElement} Element to render.
  */
 export default function Edit( { context, attributes, setAttributes } ) {
-
 	const { textAlign } = attributes;
-	const authorPlaceholder = useSelect( select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(), []);
-	const author = context['co-authors-plus/author'] || authorPlaceholder;
+	const authorPlaceholder = useSelect(
+		( select ) => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(),
+		[]
+	);
+	const author = context[ 'co-authors-plus/author' ] || authorPlaceholder;
 	const { description } = author;
 
 	return (
@@ -36,14 +43,12 @@ export default function Edit( { context, attributes, setAttributes } ) {
 				/>
 			</BlockControls>
 			<div
-				{
-					...useBlockProps({
-						className: classnames({
-							[`has-text-align-${ textAlign }`]: textAlign,
-							'is-layout-flow': true
-						})
-					})
-				}
+				{ ...useBlockProps( {
+					className: classnames( {
+						[ `has-text-align-${ textAlign }` ]: textAlign,
+						'is-layout-flow': true,
+					} ),
+				} ) }
 				dangerouslySetInnerHTML={ { __html: description.rendered } }
 			/>
 		</>

@@ -28,7 +28,7 @@
 		"spacing": {
 			"margin": true,
 			"padding": true,
-			"blockGap": ["vertical"],
+			"blockGap": [ "vertical" ],
 			"__experimentalDefaultControls": {
 				"margin": false,
 				"padding": false,

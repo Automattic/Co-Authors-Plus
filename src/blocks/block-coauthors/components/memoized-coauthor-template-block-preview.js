@@ -4,13 +4,12 @@ import { __experimentalUseBlockPreview as useBlockPreview } from '@wordpress/blo
 /**
  * CoAuthor Template Block Preview
  */
-function CoAuthorTemplateBlockPreview({
+function CoAuthorTemplateBlockPreview( {
 	blocks,
 	blockContextId,
 	isHidden,
 	setActiveBlockContextId,
-}) {
-	
+} ) {
 	const blockPreviewProps = useBlockPreview( {
 		blocks,
 		props: {

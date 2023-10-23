@@ -13,7 +13,7 @@ import {
 	InspectorControls,
 	RichText,
 	__experimentalGetGapCSSValue,
-	AlignmentControl
+	AlignmentControl,
 } from '@wordpress/block-editor';
 import { TextControl, ToolbarGroup, PanelBody } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
@@ -29,18 +29,18 @@ import MemoizedCoAuthorTemplateBlockPreview from './components/memoized-coauthor
 /**
  * CoAuthor Template Inner Blocks
  */
-function CoAuthorTemplateInnerBlocks () {
-	return <div { ...useInnerBlocksProps(
-		{ className: 'wp-block-co-authors-plus-coauthor' },
-		{ template : [['co-authors-plus/name']]}
-	) } />;
+function CoAuthorTemplateInnerBlocks() {
+	return (
+		<div
+			{ ...useInnerBlocksProps(
+				{ className: 'wp-block-co-authors-plus-coauthor' },
+				{ template: [ [ 'co-authors-plus/name' ] ] }
+			) }
+		/>
+	);
 }
 
-const ALLOWED_FORMATS = [
-	'core/bold',
-	'core/italic',
-	'core/text-color',
-];
+const ALLOWED_FORMATS = [ 'core/bold', 'core/italic', 'core/text-color' ];
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -50,16 +50,25 @@ const ALLOWED_FORMATS = [
  *
  * @return {WPElement} Element to render.
  */
-export default function Edit( { attributes, setAttributes, clientId, context, isSelected } ) {
-
-	const { prefix, separator, lastSeparator, suffix, layout, textAlign } = attributes;
+export default function Edit( {
+	attributes,
+	setAttributes,
+	clientId,
+	context,
+	isSelected,
+} ) {
+	const { prefix, separator, lastSeparator, suffix, layout, textAlign } =
+		attributes;
 	const { postId } = context;
-	const authorPlaceholder = useSelect( select => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(), []);
-	const [ coAuthors, setCoAuthors ] = useState([authorPlaceholder]);
+	const authorPlaceholder = useSelect(
+		( select ) => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(),
+		[]
+	);
+	const [ coAuthors, setCoAuthors ] = useState( [ authorPlaceholder ] );
 	const [ activeBlockContextId, setActiveBlockContextId ] = useState();
-	const noticesDispatch = useDispatch('core/notices');
+	const noticesDispatch = useDispatch( 'core/notices' );
 
-	useEffect(()=>{
+	useEffect( () => {
 		if ( ! postId ) {
 			return;
 		}
@@ -67,38 +76,40 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 		const controller = new AbortController();
 
 		apiFetch( {
-			path: `/coauthors/v1/coauthors?post_id=${postId}`,
-			signal: controller.signal
+			path: `/coauthors/v1/coauthors?post_id=${ postId }`,
+			signal: controller.signal,
 		} )
-		.then( setCoAuthors )
-		.catch( handleError )
+			.then( setCoAuthors )
+			.catch( handleError );
 
 		return () => {
 			controller.abort();
-		}
-	},[postId]);
+		};
+	}, [ postId ] );
 
 	/**
 	 * Handle Error
-	 * 
+	 *
 	 * @param {Error}
 	 */
 	function handleError( error ) {
 		if ( 'AbortError' === error.name ) {
 			return;
 		}
-		noticesDispatch.createErrorNotice( error.message, { isDismissible: true } );
+		noticesDispatch.createErrorNotice( error.message, {
+			isDismissible: true,
+		} );
 	}
 
-	const blocks = useSelect( (select) => {
+	const blocks = useSelect( ( select ) => {
 		return select( blockEditorStore ).getBlocks( clientId );
-	});
+	} );
 
 	const setLayout = ( nextLayout ) => {
 		setAttributes( {
 			layout: { ...layout, ...nextLayout },
 		} );
-	}
+	};
 
 	const layoutControls = [
 		{
@@ -110,8 +121,7 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 		{
 			icon: grid,
 			title: __( 'Block', 'co-authors-plus' ),
-			onClick: () =>
-				setLayout( { type: 'block' } ),
+			onClick: () => setLayout( { type: 'block' } ),
 			isActive: layout.type === 'block',
 		},
 	];
@@ -127,75 +137,81 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 					} }
 				/>
 			</BlockControls>
-			<div { ...useBlockProps({
+			<div
+				{ ...useBlockProps( {
 					className: classnames( {
-						[`is-layout-cap-${layout.type}`]: layout.type,
-						[`has-text-align-${ textAlign }`]: textAlign,
-					}),
+						[ `is-layout-cap-${ layout.type }` ]: layout.type,
+						[ `has-text-align-${ textAlign }` ]: textAlign,
+					} ),
 					style: {
-						gap: __experimentalGetGapCSSValue( attributes?.style?.spacing?.blockGap )
-					}
-				})
-			}>
-				{
-					coAuthors &&
+						gap: __experimentalGetGapCSSValue(
+							attributes?.style?.spacing?.blockGap
+						),
+					},
+				} ) }
+			>
+				{ coAuthors &&
 					'inline' === layout.type &&
-					( isSelected || prefix ) &&
-					(
+					( isSelected || prefix ) && (
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
 							className="wp-block-co-authors-plus-coauthors__prefix"
 							multiline={ false }
 							aria-label={ __( 'Prefix', 'co-authors-plus' ) }
-							placeholder={ __( 'Prefix', 'co-authors-plus' ) + ' ' }
+							placeholder={
+								__( 'Prefix', 'co-authors-plus' ) + ' '
+							}
 							value={ prefix }
 							onChange={ ( value ) =>
 								setAttributes( { prefix: value } )
 							}
 							tagName="span"
 						/>
-					)
-				}
-				{
-					coAuthors && 
+					) }
+				{ coAuthors &&
 					coAuthors
-					.map( ( author ) => {
-						const isHidden = author.id === ( activeBlockContextId || coAuthors[0]?.id );
-						return (
-							<BlockContextProvider
-								key={ author.id }
-								value={ {'co-authors-plus/author': author } }
-							>
-								{ isHidden ? (<CoAuthorTemplateInnerBlocks />) : null }
-								<MemoizedCoAuthorTemplateBlockPreview
-									blocks={blocks}
-									blockContextId={author.id}
-									setActiveBlockContextId={ setActiveBlockContextId }
-									isHidden={isHidden}
-								/>
-							</BlockContextProvider>
-						);
-					})
-					.reduce( ( previous, current, index, all ) => (
-						<>
-						{ previous }
-						{
-							'inline' === layout.type &&
-							(
-								<span className="wp-block-co-authors-plus-coauthors__separator">
-									{ ( lastSeparator && index === (all.length - 1) ) ? `${lastSeparator}` : `${separator}` }
-								</span>
-							)	
-						}
-						{ current }
-						</>
-					))
-				}
-				{
-					coAuthors &&
+						.map( ( author ) => {
+							const isHidden =
+								author.id ===
+								( activeBlockContextId || coAuthors[ 0 ]?.id );
+							return (
+								<BlockContextProvider
+									key={ author.id }
+									value={ {
+										'co-authors-plus/author': author,
+									} }
+								>
+									{ isHidden ? (
+										<CoAuthorTemplateInnerBlocks />
+									) : null }
+									<MemoizedCoAuthorTemplateBlockPreview
+										blocks={ blocks }
+										blockContextId={ author.id }
+										setActiveBlockContextId={
+											setActiveBlockContextId
+										}
+										isHidden={ isHidden }
+									/>
+								</BlockContextProvider>
+							);
+						} )
+						.reduce( ( previous, current, index, all ) => (
+							<>
+								{ previous }
+								{ 'inline' === layout.type && (
+									<span className="wp-block-co-authors-plus-coauthors__separator">
+										{ lastSeparator &&
+										index === all.length - 1
+											? `${ lastSeparator }`
+											: `${ separator }` }
+									</span>
+								) }
+								{ current }
+							</>
+						) ) }
+				{ coAuthors &&
 					'inline' === layout.type &&
-					( isSelected || suffix ) &&
-					(
+					( isSelected || suffix ) && (
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
 							className="wp-block-co-authors-plus-coauthors__suffix"
@@ -208,14 +224,13 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 							}
 							tagName="span"
 						/>
-					)
-				}
+					) }
 			</div>
 			<InspectorControls>
-				{
-					'inline' === layout.type &&
-					(
-						<PanelBody title={ __( 'Co-authors Layout', 'co-authors-plus' ) }>
+				{ 'inline' === layout.type && (
+					<PanelBody
+						title={ __( 'Co-authors Layout', 'co-authors-plus' ) }
+					>
 						<TextControl
 							autoComplete="off"
 							label={ __( 'Separator', 'co-authors-plus' ) }
@@ -223,7 +238,10 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 							onChange={ ( nextValue ) => {
 								setAttributes( { separator: nextValue } );
 							} }
-							help={ __( 'Enter character(s) used to separate authors.', 'co-authors-plus' ) }
+							help={ __(
+								'Enter character(s) used to separate authors.',
+								'co-authors-plus'
+							) }
 						/>
 						<TextControl
 							autoComplete="off"
@@ -232,11 +250,13 @@ export default function Edit( { attributes, setAttributes, clientId, context, is
 							onChange={ ( nextValue ) => {
 								setAttributes( { lastSeparator: nextValue } );
 							} }
-							help={ __( 'Enter character(s) used to separate the last author.', 'co-authors-plus' ) }
+							help={ __(
+								'Enter character(s) used to separate the last author.',
+								'co-authors-plus'
+							) }
 						/>
-						</PanelBody>
-					)
-				}
+					</PanelBody>
+				) }
 			</InspectorControls>
 		</>
 	);
