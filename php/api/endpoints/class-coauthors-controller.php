@@ -150,7 +150,7 @@ class CoAuthors_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'rest_unusable_data',
 				__( 'Sorry, an unusable response was produced.', 'co-authors-plus' ),
-				array( 'status' => 406 )
+				array( 'status' => 404 )
 			);
 		}
 
