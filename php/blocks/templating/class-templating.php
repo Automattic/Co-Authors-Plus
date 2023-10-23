@@ -17,7 +17,10 @@ class Templating {
 
 	/**
 	 * Render Element
-	 * 
+	 *
+	 * @param string      $name HTML element tag name.
+	 * @param string|null $attributes HTML attributes.
+	 * @param string|null $content Inner HTML content.
 	 * @since 3.6.0
 	 */
 	public static function render_element( string $name, ?string $attributes = '', ?string $content = '' ): string {

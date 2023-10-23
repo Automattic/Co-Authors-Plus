@@ -48,8 +48,8 @@ class Block_CoAuthor_Image {
 		}
 
 		$featured_media_id = absint( $author['featured_media'] ?? 0 );
-		$display_name      = $author['display_name'] ?? '';
-		$link              = $author['link'] ?? '';
+		$display_name      = esc_html( $author['display_name'] ?? '' );
+		$link              = esc_url( $author['link'] ?? '' );
 
 		if ( 0 === $featured_media_id ) {
 			return '';

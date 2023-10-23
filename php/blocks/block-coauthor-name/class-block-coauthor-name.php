@@ -47,8 +47,8 @@ class Block_CoAuthor_Name {
 			return '';
 		}
 
-		$display_name = $author['display_name'] ?? '';
-		$link         = $author['link'] ?? '';
+		$display_name = esc_html( $author['display_name'] ?? '' );
+		$link         = esc_url( $author['link'] ?? '' );
 
 		if ( '' === $display_name ) {
 			return '';

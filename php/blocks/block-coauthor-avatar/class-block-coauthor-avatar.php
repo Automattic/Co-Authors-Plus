@@ -52,8 +52,8 @@ class Block_CoAuthor_Avatar {
 			return '';
 		}
 		
-		$display_name = $author['display_name'] ?? '';
-		$link         = $author['link'] ?? '';
+		$display_name = esc_html( $author['display_name'] ?? '' );
+		$link         = esc_url( $author['link'] ?? '' );
 		$is_link      = '' !== $link && $attributes['isLink'] ?? false;
 		$rel          = $attributes['rel'] ?? '';
 		$size         = $attributes['size'] ?? array_keys( $avatar_urls )[0];
