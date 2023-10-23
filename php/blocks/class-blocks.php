@@ -135,10 +135,10 @@ class Blocks {
 			array(
 				'authorPlaceholder' => array(
 					'id'             => 0,
-					'display_name'   => 'FirstName LastName',
+					'display_name'   => __( 'FirstName LastName', 'co-authors-plus' ),
 					'description'    => array(
-						'raw'      => 'Placeholder description from Co-Authors block.',
-						'rendered' => '<p>Placeholder description from Co-Authors block.</p>',
+						'raw'      => __( 'Placeholder description from Co-Authors block.', 'co-authors-plus' ),
+						'rendered' => '<p>' . __( 'Placeholder description from Co-Authors block.', 'co-authors-plus' ) . '</p>',
 					),
 					'link'           => '#',
 					'featured_media' => 0,
