@@ -772,7 +772,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_append_post_author_who_has_not_been_linked(  ) {
+	public function test_append_post_author_who_has_not_been_linked() {
 		$post_id = $this->factory()->post->create(
 			array(
 				'post_author' => $this->author2->ID,
@@ -781,6 +781,7 @@ class CoAuthorsPlusTest extends TestCase {
 			)
 		);
 
+		// Immediately update the co-authors, adding $author3 to the existing $author2.
 		$this->_cap->add_coauthors( $post_id, array( $this->author3->user_login ), true );
 
 		$query = new WP_Query(
@@ -790,6 +791,7 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 
 		$this->assertEquals( 1, $query->found_posts );
+		// Although we added a co-author, the wp_posts.post_author column should still be attributed to $author2.
 		$this->assertEquals( $this->author2->ID, $query->posts[0]->post_author );
 
 		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
