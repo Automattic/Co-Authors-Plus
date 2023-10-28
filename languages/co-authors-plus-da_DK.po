@@ -1,0 +1,639 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Plugins - Co-Authors Plus - Stable (latest release)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-18T17:14:46+00:00\n"
+"PO-Revision-Date: 2023-10-27 17:44+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: da_DK\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.4.1\n"
+
+#. Author of the plugin
+msgid "Mohammad Jangda, Daniel Bachhuber, Automattic"
+msgstr "Mohammad Jangda, Daniel Bachhuber, Automattic"
+
+#. Description of the plugin
+msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
+msgstr "Tillader at et indlæg tildeles flere forfattere. Dette plugin er en udvidet version af det Co-Authors-plugin, som er udviklet af Weston Ruter."
+
+#. Plugin Name of the plugin
+msgid "Co-Authors Plus"
+msgstr "Co-Authors Plus"
+
+#. translators: Author display name.
+#: template-tags.php:409 template-tags.php:419
+msgid "Visit %s&#8217;s website"
+msgstr "Besøg %ss hjemmeside"
+
+#. translators: Author display name.
+#: template-tags.php:239 template-tags.php:635
+msgid "Posts by %s"
+msgstr "Indlæg af %s"
+
+#: template-tags.php:91
+msgid " and "
+msgstr " og "
+
+#: php/class-coauthors-guest-authors.php:455
+msgid "Name"
+msgstr "Navn"
+
+#: php/class-coauthors-plus.php:567 php/class-coauthors-wp-list-table.php:177
+msgid "Posts"
+msgstr "Indlæg"
+
+#: php/class-coauthors-wp-list-table.php:242
+msgid "Delete"
+msgstr "Slet"
+
+#: php/class-coauthors-plus.php:1395 php/class-coauthors-wp-list-table.php:239
+msgid "Edit"
+msgstr "Rediger"
+
+#: php/class-coauthors-guest-authors.php:452
+msgid "Save"
+msgstr "Gem"
+
+#: php/class-coauthors-plus.php:1396
+msgid "Remove"
+msgstr "Fjern"
+
+#. translators: URL for marking a comment as spam.
+#: co-authors-plus.php:137
+msgid "Spam it: %s"
+msgstr "Marker som spam: %s"
+
+#: php/class-wp-cli.php:235
+msgid "Please specify a valid co-author login"
+msgstr "Angiv et gyldigt medforfatter-login"
+
+#: php/class-wp-cli.php:231
+msgid "Please specify a valid user_login"
+msgstr "Angiv et gyldigt user_login"
+
+#: php/class-coauthors-wp-list-table.php:291
+msgid "Filter"
+msgstr "Filtrer"
+
+#: php/class-coauthors-wp-list-table.php:244
+msgid "View Posts"
+msgstr "Vis indlæg"
+
+#: php/class-coauthors-wp-list-table.php:89
+msgid "Show all"
+msgstr "Vis alle"
+
+#: php/class-coauthors-wp-list-table.php:91
+msgid "Without linked account"
+msgstr "Uden tilknyttet konto"
+
+#: php/class-coauthors-wp-list-table.php:90
+msgid "With linked account"
+msgstr "Med tilknyttet konto"
+
+#: php/class-coauthors-wp-list-table.php:24
+msgid "Co-Author"
+msgstr "Medforfatter"
+
+#: php/class-coauthors-wp-list-table.php:23
+msgid "Co-Authors"
+msgstr "Medforfattere"
+
+#: php/class-coauthors-guest-authors.php:1440
+msgid "Create Profile"
+msgstr "Opret profil"
+
+#: php/class-coauthors-guest-authors.php:1431
+msgid "Edit Profile"
+msgstr "Rediger profil"
+
+#: php/class-coauthors-guest-authors.php:1368
+msgid "No user exists with that ID"
+msgstr "Ingen brugere eksisterer med det ID"
+
+#: php/class-coauthors-guest-authors.php:1328
+msgid "Reassignment co-author does not exist"
+msgstr "Medforfatteren som du vil overføre til findes ikke"
+
+#: php/class-coauthors-guest-authors.php:1313
+msgid "Guest author does not exist"
+msgstr "Gæsteforfatter eksisterer ikke"
+
+#: php/class-coauthors-guest-authors.php:1257
+msgid "user_login cannot duplicate existing guest author or mapped user"
+msgstr "user_login kan ikke duplikere eksisterende gæsteforfatter eller tilknyttede bruger"
+
+#. translators: Name of a form field.
+#: php/class-coauthors-guest-authors.php:1251
+msgid "%s is a required field"
+msgstr "%s er et obligatorisk felt"
+
+#: php/class-coauthors-guest-authors.php:1074
+#: php/class-coauthors-guest-authors.php:1587
+msgid "Biographical Info"
+msgstr "Biografisk info"
+
+#: php/class-coauthors-guest-authors.php:1586
+msgid "Jabber / Google Talk"
+msgstr "Jabber / Google Talk"
+
+#: php/class-coauthors-guest-authors.php:1585
+msgid "Yahoo IM"
+msgstr "Yahoo IM"
+
+#: php/class-coauthors-guest-authors.php:1584
+msgid "AIM"
+msgstr "AIM"
+
+#: php/class-coauthors-guest-authors.php:1068
+#: php/class-coauthors-guest-authors.php:1583
+msgid "Website"
+msgstr "Hjemmeside"
+
+#: php/class-coauthors-guest-authors.php:1063
+#: php/class-coauthors-wp-list-table.php:176
+msgid "Linked Account"
+msgstr "Tilknyttet konto"
+
+#: php/class-coauthors-guest-authors.php:1057
+#: php/class-coauthors-wp-list-table.php:175
+msgid "E-mail"
+msgstr "E-mail"
+
+#: php/class-coauthors-guest-authors.php:1050
+msgid "Slug"
+msgstr "Kortlink"
+
+#: php/class-coauthors-guest-authors.php:1045
+#: php/class-coauthors-guest-authors.php:1582
+#: php/class-coauthors-wp-list-table.php:174
+msgid "Last Name"
+msgstr "Efternavn"
+
+#: php/class-coauthors-guest-authors.php:1040
+#: php/class-coauthors-guest-authors.php:1581
+#: php/class-coauthors-wp-list-table.php:173
+msgid "First Name"
+msgstr "Fornavn"
+
+#: php/class-coauthors-guest-authors.php:1034
+#: php/class-coauthors-guest-authors.php:1579
+#: php/class-coauthors-wp-list-table.php:172
+msgid "Display Name"
+msgstr "Visningsnavn"
+
+#: php/class-coauthors-guest-authors.php:1027
+#: php/class-coauthors-guest-authors.php:1577
+msgid "ID"
+msgstr "ID"
+
+#: php/class-coauthors-guest-authors.php:775
+#: php/class-coauthors-guest-authors.php:786
+msgid "Guest authors cannot be created without display names."
+msgstr "Gæsteforfattere kan ikke oprettes uden visningsnavn."
+
+#: php/class-coauthors-guest-authors.php:631
+msgid "-- Not mapped --"
+msgstr "-- Ikke tilknyttet --"
+
+#: php/class-coauthors-guest-authors.php:556
+msgid "Add New"
+msgstr "Tilføj ny"
+
+#: php/class-coauthors-guest-authors.php:626
+msgid "WordPress User Mapping"
+msgstr "WordPress brugertilknytning"
+
+#: php/class-coauthors-guest-authors.php:543
+#: php/class-coauthors-guest-authors.php:545
+msgid "Confirm Deletion"
+msgstr "Bekræft sletning"
+
+#: php/class-coauthors-guest-authors.php:535
+msgid "Remove byline from posts (but leave each post in its current status)."
+msgstr "Fjern byline fra indlæggene (men lad hvert indlæg beholde sin nuværende status)."
+
+#: php/class-coauthors-guest-authors.php:523
+msgid "Reassign to another co-author:"
+msgstr "Overfør til en anden medforfatter:"
+
+#: php/class-coauthors-guest-authors.php:494
+msgid "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author."
+msgstr "Bemærk: Hvis du gerne vil slette en gæsteforfatter og alle dennes indlæg, bør du slette indlæggene først og derefter slette gæsteforfatteren."
+
+#: php/class-coauthors-guest-authors.php:488
+msgid "You have specified this guest author for deletion:"
+msgstr "Du har markeret denne gæsteforfatter til sletning:"
+
+#: php/class-coauthors-guest-authors.php:456
+msgid "Contact Info"
+msgstr "Kontaktinfo"
+
+#: php/class-coauthors-guest-authors.php:453
+msgid "Unique Slug"
+msgstr "Entydig korttitel"
+
+#: php/class-coauthors-guest-authors.php:433
+msgid "Guest author deleted."
+msgstr "Gæsteforfatter slettet."
+
+#: php/class-coauthors-guest-authors.php:281
+msgid "Please make sure to pick an option."
+msgstr "Sørg for at vælge en af valgmulighederne."
+
+#: php/class-coauthors-guest-authors.php:271
+msgid "Co-author does not exists. Try again?"
+msgstr "Medforfatter eksisterer ikke. Prøv igen?"
+
+#: php/class-coauthors-guest-authors.php:255
+#: php/class-coauthors-guest-authors.php:478
+msgid "Guest author can't be deleted because it doesn't exist."
+msgstr "Gæsteforfatteren kan ikke slettes fordi den ikke eksisterer."
+
+#: php/class-coauthors-guest-authors.php:209
+#: php/class-coauthors-guest-authors.php:249
+msgid "You don't have permission to perform this action."
+msgstr "Du har ikke tilladelse til at udføre denne handling."
+
+#: php/class-coauthors-guest-authors.php:205
+#: php/class-coauthors-guest-authors.php:244
+#: php/class-coauthors-guest-authors.php:472
+msgid "Doin' something fishy, huh?"
+msgstr "Har du gang i noget fy fy?"
+
+#. translators: Guest author profile preview URL.
+#: php/class-coauthors-guest-authors.php:187
+msgid "Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+msgstr "Gæsteforfatter opdateret. <a target=\"_blank\" href=\"%s\">Forhåndsvis profil</a>"
+
+#. translators: Guest author profile preview URL.
+#: php/class-coauthors-guest-authors.php:181
+msgid "Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview profile</a>"
+msgstr "Gæsteforfatter planlagt til: <strong>%1$s </strong>. <a target=\"_blank\" href=\"%2$s\">Forhåndsvis profil</a>"
+
+#. translators: Guest author URL
+#: php/class-coauthors-guest-authors.php:178
+msgid "Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+msgstr "Gæsteforfatter tilføjet. <a target=\"_blank\" href=\"%s\">Forhåndsvis profil</a>"
+
+#: php/class-coauthors-guest-authors.php:176
+msgid "Guest author saved."
+msgstr "Gæsteforfatter gemt."
+
+#. translators: %s: date and time of the revision
+#: php/class-coauthors-guest-authors.php:173
+msgid "Guest author restored to revision from %s"
+msgstr "Gæsteforfatter tilbageført til revisionen fra %s"
+
+#: php/class-coauthors-guest-authors.php:171
+msgid "Guest author updated."
+msgstr "Gæsteforfatter opdateret."
+
+#: php/class-coauthors-guest-authors.php:170
+msgid "Custom field deleted."
+msgstr "Tilpasset felt slettet."
+
+#: php/class-coauthors-guest-authors.php:169
+msgid "Custom field updated."
+msgstr "Tilpasset felt opdateret."
+
+#. translators: Guest author URL
+#: php/class-coauthors-guest-authors.php:168
+#: php/class-coauthors-guest-authors.php:175
+msgid "Guest author updated. <a href=\"%s\">View profile</a>"
+msgstr "Gæsteforfatter opdateret. <a href=\"%s\">Se profil</a>"
+
+#: php/class-coauthors-guest-authors.php:114
+msgctxt "guest author"
+msgid "Add New"
+msgstr "Tilføj ny"
+
+#: php/class-coauthors-guest-authors.php:100
+msgid "About the guest author"
+msgstr "Om gæsteforfatteren"
+
+#: php/class-coauthors-guest-authors.php:99
+msgid "Update Guest Author"
+msgstr "Opdater gæsteforfatter"
+
+#: php/class-coauthors-guest-authors.php:98
+msgid "No guest authors found in Trash"
+msgstr "Ingen gæsteforfattere blev fundet i papirkurven"
+
+#: php/class-coauthors-guest-authors.php:97
+msgid "No guest authors found"
+msgstr "Ingen gæsteforfattere fundet"
+
+#: php/class-coauthors-guest-authors.php:96
+msgid "Search Guest Authors"
+msgstr "Søg i gæsteforfattere"
+
+#: php/class-coauthors-guest-authors.php:95
+msgid "View Guest Author"
+msgstr "Vis gæsteforfatter"
+
+#: php/class-coauthors-guest-authors.php:94
+msgid "New Guest Author"
+msgstr "Ny gæsteforfatter"
+
+#: php/class-coauthors-guest-authors.php:93
+msgid "Edit Guest Author"
+msgstr "Rediger gæsteforfatter"
+
+#: php/class-coauthors-guest-authors.php:92
+msgid "Add New Guest Author"
+msgstr "Tilføj ny gæsteforfatter"
+
+#: php/class-coauthors-guest-authors.php:91
+msgid "All Guest Authors"
+msgstr "Alle gæsteforfattere"
+
+#: php/class-coauthors-guest-authors.php:90
+msgid "Guest Authors"
+msgstr "Gæsteforfattere"
+
+#: php/class-coauthors-guest-authors.php:89
+#: php/class-coauthors-guest-authors.php:1547
+#: php/class-coauthors-guest-authors.php:1620
+msgid "Guest Author"
+msgstr "Gæsteforfatter"
+
+#. translators: URL for deleting a comment.
+#: co-authors-plus.php:134
+msgid "Delete it: %s"
+msgstr "Slet den: %s"
+
+#. translators: Post title.
+#: co-authors-plus.php:116
+msgid "New pingback on your post \"%s\""
+msgstr "Nyt pingback til dit indlæg \"%s\""
+
+#. translators: 1: blog name, 2: post title
+#: co-authors-plus.php:113
+msgid "[%1$s] Trackback: \"%2$s\""
+msgstr "[%1$s] Trackback: \"%2$s\""
+
+#: co-authors-plus.php:111
+msgid "You can see all trackbacks on this post here: "
+msgstr "Du kan se alle trackbacks til dette indlæg her: "
+
+#: co-authors-plus.php:110 co-authors-plus.php:121
+msgid "Excerpt: "
+msgstr "Uddrag: "
+
+#. translators: 1: comment author, 2: author IP, 3: author domain
+#: co-authors-plus.php:107 co-authors-plus.php:118
+msgid "Website: %1$s (IP: %2$s , %3$s)"
+msgstr "Hjemmeside: %1$s (IP: %2$s , %3$s)"
+
+#. translators: Post title.
+#: co-authors-plus.php:105
+msgid "New trackback on your post \"%s\""
+msgstr "Ny trackback til dit indlæg \"%s\""
+
+#. translators: 1: blog name, 2: post title
+#: co-authors-plus.php:102
+msgid "[%1$s] Comment: \"%2$s\""
+msgstr "[%1$s] Kommentar: \"%2$s\""
+
+#: co-authors-plus.php:100
+msgid "You can see all comments on this post here: "
+msgstr "Du kan se alle kommentarerne til dette indlæg her: "
+
+#: co-authors-plus.php:99
+msgid "Comment: "
+msgstr "Kommentar: "
+
+#. translators: Comment author URL.
+#: co-authors-plus.php:96 co-authors-plus.php:109 co-authors-plus.php:120
+msgid "URL    : %s"
+msgstr "URL    : %s"
+
+#. translators: 1: comment author, 2: author IP, 3: author domain
+#: co-authors-plus.php:92
+msgid "Author : %1$s (IP: %2$s , %3$s)"
+msgstr "Forfatter : %1$s (IP: %2$s , %3$s)"
+
+#. translators: Post title.
+#: co-authors-plus.php:90
+msgid "New comment on your post \"%s\""
+msgstr "Ny kommentar til dit indlæg \"%s\""
+
+#: php/class-coauthors-plus.php:1441
+msgid "Mine"
+msgstr "Min"
+
+#: php/class-coauthors-plus.php:1399
+msgid "Search for an author"
+msgstr "Søg efter en forfatter"
+
+#: php/class-coauthors-plus.php:1398
+msgid "Click to change this author, or drag to change their position"
+msgstr "Klik for at ændre denne forfatter eller træk for at ændre placeringen"
+
+#: php/class-coauthors-plus.php:1397
+msgid "Are you sure you want to remove this author?"
+msgstr "Er du sikker på at du vil fjerne denne forfatter?"
+
+#: php/class-coauthors-plus.php:649 php/class-coauthors-plus.php:667
+msgid "No co-author exists for that term"
+msgstr "Ingen medforfatter eksisterer for denne term"
+
+#: php/class-coauthors-plus.php:586
+msgid "View posts by this author"
+msgstr "Vis indlæg af denne forfatter"
+
+#: php/class-coauthors-plus.php:472 php/class-coauthors-plus.php:606
+#: php/class-coauthors-plus.php:1400
+msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
+msgstr "Klik på en forfatter for at ændre denne. Træk for at ændre rækkefølgen. Klik på <strong>Fjern</strong> for at fjerne dem."
+
+#: php/class-coauthors-plus.php:197 php/class-coauthors-plus.php:395
+#: php/class-coauthors-plus.php:515 php/class-coauthors-plus.php:604
+#: php/class-coauthors-plus.php:1649 build/index.js:1 src/index.js:20
+msgid "Authors"
+msgstr "Forfattere"
+
+#. translators: Publish box date format, see http://php.net/date
+#: php/class-coauthors-guest-authors.php:183
+msgid "M j, Y @ G:i"
+msgstr "j. F Y, k\\l H:i"
+
+#. translators: URL for trashing a comment.
+#: co-authors-plus.php:131
+msgid "Trash it: %s"
+msgstr "Smid i papirkurven: %s"
+
+#. translators: Comment URL.
+#: co-authors-plus.php:128
+msgid "Permalink: %s"
+msgstr "Permanent link: %s"
+
+#. translators: 1: blog name, 2: post title
+#: co-authors-plus.php:124
+msgid "[%1$s] Pingback: \"%2$s\""
+msgstr "[%1$s] Pingback: \"%2$s\""
+
+#: co-authors-plus.php:122
+msgid "You can see all pingbacks on this post here: "
+msgstr "Du kan se alle pingbacks til dette indlæg her: "
+
+#: php/class-coauthors-guest-authors.php:806
+msgid "Display name conflicts with another guest author display name."
+msgstr "Visningsnavn er i konflikt med en anden gæsteforfatters visningsnavn."
+
+#. translators: Name of a linked user account.
+#: php/class-coauthors-guest-authors.php:530
+msgid "Leave posts assigned to the mapped user, %s."
+msgstr "Lad indlæggene forblive knyttet til den tilknyttede bruger, %s."
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/co-authors-plus/"
+msgstr "https://wordpress.org/plugins/co-authors-plus/"
+
+#. Author URI of the plugin
+msgid "https://automattic.com"
+msgstr "https://automattic.com"
+
+#. translators: Comment author email address.
+#: co-authors-plus.php:94
+msgid "Email : %s"
+msgstr "Email : %s"
+
+#. translators: Comment author IP address.
+#: co-authors-plus.php:98
+msgid "Whois  : https://whois.arin.net/rest/ip/%s"
+msgstr "Whois  : https://whois.arin.net/rest/ip/%s"
+
+#: php/class-coauthors-endpoint.php:65
+msgid "Text to search."
+msgstr "Tekst som der skal søges i."
+
+#: php/class-coauthors-endpoint.php:70
+msgid "Names of existing co-authors to exclude from search results."
+msgstr "Navne på medforfattere, som skal udelukkes fra søgeresultater."
+
+#: php/class-coauthors-endpoint.php:113
+msgid "Names of co-authors to save."
+msgstr "Navne på medforfattere, som skal gemmes."
+
+#: php/class-coauthors-guest-authors.php:101
+msgid "Avatar"
+msgstr "Profilbillede"
+
+#: php/class-coauthors-guest-authors.php:102
+msgid "Set Avatar"
+msgstr "Vælg profilbillede"
+
+#: php/class-coauthors-guest-authors.php:103
+msgid "Use Avatar"
+msgstr "Brug profilbillede"
+
+#: php/class-coauthors-guest-authors.php:104
+msgid "Remove Avatar"
+msgstr "Fjern profilbillede"
+
+#: php/class-coauthors-guest-authors.php:486
+msgid "Delete Guest Authors"
+msgstr "Slet gæsteforfattere"
+
+#: php/class-coauthors-guest-authors.php:492
+msgid "There are no posts associated with this guest author."
+msgstr "Der er ingen indlæg knyttet til denne gæsteforfatter."
+
+#. translators: Count of posts
+#: php/class-coauthors-guest-authors.php:497
+msgid "There is %d post associated with this guest author. What should be done with the post assigned to this Guest Author?"
+msgid_plural "There are %d posts associated with this guest author. What should be done with the posts assigned to this Guest Author?"
+msgstr[0] "Der er %d indlæg knyttet til denne gæsteforfatter. Hvad skal der ske med dette indlæg?"
+msgstr[1] "Der er %d indlæg knyttet til denne gæsteforfatter. Hvad skal der ske med disse indlæg?"
+
+#: php/class-coauthors-guest-authors.php:800
+msgid "There is a WordPress user with the same username as this guest author, please go back and link them in order to update."
+msgstr "Der er en Wordpress-bruger med samme brugernavn som denne gæsteforfatter. Du skal gå tilbage og knytte den til hinanden for at kunne opdatere."
+
+#: php/class-coauthors-guest-authors.php:1578
+msgid "Login Name"
+msgstr "Loginnavn"
+
+#: php/class-coauthors-guest-authors.php:1580
+msgid "Email"
+msgstr "Email"
+
+#: php/class-coauthors-plus.php:198
+msgid "All Authors"
+msgstr "Alle forfattere"
+
+#: php/class-coauthors-plus.php:465
+msgid "<strong>Note:</strong> To edit post authors, please enable JavaScript or use a JavaScript-capable browser"
+msgstr "<strong>Bemærk:</strong> For at redigere indlægsforfattere skal javascript være aktivt, eller du skal bruge en browser som understøtter javascript"
+
+#. translators: Author display name.
+#: php/class-coauthors-plus.php:1805
+msgid "Author: %s"
+msgstr "Forfatter: %s"
+
+#: php/class-coauthors-wp-list-table.php:164
+msgid "No matching co-authors were found."
+msgstr "Ingen matchende gæsteforfattere blev fundet."
+
+#. translators: 1: Post ID, 2: Comma-separated list of co-author slugs.
+#: php/class-wp-cli.php:248
+msgid "Skipping - Post #%1$d already has co-authors assigned: %2$s"
+msgstr "Springer over - Indlægget #%d har allerede tilknyttede medforfattere: %s"
+
+#. translators: 1: Co-author login, 2: Post ID
+#: php/class-wp-cli.php:258
+msgid "Updating - Adding %1$s's byline to post #%2$d"
+msgstr "Opdaterer - Tilføjer %1$ss byline til indlægget #%2$d"
+
+#. translators: Count of posts.
+#: php/class-wp-cli.php:267
+msgid "All done! %d post was affected."
+msgid_plural "All done! %d posts were affected."
+msgstr[0] "Færdig! %d indlæg blev ændret."
+msgstr[1] "Færdig! %d indlæg blev ændret."
+
+#. translators: Guest Author ID.
+#: php/class-wp-cli.php:902
+msgid "-- Author already exists (ID #%s); skipping."
+msgstr "-- Forfatter findes allerede (ID #%s). Springer over."
+
+#: php/class-wp-cli.php:905
+msgid "-- Not found; creating profile."
+msgstr "-- Ikke fundet. Opretter profil."
+
+#. translators: The error message.
+#: php/class-wp-cli.php:922
+msgid "-- Failed to create guest author: %s"
+msgstr "-- Der opstod en fejl med at oprette gæsteforfatteren: %s"
+
+#. translators: Guest Author ID.
+#: php/class-wp-cli.php:932
+msgid "-- Created as guest author #%s"
+msgstr "-- Oprettet som gæsteforfatter #%s"
+
+#: php/integrations/yoast.php:258
+msgid "Written by"
+msgstr "Skrevet af"
+
+#: build/index.js:1 src/components/author-selection/index.jsx:74
+msgid "Move Up"
+msgstr "Flyt op"
+
+#: build/index.js:1 src/components/author-selection/index.jsx:85
+msgid "Move down"
+msgstr "Flyt ned"
+
+#: build/index.js:1 src/components/author-selection/index.jsx:102
+msgid "Remove Author"
+msgstr "Fjern forfatter"
+
+#: build/index.js:1 src/components/co-authors/index.jsx:189
+msgid "Select An Author"
+msgstr "Vælg forfatter"
