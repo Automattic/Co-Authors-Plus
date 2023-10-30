@@ -196,4 +196,39 @@ class Blocks {
 
 		return $data;
 	}
+
+	/**
+	 * Get CoAuthors with API Schema
+	 * 
+	 * Use the global WP_REST_Server to fetch co-authors for a post,
+	 * so that it matches what a user would see in the editor.
+	 * 
+	 * @since 3.6.0
+	 * @param int   $post_id Post ID for querying co-authors.
+	 * @param array $data Co-authors as returned by the REST API.
+	 */
+	public static function get_authors_with_api_schema( int $post_id ): array {
+
+		$data = rest_get_server()->dispatch(
+			WP_REST_Request::from_url(
+				home_url(
+					sprintf(
+						'/wp-json/coauthors/v1/coauthors?post_id=%d',
+						$post_id
+					)
+				)
+			)
+		)->get_data();
+
+		if ( ! is_array( $data ) ) {
+			return array();
+		}
+
+		// The presence of `code` indicates this is an error response.
+		if ( array_key_exists( 'code', $data ) ) {
+			return array();
+		}
+
+		return $data;
+	}
 }

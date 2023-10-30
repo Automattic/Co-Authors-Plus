@@ -82,7 +82,7 @@ class CoAuthors_Controller extends WP_REST_Controller {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
-					'permission_callback' => array( $this, 'get_items_permission_check' ),
+					'permission_callback' => '__return_true'
 				),
 			)
 		);
@@ -195,32 +195,6 @@ class CoAuthors_Controller extends WP_REST_Controller {
 				},
 				$coauthors
 			)
-		);
-	}
-
-	/**
-	 * Get Items Permission Check
-	 *
-	 * @since 3.6.0
-	 * @param WP_REST_Request $request
-	 * @return bool|WP_Error
-	 */
-	public function get_items_permission_check( WP_REST_Request $request ) {
-
-		$post_id = $request->get_param( 'post_id' );
-
-		if ( current_user_can( 'edit_post', $post_id ) ) {
-			return true;
-		}
-
-		if ( is_coauthor_for_post( get_current_user(), $post_id ) ) {
-			return true;
-		}
-
-		return new WP_Error(
-			'rest_cannot_view',
-			__( 'Sorry, you are not allowed to view co-authors of this post.', 'co-authors-plus' ),
-			array( 'status' => rest_authorization_required_code() )
 		);
 	}
 

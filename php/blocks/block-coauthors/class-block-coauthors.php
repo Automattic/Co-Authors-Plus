@@ -9,6 +9,7 @@
 namespace CoAuthors\Blocks;
 
 use WP_Block;
+use CoAuthors\Blocks;
 
 /**
  * Block CoAuthors
@@ -96,19 +97,9 @@ class Block_CoAuthors {
 			return '';
 		}
 
-		$authors = array_values(
-			array_filter(
-				array_map(
-					'CoAuthors\Blocks::get_author_with_api_schema',
-					get_coauthors( $post_id )
-				),
-				function( $author ) : bool {
-					return ! is_null( $author );
-				}
-			)
-		);
+		$authors = Blocks::get_authors_with_api_schema( $post_id );
 
-		if ( ! is_array( $authors ) || empty( $authors ) ) {
+		if ( empty( $authors ) ) {
 			return '';
 		}
 
