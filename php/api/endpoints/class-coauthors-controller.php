@@ -164,7 +164,17 @@ class CoAuthors_Controller extends WP_REST_Controller {
 	 * @param WP_User|stdClass $coauthor
 	 */
 	public static function is_coauthor( $coauthor ): bool {
-		return is_a( $coauthor, 'WP_User' ) || ( property_exists( $coauthor, 'type' ) && 'guest-author' === $coauthor->type );
+		return is_a( $coauthor, 'WP_User' ) || self::is_guest_author( $coauthor );
+	}
+
+	/**
+	 * Is Guest Author
+	 *
+	 * @since 3.6.0
+	 * @param WP_User|stdClass $coauthor
+	 */
+	public static function is_guest_author( $coauthor ): bool {
+		return property_exists( $coauthor, 'type' ) && 'guest-author' === $coauthor->type;
 	}
 
 	/**
@@ -349,7 +359,11 @@ class CoAuthors_Controller extends WP_REST_Controller {
 		}
 
 		if ( rest_is_field_included( 'featured_media', $fields ) ) {
-			$data['featured_media'] = (int) ( 'guest-author' === $author->type ? get_post_thumbnail_id( $author->ID ) : 0 );
+			if ( self::is_guest_author( $author ) ) {
+				$data['featured_media'] = (int) get_post_thumbnail_id( $author->ID );
+			} else {
+				$data['featured_media'] = 0;
+			}
 		}
 
 		if ( rest_is_field_included( 'user_nicename', $fields ) ) {
