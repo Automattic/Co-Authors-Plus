@@ -1,9 +1,5 @@
 /* Default Layout */
 
-.wp-block-co-authors-plus-avatar {
-	margin-bottom: 0;
-}
-
 .wp-block-co-authors-plus-avatar :where(img) {
 	height: auto;
 	max-width: 100%;
@@ -12,18 +8,8 @@
 
 /* Inline Layout */
 
-.wp-block-co-authors-plus-coauthors.is-layout-cap-inline .wp-block-co-authors-plus-avatar {
-	display: inline;
-}
-
 .wp-block-co-authors-plus-coauthors.is-layout-cap-inline .wp-block-co-authors-plus-avatar :where(img) {
 	vertical-align: middle;
-}
-
-/* Align wide, full */
-
-.wp-block-co-authors-plus-avatar:is(.alignfull,.alignwide) :where(img) {
-	width: 100%;
 }
 
 /* Align left, right, center */

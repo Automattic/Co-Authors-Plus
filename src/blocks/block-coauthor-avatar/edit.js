@@ -49,7 +49,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 
 	return (
 		<>
-			<figure { ...useBlockProps() }>
+			<div { ...useBlockProps() }>
 				{ '' === src ? (
 					<PlaceholderImage
 						className={ borderProps.className }
@@ -72,7 +72,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 						src={ `${ avatar_urls[ size ] }` }
 					/>
 				) }
-			</figure>
+			</div>
 			<InspectorControls>
 				<PanelBody title={ __( 'Avatar Settings', 'co-authors-plus' ) }>
 					<SelectControl
@@ -106,7 +106,7 @@ export default function Edit( { context, attributes, setAttributes } ) {
 				</PanelBody>
 				<PanelBody
 					initialOpen={ false }
-					title={ __( 'Co-authors Layout', 'co-authors-plus' ) }
+					title={ __( 'Co-Authors Layout', 'co-authors-plus' ) }
 				>
 					<SelectControl
 						label={ __( 'Vertical align', 'co-authors-plus' ) }

@@ -66,22 +66,44 @@ class Block_CoAuthor_Avatar {
 			array_values( $avatar_urls )
 		);
 
-		$image_attributes = Templating::render_attributes(
-			array_merge(
-				get_block_core_post_featured_image_border_attributes( $attributes ),
-				array(
-					'src'    => $avatar_urls[ $size ],
-					'width'  => $size,
-					'height' => $size,
-					'sizes'  => "{$size}px",
-					'srcset' => implode( ', ', $srcset ),
-				)
-			)
+		$image_attributes = array_merge(
+			array(
+				'src'    => $avatar_urls[ $size ],
+				'width'  => $size,
+				'height' => $size,
+				'sizes'  => "{$size}px",
+				'srcset' => implode( ', ', $srcset ),
+				'style'  => '',
+				'class'  => ''
+			),
+			get_block_core_post_featured_image_border_attributes( $attributes ),
 		);
+
+		$style_attribute_key_map = array(
+			'verticalAlign' => 'vertical-align',
+		);
+
+		$styles = array_map(
+			function( string $key, string $style ) use ( $attributes ) : string {
+				if ( empty( $attributes[ $key ] ) ) {
+					return '';
+				}
+				return sprintf(
+					'%s;',
+					safecss_filter_attr(
+						"{$style}:{$attributes[$key]}"
+					)
+				);
+			},
+			array_keys( $style_attribute_key_map ),
+			array_values( $style_attribute_key_map )
+		);
+
+		$image_attributes['style'] .= implode( '', $styles );
 
 		$image = Templating::render_self_closing_element(
 			'img',
-			$image_attributes
+			Templating::render_attributes( $image_attributes )
 		);
 
 		if ( $is_link ) {
@@ -98,7 +120,7 @@ class Block_CoAuthor_Avatar {
 		}
 
 		return Templating::render_element(
-			'figure',
+			'div',
 			get_block_wrapper_attributes(),
 			$inner_content
 		);
