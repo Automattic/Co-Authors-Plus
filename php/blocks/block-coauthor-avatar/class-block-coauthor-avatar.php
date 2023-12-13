@@ -76,7 +76,7 @@ class Block_CoAuthor_Avatar {
 				'style'  => '',
 				'class'  => ''
 			),
-			get_block_core_post_featured_image_border_attributes( $attributes ),
+			get_block_core_post_featured_image_border_attributes( $attributes )
 		);
 
 		$style_attribute_key_map = array(
