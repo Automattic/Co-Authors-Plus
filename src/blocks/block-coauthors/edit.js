@@ -20,7 +20,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { list, grid } from '@wordpress/icons';
+import { row, stack } from '@wordpress/icons';
 
 import classnames from 'classnames';
 
@@ -113,13 +113,13 @@ export default function Edit( {
 
 	const layoutControls = [
 		{
-			icon: list,
+			icon: row,
 			title: __( 'Inline', 'co-authors-plus' ),
 			onClick: () => setLayout( { type: 'inline' } ),
 			isActive: layout.type === 'inline',
 		},
 		{
-			icon: grid,
+			icon: stack,
 			title: __( 'Block', 'co-authors-plus' ),
 			onClick: () => setLayout( { type: 'block' } ),
 			isActive: layout.type === 'block',
