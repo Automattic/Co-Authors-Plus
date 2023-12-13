@@ -229,7 +229,7 @@ export default function Edit( {
 			<InspectorControls>
 				{ 'inline' === layout.type && (
 					<PanelBody
-						title={ __( 'Co-authors Layout', 'co-authors-plus' ) }
+						title={ __( 'Co-Authors Layout', 'co-authors-plus' ) }
 					>
 						<TextControl
 							autoComplete="off"

@@ -166,7 +166,7 @@ export default function Edit( {
 				</PanelBody>
 				<PanelBody
 					initialOpen={ false }
-					title={ __( 'Co-authors Layout', 'co-authors-plus' ) }
+					title={ __( 'Co-Authors Layout', 'co-authors-plus' ) }
 				>
 					<SelectControl
 						label={ __( 'Vertical align', 'co-authors-plus' ) }

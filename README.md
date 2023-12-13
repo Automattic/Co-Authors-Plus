@@ -114,7 +114,7 @@ This block outputs the biographical information for a co-author based on either 
 
 The content is wrapped in paragraph elements using `wpautop` and is escaped using `wp_kses_post`.
 
-### Co-Author Image
+### Co-Author Featured Image
 
 This block requires the use of Guest Authors. Because guest author avatars are uploaded to the WordPress media library, there are more options for displaying these images.
 
