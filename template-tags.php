@@ -24,7 +24,7 @@ function get_coauthors( $post_id = 0 ) {
 					$coauthors[] = $post_author;
 				}
 			}
-		} elseif ( ! $coauthors_plus->force_guest_authors ) {
+		} else {
 			if ( $post && $post_id == $post->ID ) {
 				$post_author = get_userdata( $post->post_author );
 			} else {
@@ -33,7 +33,7 @@ function get_coauthors( $post_id = 0 ) {
 			if ( ! empty( $post_author ) ) {
 				$coauthors[] = $post_author;
 			}
-		} // the empty else case is because if we force guest authors, we don't ever care what value wp_posts.post_author has.
+		}
 	}
 	// remove duplicate $coauthors objects from mapping user accounts to guest authors accounts
 	$coauthors = array_unique( $coauthors, SORT_REGULAR );
@@ -77,8 +77,7 @@ function is_coauthor_for_post( $user, $post_id = 0 ) {
 	}
 
 	foreach ( $coauthors as $coauthor ) {
-		if ( ( isset( $coauthor->user_login ) && $user == $coauthor->user_login )
-			|| ( isset( $coauthor->linked_account ) && $user == $coauthor->linked_account ) ) {
+		if ( isset( $coauthor->user_login ) && $user == $coauthor->user_login ) {
 			return true;
 		}
 	}
@@ -405,16 +404,6 @@ function coauthors_emails( $between = null, $betweenLast = null, $before = null,
  * @return string
  */
 function coauthors_links_single( $author ) {
-	if ( 'guest-author' === $author->type && get_the_author_meta( 'website' ) ) {
-		return sprintf(
-			'<a href="%s" title="%s" rel="author external">%s</a>',
-			esc_url( get_the_author_meta( 'website' ) ),
-			/* translators: Author display name. */
-			esc_attr( sprintf( __( 'Visit %s&#8217;s website', 'co-authors-plus' ), esc_html( get_the_author() ) ) ),
-			esc_html( get_the_author() )
-		);
-	}
-
 	if ( get_the_author_meta( 'url' ) ) {
 		return sprintf(
 			'<a href="%s" title="%s" rel="author external">%s</a>',
@@ -482,14 +471,6 @@ function get_the_coauthor_meta( $field, $user_id = false ) {
 	foreach ( $coauthors as $coauthor ) {
 		$user_id = $coauthor->ID;
 
-		if ( isset( $coauthor->type ) && 'user_url' === $field ) {
-			if ( 'guest-author' === $coauthor->type ) {
-				$field = 'website';
-			}
-		} elseif ( 'website' === $field ) {
-			$field = 'user_url';
-		}
-
 		if ( isset( $coauthor->$field ) ) {
 			$meta[ $user_id ] = $coauthor->$field;
 		} else {
@@ -513,13 +494,10 @@ function the_coauthor_meta( $field, $user_id = 0 ) {
  * Returns an array of blog users and co-authors.
  * @param array $args An argument array to customize the returned result.
  *      number (int) (20): The maximum number of (co-)authors to return.
- *      guest_authors_only (boolean) (false): If true, include only guest authors without WP users.
  *      authors_with_posts_only (boolean) (false): If true, don't query for authors with no posts.
  *      orderby (string) ('name'): A field to order the authors by {@see WP_Term_Query::__construct()}
  *
- * @return array A unique array of WP_User-like objects each containing data for a use or a co-author.
- *      The returned array may contain a mix of native WP users as well as guest authors as
- *      designated by $args. You can use the $user->type property to check for the user type.
+ * @return WP_User[] A unique array WP_User objects each containing data for a user.
  */
 function coauthors_get_users( $args = array() ) {
 	global $coauthors_plus;
@@ -551,21 +529,10 @@ function coauthors_get_users( $args = array() ) {
 		}
 
 		$authors[ $author_term->name ] = $coauthor;
+		$authors[ $author_term->name ]->post_count = $author_term->count;
 
-		// only show guest authors if the $args is set to true
-		if ( ! $args['guest_authors_only'] || $authors[ $author_term->name ]->type === 'guest-author' ) {
-			$authors[ $author_term->name ]->post_count = $author_term->count;
-		} else {
-			unset( $authors[ $author_term->name ] );
-		}
 	}
 	$authors = apply_filters( 'coauthors_wp_list_authors_array', $authors );
-
-	// remove duplicates from linked accounts
-	$linked_accounts = array_unique( array_column( $authors, 'linked_account' ) );
-	foreach ( $linked_accounts as $linked_account ) {
-		unset( $authors[ $linked_account ] );
-	}
 
 	return $authors;
 }
@@ -595,7 +562,6 @@ function coauthors_wp_list_authors( $args = array() ) {
 		'style'                   => 'list',
 		'html'                    => true,
 		'number'                  => 20, // A sane limit to start to avoid breaking all the things
-		'guest_authors_only'      => false,
 		'authors_with_posts_only' => false,
 		'orderby'                 => 'name',
 	);
@@ -717,14 +683,6 @@ function coauthors_get_avatar( $coauthor, $size = 32, $default = '', $alt = fals
 
 	if ( ! is_object( $coauthor ) ) {
 		return '';
-	}
-
-	if ( isset( $coauthor->type ) && 'guest-author' == $coauthor->type ) {
-		$guest_author_thumbnail = $coauthors_plus->guest_authors->get_guest_author_thumbnail( $coauthor, $size, $class );
-
-		if ( $guest_author_thumbnail ) {
-			return $guest_author_thumbnail;
-		}
 	}
 
 	// Make sure we're dealing with an object for which we can retrieve an email
