@@ -8,12 +8,17 @@
 
 /* Inline Layout */
 
-.wp-block-co-authors-plus-coauthors.is-layout-cap-inline .wp-block-co-authors-plus-avatar :where(img) {
+.wp-block-co-authors-plus-coauthors.is-layout-flow .wp-block-co-authors-plus-avatar :where(img) {
 	vertical-align: middle;
 }
 
 /* Align left, right, center */
 
-.wp-block-co-authors-plus-avatar:is(.alignleft,.alignright,.aligncenter) {
+.wp-block-co-authors-plus-avatar:is(.alignleft,.alignright) {
 	display: table;
+}
+
+.wp-block-co-authors-plus-avatar.aligncenter {
+	display: table;
+	margin-inline: auto;
 }

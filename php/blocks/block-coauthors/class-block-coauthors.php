@@ -118,7 +118,7 @@ class Block_CoAuthors {
 			$separators
 		);
 
-		if ( 'inline' === $attributes['layout']['type'] ) {
+		if ( 'default' === $attributes['layout']['type'] ) {
 			array_unshift(
 				$blocks_with_separators,
 				self::render_prefix( $attributes['prefix'] ?? '' )
@@ -234,7 +234,7 @@ class Block_CoAuthors {
 			return array();
 		}
 
-		if ( 'inline' !== $attributes['layout']['type'] ) {
+		if ( 'default' !== $attributes['layout']['type'] ) {
 			return array();
 		}
 
@@ -309,6 +309,7 @@ class Block_CoAuthors {
 					$block_template,
 					array(
 						'co-authors-plus/author' => $author,
+						'co-authors-plus/layout' => $block_template['attrs']['layout']['type'] ?? 'default'
 					)
 				)
 			)->render(

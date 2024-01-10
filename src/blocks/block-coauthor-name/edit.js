@@ -9,7 +9,6 @@ import {
 	InspectorControls,
 	AlignmentControl,
 	BlockControls,
-	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import {
 	TextControl,

@@ -19,11 +19,7 @@
 
 /* Inline Layout */
 
-.wp-block-co-authors-plus-coauthors.is-layout-cap-inline .wp-block-co-authors-plus-image {
-	display: inline;
-}
-
-.wp-block-co-authors-plus-coauthors.is-layout-cap-inline .wp-block-co-authors-plus-image :where(img) {
+.wp-block-co-authors-plus-coauthors.is-layout-flow .wp-block-co-authors-plus-image :where(img) {
 	vertical-align: middle;
 }
 
@@ -35,6 +31,11 @@
 
 /* Align left, right, center */
 
-.wp-block-co-authors-plus-image:is(.alignleft,.alignright,.aligncenter) {
+.wp-block-co-authors-plus-image:is(.alignleft,.alignright) {
 	display: table;
+}
+
+.wp-block-co-authors-plus-image.aligncenter {
+	display: table;
+	margin-inline: auto;
 }

@@ -20,8 +20,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { row, stack } from '@wordpress/icons';
-
+import { row, stack, grid, list, lineDashed } from '@wordpress/icons';
 import classnames from 'classnames';
 
 import MemoizedCoAuthorTemplateBlockPreview from './components/memoized-coauthor-template-block-preview';
@@ -34,7 +33,7 @@ function CoAuthorTemplateInnerBlocks() {
 		<div
 			{ ...useInnerBlocksProps(
 				{ className: 'wp-block-co-authors-plus-coauthor' },
-				{ template: [ [ 'co-authors-plus/name' ] ] }
+				{ template: [ [ 'co-authors-plus/name' ] ], __unstableDisableLayoutClassNames: true }
 			) }
 		/>
 	);
@@ -56,9 +55,11 @@ export default function Edit( {
 	clientId,
 	context,
 	isSelected,
+	__unstableLayoutClassNames
 } ) {
-	const { prefix, separator, lastSeparator, suffix, layout, textAlign } =
-		attributes;
+	const { prefix, separator, lastSeparator, suffix, layout, textAlign } = attributes;
+	const { type: layoutType, orientation: layoutOrientation } = layout || {};
+
 	const { postId } = context;
 	const authorPlaceholder = useSelect(
 		( select ) => select( 'co-authors-plus/blocks' ).getAuthorPlaceholder(),
@@ -107,22 +108,55 @@ export default function Edit( {
 
 	const setLayout = ( nextLayout ) => {
 		setAttributes( {
-			layout: { ...layout, ...nextLayout },
+			layout: nextLayout,
 		} );
 	};
 
 	const layoutControls = [
 		{
+			icon: lineDashed,
+			title: __( 'Inline view' ),
+			onClick: () => setLayout( {
+				type: 'default'
+			}),
+			isActive: layoutType === 'default'
+		},
+		{
+			icon: list,
+			title: __( 'List view' ),
+			onClick: () => setLayout( {
+				type: 'constrained'
+			} ),
+			isActive: layoutType === 'constrained',
+		},
+		{
+			icon: grid,
+			title: __( 'Grid view' ),
+			onClick: () =>
+				setLayout( {
+					type: 'grid'
+				} ),
+			isActive: layoutType === 'grid',
+		},
+		{
 			icon: row,
-			title: __( 'Inline', 'co-authors-plus' ),
-			onClick: () => setLayout( { type: 'inline' } ),
-			isActive: layout.type === 'inline',
+			title: __( 'Row view' ),
+			onClick: () =>
+				setLayout( {
+					type: 'flex',
+					orientation: 'horizontal'
+				} ),
+			isActive: layoutType === 'flex' && 'horizontal' === layoutOrientation,
 		},
 		{
 			icon: stack,
-			title: __( 'Block', 'co-authors-plus' ),
-			onClick: () => setLayout( { type: 'block' } ),
-			isActive: layout.type === 'block',
+			title: __( 'Stack view' ),
+			onClick: () =>
+				setLayout( {
+					type: 'flex',
+					orientation: 'vertical'
+				} ),
+			isActive: layoutType === 'flex' && 'vertical' === layoutOrientation,
 		},
 	];
 
@@ -138,20 +172,19 @@ export default function Edit( {
 				/>
 			</BlockControls>
 			<div
-				{ ...useBlockProps( {
-					className: classnames( {
-						[ `is-layout-cap-${ layout.type }` ]: layout.type,
-						[ `has-text-align-${ textAlign }` ]: textAlign,
-					} ),
-					style: {
-						gap: __experimentalGetGapCSSValue(
-							attributes?.style?.spacing?.blockGap
-						),
-					},
-				} ) }
+				{ ...useBlockProps(
+					{
+						className: classnames(
+							__unstableLayoutClassNames,
+							{
+								[ `has-text-align-${ textAlign }` ]: textAlign
+							}
+						)
+					}
+				) }
 			>
 				{ coAuthors &&
-					'inline' === layout.type &&
+					'default' === layoutType &&
 					( isSelected || prefix ) && (
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
@@ -171,14 +204,13 @@ export default function Edit( {
 				{ coAuthors &&
 					coAuthors
 						.map( ( author ) => {
-							const isHidden =
-								author.id ===
-								( activeBlockContextId || coAuthors[ 0 ]?.id );
+							const isHidden = author.id === ( activeBlockContextId || coAuthors[ 0 ]?.id );
 							return (
 								<BlockContextProvider
 									key={ author.id }
 									value={ {
 										'co-authors-plus/author': author,
+										'co-authors-plus/layout': layoutType
 									} }
 								>
 									{ isHidden ? (
@@ -198,7 +230,7 @@ export default function Edit( {
 						.reduce( ( previous, current, index, all ) => (
 							<>
 								{ previous }
-								{ 'inline' === layout.type && (
+								{ 'default' === layoutType && (
 									<span className="wp-block-co-authors-plus-coauthors__separator">
 										{ lastSeparator &&
 										index === all.length - 1
@@ -210,7 +242,7 @@ export default function Edit( {
 							</>
 						) ) }
 				{ coAuthors &&
-					'inline' === layout.type &&
+					'default' === layoutType &&
 					( isSelected || suffix ) && (
 						<RichText
 							allowedFormats={ ALLOWED_FORMATS }
@@ -227,7 +259,7 @@ export default function Edit( {
 					) }
 			</div>
 			<InspectorControls>
-				{ 'inline' === layout.type && (
+				{ 'default' === layoutType && (
 					<PanelBody
 						title={ __( 'Co-Authors Layout', 'co-authors-plus' ) }
 					>

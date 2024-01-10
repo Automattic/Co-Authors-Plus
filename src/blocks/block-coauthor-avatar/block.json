@@ -8,7 +8,6 @@
 	"description": "Displays a small scale version of a co-author's avatar. Utilizes fallbacks from Gravatar so everyone has an avatar.",
 	"keywords": [ "coauthors" ],
 	"supports": {
-		"align": [ "left", "right", "center" ],
 		"html": false,
 		"__experimentalBorder": {
 			"color": true,
@@ -31,7 +30,10 @@
 			}
 		}
 	},
-	"usesContext": [ "co-authors-plus/author" ],
+	"usesContext": [
+		"co-authors-plus/author",
+		"co-authors-plus/layout"
+	],
 	"attributes": {
 		"size": {
 			"type": "number",
@@ -45,6 +47,9 @@
 			"type": "string"
 		},
 		"verticalAlign": {
+			"type": "string"
+		},
+		"align": {
 			"type": "string"
 		}
 	},

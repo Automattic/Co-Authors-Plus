@@ -10,13 +10,6 @@
     "coauthors"
   ],
   "supports": {
-    "align": [
-      "left",
-      "right",
-      "center",
-      "wide",
-      "full"
-    ],
     "__experimentalBorder": {
       "color": true,
       "radius": true,
@@ -39,7 +32,8 @@
     }
   },
   "usesContext": [
-    "co-authors-plus/author"
+    "co-authors-plus/author",
+    "co-authors-plus/layout"
   ],
   "attributes": {
     "isLink": {
@@ -66,6 +60,9 @@
       "type": "string"
     },
     "verticalAlign": {
+      "type": "string"
+    },
+    "align": {
       "type": "string"
     }
   },

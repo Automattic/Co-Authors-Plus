@@ -8,6 +8,8 @@ import {
 	store as blockEditorStore,
 	__experimentalUseBorderProps as useBorderProps,
 	InspectorControls,
+	BlockControls,
+	BlockAlignmentToolbar,
 } from '@wordpress/block-editor';
 import {
 	TextControl,
@@ -25,6 +27,8 @@ import {
 	getMediaDimensions,
 	getPlaceholderImageDimensions,
 } from './utils';
+
+import classnames from 'classnames';
 
 /**
  * Edit
@@ -48,6 +52,7 @@ export default function Edit( {
 		sizeSlug,
 		verticalAlign,
 		width,
+		align
 	} = attributes;
 
 	// Author
@@ -56,6 +61,7 @@ export default function Edit( {
 		[]
 	);
 	const author = context[ 'co-authors-plus/author' ] || authorPlaceholder;
+	const layout = context[ 'co-authors-plus/layout' ] || '';
 
 	// Media
 	const media = useSelect(
@@ -105,8 +111,19 @@ export default function Edit( {
 				setAttributes={ setAttributes }
 				imageSizeOptions={ imageSizeOptions }
 			/>
+			{
+			'' === layout ? (
+				<BlockControls>
+					<BlockAlignmentToolbar value={ align } onChange={ ( nextAlign ) => { setAttributes({align: nextAlign}) } } controls={['none', 'left', 'center', 'right', 'wide', 'full']} />
+				</BlockControls>
+			) : (null)
+			}
 			{ panic ? null : (
-				<figure { ...useBlockProps() }>
+				<figure { ...useBlockProps({
+					className: classnames({
+						[`align${align}`]: ! layout && align && 'none' !== align
+					})
+				} ) }>
 					{ media ? (
 						<img
 							alt={ __(
@@ -164,62 +181,66 @@ export default function Edit( {
 						/>
 					) }
 				</PanelBody>
-				<PanelBody
-					initialOpen={ false }
-					title={ __( 'Co-Authors Layout', 'co-authors-plus' ) }
-				>
-					<SelectControl
-						label={ __( 'Vertical align', 'co-authors-plus' ) }
-						value={ verticalAlign }
-						options={ [
-							{
-								value: '',
-								label: __( 'Default', 'co-authors-plus' ),
-							},
-							{
-								value: 'baseline',
-								label: __( 'Baseline', 'co-authors-plus' ),
-							},
-							{
-								value: 'bottom',
-								label: __( 'Bottom', 'co-authors-plus' ),
-							},
-							{
-								value: 'middle',
-								label: __( 'Middle', 'co-authors-plus' ),
-							},
-							{
-								value: 'sub',
-								label: __( 'Sub', 'co-authors-plus' ),
-							},
-							{
-								value: 'super',
-								label: __( 'Super', 'co-authors-plus' ),
-							},
-							{
-								value: 'text-bottom',
-								label: __( 'Text Bottom', 'co-authors-plus' ),
-							},
-							{
-								value: 'text-top',
-								label: __( 'Text Top', 'co-authors-plus' ),
-							},
-							{
-								value: 'top',
-								label: __( 'Top', 'co-authors-plus' ),
-							},
-						] }
-						onChange={ ( value ) => {
-							setAttributes( {
-								verticalAlign: '' === value ? undefined : value,
-							} );
-						} }
-						help={ __(
-							'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.',
-							'co-authors-plus'
-						) }
-					/>
-				</PanelBody>
+				{ 'default' === layout ? (
+					<PanelBody
+						initialOpen={ false }
+						title={ __( 'Co-Authors Layout', 'co-authors-plus' ) }
+					>
+						<SelectControl
+							label={ __( 'Vertical align', 'co-authors-plus' ) }
+							value={ verticalAlign }
+							options={ [
+								{
+									value: '',
+									label: __( 'Default', 'co-authors-plus' ),
+								},
+								{
+									value: 'baseline',
+									label: __( 'Baseline', 'co-authors-plus' ),
+								},
+								{
+									value: 'bottom',
+									label: __( 'Bottom', 'co-authors-plus' ),
+								},
+								{
+									value: 'middle',
+									label: __( 'Middle', 'co-authors-plus' ),
+								},
+								{
+									value: 'sub',
+									label: __( 'Sub', 'co-authors-plus' ),
+								},
+								{
+									value: 'super',
+									label: __( 'Super', 'co-authors-plus' ),
+								},
+								{
+									value: 'text-bottom',
+									label: __( 'Text Bottom', 'co-authors-plus' ),
+								},
+								{
+									value: 'text-top',
+									label: __( 'Text Top', 'co-authors-plus' ),
+								},
+								{
+									value: 'top',
+									label: __( 'Top', 'co-authors-plus' ),
+								},
+							] }
+							onChange={ ( value ) => {
+								setAttributes( {
+									verticalAlign: '' === value ? undefined : value,
+								} );
+							} }
+							help={ __(
+								'Vertical alignment defaults to bottom in the block layout and middle in the inline layout.',
+								'co-authors-plus'
+							) }
+						/>
+					</PanelBody>
+				) : (
+					null
+				) }
 			</InspectorControls>
 		</>
 	);

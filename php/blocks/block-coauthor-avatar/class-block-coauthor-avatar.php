@@ -41,6 +41,7 @@ class Block_CoAuthor_Avatar {
 	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
 		$author = $block->context['co-authors-plus/author'] ?? array();
+		$layout = $block->context['co-authors-plus/layout'] ?? '';
 
 		if ( empty( $author ) ) {
 			return '';
@@ -57,6 +58,7 @@ class Block_CoAuthor_Avatar {
 		$is_link      = '' !== $link && $attributes['isLink'] ?? false;
 		$rel          = $attributes['rel'] ?? '';
 		$size         = $attributes['size'] ?? array_keys( $avatar_urls )[0];
+		$align        = esc_attr( $attributes['align'] ?? '' );
 
 		$srcset = array_map(
 			function( $size, $url ) {
@@ -74,7 +76,7 @@ class Block_CoAuthor_Avatar {
 				'sizes'  => "{$size}px",
 				'srcset' => implode( ', ', $srcset ),
 				'style'  => '',
-				'class'  => ''
+				'class'  => '',
 			),
 			get_block_core_post_featured_image_border_attributes( $attributes )
 		);
@@ -121,7 +123,11 @@ class Block_CoAuthor_Avatar {
 
 		return Templating::render_element(
 			'div',
-			get_block_wrapper_attributes(),
+			get_block_wrapper_attributes(
+				array(
+					'class' => ( 'default' !== $layout && ! empty( $align ) && 'none' !== $align ) ? "align{$align}" : ''
+				)
+			),
 			$inner_content
 		);
 	}

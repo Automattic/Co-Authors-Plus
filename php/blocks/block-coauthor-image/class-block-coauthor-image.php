@@ -42,6 +42,7 @@ class Block_CoAuthor_Image {
 	public static function render_block( array $attributes, string $content, WP_Block $block ): string {
 
 		$author = $block->context['co-authors-plus/author'] ?? array();
+		$layout = $block->context['co-authors-plus/layout'] ?? '';
 
 		if ( empty( $author ) ) {
 			return '';
@@ -50,6 +51,7 @@ class Block_CoAuthor_Image {
 		$featured_media_id = absint( $author['featured_media'] ?? 0 );
 		$display_name      = esc_html( $author['display_name'] ?? '' );
 		$link              = esc_url( $author['link'] ?? '' );
+		$align             = esc_attr( $attributes['align'] ?? '' );
 
 		if ( 0 === $featured_media_id ) {
 			return '';
@@ -122,6 +124,14 @@ class Block_CoAuthor_Image {
 			$inner_content = $feature_image;
 		}
 
-		return Templating::render_element( 'figure', get_block_wrapper_attributes(), $inner_content );
+		return Templating::render_element(
+			'figure',
+			get_block_wrapper_attributes(
+				array(
+					'class' => ( 'default' !== $layout && ! empty( $align ) && 'none' !== $align ) ? "align{$align}" : ''
+				)
+			),
+			$inner_content
+		);
 	}
 }

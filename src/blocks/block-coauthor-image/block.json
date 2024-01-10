@@ -8,7 +8,6 @@
 	"description": "Uses your theme's image sizes to display a scalable avatar for a co-author with a guest author profile. Does not fallback to Gravatar images.",
 	"keywords": [ "coauthors" ],
 	"supports": {
-		"align": [ "left", "right", "center", "wide", "full" ],
 		"__experimentalBorder": {
 			"color": true,
 			"radius": true,
@@ -30,7 +29,10 @@
 			}
 		}
 	},
-	"usesContext": [ "co-authors-plus/author" ],
+	"usesContext": [
+		"co-authors-plus/author",
+		"co-authors-plus/layout"
+	],
 	"attributes": {
 		"isLink": {
 			"type": "boolean",
@@ -56,6 +58,9 @@
 			"type": "string"
 		},
 		"verticalAlign": {
+			"type": "string"
+		},
+		"align": {
 			"type": "string"
 		}
 	},

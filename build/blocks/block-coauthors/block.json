@@ -28,21 +28,20 @@
     "spacing": {
       "margin": true,
       "padding": true,
-      "blockGap": [
-        "vertical"
-      ],
+      "blockGap": true,
       "__experimentalDefaultControls": {
         "margin": false,
         "padding": false,
         "blockGap": false
       }
-    }
+    },
+    "layout": true
   },
   "attributes": {
     "layout": {
       "type": "object",
       "default": {
-        "type": "inline"
+        "type": "default"
       }
     },
     "textAlign": {

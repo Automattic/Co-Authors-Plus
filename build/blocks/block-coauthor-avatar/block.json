@@ -10,11 +10,6 @@
     "coauthors"
   ],
   "supports": {
-    "align": [
-      "left",
-      "right",
-      "center"
-    ],
     "html": false,
     "__experimentalBorder": {
       "color": true,
@@ -38,7 +33,8 @@
     }
   },
   "usesContext": [
-    "co-authors-plus/author"
+    "co-authors-plus/author",
+    "co-authors-plus/layout"
   ],
   "attributes": {
     "size": {
@@ -53,6 +49,9 @@
       "type": "string"
     },
     "verticalAlign": {
+      "type": "string"
+    },
+    "align": {
       "type": "string"
     }
   },
