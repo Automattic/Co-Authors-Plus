@@ -177,8 +177,9 @@ export default function Edit( {
 						className: classnames(
 							__unstableLayoutClassNames,
 							{
-								[ `has-text-align-${ textAlign }` ]: textAlign
-							}
+								[ `has-text-align-${ textAlign }` ]: textAlign,
+							},
+							'remove-outline'
 						)
 					}
 				) }
