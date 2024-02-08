@@ -126,5 +126,5 @@ export function getAvailableSizeSlug( media, imageDimensions, sizeSlug ) {
 		return sizeSlug;
 	}
 
-	return keys[ Math.max( 0, keys.length - 1 ) ];
+	return keys[0];
 }

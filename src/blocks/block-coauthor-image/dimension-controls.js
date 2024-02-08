@@ -33,7 +33,7 @@ const SCALE_OPTIONS = (
 );
 
 const DEFAULT_SCALE = 'cover';
-const DEFAULT_SIZE = 'full';
+const DEFAULT_SIZE = 'thumbnail';
 
 const scaleHelp = {
 	cover: __(
