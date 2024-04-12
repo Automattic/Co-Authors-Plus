@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2024-04-12
+
+### Added
+* Blocks for Co-Authors #997
+
+### Fixed
+* Improve alignment in author-selection component #990
+* Fix admin notice positions #1002
+* UI: Add capability check to Add New button #1003
+* i18n: set script translations and refresh language files #1007
+
+### Maintenance
+* Docs: Consolidate and refresh README.md #992
+* Refresh package.json #993
+* NPM: Add version-bump-prompt #994
+* Fix/general code tidy #995
+* Composer: Use 4-space tab indentation #999
+* Improve tests structure #1000
+* Extract iterator class from template-tags.php #1005
+* Add supported_post_types() method #1006
+* Tests improvements #1008
+* Bump postcss from 8.4.19 to 8.4.31 #1009
+* Create co-authors-plus-da_DK.po #1013
+
+
 ## [3.5.15] - 2023-08-28
 
 ### Fixed
