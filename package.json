@@ -1,6 +1,6 @@
 {
 	"name": "co-authors-plus",
-	"version": "3.5.15",
+	"version": "3.6.0",
 	"description": "Allows multiple authors to be assigned to a post.",
 	"license": "GPL-2.0-or-later",
 	"private": true,
