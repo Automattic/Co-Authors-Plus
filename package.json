@@ -39,8 +39,9 @@
 		"@wordpress/i18n": "^4.17.0"
 	},
 	"devDependencies": {
-		"@wordpress/icons": "^2.10.2",
+		"@wordpress/icons": "^9.33.0",
 		"@wordpress/scripts": "^24.0.0",
+		"classnames": "^2.3.2",
 		"prettier": "npm:wp-prettier@^2.2.1-beta-1",
 		"prop-types": "^15.8.1",
 		"version-bump-prompt": "^6.1.0"

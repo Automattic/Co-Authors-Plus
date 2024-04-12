@@ -34,6 +34,12 @@ require_once __DIR__ . '/php/integrations/yoast.php';
 require_once __DIR__ . '/php/class-coauthors-plus.php';
 require_once __DIR__ . '/php/class-coauthors-iterator.php';
 
+// Blocks
+require_once __DIR__ . '/php/blocks/class-blocks.php';
+
+// REST APIs for Blocks
+require_once __DIR__ . '/php/api/endpoints/class-coauthors-controller.php';
+
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once __DIR__ . '/php/class-wp-cli.php';
 }
@@ -41,6 +47,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 global $coauthors_plus;
 $coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
+CoAuthors\Blocks::run();
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**
@@ -207,3 +214,12 @@ function cap_get_coauthor_terms_for_post( $post_id ) {
 	global $coauthors_plus;
 	return $coauthors_plus->get_coauthor_terms_for_post( $post_id );
 }
+
+/**
+ * Register CoAuthor REST API Routes
+ */
+function cap_register_coauthors_rest_api_routes(): void {
+	global $coauthors_plus;
+	(new CoAuthors\API\Endpoints\CoAuthors_Controller( $coauthors_plus ))->register_routes();
+}
+add_action( 'rest_api_init', 'cap_register_coauthors_rest_api_routes' );

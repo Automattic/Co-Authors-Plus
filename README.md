@@ -68,3 +68,87 @@ Yes! Guest authors can be disabled entirely through a filter. Having the followi
 ## Change Log
 
 [View the change log](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md).
+
+## Blocks
+
+### Co-Authors
+
+Use this block to create a repeating template that displays the co-authors of a post. By default it contains the Co-Author Name block, but you can add any other block you want to the template. If you choose another Co-Author block like avatar, biography or image it will automatically be supplied the author `context` that it needs. This works similarly to creating a Post Template in a Query Loop block.
+
+The Co-Authors Block supports two layouts:
+
+#### Inline Layout
+
+Use the inline layout to display co-authors in a list on a single wrapping line.
+
+You can control the characters displayed before, between and after co-authors in the list using the block settings, or change the defaults using the following server-side filters:
+
+```
+coauthors_default_before
+coauthors_default_between
+coauthors_default_between_last
+coauthors_default_after
+```
+
+#### Block Layout
+
+Use the block layout to display co-authors in a vertical stack. While using the block layout you can use block spacing settings to control the vertical space between co-authors.
+
+Then you can create your own layout using blocks like group, row or stack and it will be applied to each co-author, similar to applying a layout to each post in a query loop.
+
+### Co-Author Name
+
+This block displays a co-author's `Display Name` and optionally turns it into a link to their author archive.
+
+Using the block's advanced settings you can select which HTML element is used to output the name. This is useful in contexts such as an author archive where you might want their name to be a heading.
+
+### Co-Author Avatar
+
+Like the post author avatar, or comment author avatar, this block displays a small scale square image of a co-author and utilizes the Gravatar default avatars as configured in your site's discussion options.
+
+To customize the available sizes, use the [rest_avatar_sizes](https://developer.wordpress.org/reference/hooks/rest_avatar_sizes/) filter.
+
+### Co-Author Biography
+
+This block outputs the biographical information for a co-author based on either their user or guest author data.
+
+The content is wrapped in paragraph elements using `wpautop` and is escaped using `wp_kses_post`.
+
+### Co-Author Featured Image
+
+This block requires the use of Guest Authors. Because guest author avatars are uploaded to the WordPress media library, there are more options for displaying these images.
+
+This block utilizes the image sizes configured in your theme and your site's media settings to present a guest author's avatar at a larger scale or higher resolution. It does not support Gravatars.
+
+## Block Context
+
+### Post, Page, Query Loop
+
+By default, all blocks receive the post context. The job of the Co-Authors Block is to use this context to find the relevant authors and provide context to its inner blocks.
+
+### Author Archive
+
+If you want to display data about the author on their own archive, use the individual co-author blocks directly without wrapping them in the Co-Authors Block. During requests for an author archive the correct context is derived from the `author_name` query variable and provided to all blocks that declare their use of the context `co-authors-plus/author`.
+
+### Extending
+
+If you make a custom block and want to use the author context, add `co-authors-plus/author` to the `usesContext` property in your block.json file.
+
+Example:
+```json
+{
+	"usesContext": ["co-authors-plus/author"]
+}
+```
+
+## Block Example Data
+
+When working with Full Site Editing, or in the post editor before the authors are loaded, example data is used. The example data provided with the co-author blocks resembles a response to the `/coauthors/v1/coauthors/:user-nicename` REST API endpoint.
+
+### Extending
+
+If you have written a plugin that modifies the REST API response, you can similarly modify the example data either on the server-side using the filter `coauthors_blocks_store_data` or the client-side using the filter `co-authors-plus.author-placeholder`.
+
+## Block Non-support
+
+To declare a lack of support for Co-Author Plus blocks on your site, use the filter `coauthors_plus_support_blocks` to return `false`.
