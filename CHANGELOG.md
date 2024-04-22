@@ -28,7 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Tests improvements #1008
 * Bump postcss from 8.4.19 to 8.4.31 #1009
 * Create co-authors-plus-da_DK.po #1013
-
+* Increase minimum supported PHP version to 7.4 #954
+* Increase minimum supported WordPress version to 5.7 #955
 
 ## [3.5.15] - 2023-08-28
 
@@ -487,6 +488,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.6.0]: https://github.com/automattic/co-authors-plus/compare/3.5.15...3.6.0
 [3.5.15]: https://github.com/automattic/co-authors-plus/compare/3.5.14...3.5.15
 [3.5.14]: https://github.com/automattic/co-authors-plus/compare/3.5.13...3.5.14
 [3.5.13]: https://github.com/automattic/co-authors-plus/compare/3.5.12...3.5.13
