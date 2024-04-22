@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2024-04-22
+
+### Added
+* Blocks for Co-Authors #997
+
+### Fixed
+* Improve alignment in author-selection component #990
+* Fix admin notice positions #1002
+* UI: Add capability check to Add New button #1003
+* i18n: set script translations and refresh language files #1007
+
+### Maintenance
+* Docs: Consolidate and refresh README.md #992
+* Refresh package.json #993
+* NPM: Add version-bump-prompt #994
+* Fix/general code tidy #995
+* Composer: Use 4-space tab indentation #999
+* Improve tests structure #1000
+* Extract iterator class from template-tags.php #1005
+* Add supported_post_types() method #1006
+* Tests improvements #1008
+* Bump postcss from 8.4.19 to 8.4.31 #1009
+* Create co-authors-plus-da_DK.po #1013
+* Increase minimum supported PHP version to 7.4 #954
+* Increase minimum supported WordPress version to 5.7 #955
+
 ## [3.5.15] - 2023-08-28
 
 ### Fixed
@@ -20,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * i18n: Add text domain header #984
 
 ### Maintenance
-* CI: Update integration tests environnments #979
+* CI: Update integration tests environments #979
 * CLI: Add Behat functional tests #980
 * Create LICENSE file #985
 * Refresh plugin headers #986
@@ -148,7 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Adjust regex on posts_where_filter to be less greedy #686
 * Update deprecated GitHub hosted runner #808
 * Replace deprecated jQuery shorthand methods #812
-* Switch guest author metabox to aside context #746
+* Switch guest author meta box to aside context #746
 
 **3.4.8 (June 15, 2021)**
 * Fix AJAX author autocomplete when no author to post in author selector #803
@@ -203,7 +229,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * New filter `get_avatar_url()` to show avatar in JS selection #621
 * New parameter in `coauthors_wp_list_authors()` to only query authors with posts #496
 * Add internationalization support to title and name in author archives #516
-* Add safelist to skip irrelevant capabilities during permission checks #543
+* Add safe list to skip irrelevant capabilities during permission checks #543
 * Add helper function `get_guest_author_post_count()` #605
 * Add parameter for outputting HTML classes in `coauthors_get_avatar()` template tag #610
 * Add `--append_coauthors` flag to synopsis of CLI `assign-coauthors` #600
@@ -328,7 +354,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 
 **3.0.5 (Feb. 18, 2013)**
 * New filter `coauthors_search_authors_get_terms_args` allows you to increase the number of matches returned with AJAX co-author selection
-* Bug fix: If there isn't an author term yet for a co-author, avoid an erronous join that caused duplicate posts to appear.
+* Bug fix: If there isn't an author term yet for a co-author, avoid an erroneous join that caused duplicate posts to appear.
 
 **3.0.4 (Jan. 6, 2013)** =
 * Support for automatically adding co-authors to your feeds. Props [cfg](https://github.com/cfg).
@@ -351,7 +377,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 * Minor UI enhancements for guest authors
 
 **3.0 (Nov. 12, 2012)**
-* Create guest author profiles for bylines you'd like to assign without creating WordPress user accounts. Guest authors can have all of the same fields as normal users including display name, biography, and avatars.
+* Create guest author profiles for bylines you'd like to assign without creating WordPress user accounts. Guest authors can have all the same fields as normal users including display name, biography, and avatars.
 * Support for non-Latin characters in usernames and guest author names
 * wp-cli subcommands for creating, assigning, and reassigning co-authors
 * For themes using core template tags like `the_author()` or `the_author_posts_link()`, you enable Co-Authors Plus support with a simple filter
@@ -359,7 +385,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 * Bug fix: Apply query filters to only `post_types` registered with the taxonomy. Props [Tom Ransom](https://github.com/1bigidea)
 * Filter `coauthors_posts_link_single()` with `coauthors_posts_link`. Also adds `rel="author"`. Props [Amit Sannad](https://github.com/asannad) and [Gabriel Koen](https://github.com/mintindeed)
 * Filter for the context and priorities of the Co-Authors meta boxes. Props [Tomáš Kapler](https://github.com/tkapler)
-* Renamed the post meta box for selecting authors so it applies to many post types. Props [John Blackbourn](https://github.com/johnbillion)
+* Renamed the post meta box for selecting authors, so it applies to many post types. Props [John Blackbourn](https://github.com/johnbillion)
 
 **2.6.4 (May 7, 2012)**
 * Bug fix: Properly filter the user query so users can AJAX search against the display name field again
@@ -388,7 +414,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **2.6 (Dec. 22, 2011)**
 * Sortable authors: Drag and drop the order of the authors as you'd like them to appear ([props kingkool68](http://profiles.wordpress.org/users/kingkool68/))
 * Search for authors by display name (instead of nicename which was essentially the same as user_login)
-* Option to remove the first author when there are two or more so it's less confusing
+* Option to remove the first author when there are two or more, so it's less confusing
 * Bumped requirements to WordPress 3.1
 * Bug fix: Update the published post count for each user more reliably
 
@@ -425,7 +451,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 * All authors of a post are now notified on a new comment
 * Various javascript enhancements
 * New option to allow subscribers to be added as authors
-* All Authors can edit they posts of which they are co-authors
+* All Authors can edit the posts of which they are co-authors
 * FIX: Issues with `wp_coauthors_list` function
 * FIX: Issues with coauthored posts not showing up on author archives
 
@@ -462,6 +488,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.6.0]: https://github.com/automattic/co-authors-plus/compare/3.5.15...3.6.0
 [3.5.15]: https://github.com/automattic/co-authors-plus/compare/3.5.14...3.5.15
 [3.5.14]: https://github.com/automattic/co-authors-plus/compare/3.5.13...3.5.14
 [3.5.13]: https://github.com/automattic/co-authors-plus/compare/3.5.12...3.5.13

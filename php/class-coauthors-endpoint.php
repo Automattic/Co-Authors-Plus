@@ -67,7 +67,7 @@ class Endpoints {
 							'type'        => 'string',
 						),
 						'existing_authors' => array(
-							'description' => __( 'Names of existing coauthors to exclude from search results.', 'co-authors-plus' ),
+							'description' => __( 'Names of existing co-authors to exclude from search results.', 'co-authors-plus' ),
 							'type'        => 'string',
 							'required'    => false,
 						),
@@ -158,7 +158,7 @@ class Endpoints {
 	}
 
 	/**
-	 * Update coauthors.
+	 * Update co-authors.
 	 *
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
@@ -190,7 +190,7 @@ class Endpoints {
 	}
 
 	/**
-	 * Permissions for updating coauthors.
+	 * Permissions for updating co-authors.
 	 *
 	 * @return bool
 	 */
@@ -202,7 +202,7 @@ class Endpoints {
 	 * Helper function to consistently format the author data for
 	 * the response.
 	 *
-	 * @param object  $author The result from coauthors methods.
+	 * @param object  $author The result from co-authors methods.
 	 * @return array
 	 */
 	public function _format_author_data( $author ) {
@@ -235,11 +235,11 @@ class Endpoints {
 
 	/**
 	 * Add filters to REST endpoints for each post that
-	 * supports coauthors.
+	 * supports co-authors.
 	 */
 	public function modify_responses() {
 
-		$post_types = $this->coauthors->supported_post_types;
+		$post_types = $this->coauthors->supported_post_types();
 
 		if ( empty( $post_types ) || ! is_array( $post_types ) ) {
 			return;

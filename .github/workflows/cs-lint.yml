@@ -43,7 +43,7 @@ jobs:
       # Validate the composer.json file.
       # @link https://getcomposer.org/doc/03-cli.md#validate
       - name: Validate Composer installation
-        run: composer validate --no-check-all
+        run: composer validate --no-check-all --strict
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies

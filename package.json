@@ -1,43 +1,50 @@
 {
-  "name": "co-authors-plus-3.5.3",
-  "version": "1.0.0",
-  "description": "Allows multiple authors to be assigned to a post.",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "build": "wp-scripts build",
-    "check-engines": "wp-scripts check-engines",
-    "check-licenses": "wp-scripts check-licenses",
-    "format:js": "wp-scripts format",
-    "format:js:src": "wp-scripts format ./src",
-    "lint:css": "wp-scripts lint-style",
-    "lint:js": "wp-scripts lint-js",
-    "lint:js:src": "wp-scripts lint-js ./src",
-    "lint:md:docs": "wp-scripts lint-md-docs",
-    "lint:md:js": "wp-scripts lint-md-js",
-    "lint:pkg-json": "wp-scripts lint-pkg-json",
-    "packages-update": "wp-scripts packages-update",
-    "start": "wp-scripts start",
-    "test:e2e": "wp-scripts test-e2e",
-    "test:unit": "wp-scripts test-unit-js",
-    "test:unit:watch": "wp-scripts test-unit-js --watch"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@wordpress/icons": "^2.10.2",
-    "@wordpress/scripts": "^24.0.0",
-    "prettier": "npm:wp-prettier@^2.2.1-beta-1",
-    "prop-types": "^15.8.1"
-  },
-  "dependencies": {
-    "@wordpress/api-fetch": "^6.14.0",
-    "@wordpress/components": "^21.0.0",
-    "@wordpress/data": "^7.1.0",
-    "@wordpress/element": "^4.15.0",
-    "@wordpress/i18n": "^4.17.0"
-  }
+	"name": "co-authors-plus",
+	"version": "3.6.0",
+	"description": "Allows multiple authors to be assigned to a post.",
+	"license": "GPL-2.0-or-later",
+	"private": true,
+	"author": "Automattic and contributors",
+	"repository": "Automattic/Co-Authors-Plus",
+	"main": "index.js",
+	"directories": {
+		"lib": "lib"
+	},
+	"scripts": {
+		"build": "wp-scripts build",
+		"bump:patch": "bump patch --commit 'Version %s.' package.json package-lock.json co-authors-plus.php README.md",
+		"bump:minor": "bump minor --commit 'Version %s.' package.json package-lock.json co-authors-plus.php README.md",
+		"bump:major": "bump major --commit 'Version %s.' package.json package-lock.json co-authors-plus.php README.md",
+		"check-engines": "wp-scripts check-engines",
+		"check-licenses": "wp-scripts check-licenses",
+		"format:js": "wp-scripts format",
+		"format:js:src": "wp-scripts format ./src",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"lint:js:src": "wp-scripts lint-js ./src",
+		"lint:md:docs": "wp-scripts lint-md-docs",
+		"lint:md:js": "wp-scripts lint-md-js",
+		"lint:pkg-json": "wp-scripts lint-pkg-json",
+		"packages-update": "wp-scripts packages-update",
+		"start": "wp-scripts start",
+		"test:e2e": "wp-scripts test-e2e",
+		"test:unit": "wp-scripts test-unit-js",
+		"test:unit:watch": "wp-scripts test-unit-js --watch"
+	},
+	"dependencies": {
+		"@wordpress/api-fetch": "^6.14.0",
+		"@wordpress/components": "^21.0.0",
+		"@wordpress/data": "^7.1.0",
+		"@wordpress/element": "^4.15.0",
+		"@wordpress/i18n": "^4.17.0"
+	},
+	"devDependencies": {
+		"@wordpress/icons": "^9.33.0",
+		"@wordpress/scripts": "^24.0.0",
+		"classnames": "^2.3.2",
+		"prettier": "npm:wp-prettier@^2.2.1-beta-1",
+		"prop-types": "^15.8.1",
+		"version-bump-prompt": "^6.1.0"
+	},
+	"keywords": []
 }

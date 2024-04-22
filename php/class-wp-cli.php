@@ -10,6 +10,8 @@ WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
 
 class CoAuthorsPlus_Command extends WP_CLI_Command {
 
+	private $args;
+
 	/**
 	 * Subcommand to create guest authors based on users
 	 *
@@ -60,7 +62,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$args = array(
 			'order'             => 'ASC',
 			'orderby'           => 'ID',
-			'post_type'         => $coauthors_plus->supported_post_types,
+			'post_type'         => $coauthors_plus->supported_post_types(),
 			'posts_per_page'    => 100,
 			'paged'             => 1,
 			'update_meta_cache' => false,
@@ -153,18 +155,19 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			foreach ( $posts->posts as $single_post ) {
 				$posts_total++;
 
-				// See if the value in the post meta field is the same as any of the existing coauthors
+				// See if the value in the post meta field is the same as any of the existing co-authors.
 				$original_author    = get_post_meta( $single_post->ID, $this->args['meta_key'], true );
 				$existing_coauthors = get_coauthors( $single_post->ID );
 				$already_associated = false;
 				foreach ( $existing_coauthors as $existing_coauthor ) {
 					if ( $original_author == $existing_coauthor->user_login ) {
 						$already_associated = true;
+						break;
 					}
 				}
 				if ( $already_associated ) {
 					$posts_already_associated++;
-					WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' already has "' . $original_author . '" associated as a coauthor' );
+					WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' already has "' . $original_author . '" associated as a co-author' );
 					continue;
 				}
 
@@ -173,11 +176,11 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					( ! $coauthor = $coauthors_plus->get_coauthor_by( 'user_login', sanitize_title( $original_author ) ) ) ) {
 					$posts_missing_coauthor++;
 					$missing_coauthors[] = $original_author;
-					WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' does not have "' . $original_author . '" associated as a coauthor but there is not a coauthor profile' );
+					WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' does not have "' . $original_author . '" associated as a co-author but there is not a co-author profile' );
 					continue;
 				}
 
-				// Assign the coauthor to the post
+				// Assign the co-author to the post.
 				$coauthors_plus->add_coauthors( $single_post->ID, array( $coauthor->user_nicename ), $append_coauthors );
 				WP_CLI::line( $posts_total . ': Post #' . $single_post->ID . ' has been assigned "' . $original_author . '" as the author' );
 				$posts_associated++;
@@ -191,14 +194,14 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		WP_CLI::line( 'All done! Here are your results:' );
 		if ( $posts_already_associated ) {
-			WP_CLI::line( "- {$posts_already_associated} posts already had the coauthor assigned" );
+			WP_CLI::line( "- {$posts_already_associated} posts already had the co-author assigned" );
 		}
 		if ( $posts_missing_coauthor ) {
-			WP_CLI::line( "- {$posts_missing_coauthor} posts reference coauthors that don't exist. These are:" );
+			WP_CLI::line( "- {$posts_missing_coauthor} posts reference co-authors that don't exist. These are:" );
 			WP_CLI::line( '  ' . implode( ', ', array_unique( $missing_coauthors ) ) );
 		}
 		if ( $posts_associated ) {
-			WP_CLI::line( "- {$posts_associated} posts now have the proper coauthor" );
+			WP_CLI::line( "- {$posts_associated} posts now have the proper co-author" );
 		}
 
 	}
@@ -210,7 +213,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @since 3.0
 	 *
 	 * @subcommand assign-user-to-coauthor
-	 * @synopsis --user_login=<user-login> --coauthor=<coauthor>
+	 * @synopsis --user_login=<user-login> --coauthor=<co-author>
 	 */
 	public function assign_user_to_coauthor( $args, $assoc_args ) {
 		global $coauthors_plus, $wpdb;
@@ -232,7 +235,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			WP_CLI::error( __( 'Please specify a valid co-author login', 'co-authors-plus' ) );
 		}
 
-		$post_types = implode( "','", $coauthors_plus->supported_post_types );
+		$post_types = implode( "','", $coauthors_plus->supported_post_types() );
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$posts    = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ({$post_types})", $user->ID ) );
 		$affected = 0;
@@ -302,7 +305,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$new_term       = $this->args['new_term'];
 
 		// Get the reassignment data
-		if ( $author_mapping && file_exists( $author_mapping ) ) {
+		if ( $author_mapping && is_file( $author_mapping ) ) {
 			require_once $author_mapping;
 			$authors_to_migrate = $cli_user_map;
 		} elseif ( $author_mapping ) {
@@ -515,8 +518,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					// Add the 'to' author on
 					$coauthors[] = $to_userlogin;
 
-					// By not passing $append = false as the 3rd param, we replace all existing coauthors
-					$coauthors_plus->add_coauthors( $post->ID, $coauthors, false );
+					// By not passing $append = false as the 3rd param, we replace all existing co-authors.
+					$coauthors_plus->add_coauthors( $post->ID, $coauthors );
 
 					WP_CLI::line( $posts_total . ': Post #' . $post->ID . ' has been assigned "' . $to_userlogin . '" as a co-author' );
 
@@ -540,7 +543,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * List all of the posts without assigned co-authors terms
+	 * List all the posts without assigned co-authors terms.
 	 *
 	 * @since 3.0
 	 *
@@ -658,7 +661,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		// And create author terms for any Guest Authors that don't have them
-		if ( $coauthors_plus->is_guest_authors_enabled() && $coauthors_plus->guest_authors instanceof CoAuthors_Guest_Authors ) {
+		if ( $coauthors_plus->guest_authors instanceof CoAuthors_Guest_Authors && $coauthors_plus->is_guest_authors_enabled() ) {
 			$args = array(
 				'order'             => 'ASC',
 				'orderby'           => 'ID',
@@ -670,12 +673,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			);
 
 			$posts = new WP_Query( $args );
-			$count = 0;
 			WP_CLI::line( "Now inspecting or updating {$posts->found_posts} Guest Authors." );
 
 			while ( $posts->post_count ) {
 				foreach ( $posts->posts as $guest_author_id ) {
-					$count++;
 
 					$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'ID', $guest_author_id );
 
@@ -776,7 +777,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				'ID'           => $author['author_id'],
 			);
 
-			$guest_author_id = $this->create_guest_author( $guest_author_data );
+			$this->create_guest_author( $guest_author_data );
 		}
 
 		WP_CLI::line( 'All done!' );
@@ -819,7 +820,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			WP_CLI::error( 'Please specify a valid CSV file with the --file arg.' );
 		}
 
-		$file = fopen( $this->args['file'], 'r' );
+		$file = fopen( $this->args['file'], 'rb' );
 
 		if ( ! $file ) {
 			WP_CLI::error( 'Failed to read file.' );
@@ -835,7 +836,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			} else {
 				$row_data    = array_map( 'trim', $data );
 				$author_data = array();
-				foreach ( (array) $row_data as $col_num => $val ) {
+				foreach ( $row_data as $col_num => $val ) {
 						// Don't use the value of the field key isn't set
 					if ( empty( $field_keys[ $col_num ] ) ) {
 						continue;
@@ -876,7 +877,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$guest_author_data['last_name']  = sanitize_text_field( $author['last_name'] );
 			}
 
-			$guest_author_id = $this->create_guest_author( $guest_author_data );
+			$this->create_guest_author( $guest_author_data );
 		}
 
 		WP_CLI::line( 'All done!' );
@@ -932,7 +933,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Clear all of the caches for memory management
+	 * Clear all the caches for memory management.
 	 */
 	private function stop_the_insanity() {
 		global $wpdb, $wp_object_cache;
