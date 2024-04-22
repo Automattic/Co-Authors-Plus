@@ -3,7 +3,7 @@
 Stable tag: 3.6.0  
 Requires at least: 4.1  
 Tested up to: 6.5  
-Requires PHP: 5.6  
+Requires PHP: 7.4  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 Tags: authors, users, multiple authors, co-authors, multi-author, publishing  
