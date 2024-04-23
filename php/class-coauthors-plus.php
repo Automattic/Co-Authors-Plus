@@ -1519,8 +1519,8 @@ class CoAuthors_Plus {
 	public function filter_user_has_cap( $allcaps, $caps, $args ) {
 
 		$cap     = $args[0];
-		$user_id = isset( $args[1] ) ? $args[1] : 0;
-		$post_id = isset( $args[2] ) ? $args[2] : 0;
+		$user_id = $args[1] ?? 0;
+		$post_id = $args[2] ?? 0;
 
 		if ( ! in_array( $cap, $this->get_to_be_filtered_caps(), true ) ) {
 			return $allcaps;

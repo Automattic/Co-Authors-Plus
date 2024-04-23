@@ -130,7 +130,7 @@ class Endpoints {
 		$response = array();
 
 		$search  = strtolower( $request->get_param( 'q' ) );
-		$ignorable = null === $request->get_param( 'existing_authors' ) ? '' : $request->get_param( 'existing_authors' );
+		$ignorable = $request->get_param( 'existing_authors' ) ?? '';
 		$ignore  = explode( ',', $ignorable );
 		$authors = $this->coauthors->search_authors( $search, $ignore );
 
