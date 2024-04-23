@@ -15,7 +15,7 @@ class CoauthorsPostsLinksSingleTest extends TestCase {
 	/**
 	 * Checks _doing_it_wrong() is called if author object is incomplete.
 	 */
-	public function test_null_is_returned_if_author_object_is_incomplete() {
+	public function test_null_is_returned_if_author_object_is_incomplete(): void {
 		$author = $this->create_author();
 		$this->setExpectedIncorrectUsage( 'coauthors_posts_links_single' );
 		unset( $author->ID, $author->user_nicename, $author->display_name );
@@ -26,7 +26,7 @@ class CoauthorsPostsLinksSingleTest extends TestCase {
 	/**
 	 * Checks single co-author linked to their post archive.
 	 */
-	public function test_single_link_is_returned_with_default_args() {
+	public function test_single_link_is_returned_with_default_args(): void {
 		$author = $this->create_author();
 
 		$author_link = coauthors_posts_links_single( $author );
@@ -41,7 +41,7 @@ class CoauthorsPostsLinksSingleTest extends TestCase {
 	/**
 	 * Checks single co-author linked to their post archive.
 	 */
-	public function test_single_link_is_returned_with_filtered_args() {
+	public function test_single_link_is_returned_with_filtered_args(): void {
 		$author = $this->create_author( 'filtered-author' );
 		add_filter( 'coauthors_posts_link', function( $args ) use ( $author ) {
 			return array(
