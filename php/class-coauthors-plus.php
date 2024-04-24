@@ -397,7 +397,6 @@ class CoAuthors_Plus {
 	 * Adds a custom 'Authors' box
 	 */
 	public function add_coauthors_box() {
-        var_dump($this->is_post_type_enabled());
 		if ( $this->is_post_type_enabled() && $this->current_user_can_set_authors() ) {
 			if ( false === $this->is_block_editor() ) {
 				add_meta_box( $this->coauthors_meta_box_name, apply_filters( 'coauthors_meta_box_title', __( 'Authors', 'co-authors-plus' ) ), array( $this, 'coauthors_meta_box' ), get_post_type(), apply_filters( 'coauthors_meta_box_context', 'side' ), apply_filters( 'coauthors_meta_box_priority', 'high' ) );
