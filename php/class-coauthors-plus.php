@@ -250,7 +250,7 @@ class CoAuthors_Plus {
 	 *
 	 * By default, this is the built-in and custom post types that have authors.
 	 *
-	 * @since 3.5.16
+	 * @since 3.6.0
 	 *
 	 * @return array Supported post types.
 	 */
@@ -487,13 +487,23 @@ class CoAuthors_Plus {
 	}
 
 	/**
-	 * Removes the default 'author' dropdown from quick edit
+	 * Removes the default 'author' dropdown from quick edit.
 	 */
 	public function remove_quick_edit_authors_box() {
 		global $pagenow;
 
 		if ( 'edit.php' === $pagenow && $this->is_post_type_enabled() ) {
-			remove_post_type_support( get_post_type(), $this->coauthor_taxonomy );
+			/*
+			 * The author dropdown isn't displayed if wp_dropdown_users( $args ) returns an empty string.
+			 * It will return an empty string if the user query returns an empty array.
+			 * We can force it return an empty array by changing $args to include only the user ID 0 which doesn't exist.
+			 * We can target the $args specific to Quick Edit using the filter quick_edit_dropdown_authors_args.
+			 * See https://github.com/Automattic/Co-Authors-Plus/issues/1033.
+			 */
+			add_filter(
+				'quick_edit_dropdown_authors_args',
+				static fn() => [ 'include' => [ 0 ] ]
+			);
 		}
 	}
 
