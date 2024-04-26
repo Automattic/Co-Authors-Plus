@@ -12,7 +12,7 @@ class IsCoauthorForPostTest extends TestCase {
 	/**
 	 * Checks whether a non-existent user is a coauthor of a post.
 	 */
-	public function test_return_false_when_user_is_not_valid() {
+	public function test_return_false_when_user_is_not_valid(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 		$user = new \WP_User();
@@ -25,7 +25,7 @@ class IsCoauthorForPostTest extends TestCase {
 	/**
 	 * Checks whether a user is a coauthor of a non-existent post.
 	 */
-	public function test_return_false_when_post_does_not_exist() {
+	public function test_return_false_when_post_does_not_exist(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
@@ -35,7 +35,7 @@ class IsCoauthorForPostTest extends TestCase {
 	/**
 	 * Checks whether a user is a coauthor of a non-existent post.
 	 */
-	public function test_return_false_when_post_is_not_provided_and_global_post_is_not_set() {
+	public function test_return_false_when_post_is_not_provided_and_global_post_is_not_set(): void {
 		$author = $this->create_author();
 		unset( $GLOBALS['post'] );
 
@@ -46,7 +46,7 @@ class IsCoauthorForPostTest extends TestCase {
 	 * Checks whether user is a coauthor of the post when user is set in either way,
 	 * as user_id or user object but he/she is not coauthor of the post.
 	 */
-	public function test_is_coauthor_for_post_when_user_numeric_or_user_login_set_but_not_coauthor() {
+	public function test_is_coauthor_for_post_when_user_numeric_or_user_login_set_but_not_coauthor(): void {
 		$author = $this->create_author();
 		$editor = $this->create_editor();
 		$post   = $this->create_post( $author );
@@ -58,7 +58,7 @@ class IsCoauthorForPostTest extends TestCase {
 	/**
 	 * Checks whether user is a coauthor of the post.
 	 */
-	public function test_is_coauthor_for_post_when_user_is_coauthor() {
+	public function test_is_coauthor_for_post_when_user_is_coauthor(): void {
 		$author = $this->create_author();
 		$editor = $this->create_editor();
 		$post   = $this->create_post( $author );

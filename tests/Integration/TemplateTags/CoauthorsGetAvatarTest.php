@@ -12,7 +12,7 @@ class CoauthorsGetAvatarTest extends TestCase {
 	/**
 	 * Checks co-author's avatar.
 	 */
-	public function test_with_author() {
+	public function test_with_author(): void {
 		$author = $this->create_author();
 
 		$this->assertEmpty( coauthors_get_avatar( $author->ID ) );
@@ -22,7 +22,7 @@ class CoauthorsGetAvatarTest extends TestCase {
 	/**
 	 * Checks co-author's avatar when author is a guest author.
 	 */
-	public function test_with_guest_author() {
+	public function test_with_guest_author(): void {
 		global $coauthors_plus;
 
 		$guest_author_id = $this->create_guest_author();
@@ -45,7 +45,7 @@ class CoauthorsGetAvatarTest extends TestCase {
 	/**
 	 * Checks co-author's avatar when user's email is not set somehow.
 	 */
-	public function test_with_guest_author_when_user_email_not_set() {
+	public function test_with_guest_author_when_user_email_not_set(): void {
 		global $coauthors_plus;
 
 		$guest_author_id = $this->create_guest_author();
@@ -58,7 +58,7 @@ class CoauthorsGetAvatarTest extends TestCase {
 	/**
 	 * Checks co-author's avatar with size.
 	 */
-	public function test_with_author_and_size_arg() {
+	public function test_with_author_and_size_arg(): void {
 		$author = $this->create_author();
 		$size = '100';
 
@@ -68,7 +68,7 @@ class CoauthorsGetAvatarTest extends TestCase {
 	/**
 	 * Checks co-author's avatar with alt.
 	 */
-	public function test_with_author_and_alt_arg() {
+	public function test_with_author_and_alt_arg(): void {
 		$author = $this->create_author();
 		$alt = 'Test';
 

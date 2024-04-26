@@ -25,7 +25,7 @@ class CoAuthor extends Author {
 	 *
 	 * @return bool
 	 */
-	public function is_needed() {
+	public function is_needed(): bool {
 		return true;
 	}
 
@@ -104,7 +104,7 @@ class CoAuthor extends Author {
 	 *
 	 * @return array An array of Schema Person data.
 	 */
-	protected function build_person_data_for_guest_author( $guest_author, $add_hash = false ) {
+	protected function build_person_data_for_guest_author( $guest_author, $add_hash = false ): array {
 		$schema_id = $this->context->site_url . Schema_IDs::PERSON_LOGO_HASH;
 		$data      = [
 			'@type' => $this->type,
@@ -143,7 +143,7 @@ class CoAuthor extends Author {
 	 *
 	 * @return array The Person schema data.
 	 */
-	protected function add_guest_author_same_as_urls( $data, $guest_author ) {
+	protected function add_guest_author_same_as_urls( $data, $guest_author ): array {
 		$same_as_urls = [];
 
 		// Add the "Website" field from co-authors' contact info.

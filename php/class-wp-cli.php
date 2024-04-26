@@ -19,7 +19,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand create-guest-authors
 	 */
-	public function create_guest_authors( $args, $assoc_args ) {
+	public function create_guest_authors( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults = array(
@@ -52,7 +52,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand create-terms-for-posts
 	 */
-	public function create_terms_for_posts() {
+	public function create_terms_for_posts(): void {
 		global $coauthors_plus, $wp_post_types;
 
 		// Cache these to prevent repeated lookups
@@ -125,7 +125,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand assign-coauthors
 	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>] [--append_coauthors]
 	 */
-	public function assign_coauthors( $args, $assoc_args ) {
+	public function assign_coauthors( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -215,7 +215,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand assign-user-to-coauthor
 	 * @synopsis --user_login=<user-login> --coauthor=<co-author>
 	 */
-	public function assign_user_to_coauthor( $args, $assoc_args ) {
+	public function assign_user_to_coauthor( $args, $assoc_args ): void {
 		global $coauthors_plus, $wpdb;
 
 		$defaults   = array(
@@ -290,7 +290,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand reassign-terms
 	 * @synopsis [--author-mapping=<file>] [--old_term=<slug>] [--new_term=<slug>]
 	 */
-	public function reassign_terms( $args, $assoc_args ) {
+	public function reassign_terms( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -382,7 +382,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand rename-coauthor
 	 * @synopsis --from=<user-login> --to=<user-login>
 	 */
-	public function rename_coauthor( $args, $assoc_args ) {
+	public function rename_coauthor( $args, $assoc_args ): void {
 		global $coauthors_plus, $wpdb;
 
 		$defaults   = array(
@@ -434,7 +434,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand swap-coauthors
 	 * @synopsis --from=<user-login> --to=<user-login> [--post_type=<ptype>] [--dry=<dry>]
 	 */
-	public function swap_coauthors( $args, $assoc_args ) {
+	public function swap_coauthors( $args, $assoc_args ): void {
 		global $coauthors_plus, $wpdb;
 
 		$defaults = array(
@@ -550,7 +550,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand list-posts-without-terms
 	 * @synopsis [--post_type=<ptype>]
 	 */
-	public function list_posts_without_terms( $args, $assoc_args ) {
+	public function list_posts_without_terms( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -599,7 +599,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand migrate-author-terms
 	 */
-	public function migrate_author_terms( $args, $assoc_args ) {
+	public function migrate_author_terms( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
@@ -637,7 +637,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand update-author-terms
 	 */
-	public function update_author_terms() {
+	public function update_author_terms(): void {
 		global $coauthors_plus;
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
 		WP_CLI::line( 'Now updating ' . count( $author_terms ) . ' terms' );
@@ -712,7 +712,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand remove-terms-from-revisions
 	 */
-	public function remove_terms_from_revisions() {
+	public function remove_terms_from_revisions(): void {
 		global $wpdb;
 
 		$ids = $wpdb->get_col( "SELECT ID FROM $wpdb->posts WHERE post_type='revision' AND post_status='inherit'" );
@@ -739,7 +739,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand create-guest-authors-from-wxr
 	 * @synopsis --file=<file>
 	 */
-	public function create_guest_authors_from_wxr( $args, $assoc_args ) {
+	public function create_guest_authors_from_wxr( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -798,7 +798,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * [--user_email=<user_email>]
 	 * [--description=<description>]
 	 */
-	public function create_author( $args, $assoc_args ) {
+	public function create_author( $args, $assoc_args ): void {
 		$this->create_guest_author( $assoc_args );
 	}
 
@@ -808,7 +808,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand create-guest-authors-from-csv
 	 * @synopsis --file=<file>
 	 */
-	public function create_guest_authors_from_csv( $args, $assoc_args ) {
+	public function create_guest_authors_from_csv( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -889,7 +889,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @param $author array author args. Required: display_name, user_login
 	 * @return void
 	 */
-	private function create_guest_author( $author ) {
+	private function create_guest_author( $author ): void {
 		global $coauthors_plus;
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email', $author['user_email'], true );
 
@@ -899,7 +899,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		if ( $guest_author ) {
 			/* translators: Guest Author ID. */
-			return WP_CLI::warning( sprintf( esc_html__( '-- Author already exists (ID #%s); skipping.', 'co-authors-plus' ), $guest_author->ID ) );
+			WP_CLI::warning( sprintf( esc_html__( '-- Author already exists (ID #%s); skipping.', 'co-authors-plus' ), $guest_author->ID ) );
+			return;
 		}
 
 		WP_CLI::line( esc_html__( '-- Not found; creating profile.', 'co-authors-plus' ) );
@@ -919,7 +920,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		if ( is_wp_error( $guest_author_id ) ) {
 			/* translators: The error message. */
-			return WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
+			WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
+			return;
 		}
 
 		if ( isset( $author['author_id'] ) ) {
@@ -935,7 +937,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	/**
 	 * Clear all the caches for memory management.
 	 */
-	private function stop_the_insanity() {
+	private function stop_the_insanity(): void {
 		global $wpdb, $wp_object_cache;
 
 		$wpdb->queries = array(); // or define( 'WP_IMPORTING', true );
