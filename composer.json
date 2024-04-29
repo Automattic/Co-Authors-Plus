@@ -56,10 +56,10 @@
 			"@php ./vendor/bin/phpunit --exclude=ms-excluded"
 		],
 		"cs": [
-			"@php ./vendor/bin/phpcs -p -s -v -n . --standard=\"WordPress-VIP-Go\" --extensions=php --ignore=\"/vendor/*,/node_modules/*,/tests/*\""
+			"@php ./vendor/bin/phpcs"
 		],
 		"cbf": [
-			"@php ./vendor/bin/phpcbf -p -s -v -n . --standard=\"WordPress-VIP-Go\" --extensions=php --ignore=\"/vendor/*,/node_modules/*,/tests/*\""
+			"@php ./vendor/bin/phpcbf"
 		],
 		"lint": [
 			"@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git"
