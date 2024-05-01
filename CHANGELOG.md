@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.1] - 2024-04-25
+
+### Fixed
+
+* Fix missing author column in wp-admin Posts table #1038
+
+## [3.6.0] - 2024-04-22
+
+### Added
+* Blocks for Co-Authors #997
+
+### Fixed
+* Improve alignment in author-selection component #990
+* Fix admin notice positions #1002
+* UI: Add capability check to Add New button #1003
+* i18n: set script translations and refresh language files #1007
+
+### Maintenance
+* Docs: Consolidate and refresh README.md #992
+* Refresh package.json #993
+* NPM: Add version-bump-prompt #994
+* Fix/general code tidy #995
+* Composer: Use 4-space tab indentation #999
+* Improve tests structure #1000
+* Extract iterator class from template-tags.php #1005
+* Add supported_post_types() method #1006
+* Tests improvements #1008
+* Bump postcss from 8.4.19 to 8.4.31 #1009
+* Create co-authors-plus-da_DK.po #1013
+* Increase minimum supported PHP version to 7.4 #954
+* Increase minimum supported WordPress version to 5.7 #955
+
 ## [3.5.15] - 2023-08-28
 
 ### Fixed
@@ -462,6 +494,8 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.6.1]: https://github.com/automattic/co-authors-plus/compare/3.6.0..3.6.1
+[3.6.0]: https://github.com/automattic/co-authors-plus/compare/3.5.15...3.6.0
 [3.5.15]: https://github.com/automattic/co-authors-plus/compare/3.5.14...3.5.15
 [3.5.14]: https://github.com/automattic/co-authors-plus/compare/3.5.13...3.5.14
 [3.5.13]: https://github.com/automattic/co-authors-plus/compare/3.5.12...3.5.13

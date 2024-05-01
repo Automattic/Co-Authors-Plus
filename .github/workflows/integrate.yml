@@ -13,22 +13,23 @@ jobs:
 
     strategy:
       matrix:
-        wordpress: [ '5.7', '6.3' ]
-        php: [ '7.1', '7.4', '8.0', '8.2' ]
-        allowed_failure: [ false ]
         include:
+          # Check lowest supported WP version, with the lowest supported PHP.
+          - wordpress: '5.9'
+            php: '7.4'
+            allowed_failure: false
+          # Check latest WP with the highest supported PHP.
+          - wordpress: 'latest'
+            php: 'latest'
+            allowed_failure: false
           # Check upcoming WP.
-          - php: '8.2'
-            wordpress: 'trunk'
+          - wordpress: 'trunk'
+            php: 'latest'
             allowed_failure: true
-          # Check upcoming PHP.
-          - php: '8.3'
-            wordpress: 'latest'
-            allowed_failure: true
-        exclude:
-          # WordPress 5.7 doesn't support PHP 8.2.
-          - php: '8.2'
-            wordpress: '5.7'
+          # Check upcoming PHP - only needed when a new version has been forked (typically Sep-Nov)
+#          - wordpress: 'trunk'
+#            php: 'nightly'
+#            allowed_failure: true
       fail-fast: false
 
     steps:
@@ -42,11 +43,6 @@ jobs:
           extensions: ${{ matrix.extensions }}
           ini-values: ${{ matrix.ini-values }}
           coverage: ${{ matrix.coverage }}
-
-      - name: Install PHPUnit 7.x for WP < 5.9
-        if: ${{ matrix.wordpress < 5.9 }}
-        # Ignore platform requirements, so that PHPUnit 7.5 can be installed on PHP 8.0 (and above).
-        run: composer require --dev phpunit/phpunit:"^7.5" --ignore-platform-req=php+ --no-update --no-scripts --no-interaction
 
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
@@ -66,10 +62,6 @@ jobs:
 
       - name: Start MySQL service
         run: sudo systemctl start mysql.service
-
-      - name: Setting mysql_native_password for PHP <= 7.3
-        if: ${{ matrix.php <= 7.3 }}
-        run: mysql -u root -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root'";
 
       - name: Install WordPress environment
         run: composer prepare ${{ matrix.wordpress }}

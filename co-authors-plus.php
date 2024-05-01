@@ -11,9 +11,9 @@
  * Plugin Name:       Co-Authors Plus
  * Plugin URI:        https://wordpress.org/plugins/co-authors-plus/
  * Description:       Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
- * Version:           3.5.15
- * Requires at least: 4.1
- * Requires PHP:      5.6
+ * Version:           3.6.1
+ * Requires at least: 5.9
+ * Requires PHP:      7.4
  * Author:            Mohammad Jangda, Daniel Bachhuber, Automattic
  * Author URI:        https://automattic.com
  * Text Domain:       co-authors-plus
@@ -21,7 +21,7 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-const COAUTHORS_PLUS_VERSION = '3.5.15';
+const COAUTHORS_PLUS_VERSION = '3.6.1';
 const COAUTHORS_PLUS_FILE = __FILE__;
 
 require_once __DIR__ . '/template-tags.php';
@@ -34,6 +34,12 @@ require_once __DIR__ . '/php/integrations/yoast.php';
 require_once __DIR__ . '/php/class-coauthors-plus.php';
 require_once __DIR__ . '/php/class-coauthors-iterator.php';
 
+// Blocks
+require_once __DIR__ . '/php/blocks/class-blocks.php';
+
+// REST APIs for Blocks
+require_once __DIR__ . '/php/api/endpoints/class-coauthors-controller.php';
+
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once __DIR__ . '/php/class-wp-cli.php';
 }
@@ -41,6 +47,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 global $coauthors_plus;
 $coauthors_plus     = new CoAuthors_Plus();
 $coauthors_endpoint = new CoAuthors\API\Endpoints( $coauthors_plus );
+CoAuthors\Blocks::run();
 
 if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 	/**
@@ -207,3 +214,12 @@ function cap_get_coauthor_terms_for_post( $post_id ) {
 	global $coauthors_plus;
 	return $coauthors_plus->get_coauthor_terms_for_post( $post_id );
 }
+
+/**
+ * Register CoAuthor REST API Routes
+ */
+function cap_register_coauthors_rest_api_routes(): void {
+	global $coauthors_plus;
+	(new CoAuthors\API\Endpoints\CoAuthors_Controller( $coauthors_plus ))->register_routes();
+}
+add_action( 'rest_api_init', 'cap_register_coauthors_rest_api_routes' );

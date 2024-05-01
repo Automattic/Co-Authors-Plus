@@ -64,7 +64,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::is_guest_authors_enabled()
 	 */
-	public function test_is_guest_authors_enabled() {
+	public function test_is_guest_authors_enabled(): void {
 
 		global $coauthors_plus;
 
@@ -84,7 +84,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_coauthor_by()
 	 */
-	public function test_get_coauthor_by_when_guest_author() {
+	public function test_get_coauthor_by_when_guest_author(): void {
 
 		global $coauthors_plus;
 
@@ -108,7 +108,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_coauthor_by()
 	 */
-	public function test_get_coauthor_by_when_guest_author_has_unicode_username() {
+	public function test_get_coauthor_by_when_guest_author_has_unicode_username(): void {
 
 		global $coauthors_plus;
 
@@ -133,7 +133,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_coauthor_by()
 	 */
-	public function test_get_coauthor_by_when_guest_authors_not_enabled() {
+	public function test_get_coauthor_by_when_guest_authors_not_enabled(): void {
 
 		global $coauthors_plus;
 
@@ -182,7 +182,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::is_post_type_enabled()
 	 */
-	public function test_is_post_type_enabled() {
+	public function test_is_post_type_enabled(): void {
 
 		global $coauthors_plus, $post;
 
@@ -227,7 +227,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::current_user_can_set_authors()
 	 */
-	public function test_current_user_can_set_author() {
+	public function test_current_user_can_set_author(): void {
 		global $coauthors_plus;
 
 		$this->assertFalse( $coauthors_plus->current_user_can_set_authors() );
@@ -265,7 +265,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::current_user_can_set_authors()
 	 */
-	public function test_current_user_can_set_authors_using_coauthors_plus_edit_authors_filter() {
+	public function test_current_user_can_set_authors_using_coauthors_plus_edit_authors_filter(): void {
 
 		global $coauthors_plus;
 
@@ -305,7 +305,7 @@ class CoAuthorsPlusTest extends TestCase {
 	/**
 	 * Checks if the current user can edit a post they are set as a coauthor for.
 	 */
-	public function test_current_user_can_edit_post_they_coauthor() {
+	public function test_current_user_can_edit_post_they_coauthor(): void {
 		global $coauthors_plus;
 
 		// Backing up current user.
@@ -351,7 +351,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::search_authors()
 	 */
-	public function test_search_authors_no_args() {
+	public function test_search_authors_no_args(): void {
 
 		global $coauthors_plus;
 
@@ -395,7 +395,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::search_authors()
 	 */
-	public function test_search_authors_when_search_keyword_provided() {
+	public function test_search_authors_when_search_keyword_provided(): void {
 
 		global $coauthors_plus;
 
@@ -449,7 +449,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::search_authors()
 	 */
-	public function test_search_authors_when_ignored_authors_provided() {
+	public function test_search_authors_when_ignored_authors_provided(): void {
 
 		global $coauthors_plus;
 
@@ -488,7 +488,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::search_authors()
 	 */
-	public function test_search_authors_when_search_keyword_and_ignored_authors_provided() {
+	public function test_search_authors_when_search_keyword_and_ignored_authors_provided(): void {
 
 		global $coauthors_plus;
 
@@ -517,7 +517,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_author_term()
 	 */
-	public function test_get_author_term_when_coauthor_is_not_object() {
+	public function test_get_author_term_when_coauthor_is_not_object(): void {
 
 		global $coauthors_plus;
 
@@ -531,7 +531,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_author_term()
 	 */
-	public function test_get_author_term_using_caching() {
+	public function test_get_author_term_using_caching(): void {
 
 		global $coauthors_plus;
 
@@ -553,7 +553,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_author_term()
 	 */
-	public function test_get_author_term_when_author_has_linked_account() {
+	public function test_get_author_term_when_author_has_linked_account(): void {
 
 		global $coauthors_plus;
 
@@ -576,7 +576,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::get_author_term()
 	 */
-	public function test_get_author_term_when_author_has_not_linked_account() {
+	public function test_get_author_term_when_author_has_not_linked_account(): void {
 
 		global $coauthors_plus;
 
@@ -604,7 +604,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::update_author_term()
 	 */
-	public function test_update_author_term_when_coauthor_is_not_object() {
+	public function test_update_author_term_when_coauthor_is_not_object(): void {
 
 		global $coauthors_plus;
 
@@ -618,7 +618,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::update_author_term()
 	 */
-	public function test_update_author_term_when_author_term_exists() {
+	public function test_update_author_term_when_author_term_exists(): void {
 
 		global $coauthors_plus;
 
@@ -664,7 +664,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Plus::update_author_term()
 	 */
-	public function test_update_author_term_when_author_term_not_exist() {
+	public function test_update_author_term_when_author_term_not_exist(): void {
 
 		global $coauthors_plus;
 
@@ -2131,7 +2131,7 @@ class CoAuthorsPlusTest extends TestCase {
 	/**
 	 * @covers CoAuthors_Plus::is_block_editor()
 	 */
-	public function test_is_block_editor() {
+	public function test_is_block_editor(): void {
 		global $coauthors_plus;
 
 		set_current_screen( 'post-new.php' );
@@ -2146,7 +2146,7 @@ class CoAuthorsPlusTest extends TestCase {
 	/**
 	 * @covers CoAuthors_Plus::enqueue_sidebar_plugin_assets()
 	 */
-	public function test_enqueue_editor_assets() {
+	public function test_enqueue_editor_assets(): void {
 
 		// Default state
 		do_action( 'enqueue_block_editor_assets' );
@@ -2168,7 +2168,7 @@ class CoAuthorsPlusTest extends TestCase {
 	/**
 	 * @covers CoAuthors_Plus::add_coauthors_box()
 	 */
-	public function test_add_coauthors_box() {
+	public function test_add_coauthors_box(): void {
 		global $coauthors_plus, $wp_meta_boxes;
 
 		wp_set_current_user( $this->editor1->ID );
@@ -2183,7 +2183,7 @@ class CoAuthorsPlusTest extends TestCase {
 	/**
 	 * Test the expected default supported post types.
 	 */
-	public function test_default_supported_post_types() {
+	public function test_default_supported_post_types(): void {
 		$supported_post_types = (new \CoAuthors_Plus())->supported_post_types();
 		$expected = array(
 			'post',
@@ -2195,7 +2195,7 @@ class CoAuthorsPlusTest extends TestCase {
 	/**
 	 * Test whether the supported post types can be filtered.
 	 */
-	public function test_can_filter_supported_post_types() {
+	public function test_can_filter_supported_post_types(): void {
 		// This should be detected.
 		$post_type_with_author = register_post_type(
 			'foo',
