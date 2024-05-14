@@ -87,6 +87,7 @@ class Yoast {
 		add_filter( 'wpseo_enhanced_slack_data', [__CLASS__, 'filter_slack_data'], 10, 2 );
 		add_filter( 'wpseo_robots_array', [ __CLASS__, 'allow_indexing_guest_author_archive' ], 10, 2 );
 		add_filter( 'wpseo_opengraph_url', [ __CLASS__, 'fix_guest_author_archive_url_presenter' ], 10, 2 );
+		add_filter( 'wpseo_replacements', [ __CLASS__, 'filter_author_name_variable' ], 10, 2 );
 	}
 
 	/**
@@ -326,6 +327,30 @@ class Yoast {
 		}
 
 		return get_author_posts_url( $user->ID, $user->user_nicename );
+	}
+
+	/**
+	 * Uses guest authors in the '%%name%%' Yoast variable when needed.
+	 *
+	 * See https://yoast.com/features/meta-tag-variables/.
+	 *
+	 * @param array    $replacements Key/val pair of variables and their transformed value.
+	 * @param stdClass $args         Info about current queried object.
+	 * @return array   Modified $replacements.
+	 */
+	public static function filter_author_name_variable( $replacements, $args ): array {
+		if ( isset( $replacements['%%name%%'], $args->ID ) ) {
+			$author_objects = get_coauthors( $args->ID );
+
+			// Fallback in case of error.
+			if ( empty( $author_objects ) ) {
+				return $replacements;
+			}
+
+			$replacements['%%name%%'] = self::get_authors_display_names_output( $author_objects );
+		}
+
+		return $replacements;
 	}
 }
 
