@@ -2,6 +2,7 @@
 
 namespace Automattic\CoAuthorsPlus\Tests\Integration;
 
+use PHPUnit\Framework\InvalidArgumentException;
 use WP_Query;
 use WP_Term;
 
@@ -723,6 +724,42 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 	}
 
+	/**
+	 * This function handles asserting that a post has the authors specified, and the correct number of authors.
+	 *
+	 * @param int   $post_id The Post ID.
+	 * @param array $authors The authors to check that are assigned to a post.
+	 *
+	 * @return void
+	 * @throws InvalidArgumentException Throws exception if $authors is not a valid Guest Author or WP_User object or a string.
+	 */
+	public function assertPostHasCoAuthors( int $post_id, array $authors ) {
+		$authors = array_map(
+			function ( $author ) {
+				if ( is_object( $author ) ) {
+					return 'cap-' . $author->user_login;
+				} elseif ( is_string( $author ) ) {
+					return $author; // Assuming that caller is giving author slug.
+				} else {
+					throw InvalidArgumentException::create( 2, 'Authors should be string, Guest Author Object, or WP_User' );
+				}
+			},
+			$authors
+		);
+
+		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
+
+		$this->assertIsArray( $post_author_terms );
+		$this->assertSameSize(
+			$authors,
+			$post_author_terms
+		);
+
+		foreach ( $post_author_terms as $term ) {
+			$this->assertInstanceOf( WP_Term::class, $term );
+			$this->assertContains( $term->slug, $authors );
+		}
+	}
 
 	/**
 	 * This is a basic test to ensure that any authors being assigned to a post
@@ -814,20 +851,13 @@ class CoAuthorsPlusTest extends TestCase {
 		// Although we added a co-author, the wp_posts.post_author column should still be attributed to $author2.
 		$this->assertEquals( $this->author2->ID, $query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 2, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author2->user_login,
-			'cap-' . $this->author3->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2->user_login,
+				$this->author3->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -865,21 +895,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $query->found_posts );
 		$this->assertEquals( $this->author3->ID, $query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author3->user_login,
-			'cap-' . $this->editor1->user_login,
-			'cap-' . $this->author2->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author3->user_login,
+				$this->editor1->user_login,
+				$this->author2->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1034,21 +1057,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author1->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author1->user_login,
-			'cap-' . $guest_author_1->user_login,
-			'cap-' . $guest_author_2->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author1->user_login,
+				$guest_author_1->user_login,
+				$guest_author_2->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1108,20 +1124,13 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 2, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author3->user_login,
-			'cap-' . $guest_author_1->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author3->user_login,
+				$guest_author_1->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1181,21 +1190,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author1->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author1->user_login,
-			'cap-' . $this->author3->user_login,
-			'cap-' . $guest_author_1->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author1->user_login,
+				$this->author3->user_login,
+				$guest_author_1->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1266,20 +1268,13 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author2->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 2, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author2->user_login,
-			'cap-' . $this->author3->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2->user_login,
+				$this->author3->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1352,21 +1347,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->editor1->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->editor1->user_login,
-			'cap-' . $guest_author_1->user_login,
-			'cap-' . $this->author3->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->editor1->user_login,
+				$guest_author_1->user_login,
+				$this->author3->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1433,21 +1421,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author1->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author1->user_login,
-			'cap-' . $guest_author_1->user_login,
-			'cap-' . $this->author3->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author1->user_login,
+				$guest_author_1->user_login,
+				$this->author3->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1534,21 +1515,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author3->user_login,
-			'cap-' . $guest_author_1->user_login,
-			'cap-' . $guest_author_2->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author3->user_login,
+				$guest_author_1->user_login,
+				$guest_author_2->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1619,21 +1593,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author2->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author2->user_login,
-			'cap-' . $this->author3->user_login,
-			'cap-' . $guest_author_1->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2->user_login,
+				$this->author3->user_login,
+				$guest_author_1->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1705,21 +1672,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author2->user_login,
-			'cap-' . $this->author3->user_login,
-			'cap-' . $guest_author_1->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2->user_login,
+				$this->author3->user_login,
+				$guest_author_1->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 	}
 
 	/**
@@ -1792,21 +1752,14 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( 1, $second_query->found_posts );
 		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
 
-		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
-
-		$this->assertIsArray( $post_author_terms );
-		$this->assertCount( 3, $post_author_terms );
-
-		$author_slugs = array(
-			'cap-' . $this->author2->user_login,
-			'cap-' . $this->author3->user_login,
-			'cap-' . $guest_author_1->user_login,
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2->user_login,
+				$this->author3->user_login,
+				$guest_author_1->user_login,
+			]
 		);
-
-		foreach ( $post_author_terms as $term ) {
-			$this->assertInstanceOf( WP_Term::class, $term );
-			$this->assertContains( $term->slug, $author_slugs );
-		}
 
 		$guest_author_term = wp_get_post_terms( $linked_author_1->ID, $this->_cap->coauthor_taxonomy );
 
