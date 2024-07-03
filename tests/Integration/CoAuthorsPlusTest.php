@@ -705,6 +705,26 @@ class CoAuthorsPlusTest extends TestCase {
 	}
 
 	/**
+	 * Convenience function which makes sure an author object is not a WP_User. This is because we don't have
+	 * an actual "Guest Author" object.
+	 *
+	 * @param object $author The author object.
+	 *
+	 * @return void
+	 */
+	public function assertIsGuestAuthorNotWpUser( object $author ): void {
+		// Perhaps we can further assert that the required properties exist on the object or is that overkill?
+
+		$this->assertThat(
+			$author,
+			$this->logicalNot(
+				$this->isInstanceOf( WP_User::class )
+			)
+		);
+	}
+
+
+	/**
 	 * This is a basic test to ensure that any authors being assigned to a post
 	 * using the CoAuthors_Plus::add_coauthors() method are appropriately
 	 * associated to the post. Some of the things the add_coauthors()
@@ -888,13 +908,7 @@ class CoAuthorsPlusTest extends TestCase {
 		 */
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$random_username = 'random_user_' . rand( 1001, 2000 );
 		$display_name = str_replace( '_', ' ', $random_username );
@@ -907,13 +921,7 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_2 = $this->_cap->get_coauthor_by( 'id', $guest_author_2_id );
 
-		$this->assertIsObject( $guest_author_2 );
-		$this->assertThat(
-			$guest_author_2,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_2 );
 
 		$post_id = $this->factory()->post->create(
 			array(
@@ -974,13 +982,7 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$random_username = 'random_user_' . rand( 1001, 2000 );
 		$display_name = str_replace( '_', ' ', $random_username );
@@ -993,13 +995,7 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_2 = $this->_cap->get_coauthor_by( 'id', $guest_author_2_id );
 
-		$this->assertIsObject( $guest_author_2 );
-		$this->assertThat(
-			$guest_author_2,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_2 );
 
 		$post_id = $this->factory()->post->create(
 			array(
@@ -1074,13 +1070,7 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$post_id = $this->factory()->post->create(
 			array(
@@ -1152,13 +1142,7 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$post_id = $this->factory()->post->create(
 			array(
@@ -1227,13 +1211,7 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
 
 		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author2->ID );
-		$this->assertIsObject( $linked_author_1 );
-		$this->assertThat(
-			$linked_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
 		$this->assertTrue( property_exists( $linked_author_1, 'type' ) );
 		$this->assertEquals( 'guest-author', $linked_author_1->type );
 		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
@@ -1243,13 +1221,7 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertEquals( $this->author2->ID, $linked_author_1->wp_user->ID );
 
 		$linked_author_2 = $this->_cap->get_coauthor_by( 'user_login', $this->author3->user_login );
-		$this->assertIsObject( $linked_author_2 );
-		$this->assertThat(
-			$linked_author_2,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_2 );
 		$this->assertTrue( property_exists( $linked_author_2, 'type' ) );
 		$this->assertEquals( 'guest-author', $linked_author_2->type );
 		$this->assertTrue( property_exists(  $linked_author_2, 'is_wp_user' ) );
@@ -1329,24 +1301,12 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
 
 		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
-		$this->assertIsObject( $linked_author_1 );
-		$this->assertThat(
-			$linked_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
 		$this->assertTrue( property_exists( $linked_author_1, 'type' ) );
 		$this->assertEquals( 'guest-author', $linked_author_1->type );
 		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
@@ -1429,24 +1389,12 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
 
 		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
-		$this->assertIsObject( $linked_author_1 );
-		$this->assertThat(
-			$linked_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
 
 		$post_id = $this->factory()->post->create(
 			array(
@@ -1520,13 +1468,7 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$random_username = 'random_user_' . rand( 1001, 2000 );
 		$display_name = str_replace( '_', ' ', $random_username );
@@ -1539,24 +1481,13 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_2 = $this->_cap->get_coauthor_by( 'id', $guest_author_2_id );
 
-		$this->assertIsObject( $guest_author_2 );
-		$this->assertThat(
-			$guest_author_2,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_2 );
 
 		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
 
 		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
-		$this->assertIsObject( $linked_author_1 );
-		$this->assertThat(
-			$linked_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
 		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
 		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
@@ -1638,24 +1569,13 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
 
 		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
-		$this->assertIsObject( $linked_author_1 );
-		$this->assertThat(
-			$linked_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
 		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
 		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
@@ -1735,24 +1655,13 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
 
 		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
-		$this->assertIsObject( $linked_author_1 );
-		$this->assertThat(
-			$linked_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
 		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
 		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
@@ -1832,24 +1741,13 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
 
-		$this->assertIsObject( $guest_author_1 );
-		$this->assertThat(
-			$guest_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
 		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
 
 		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
-		$this->assertIsObject( $linked_author_1 );
-		$this->assertThat(
-			$linked_author_1,
-			$this->logicalNot(
-				$this->isInstanceOf( WP_User::class )
-			)
-		);
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
 		$this->assertTrue( property_exists( $linked_author_1, 'is_wp_user' ) );
 		$this->assertTrue( $linked_author_1->is_wp_user );
 		$this->assertTrue( property_exists( $linked_author_1, 'wp_user' ) );
