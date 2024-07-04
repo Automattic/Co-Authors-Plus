@@ -944,8 +944,8 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author2->user_login,
-				$this->author3->user_login,
+				$this->author2,
+				$this->author3,
 			]
 		);
 	}
@@ -988,9 +988,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author3->user_login,
-				$this->editor1->user_login,
-				$this->author2->user_login,
+				$this->author3,
+				$this->editor1,
+				$this->author2,
 			]
 		);
 	}
@@ -1150,9 +1150,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author1->user_login,
-				$guest_author_1->user_login,
-				$guest_author_2->user_login,
+				$this->author1,
+				$guest_author_1,
+				$guest_author_2,
 			]
 		);
 	}
@@ -1217,8 +1217,8 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author3->user_login,
-				$guest_author_1->user_login,
+				$this->author3,
+				$guest_author_1,
 			]
 		);
 	}
@@ -1283,9 +1283,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author1->user_login,
-				$this->author3->user_login,
-				$guest_author_1->user_login,
+				$this->author1,
+				$this->author3,
+				$guest_author_1,
 			]
 		);
 	}
@@ -1347,8 +1347,8 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author2->user_login,
-				$this->author3->user_login,
+				$this->author2,
+				$this->author3,
 			]
 		);
 	}
@@ -1419,9 +1419,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->editor1->user_login,
-				$guest_author_1->user_login,
-				$this->author3->user_login,
+				$this->editor1,
+				$guest_author_1,
+				$this->author3,
 			]
 		);
 	}
@@ -1493,9 +1493,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author1->user_login,
-				$guest_author_1->user_login,
-				$this->author3->user_login,
+				$this->author1,
+				$guest_author_1,
+				$this->author3,
 			]
 		);
 	}
@@ -1581,9 +1581,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author3->user_login,
-				$guest_author_1->user_login,
-				$guest_author_2->user_login,
+				$this->author3,
+				$guest_author_1,
+				$guest_author_2,
 			]
 		);
 	}
@@ -1653,9 +1653,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author2->user_login,
-				$this->author3->user_login,
-				$guest_author_1->user_login,
+				$this->author2,
+				$this->author3,
+				$guest_author_1,
 			]
 		);
 	}
@@ -1726,9 +1726,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author2->user_login,
-				$this->author3->user_login,
-				$guest_author_1->user_login,
+				$this->author2,
+				$this->author3,
+				$guest_author_1,
 			]
 		);
 	}
@@ -1800,9 +1800,9 @@ class CoAuthorsPlusTest extends TestCase {
 		$this->assertPostHasCoAuthors(
 			$post_id,
 			[
-				$this->author2->user_login,
-				$this->author3->user_login,
-				$guest_author_1->user_login,
+				$this->author2,
+				$this->author3,
+				$guest_author_1,
 			]
 		);
 
