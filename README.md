@@ -83,12 +83,12 @@ Use the inline layout to display co-authors in a list on a single wrapping line.
 
 You can control the characters displayed before, between and after co-authors in the list using the block settings, or change the defaults using the following server-side filters:
 
-```
+~~~
 coauthors_default_before
 coauthors_default_between
 coauthors_default_between_last
 coauthors_default_after
-```
+~~~
 
 #### Block Layout
 
@@ -135,11 +135,11 @@ If you want to display data about the author on their own archive, use the indiv
 If you make a custom block and want to use the author context, add `co-authors-plus/author` to the `usesContext` property in your block.json file.
 
 Example:
-```json
+~~~json
 {
 	"usesContext": ["co-authors-plus/author"]
 }
-```
+~~~
 
 ## Block Example Data
 
