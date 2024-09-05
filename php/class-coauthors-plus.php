@@ -956,6 +956,8 @@ class CoAuthors_Plus {
 				}
 			}
 		}
+		do_action('cap_finished', $post_id);
+
 	}
 
 	public function has_author_terms( $post_id ): bool {
@@ -1029,7 +1031,6 @@ class CoAuthors_Plus {
 			$wpdb->update( $wpdb->posts, array( 'post_author' => $new_author->ID ), array( 'ID' => $post_id ) );
 			clean_post_cache( $post_id );
 		}
-	        do_action('coauthors_post_updated', $post_id, $coauthor_objects);
 		return true;
 
 	}
