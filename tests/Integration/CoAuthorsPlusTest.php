@@ -1291,22 +1291,124 @@ class CoAuthorsPlusTest extends TestCase {
 	}
 
 	/**
+	 * Provides the different permutations of assigning authors to a post.
+	 *
+	 * @return array[]
+	 */
+	public function provide_data_for_assign_post_authors_test() {
+		return [
+			'setting_linked_coauthors'                => [
+				'author_set'         => [
+					'author_1' => 'linked',
+					'author_2' => 'linked',
+				],
+				'all_authors_linked' => true,
+				'append'             => false,
+			],
+			'appending_linked_coauthors'              => [
+				'author_set'         => [
+					'author_1' => 'linked',
+					'author_2' => 'linked',
+				],
+				'all_authors_linked' => true,
+				'append'             => true,
+			],
+			'setting_linked_and_unlinked_coauthors'   => [
+				'author_set'         => [
+					'author_1' => 'guest',
+					'author_2' => 'linked',
+				],
+				'all_authors_linked' => false,
+				'append'             => false,
+			],
+			'appending_linked_and_unlinked_coauthors' => [
+				'author_set'         => [
+					'author_1' => 'linked',
+					'author_2' => 'guest',
+				],
+				'all_authors_linked' => false,
+				'append'             => true,
+			],
+			'setting_unlinked_coauthors'              => [
+				'author_set'         => [
+					'author_1' => 'user',
+					'author_2' => 'guest',
+				],
+				'all_authors_linked' => false,
+				'append'             => false,
+			],
+			'appending_unlinked_coauthors'            => [
+				'author_set'         => [
+					'author_1' => 'guest',
+					'author_2' => 'user',
+				],
+				'all_authors_linked' => false,
+				'append'             => true,
+			],
+		];
+	}
+
+	/**
 	 * This is where we test many moving parts of the CoAuthorsPlugin all at once. We are creating a guest author from a
 	 * WP_User, and then assigning that guest author to a post. Since the guest author is linked to a WP_User, the
 	 * function CoAuthors_Plus::get_coauthor_by() should return a guest author object along with meta data
 	 * indicating that the object is linked to a WP_User. The wp_posts.post_author column should change,
 	 * and the response from CoAuthors_Plus::add_coauthors() should be true.
+	 * @dataProvider provide_data_for_assign_post_authors_test
 	 * @return void
 	 */
-	public function test_assign_post_authors_from_coauthors_who_are_linked() {
-		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author2->ID );
-		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
+	public function test_assign_post_authors_from_coauthors( $author_set, $all_authors_linked, $append ) {
+		$coauthors = [];
 
-		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author2->ID );
-		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+		foreach ( $author_set as $author_key => $link_type ) {
+			if ( in_array( $link_type, [ 'linked', 'user' ], true ) ) {
+				$author = $this->factory()->user->create_and_get(
+					[
+						'role'         => 'author',
+						'user_login'   => wp_rand( 1, 1000 ) . '_author_' . $author_key,
+						'display_name' => 'Author ' . $author_key,
+						'first_name'   => 'Author',
+						'last_name'    => $author_key,
+					]
+				);
 
-		$linked_author_2 = $this->_cap->get_coauthor_by( 'user_login', $this->author3->user_login );
-		$this->assertIsGuestAuthorNotWpUser( $linked_author_2 );
+				if ( 'linked' === $link_type ) {
+
+					$this->_cap->guest_authors->create_guest_author_from_user_id( $author->ID );
+
+					$linked_author = $this->_cap->get_coauthor_by( 'id', $author->ID );
+
+					$this->assertIsGuestAuthorNotWpUser( $linked_author );
+
+					$coauthors[] = [
+						'user'     => $author,
+						'coauthor' => $linked_author,
+					];
+				} else {
+					$coauthors[] = [
+						'user' => $author,
+					];
+				}
+			} else {
+				$random_username = 'random_user_' . wp_rand( 1001, 2000 );
+				$display_name    = str_replace( '_', ' ', $random_username );
+
+				$guest_author_id = $this->_cap->guest_authors->create(
+					[
+						'user_login'   => $random_username,
+						'display_name' => $display_name,
+					]
+				);
+
+				$guest_author = $this->_cap->get_coauthor_by( 'id', $guest_author_id );
+
+				$this->assertIsGuestAuthorNotWpUser( $guest_author );
+
+				$coauthors[] = [
+					'coauthor' => $guest_author,
+				];
+			}
+		}
 
 		$post_id = $this->factory()->post->create(
 			array(
@@ -1327,82 +1429,17 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$result = $this->_cap->add_coauthors(
 			$post_id,
-			array(
-				$linked_author_1->user_login,
-				$linked_author_2->user_login,
-			)
-		);
+			array_map(
+				function ( $coauthor ) {
+					if ( isset( $coauthor['coauthor'] ) ) {
+						return $coauthor['coauthor']->user_login;
+					}
 
-		$this->assertTrue( $result );
-
-		$second_query = new WP_Query(
-			array(
-				'p' => $post_id,
-			)
-		);
-
-		$this->assertEquals( 1, $second_query->found_posts );
-		$this->assertEquals( $this->author2->ID, $second_query->posts[0]->post_author );
-
-		$this->assertPostHasCoAuthors(
-			$post_id,
-			[
-				$this->author2,
-				$this->author3,
-			]
-		);
-	}
-
-	/**
-	 * Very similar test as before. The only difference is that we are appending,
-	 * so the wp_posts.post_author column should not change, but we should
-	 * see 3 WP_Terms for the authors now.
-	 *
-	 * @return void
-	 */
-	public function test_append_post_authors_from_coauthors_one_of_whom_is_linked() {
-		$random_username = 'random_user_' . rand( 1, 1000 );
-		$display_name = str_replace( '_', ' ', $random_username );
-
-		$guest_author_1_id = $this->_cap->guest_authors->create(
-			array(
-				'user_login'   => $random_username,
-				'display_name' => $display_name,
-			)
-		);
-		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
-
-		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
-
-		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
-
-		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
-		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
-
-		$post_id = $this->factory()->post->create(
-			array(
-				'post_author' => $this->editor1->ID,
-				'post_status' => 'publish',
-				'post_type'   => 'post',
-			)
-		);
-
-		$query = new WP_Query(
-			array(
-				'p' => $post_id,
-			)
-		);
-
-		$this->assertEquals( 1, $query->found_posts );
-		$this->assertEquals( $this->editor1->ID, $query->posts[0]->post_author );
-
-		$result = $this->_cap->add_coauthors(
-			$post_id,
-			array(
-				$guest_author_1->user_login,
-				$linked_author_1->user_login,
+					return $coauthor['user']->user_login;
+				},
+				$coauthors
 			),
-			true
+			$append
 		);
 
 		$this->assertTrue( $result );
@@ -1414,16 +1451,55 @@ class CoAuthorsPlusTest extends TestCase {
 		);
 
 		$this->assertEquals( 1, $second_query->found_posts );
-		$this->assertEquals( $this->editor1->ID, $second_query->posts[0]->post_author );
 
-		$this->assertPostHasCoAuthors(
-			$post_id,
-			[
-				$this->editor1,
-				$guest_author_1,
-				$this->author3,
-			]
+		$assigned_authors = array_map(
+			function ( $coauthor ) {
+				if ( isset( $coauthor['coauthor'] ) ) {
+					return $coauthor['coauthor'];
+				}
+
+				return $coauthor['user'];
+			},
+			$coauthors
 		);
+
+		$first_user_account = null;
+		foreach ( $coauthors as $coauthor ) {
+			if ( isset( $coauthor['user'] ) ) {
+				$first_user_account = $coauthor['user'];
+				break;
+			}
+		}
+
+		if ( $all_authors_linked ) {
+			if ( $append ) {
+				$this->assertEquals( $this->editor1->ID, $second_query->posts[0]->post_author );
+				$this->assertPostHasCoAuthors( $post_id, array_merge( [ $this->editor1 ], $assigned_authors ) );
+			} else {
+				if ( $first_user_account ) {
+					$this->assertEquals( $first_user_account->ID, $second_query->posts[0]->post_author );
+				}
+				$this->assertPostHasCoAuthors( $post_id, $assigned_authors );
+			}
+		} else {
+			if ( $append ) {
+				$this->assertEquals( $this->editor1->ID, $second_query->posts[0]->post_author );
+				$this->assertPostHasCoAuthors(
+					$post_id,
+					array_merge(
+						[
+							$this->editor1,
+						],
+						$assigned_authors
+					)
+				);
+			} else {
+				if ( $first_user_account ) {
+					$this->assertEquals( $first_user_account->ID, $second_query->posts[0]->post_author );
+				}
+				$this->assertPostHasCoAuthors( $post_id, $assigned_authors );
+			}
+		}
 	}
 
 	/**
@@ -1435,8 +1511,8 @@ class CoAuthorsPlusTest extends TestCase {
 	 * @return void
 	 */
 	public function test_assign_multiple_post_authors_wp_user_guest_author_linked_user(  ) {
-		$random_username = 'random_user_' . rand( 1, 1000 );
-		$display_name = str_replace( '_', ' ', $random_username );
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
+		$display_name    = str_replace( '_', ' ', $random_username );
 
 		$guest_author_1_id = $this->_cap->guest_authors->create(
 			array(
@@ -1507,7 +1583,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 * @return void
 	 */
 	public function test_assign_multiple_post_authors_only_one_linked_passed_last() {
-		$random_username = 'random_user_' . rand( 1, 1000 );
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
 		$display_name = str_replace( '_', ' ', $random_username );
 
 		$guest_author_1_id = $this->_cap->guest_authors->create(
@@ -1520,7 +1596,7 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
 
-		$random_username = 'random_user_' . rand( 1001, 2000 );
+		$random_username = 'random_user_' . wp_rand( 1001, 2000 );
 		$display_name = str_replace( '_', ' ', $random_username );
 
 		$guest_author_2_id = $this->_cap->guest_authors->create(
@@ -1595,7 +1671,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 * @return void
 	 */
 	public function test_assign_multiple_post_authors_one_user_before_one_linked_passed_last() {
-		$random_username = 'random_user_' . rand( 1, 1000 );
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
 		$display_name = str_replace( '_', ' ', $random_username );
 
 		$guest_author_1_id = $this->_cap->guest_authors->create(
@@ -1668,7 +1744,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 * @return void
 	 */
 	public function test_assign_multiple_post_authors_one_linked_passed_first() {
-		$random_username = 'random_user_' . rand( 1, 1000 );
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
 		$display_name = str_replace( '_', ' ', $random_username );
 
 		$guest_author_1_id = $this->_cap->guest_authors->create(
@@ -1741,7 +1817,7 @@ class CoAuthorsPlusTest extends TestCase {
 	 * @return void
 	 */
 	public function test_assign_multiple_post_authors_one_linked_passed_using_user_login_to_assign() {
-		$random_username = 'random_user_' . rand( 1, 1000 );
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
 		$display_name = str_replace( '_', ' ', $random_username );
 
 		$guest_author_1_id = $this->_cap->guest_authors->create(
