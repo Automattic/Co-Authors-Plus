@@ -133,14 +133,14 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @param array $assoc_args Associative arguments.
 	 *
 	 * @subcommand create-author-terms-for-posts
-	 * @synopsis [--post-types=<csv>] [--post-statuses=<csv>] [--batched] [--records-per-batch=<records-per-batch>] [--specific-post-ids=<csv>] [--above-post-id=<above-post-id>] [--below-post-id=<below-post-id>]
+	 * @synopsis [--post-types=<csv>] [--post-statuses=<csv>] [--unbatched] [--records-per-batch=<records-per-batch>] [--specific-post-ids=<csv>] [--above-post-id=<above-post-id>] [--below-post-id=<below-post-id>]
 	 * @return void
 	 * @throws Exception If above-post-id is greater than or equal to below-post-id.
 	 */
 	public function create_author_terms_for_posts( $args, $assoc_args ) {
 		$post_types        = isset( $assoc_args['post-types'] ) ? explode( ',', $assoc_args['post-types'] ) : [ 'post' ];
 		$post_statuses     = isset( $assoc_args['post-statuses'] ) ? explode( ',', $assoc_args['post-statuses'] ) : [ 'publish' ];
-		$batched           = $assoc_args['batched'] ?? false;
+		$batched           = ! isset( $assoc_args['unbatched'] );
 		$records_per_batch = $assoc_args['records-per-batch'] ?? 250;
 		$specific_post_ids = isset( $assoc_args['specific-post-ids'] ) ? explode( ',', $assoc_args['specific-post-ids'] ) : [];
 		$above_post_id     = $assoc_args['above-post-id'] ?? null;
