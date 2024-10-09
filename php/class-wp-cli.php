@@ -48,7 +48,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Create author terms for all posts that don't have them
+	 * Create author terms for all posts that don't have them. However, please see `create_author_terms_for_posts` for an
+	 * alternative approach that not only allows for more granular control over which posts are targeted, but
+	 * is also faster in most cases.
 	 *
 	 * @subcommand create-terms-for-posts
 	 */
@@ -118,7 +120,14 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Creates missing author terms for posts.
+	 * Creates missing author terms for posts. `create_terms_for_posts` does exactly the same thing as this one,
+	 * except with some key differences:
+	 * 1. This command will only ever target posts that are missing* author terms, whereas create_terms_for_posts
+	 * always will start from the beginning of the posts table and work its way through all posts.
+	 * 2. Since this command only targets posts that are missing author terms, it will be faster than
+	 * create_terms_for_posts in most cases. If the command is ever interrupted, it can be restarted without
+	 * reprocessing posts that already have author terms.
+	 * 3. This command allows one to target specific post types and statuses, as well as specific post IDs.
 	 *
 	 * @param array $args Positional arguments.
 	 * @param array $assoc_args Associative arguments.
