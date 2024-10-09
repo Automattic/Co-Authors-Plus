@@ -307,51 +307,88 @@ class CoAuthors_Plus {
 	public function get_coauthor_by( $key, $value, $force = false ) {
 
 		// If Guest Authors are enabled, prioritize those profiles
-		if ( isset( $this->guest_authors ) && $this->is_guest_authors_enabled() ) {
+		if ( $this->is_guest_authors_enabled() && isset( $this->guest_authors ) ) {
 			$guest_author = $this->guest_authors->get_guest_author_by( $key, $value, $force );
 			if ( is_object( $guest_author ) ) {
-				return $guest_author;
-			}
-		}
+				if ( isset( $guest_author->linked_account ) ) {
+					$user = $this->get_user_by( 'login', $guest_author->linked_account );
 
-		switch ( $key ) {
-			case 'id':
-			case 'login':
-			case 'user_login':
-			case 'email':
-			case 'user_nicename':
-			case 'user_email':
-				if ( 'user_login' === $key ) {
-					$key = 'login';
-				}
-				if ( 'user_email' === $key ) {
-					$key = 'email';
-				}
-				if ( 'user_nicename' === $key ) {
-					$key = 'slug';
-				}
-				$user = get_user_by( $key, $value );
-				if ( ! $user && ( 'login' === $key || 'slug' === $key ) ) {
-					// Re-try lookup without prefixed value if no results found.
-					$value = preg_replace( '#^cap\-#', '', $value );
-					$user  = get_user_by( $key, $value );
-				}
-				if ( ! $user ) {
-					return false;
-				}
-				$user->type = 'wpuser';
-				// However, if guest authors are enabled and there's a guest author linked to this
-				// user account, we want to use that instead
-				if ( isset( $this->guest_authors ) && $this->is_guest_authors_enabled() ) {
-					$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
-					if ( is_object( $guest_author ) ) {
-						$user = $guest_author;
+					if ( null !== $user ) {
+						$guest_author->wp_user = $user;
 					}
 				}
-				return $user;
-		}
-		return false;
 
+				return $guest_author;
+			} else {
+				// Guest Author was not found, so let's see if we are searching for a WP_User.
+				$user = $this->get_user_by( $key, $value );
+
+				if ( null === $user ) {
+					return false;
+				}
+
+				// At this point we have a valid $user.
+				$user->type = 'wpuser';
+
+				$guest_author = $this->guest_authors->get_guest_author_by( 'linked_account', $user->user_login );
+				if ( is_object( $guest_author ) ) {
+					$guest_author->wp_user = $user;
+					$user                  = $guest_author;
+				}
+
+				return $user;
+			}
+		} else {
+			$user = $this->get_user_by( $key, $value );
+
+			if ( null === $user ) {
+				return false;
+			}
+
+			$user->type = 'wpuser';
+
+			return $user;
+		}
+	}
+
+	/**
+	 * Searches for authors by way of the WP_User table using a specific list of data points. If login or slug
+	 * are provided as search parameters, this function will remove `cap-` from the search value, if present.
+	 *
+	 * @param string $key Key to search by, i.e. 'id', 'login', 'user_login', 'email', 'user_email', 'user_nicename'.
+	 * @param string $value Value to search for.
+	 *
+	 * @return WP_User|null
+	 */
+	protected function get_user_by( $key, $value ) {
+		$acceptable_keys = [
+			'id'            => 'id',
+			'login'         => 'login',
+			'user_login'    => 'login',
+			'email'         => 'email',
+			'user_email'    => 'email',
+			'user_nicename' => 'slug',
+		];
+
+		if ( ! array_key_exists( $key, $acceptable_keys ) ) {
+			return null;
+		}
+
+		$key = $acceptable_keys[ $key ];
+
+		$user = get_user_by( $key, $value );
+
+		if ( ! $user && ( 'login' === $key || 'slug' === $key ) ) {
+			// Re-try lookup without prefixed value if no results found.
+			$value = preg_replace( '#^cap\-#', '', $value );
+			$user  = get_user_by( $key, $value );
+		}
+
+		if ( false === $user ) {
+			return null;
+		}
+
+		return $user;
 	}
 
 	/**
@@ -1016,18 +1053,34 @@ class CoAuthors_Plus {
 		if ( empty( $post_author_user )
 			|| ! in_array( $post_author_user->user_login, $coauthors ) ) {
 			foreach ( $coauthor_objects as $coauthor_object ) {
-				if ( 'wpuser' === $coauthor_object->type ) {
+				if ( $coauthor_object instanceof WP_User ) {
 					$new_author = $coauthor_object;
+					break;
+				} elseif ( isset( $coauthor_object->wp_user ) && $coauthor_object->wp_user instanceof WP_User ) {
+					$new_author = $coauthor_object->wp_user;
 					break;
 				}
 			}
-			// Uh oh, no WP_Users assigned to the post
-			if ( empty( $new_author ) ) {
+
+			/*
+			 * If setting a fresh group of authors for a post, (i.e. $append === false),
+			 * then perhaps one of those authors should be a WP_USER. However,
+			 * if $append === true, and we are perhaps unable to find a
+			 * WP_USER (perhaps none was given), we don't really
+			 * care whether post_author should be updated.
+			 * */
+			if ( false === $append && empty( $new_author ) ) {
 				return false;
 			}
 
-			$wpdb->update( $wpdb->posts, array( 'post_author' => $new_author->ID ), array( 'ID' => $post_id ) );
-			clean_post_cache( $post_id );
+			if ( ! empty( $new_author ) ) {
+				$update = $wpdb->update( $wpdb->posts, array( 'post_author' => $new_author->ID ), array( 'ID' => $post_id ) );
+				clean_post_cache( $post_id );
+
+				if ( is_bool( $update ) ) {
+					return $update;
+				}
+			}
 		}
 		return true;
 

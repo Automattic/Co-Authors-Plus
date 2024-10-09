@@ -2,9 +2,19 @@
 
 namespace Automattic\CoAuthorsPlus\Tests\Integration;
 
+use PHPUnit\Framework\InvalidArgumentException;
+use WP_Query;
+use WP_Term;
+use WP_User;
+
 class CoAuthorsPlusTest extends TestCase {
 
 	private $author1;
+
+	private $author2;
+
+	private $author3;
+
 	private $editor1;
 	private $post;
 
@@ -18,6 +28,21 @@ class CoAuthorsPlusTest extends TestCase {
 				'user_login' => 'author1',
 			)
 		);
+
+		$this->author2 = $this->factory()->user->create_and_get(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author20',
+			)
+		);
+
+		$this->author3 = $this->factory()->user->create_and_get(
+			array(
+				'role'       => 'author',
+				'user_login' => 'author30',
+			)
+		);
+
 		$this->editor1 = $this->factory()->user->create_and_get(
 			array(
 				'role'       => 'editor',
@@ -120,26 +145,26 @@ class CoAuthorsPlusTest extends TestCase {
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'id', $this->author1->ID );
 
-		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasProperty( 'ID', $coauthor );
 		$this->assertEquals( $this->author1->ID, $coauthor->ID );
 		$this->assertEquals( 'wpuser', $coauthor->type );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_login', $this->author1->user_login );
 
-		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasProperty( 'user_login', $coauthor->data );
 		$this->assertEquals( $this->author1->user_login, $coauthor->user_login );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_nicename', $this->author1->user_nicename );
 
-		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasProperty( 'user_nicename', $coauthor->data );
 		$this->assertEquals( $this->author1->user_nicename, $coauthor->user_nicename );
 
 		$coauthor = $coauthors_plus->get_coauthor_by( 'user_email', $this->author1->user_email );
 
-		$this->assertInstanceOf( \WP_User::class, $coauthor );
+		$this->assertInstanceOf( WP_User::class, $coauthor );
 		$this->assertObjectHasProperty( 'user_email', $coauthor->data );
 		$this->assertEquals( $this->author1->user_email, $coauthor->user_email );
 
@@ -679,6 +704,1189 @@ class CoAuthorsPlusTest extends TestCase {
 
 		// Restore coauthor taxonomy from backup.
 		$coauthors_plus->coauthor_taxonomy = $taxonomy_backup;
+	}
+
+	/**
+	 * Convenience function which makes sure an author object is not a WP_User. This is because we don't have
+	 * an actual "Guest Author" object.
+	 *
+	 * @param object $author The author object.
+	 *
+	 * @return void
+	 */
+	public function assertIsGuestAuthorNotWpUser( object $author ): void {
+		// Perhaps we can further assert that the required properties exist on the object or is that overkill?
+
+		$this->assertThat(
+			$author,
+			$this->logicalNot(
+				$this->isInstanceOf( WP_User::class )
+			)
+		);
+	}
+
+	/**
+	 * This function handles asserting that a post has the authors specified, and the correct number of authors.
+	 *
+	 * @param int   $post_id The Post ID.
+	 * @param array $authors The authors to check that are assigned to a post.
+	 *
+	 * @return void
+	 * @throws InvalidArgumentException Throws exception if $authors is not a valid Guest Author or WP_User object or a string.
+	 */
+	public function assertPostHasCoAuthors( int $post_id, array $authors ) {
+		$authors = array_map(
+			function ( $author ) {
+				if ( is_object( $author ) ) {
+					return 'cap-' . $author->user_login;
+				} elseif ( is_string( $author ) ) {
+					return $author; // Assuming that caller is giving author slug.
+				} else {
+					throw InvalidArgumentException::create( 2, 'Authors should be string, Guest Author Object, or WP_User' );
+				}
+			},
+			$authors
+		);
+
+		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
+
+		$this->assertIsArray( $post_author_terms );
+		$this->assertSameSize(
+			$authors,
+			$post_author_terms
+		);
+
+		foreach ( $post_author_terms as $term ) {
+			$this->assertInstanceOf( WP_Term::class, $term );
+			$this->assertContains( $term->slug, $authors );
+		}
+	}
+
+	/**
+	 * This test fully validates the expected behavior of the @return void
+	 * @see CoAuthorPlus::get_coauthor_by function.
+	 *
+	 */
+	public function test_get_coauthor_by() {
+		$author = $this->factory()->user->create_and_get(
+			[
+				'role'         => 'author',
+				'user_login'   => 'i_am_batman',
+				'display_name' => 'Bruce Wayne',
+				'first_name'   => 'Bruce',
+				'last_name'    => 'Wayne',
+			]
+		);
+
+		$first_author_retrieval = $this->_cap->get_coauthor_by( 'user_nicename', $author->user_nicename );
+		$this->assertInstanceOf( WP_User::class, $first_author_retrieval );
+		$this->assertEquals(
+			$author->ID,
+			$first_author_retrieval->ID
+		);
+
+		$maybe_guest_author_id = $this->_cap->guest_authors->create_guest_author_from_user_id( $author->ID );
+
+		$this->assertIsInt( $maybe_guest_author_id );
+
+		$guest_author = $this->_cap->guest_authors->get_guest_author_by( 'id', $maybe_guest_author_id, true );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author );
+		$this->assertNotSame( $author->user_login, $guest_author->user_login );
+		$this->assertNotSame( $author->user_nicename, $guest_author->user_nicename );
+		$this->assertObjectHasProperty( 'type', $guest_author );
+		$this->assertEquals( 'guest-author', $guest_author->type );
+
+		$third_author_retrieval = $this->_cap->get_coauthor_by( 'user_nicename', $guest_author->user_nicename );
+		$this->assertIsGuestAuthorNotWpUser( $third_author_retrieval );
+		$this->assertObjectHasProperty( 'wp_user', $third_author_retrieval );
+		$this->assertInstanceOf( WP_User::class, $third_author_retrieval->wp_user );
+		$this->assertEquals( $author->ID, $third_author_retrieval->wp_user->ID );
+
+		$fourth_author_retrieval = $this->_cap->get_coauthor_by( 'user_nicename', $author->user_nicename );
+		$this->assertIsGuestAuthorNotWpUser( $fourth_author_retrieval );
+		$this->assertEquals( 'guest-author', $fourth_author_retrieval->type );
+		$this->assertObjectHasProperty( 'wp_user', $fourth_author_retrieval );
+		$this->assertInstanceOf( WP_User::class, $fourth_author_retrieval->wp_user );
+		$this->assertEquals( $author->data->ID, $fourth_author_retrieval->wp_user->data->ID );
+		$this->assertEquals( $author->data->user_login, $fourth_author_retrieval->wp_user->data->user_login );
+		$this->assertEquals( $author->data->user_nicename, $fourth_author_retrieval->wp_user->data->user_nicename );
+
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
+		$display_name    = str_replace( '_', ' ', $random_username );
+
+		$this->_cap->guest_authors->create(
+			[
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			]
+		);
+		$fifth_author_retrieval = $this->_cap->get_coauthor_by( 'user_login', $random_username );
+		$this->assertIsGuestAuthorNotWpUser( $fifth_author_retrieval );
+		$this->assertObjectNotHasProperty( 'wp_user', $fifth_author_retrieval );
+
+		// Simulating a broken linked_account relationship.
+		$random_login = 'random_user_' . wp_rand( 1001, 2000 );
+		update_post_meta( $fifth_author_retrieval->ID, 'cap-linked_account', $random_login );
+		$fifth_author_retrieval = $this->_cap->get_coauthor_by( 'user_login', $random_username );
+		$this->assertObjectHasProperty( 'linked_account', $fifth_author_retrieval );
+		$this->assertEquals( $random_login, $fifth_author_retrieval->linked_account );
+		$this->assertObjectNotHasProperty( 'wp_user', $fifth_author_retrieval );
+
+		add_filter( 'coauthors_guest_authors_enabled', '__return_false' );
+
+		$sixth_author_retrieval = $this->_cap->get_coauthor_by( 'user_nicename', $guest_author->user_nicename );
+
+		$this->assertFalse( $sixth_author_retrieval );
+
+		$seventh_author_retrieval = $this->_cap->get_coauthor_by( 'user_nicename', $author->user_nicename );
+
+		$this->assertInstanceOf( WP_User::class, $seventh_author_retrieval );
+		$this->assertEquals( $author->data->ID, $seventh_author_retrieval->data->ID );
+		$this->assertEquals( $author->data->user_login, $seventh_author_retrieval->data->user_login );
+		$this->assertEquals( $author->data->user_nicename, $seventh_author_retrieval->data->user_nicename );
+
+		$eigth_author_retrieval = $this->_cap->get_coauthor_by( 'user_login', $random_username );
+
+		$this->assertFalse( $eigth_author_retrieval );
+	}
+
+	/**
+	 * This is a basic test to ensure that any authors being assigned to a post
+	 * using the CoAuthors_Plus::add_coauthors() method are appropriately
+	 * associated to the post. Some of the things the add_coauthors()
+	 * method should do are:
+	 *
+	 * 1. Ensure that the post_author is set to the first author in the list
+	 * 2. This is done internally by calling CoAuthors_Plus::get_coauthor_by(),
+	 * which should return a WP_User in this instance (since the author is not linked to a coauthor account)
+	 * 3. Since this coauthor is not linked, create the author's coauthor term, and associate it to the post.
+	 *
+	 * @return void
+	 */
+	public function test_assign_post_author_from_author_who_has_not_been_linked() {
+		$post = $this->factory()->post->create_and_get(
+			array(
+				'post_author' => $this->author2->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+		$post_id = $post->ID;
+
+		$first_added_authors = $this->_cap->add_coauthors( $post_id, array( $this->author3->user_login ) );
+		// add_coauthors should return true because CAP will treat this user as an Author with the
+		// extra step of setting wp_post.post_author equal to this user's wp_user.ID.
+		$this->assertTrue( $first_added_authors );
+
+		$query1 = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		// Checking that the wp_post.post_author column has indeed been updated.
+		$this->assertEquals( $this->author3->ID, $query1->posts[0]->post_author );
+
+		$author3_term = $this->_cap->get_author_term( $this->author3 );
+
+		$this->assertInstanceOf( WP_Term::class, $author3_term );
+
+		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
+
+		$this->assertIsArray( $post_author_terms );
+		$this->assertCount( 1, $post_author_terms );
+		$this->assertInstanceOf( WP_Term::class, $post_author_terms[0] );
+		$this->assertEquals( 'cap-' . $this->author3->user_login, $post_author_terms[0]->slug );
+
+		// Confirming that now $author2 does have an author term.
+		$second_added_authors = $this->_cap->add_coauthors( $post_id, array( $this->author2->user_login ) );
+		$this->assertTrue( $second_added_authors );
+		$author2_term = $this->_cap->get_author_term( $this->author2 );
+		$this->assertInstanceOf( WP_Term::class, $author2_term );
+
+		$post_author_terms = wp_get_post_terms( $post_id, $this->_cap->coauthor_taxonomy );
+
+		$this->assertIsArray( $post_author_terms );
+		$this->assertCount( 1, $post_author_terms );
+		$this->assertInstanceOf( WP_Term::class, $post_author_terms[0] );
+		$this->assertEquals( 'cap-' . $this->author2->user_login, $post_author_terms[0]->slug );
+	}
+
+	/**
+	 * This test should not affect the post_author field, since we
+	 * are simply appending an author to a post.
+	 *
+	 * @return void
+	 */
+	public function test_append_post_author_who_has_not_been_linked() {
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->author2->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		// Immediately update the co-authors, adding $author3 to the existing $author2.
+		$this->_cap->add_coauthors( $post_id, array( $this->author3->user_login ), true );
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		// Although we added a co-author, the wp_posts.post_author column should still be attributed to $author2.
+		$this->assertEquals( $this->author2->ID, $query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2,
+				$this->author3,
+			]
+		);
+	}
+
+	/**
+	 * Here we are assigning multiple authors who have not been
+	 * linked to a coauthor to a post. Since we are not
+	 * appending authors to the post, we should
+	 * expect the post_author to change.
+	 *
+	 * @return void
+	 */
+	public function test_assign_post_authors_from_authors_who_have_not_been_linked() {
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->author1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$this->author3->user_login,
+				$this->editor1->user_login,
+				$this->author2->user_login,
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->author3->ID, $query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author3,
+				$this->editor1,
+				$this->author2,
+			]
+		);
+	}
+
+	/**
+	 * Here we are creating guest authors (coauthors) and assigning them to a post,
+	 * which was created by a WP_User. Since the guest authors have not been
+	 * linked to a WP_User, the wp_post.post_author column should not
+	 * change, and the response from CoAuthors_Plus::add_coauthors()
+	 * should be false, since no WP_User could be found.
+	 *
+	 * @return void
+	 */
+	public function test_assign_post_authors_from_coauthors_who_have_not_been_linked() {
+		$random_username = 'random_user_' . rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		/**
+		 * By using CoAuthors_Plus::get_coauthor_by(), we are ensuring
+		 * that the recent changes to the code will prioritize
+		 * returning a Guest Author when one is found.
+		 */
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$random_username = 'random_user_' . rand( 1001, 2000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_2_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_2 = $this->_cap->get_coauthor_by( 'id', $guest_author_2_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_2 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->author1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->author1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$guest_author_1->user_login,
+				$guest_author_2->user_login,
+			)
+		);
+
+		/*
+		 * This is false because we are NOT appending any coauthors who are linked to a WP_User to the post.
+		 * */
+		$this->assertFalse( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author1->ID, $second_query->posts[0]->post_author );
+	}
+
+	/**
+	 * This test is similar to above, but instead here, we are appending coauthors.
+	 * This means that the wp_posts.post_author column is not expected to change,
+	 * and so the response from CoAuthors_Plus::add_coauthors() should be true.
+	 *
+	 * @return void
+	 */
+	public function test_append_post_authors_from_coauthors_who_have_not_been_linked() {
+		$random_username = 'random_user_' . rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$random_username = 'random_user_' . rand( 1001, 2000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_2_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_2 = $this->_cap->get_coauthor_by( 'id', $guest_author_2_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_2 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->author1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->author1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$guest_author_1->user_login,
+				$guest_author_2->user_login,
+			),
+			true
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author1->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author1,
+				$guest_author_1,
+				$guest_author_2,
+			]
+		);
+	}
+
+	/**
+	 * Here we are assigning one coauthor and one WP_User who have not been linked.
+	 * The result should be true, since the WP_User will be assigned as the
+	 * post_author. There should only be 2 WP_Terms for the authors.
+	 *
+	 * @return void
+	 */
+	public function test_assign_coauthors_from_coauthors_and_user_who_have_not_been_linked() {
+		$random_username = 'random_user_' . rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->author1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->author1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$guest_author_1->user_login,
+				$this->author3->user_login,
+			)
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author3,
+				$guest_author_1,
+			]
+		);
+	}
+
+	/**
+	 * Similar to above, but we are appending instead. The wp_posts.post_author should
+	 * not be changed, but we should see 3 WP_Terms for the authors now.
+	 *
+	 * @return void
+	 */
+	public function test_append_coauthors_from_coauthors_and_user_who_have_not_been_linked() {
+		$random_username = 'random_user_' . rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->author1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->author1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$guest_author_1->user_login,
+				$this->author3->user_login,
+			),
+			true
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author1->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author1,
+				$this->author3,
+				$guest_author_1,
+			]
+		);
+	}
+
+	/**
+	 * Provides the different permutations of assigning authors to a post.
+	 *
+	 * @return array[]
+	 */
+	public function provide_data_for_assign_post_authors_test() {
+		return [
+			'setting_linked_coauthors'                => [
+				'author_set'         => [
+					'author_1' => 'linked',
+					'author_2' => 'linked',
+				],
+				'all_authors_linked' => true,
+				'append'             => false,
+			],
+			'appending_linked_coauthors'              => [
+				'author_set'         => [
+					'author_1' => 'linked',
+					'author_2' => 'linked',
+				],
+				'all_authors_linked' => true,
+				'append'             => true,
+			],
+			'setting_linked_and_unlinked_coauthors'   => [
+				'author_set'         => [
+					'author_1' => 'guest',
+					'author_2' => 'linked',
+				],
+				'all_authors_linked' => false,
+				'append'             => false,
+			],
+			'appending_linked_and_unlinked_coauthors' => [
+				'author_set'         => [
+					'author_1' => 'linked',
+					'author_2' => 'guest',
+				],
+				'all_authors_linked' => false,
+				'append'             => true,
+			],
+			'setting_unlinked_coauthors'              => [
+				'author_set'         => [
+					'author_1' => 'user',
+					'author_2' => 'guest',
+				],
+				'all_authors_linked' => false,
+				'append'             => false,
+			],
+			'appending_unlinked_coauthors'            => [
+				'author_set'         => [
+					'author_1' => 'guest',
+					'author_2' => 'user',
+				],
+				'all_authors_linked' => false,
+				'append'             => true,
+			],
+		];
+	}
+
+	/**
+	 * This is where we test many moving parts of the CoAuthorsPlugin all at once. We are creating a guest author from a
+	 * WP_User, and then assigning that guest author to a post. Since the guest author is linked to a WP_User, the
+	 * function CoAuthors_Plus::get_coauthor_by() should return a guest author object along with meta data
+	 * indicating that the object is linked to a WP_User. The wp_posts.post_author column should change,
+	 * and the response from CoAuthors_Plus::add_coauthors() should be true.
+	 * @dataProvider provide_data_for_assign_post_authors_test
+	 * @return void
+	 */
+	public function test_assign_post_authors_from_coauthors( $author_set, $all_authors_linked, $append ) {
+		$coauthors = [];
+
+		foreach ( $author_set as $author_key => $link_type ) {
+			if ( in_array( $link_type, [ 'linked', 'user' ], true ) ) {
+				$author = $this->factory()->user->create_and_get(
+					[
+						'role'         => 'author',
+						'user_login'   => wp_rand( 1, 1000 ) . '_author_' . $author_key,
+						'display_name' => 'Author ' . $author_key,
+						'first_name'   => 'Author',
+						'last_name'    => $author_key,
+					]
+				);
+
+				if ( 'linked' === $link_type ) {
+
+					$this->_cap->guest_authors->create_guest_author_from_user_id( $author->ID );
+
+					$linked_author = $this->_cap->get_coauthor_by( 'id', $author->ID );
+
+					$this->assertIsGuestAuthorNotWpUser( $linked_author );
+
+					$coauthors[] = [
+						'user'     => $author,
+						'coauthor' => $linked_author,
+					];
+				} else {
+					$coauthors[] = [
+						'user' => $author,
+					];
+				}
+			} else {
+				$random_username = 'random_user_' . wp_rand( 1001, 2000 );
+				$display_name    = str_replace( '_', ' ', $random_username );
+
+				$guest_author_id = $this->_cap->guest_authors->create(
+					[
+						'user_login'   => $random_username,
+						'display_name' => $display_name,
+					]
+				);
+
+				$guest_author = $this->_cap->get_coauthor_by( 'id', $guest_author_id );
+
+				$this->assertIsGuestAuthorNotWpUser( $guest_author );
+
+				$coauthors[] = [
+					'coauthor' => $guest_author,
+				];
+			}
+		}
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->editor1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->editor1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array_map(
+				function ( $coauthor ) {
+					if ( isset( $coauthor['coauthor'] ) ) {
+						return $coauthor['coauthor']->user_login;
+					}
+
+					return $coauthor['user']->user_login;
+				},
+				$coauthors
+			),
+			$append
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+
+		$assigned_authors = array_map(
+			function ( $coauthor ) {
+				if ( isset( $coauthor['coauthor'] ) ) {
+					return $coauthor['coauthor'];
+				}
+
+				return $coauthor['user'];
+			},
+			$coauthors
+		);
+
+		$first_user_account = null;
+		foreach ( $coauthors as $coauthor ) {
+			if ( isset( $coauthor['user'] ) ) {
+				$first_user_account = $coauthor['user'];
+				break;
+			}
+		}
+
+		if ( $all_authors_linked ) {
+			if ( $append ) {
+				$this->assertEquals( $this->editor1->ID, $second_query->posts[0]->post_author );
+				$this->assertPostHasCoAuthors( $post_id, array_merge( [ $this->editor1 ], $assigned_authors ) );
+			} else {
+				if ( $first_user_account ) {
+					$this->assertEquals( $first_user_account->ID, $second_query->posts[0]->post_author );
+				}
+				$this->assertPostHasCoAuthors( $post_id, $assigned_authors );
+			}
+		} else {
+			if ( $append ) {
+				$this->assertEquals( $this->editor1->ID, $second_query->posts[0]->post_author );
+				$this->assertPostHasCoAuthors(
+					$post_id,
+					array_merge(
+						[
+							$this->editor1,
+						],
+						$assigned_authors
+					)
+				);
+			} else {
+				if ( $first_user_account ) {
+					$this->assertEquals( $first_user_account->ID, $second_query->posts[0]->post_author );
+				}
+				$this->assertPostHasCoAuthors( $post_id, $assigned_authors );
+			}
+		}
+	}
+
+	/**
+	 * This is testing that multiple coauthors can be correctly assigned to a post.
+	 * The wp_posts.post_author column should be set to the first WP_User in
+	 * the array, which is $author1. The response from CoAuthors_Plus::add_coauthors()
+	 * should be true, and there should be 3 author terms associated with the post.
+	 *
+	 * @return void
+	 */
+	public function test_assign_multiple_post_authors_wp_user_guest_author_linked_user(  ) {
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
+		$display_name    = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
+
+		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->editor1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->editor1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$this->author1->user_login,
+				$guest_author_1->user_login,
+				$linked_author_1->user_login,
+			)
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author1->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author1,
+				$guest_author_1,
+				$this->author3,
+			]
+		);
+	}
+
+	/**
+	 * With this test we are confirming that no matter the order in which a linked user is
+	 * passed in the array, the wp_posts.post_author column will be set to the linked user.
+	 *
+	 * @return void
+	 */
+	public function test_assign_multiple_post_authors_only_one_linked_passed_last() {
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$random_username = 'random_user_' . wp_rand( 1001, 2000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_2_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_2 = $this->_cap->get_coauthor_by( 'id', $guest_author_2_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_2 );
+
+		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
+
+		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->editor1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->editor1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$guest_author_1->user_login,
+				$guest_author_2->user_login,
+				// Linked user is passed last in array.
+				// Placement within array should not matter.
+				// It should get picked up, and used to set wp_posts.post_author
+				$linked_author_1->user_login,
+			)
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author3,
+				$guest_author_1,
+				$guest_author_2,
+			]
+		);
+	}
+
+	/**
+	 * Same as above, except we will pass a WP_User before the linked user. The wp_posts.post_author
+	 * should be set to the WP_User, and there should be 3 WP_Terms for the authors.
+	 *
+	 * @return void
+	 */
+	public function test_assign_multiple_post_authors_one_user_before_one_linked_passed_last() {
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
+
+		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->editor1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->editor1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$guest_author_1->user_login,
+				$this->author2->user_login,
+				$linked_author_1->user_login,
+			)
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author2->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2,
+				$this->author3,
+				$guest_author_1,
+			]
+		);
+	}
+
+	/**
+	 * Same as above, except not the linked user is passed up front. This should result in
+	 * the wp_posts.post_author column being set to the linked user, and there should be
+	 * 3 WP_Terms for the authors.
+	 *
+	 * @return void
+	 */
+	public function test_assign_multiple_post_authors_one_linked_passed_first() {
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
+
+		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->editor1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->editor1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$linked_author_1->user_login,
+				$this->author2->user_login,
+				$guest_author_1->user_login,
+			)
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2,
+				$this->author3,
+				$guest_author_1,
+			]
+		);
+	}
+
+	/**
+	 * Here we are testing a similar scenario as above, except we are passing the linked user's WP_User login field
+	 * instead when assigning the post authors. The result should be that the correct GA account
+	 * is located and used to set the author's for the post.
+	 *
+	 * @return void
+	 */
+	public function test_assign_multiple_post_authors_one_linked_passed_using_user_login_to_assign() {
+		$random_username = 'random_user_' . wp_rand( 1, 1000 );
+		$display_name = str_replace( '_', ' ', $random_username );
+
+		$guest_author_1_id = $this->_cap->guest_authors->create(
+			array(
+				'user_login'   => $random_username,
+				'display_name' => $display_name,
+			)
+		);
+		$guest_author_1 = $this->_cap->get_coauthor_by( 'id', $guest_author_1_id );
+
+		$this->assertIsGuestAuthorNotWpUser( $guest_author_1 );
+
+		$this->_cap->guest_authors->create_guest_author_from_user_id( $this->author3->ID );
+
+		$linked_author_1 = $this->_cap->get_coauthor_by( 'id', $this->author3->ID );
+		$this->assertIsGuestAuthorNotWpUser( $linked_author_1 );
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_author' => $this->editor1->ID,
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $query->found_posts );
+		$this->assertEquals( $this->editor1->ID, $query->posts[0]->post_author );
+
+		$result = $this->_cap->add_coauthors(
+			$post_id,
+			array(
+				$guest_author_1->user_login,
+				// This should be converted to the corresponding GA account for linked user.
+				$this->author3->user_login,
+				$this->author2->user_login,
+			)
+		);
+
+		$this->assertTrue( $result );
+
+		$second_query = new WP_Query(
+			array(
+				'p' => $post_id,
+			)
+		);
+
+		$this->assertEquals( 1, $second_query->found_posts );
+		$this->assertEquals( $this->author3->ID, $second_query->posts[0]->post_author );
+
+		$this->assertPostHasCoAuthors(
+			$post_id,
+			[
+				$this->author2,
+				$this->author3,
+				$guest_author_1,
+			]
+		);
+
+		$guest_author_term = wp_get_post_terms( $linked_author_1->ID, $this->_cap->coauthor_taxonomy );
+
+		$this->assertIsArray( $guest_author_term );
+		$this->assertCount( 1, $guest_author_term );
+		$this->assertEquals( 'cap-' . $linked_author_1->user_login, $guest_author_term[0]->slug );
 	}
 
 	/**
