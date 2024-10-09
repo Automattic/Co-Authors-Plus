@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.2] - 2024-10-10
+
+### Added
+
+* Support for Yoast Name variable #1046
+* new CLI cmd to backfill missing author terms for posts #1060
+
+### Fixed
+
+* Correctly populates the post_author column for linked authors #988
+
+### Maintenance
+* Increase minimum supported WordPress version to 5.9 #1035
+
 ## [3.6.1] - 2024-04-25
 
 ### Fixed
