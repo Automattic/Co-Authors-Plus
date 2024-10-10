@@ -508,7 +508,8 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
-[3.6.1]: https://github.com/automattic/co-authors-plus/compare/3.6.0..3.6.1
+[3.6.2]: https://github.com/automattic/co-authors-plus/compare/3.6.1...3.6.2
+[3.6.1]: https://github.com/automattic/co-authors-plus/compare/3.6.0...3.6.1
 [3.6.0]: https://github.com/automattic/co-authors-plus/compare/3.5.15...3.6.0
 [3.5.15]: https://github.com/automattic/co-authors-plus/compare/3.5.14...3.5.15
 [3.5.14]: https://github.com/automattic/co-authors-plus/compare/3.5.13...3.5.14
