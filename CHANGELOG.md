@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Support for Yoast Name variable #1046
-* new CLI cmd to backfill missing author terms for posts #1060
+* New CLI cmd to backfill missing author terms for posts #1060
 
 ### Fixed
 
