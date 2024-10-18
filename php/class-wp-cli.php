@@ -1260,7 +1260,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @return WP_User
 	 */
-	public function get_first_admin_user() {
+	private function get_first_admin_user() {
 		if ( ! wp_cache_get( 'co-authors-plus-most-prolific-author', 'co-authors-plus' ) ) {
 			$admin_user_query = new WP_User_Query(
 				[
