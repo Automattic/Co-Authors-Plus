@@ -191,13 +191,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					$nonexistent_user_id = $record->post_author;
 					$record->post_author = $author_trans[ $record->post_author ];
 					$author              = $authors[ $record->post_author ];
-					WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Author ID: %d (%s)', $nonexistent_user_id, $author->ID, $author->user_nicename ) );
+					WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Admin ID: %d (%s)', $nonexistent_user_id, $author->ID, $author->user_nicename ) );
 				} else {
 					$author = get_user_by( 'id', $record->post_author );
 
 					if ( false === $author ) {
 						$author = $this->get_first_admin_user();
-						WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Author ID: %d (%s)', $record->post_author, $author->ID, $author->user_nicename ) );
+						WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Admin ID: %d (%s)', $record->post_author, $author->ID, $author->user_nicename ) );
 						$author_trans[ $record->post_author ] = $author->ID;
 						$record->post_author                  = $author->ID;
 					}
