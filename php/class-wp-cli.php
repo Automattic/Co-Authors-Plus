@@ -135,7 +135,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand create-author-terms-for-posts
 	 * @synopsis [--post-types=<csv>] [--post-statuses=<csv>] [--unbatched] [--records-per-batch=<records-per-batch>] [--specific-post-ids=<csv>] [--above-post-id=<above-post-id>] [--below-post-id=<below-post-id>]
 	 * @return void
-	 * @throws Exception If above-post-id is greater than or equal to below-post-id.
+	 * @throws Exception If above-post-id is greater than or equal to below-post-id, or if unable to obtain a prolific author account.
 	 */
 	public function create_author_terms_for_posts( $args, $assoc_args ) {
 		$post_types        = isset( $assoc_args['post-types'] ) ? explode( ',', $assoc_args['post-types'] ) : [ 'post' ];
@@ -160,6 +160,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		WP_CLI::line( sprintf( 'Found %d posts with missing author terms.', $count_of_posts_with_missing_author_terms ) );
 
 		$authors      = [];
+		$author_trans = [];
 		$author_terms = [];
 		$count        = 0;
 		$affected     = 0;
@@ -178,14 +179,31 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		do {
 			foreach ( $posts_with_missing_author_terms as $record ) {
+				$record->post_author = intval( $record->post_author );
 				++$count;
 				$complete_percentage = $this->get_formatted_complete_percentage( $count, $count_of_posts_with_missing_author_terms );
 				WP_CLI::line( sprintf( 'Processing post %d (%d/%d or %s)', $record->post_id, $count, $count_of_posts_with_missing_author_terms, $complete_percentage ) );
 
-				$author                          = ( ! empty( $authors[ $record->post_author ] ) ) ?
-					$authors[ $record->post_author ] :
-					get_user_by( 'id', $record->post_author );
-				$authors[ $record->post_author ] = $author;
+				$author = null;
+				if ( isset( $authors[ $record->post_author ] ) ) {
+					$author = $authors[ $record->post_author ];
+				} elseif ( isset( $author_trans[ $record->post_author ] ) ) {
+					$nonexistent_user_id = $record->post_author;
+					$record->post_author = $author_trans[ $record->post_author ];
+					$author              = $authors[ $record->post_author ];
+					WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Admin ID: %d (%s)', $nonexistent_user_id, $author->ID, $author->user_nicename ) );
+				} else {
+					$author = get_user_by( 'id', $record->post_author );
+
+					if ( false === $author ) {
+						$author = $this->get_first_admin_user();
+						WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Admin ID: %d (%s)', $record->post_author, $author->ID, $author->user_nicename ) );
+						$author_trans[ $record->post_author ] = $author->ID;
+						$record->post_author                  = $author->ID;
+					}
+
+					$authors[ $record->post_author ] = $author;
+				}
 
 				$author_term                          = ( ! empty( $author_terms[ $record->post_author ] ) ) ?
 					$author_terms[ $record->post_author ] :
@@ -209,6 +227,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					++$affected;
 				}
 
+				if ( $count >= $count_of_posts_with_missing_author_terms ) {
+					break;
+				}
+
 				if ( $count && 0 === $count % 500 ) {
 					sleep( 1 ); // Sleep for a second every 500 posts to avoid overloading the database.
 				}
@@ -216,7 +238,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			$posts_with_missing_author_terms = [];
 
-			if ( $batched ) {
+			if ( $batched && $count < $count_of_posts_with_missing_author_terms ) {
 				++$page;
 				WP_CLI::line( sprintf( 'Processing page %d.', $page ) );
 				$posts_with_missing_author_terms = $this->get_posts_with_missing_terms(
@@ -1231,6 +1253,25 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		// phpcs:disable -- Query is properly prepared
 		return $wpdb->get_results( $wpdb->prepare( $sql, $args ) );
 		// phpcs:enable
+	}
+
+	/**
+	 * This function will obtain the first admin user available on the site.
+	 *
+	 * @return WP_User
+	 */
+	private function get_first_admin_user() {
+		if ( ! wp_cache_get( 'co-authors-plus-most-prolific-author', 'co-authors-plus' ) ) {
+			$admin_user_query = new WP_User_Query(
+				[
+					'role' => 'Administrator',
+				]
+			);
+
+			wp_cache_set( 'co-authors-plus-most-prolific-author', $admin_user_query->get_results()[0], 'co-authors-plus', HOUR_IN_SECONDS );
+		}
+
+		return wp_cache_get( 'co-authors-plus-most-prolific-author', 'co-authors-plus' );
 	}
 
 	/**
