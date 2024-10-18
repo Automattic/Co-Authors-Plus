@@ -135,7 +135,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand create-author-terms-for-posts
 	 * @synopsis [--post-types=<csv>] [--post-statuses=<csv>] [--unbatched] [--records-per-batch=<records-per-batch>] [--specific-post-ids=<csv>] [--above-post-id=<above-post-id>] [--below-post-id=<below-post-id>]
 	 * @return void
-	 * @throws Exception If above-post-id is greater than or equal to below-post-id.
+	 * @throws Exception If above-post-id is greater than or equal to below-post-id, or if unable to obtain a prolific author account.
 	 */
 	public function create_author_terms_for_posts( $args, $assoc_args ) {
 		$post_types        = isset( $assoc_args['post-types'] ) ? explode( ',', $assoc_args['post-types'] ) : [ 'post' ];
@@ -160,6 +160,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		WP_CLI::line( sprintf( 'Found %d posts with missing author terms.', $count_of_posts_with_missing_author_terms ) );
 
 		$authors      = [];
+		$author_trans = [];
 		$author_terms = [];
 		$count        = 0;
 		$affected     = 0;
@@ -178,14 +179,31 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		do {
 			foreach ( $posts_with_missing_author_terms as $record ) {
+				$record->post_author = intval( $record->post_author );
 				++$count;
 				$complete_percentage = $this->get_formatted_complete_percentage( $count, $count_of_posts_with_missing_author_terms );
 				WP_CLI::line( sprintf( 'Processing post %d (%d/%d or %s)', $record->post_id, $count, $count_of_posts_with_missing_author_terms, $complete_percentage ) );
 
-				$author                          = ( ! empty( $authors[ $record->post_author ] ) ) ?
-					$authors[ $record->post_author ] :
-					get_user_by( 'id', $record->post_author );
-				$authors[ $record->post_author ] = $author;
+				$author = null;
+				if ( isset( $authors[ $record->post_author ] ) ) {
+					$author = $authors[ $record->post_author ];
+				} elseif ( isset( $author_trans[ $record->post_author ] ) ) {
+					$nonexistent_user_id = $record->post_author;
+					$record->post_author = $author_trans[ $record->post_author ];
+					$author              = $authors[ $record->post_author ];
+					WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Author ID: %d (%s)', $nonexistent_user_id, $author->ID, $author->user_nicename ) );
+				} else {
+					$author = get_user_by( 'id', $record->post_author );
+
+					if ( false === $author ) {
+						$author = $this->get_most_prolific_author();
+						WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Author ID: %d (%s)', $record->post_author, $author->ID, $author->user_nicename ) );
+						$author_trans[ $record->post_author ] = $author->ID;
+						$record->post_author                  = $author->ID;
+					}
+
+					$authors[ $record->post_author ] = $author;
+				}
 
 				$author_term                          = ( ! empty( $author_terms[ $record->post_author ] ) ) ?
 					$author_terms[ $record->post_author ] :
@@ -209,6 +227,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					++$affected;
 				}
 
+				if ( $count >= $count_of_posts_with_missing_author_terms ) {
+					break;
+				}
+
 				if ( $count && 0 === $count % 500 ) {
 					sleep( 1 ); // Sleep for a second every 500 posts to avoid overloading the database.
 				}
@@ -216,7 +238,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			$posts_with_missing_author_terms = [];
 
-			if ( $batched ) {
+			if ( $batched && $count < $count_of_posts_with_missing_author_terms ) {
 				++$page;
 				WP_CLI::line( sprintf( 'Processing page %d.', $page ) );
 				$posts_with_missing_author_terms = $this->get_posts_with_missing_terms(
@@ -1231,6 +1253,185 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		// phpcs:disable -- Query is properly prepared
 		return $wpdb->get_results( $wpdb->prepare( $sql, $args ) );
 		// phpcs:enable
+	}
+
+	/**
+	 * This function handles obtaining an author account which should have the most posts assigned to it. If unable
+	 * to find an appropriate account, this function will attempt to create an author account for use.
+	 *
+	 * @return WP_User
+	 * @throws Exception If unable to successfully create an author user account.
+	 */
+	public function get_most_prolific_author() {
+		if ( ! wp_cache_get( 'co-authors-plus-most-prolific-author', 'co-authors-plus' ) ) {
+
+			global $wpdb;
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$most_prolific_users = $wpdb->get_results(
+				'SELECT
+					u.ID,
+					u.user_email,
+					u.display_name,
+					COUNT(p.ID) as true_count
+				FROM wp_posts p
+					INNER JOIN wp_users u ON p.post_author = u.ID
+				GROUP BY p.post_author
+				ORDER BY true_count DESC'
+			);
+
+			$most_prolific_author = false;
+
+			foreach ( $most_prolific_users as $user ) {
+				if ( user_can( $user->ID, 'edit_posts' ) ) {
+					$most_prolific_author = get_user_by( 'id', $user->ID );
+					break;
+				}
+			}
+
+			if ( ! $most_prolific_author ) { // If we STILL can't find a user, we need to create one.
+				$user_nicename = 'user-' . substr( md5( wp_rand() ), 0, 10 );
+				$user_login    = 'co-authors-plus-author-term-backfill-' . substr( md5( wp_rand() ), 0, 10 );
+				$user_email    = $user_nicename . '@' . wp_parse_url( get_site_url(), PHP_URL_HOST );
+				$maybe_user_id = wp_insert_user(
+					[
+						'user_pass'     => wp_generate_password( 24 ),
+						'user_login'    => $user_login,
+						'user_nicename' => $user_nicename,
+						'user_email'    => $user_email,
+						'display_name'  => $this->get_random_display_name(),
+						'role'          => 'author',
+					]
+				);
+
+				if ( is_wp_error( $maybe_user_id ) ) { // (╯°□°）╯︵ ┻━┻
+					$exception_message = '(' . $maybe_user_id->get_error_code() . ') ' . $maybe_user_id->get_error_message();
+					throw new Exception( wp_kses( $exception_message, wp_kses_allowed_html( 'post' ) ) );
+				}
+
+				$most_prolific_author = get_user_by( 'id', $maybe_user_id );
+			} else {
+				$most_prolific_author = get_user_by( 'id', $most_prolific_author->ID );
+			}
+
+			wp_cache_set( 'co-authors-plus-most-prolific-author', $most_prolific_author, 'co-authors-plus', HOUR_IN_SECONDS );
+		}
+
+		return wp_cache_get( 'co-authors-plus-most-prolific-author', 'co-authors-plus' );
+	}
+
+	/**
+	 * Helper function to get randomly generated display names.
+	 *
+	 * @return string
+	 */
+	private function get_random_display_name() {
+		$first_names = [
+			'Olivia',
+			'Amelia',
+			'Emma',
+			'Sophia',
+			'Charlotte',
+			'Isabella',
+			'Ava',
+			'Mia',
+			'Ellie',
+			'Luna',
+			'Harper',
+			'Aurora',
+			'Evelyn',
+			'Eliana',
+			'Aria',
+			'Violet',
+			'Nova',
+			'Lily',
+			'Camila',
+			'Gianna',
+			'Mila',
+			'Sofia',
+			'Hazel',
+			'Scarlett',
+			'Ivy',
+			'Noah',
+			'Liam',
+			'Oliver',
+			'Elijah',
+			'Mateo',
+			'Lucas',
+			'Levi',
+			'Ezra',
+			'Asher',
+			'Leo',
+			'James',
+			'Luca',
+			'Henry',
+			'Hudson',
+			'Ethan',
+			'Muhammad',
+			'Maverick',
+			'Theodore',
+			'Grayson',
+			'Daniel',
+			'Michael',
+			'Jack',
+			'Benjamin',
+			'Elias',
+			'Sebastian',
+		];
+		$last_names  = [
+			'Prakash',
+			'Pei',
+			'Rosa',
+			'Kato',
+			'Aung',
+			'Cauhan',
+			'Im',
+			'Chon',
+			'Saito',
+			'Peña',
+			'May',
+			'Gonzales',
+			'Francisco',
+			'Awad',
+			'Correa',
+			'Sawadogo',
+			'Perera',
+			'Ran',
+			'Haruna',
+			'Sinh',
+			'Santiago',
+			'Min',
+			'Hwang',
+			'Pandit',
+			'Ta',
+			'Toure',
+			'Mu',
+			'Ko',
+			'Chai',
+			'Khin',
+			'Aktar',
+			'Munda',
+			'Robinson',
+			'Suleiman',
+			'Chakraborty',
+			'Sharif',
+			'Juarez',
+			'Patal',
+			'Kamal',
+			'Jain',
+			'Phiri',
+			'Salah',
+			'Walker',
+			'Akbar',
+			'Clark',
+			'Lewis',
+			'Hosen',
+			'Diarra',
+			'Avila',
+			'Chaudhary',
+		];
+
+		return $first_names[ wp_rand( 0, 49 ) ] . ' ' . $last_names[ wp_rand( 0, 49 ) ];
 	}
 
 	/**
