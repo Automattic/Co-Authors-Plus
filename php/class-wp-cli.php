@@ -10,6 +10,8 @@ WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
 
 class CoAuthorsPlus_Command extends WP_CLI_Command {
 
+	const SKIP_POST_FOR_BACKFILL_META_KEY = '_cap_skip_backfill';
+
 	private $args;
 
 	/**
@@ -187,19 +189,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 				$author = null;
 				if ( isset( $authors[ $record->post_author ] ) ) {
 					$author = $authors[ $record->post_author ];
-				} elseif ( isset( $author_trans[ $record->post_author ] ) ) {
-					$nonexistent_user_id = $record->post_author;
-					$record->post_author = $author_trans[ $record->post_author ];
-					$author              = $authors[ $record->post_author ];
-					WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Admin ID: %d (%s)', $nonexistent_user_id, $author->ID, $author->user_nicename ) );
 				} else {
 					$author = get_user_by( 'id', $record->post_author );
 
 					if ( false === $author ) {
-						$author = $this->get_first_admin_user();
-						WP_CLI::warning( sprintf( 'Must transfer posts from User ID: %d to Admin ID: %d (%s)', $record->post_author, $author->ID, $author->user_nicename ) );
-						$author_trans[ $record->post_author ] = $author->ID;
-						$record->post_author                  = $author->ID;
+						WP_CLI::warning( sprintf( 'Post Author ID %d does not exist in %s table, inserting skip postmeta (`%s`).', $record->post_author, $wpdb->users, self::SKIP_POST_FOR_BACKFILL_META_KEY ) );
+						$this->skip_backfill_for_post( $record->post_id, 'nonexistent_post_author_id' );
+						continue;
 					}
 
 					$authors[ $record->post_author ] = $author;
@@ -272,6 +268,44 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		WP_CLI::success( 'Done!' );
+	}
+
+	/**
+	 * This command will delete the postmeta rows that were created in order to skip posts for processing in the author
+	 * term backfill command ('create-author-terms-for-posts' or function named `create_author_terms_for_posts`).
+	 *
+	 * @param array $args Positional arguments.
+	 * @param array $assoc_args Associative arguments.
+	 *
+	 * @subcommand delete-postmeta-that-skip-author-term-backfill
+	 * @synopsis [--specific-post-ids=<csv>]
+	 * @return void
+	 */
+	public function delete_postmeta_skipping_author_term_backfill( $args, $assoc_args ) {
+		$specific_post_ids = isset( $assoc_args['specific-post-ids'] ) ? explode( ',', $assoc_args['specific-post-ids'] ) : [];
+
+		if ( empty( $specific_post_ids ) ) {
+			$query = new WP_Query(
+				[
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_key' => self::SKIP_POST_FOR_BACKFILL_META_KEY,
+					'fields'   => 'ids',
+				]
+			);
+
+			$specific_post_ids = $query->get_posts();
+		}
+
+		foreach ( $specific_post_ids as $post_id ) {
+			WP_CLI::line( sprintf( 'Deleting postmeta key `%s` for Post ID %d', self::SKIP_POST_FOR_BACKFILL_META_KEY, $post_id ) );
+			$result = delete_post_meta( $post_id, self::SKIP_POST_FOR_BACKFILL_META_KEY );
+
+			if ( $result ) {
+				WP_CLI::success( '👍' );
+			} else {
+				WP_CLI::error( '👎' );
+			}
+		}
 	}
 
 	/**
@@ -1131,7 +1165,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		$sql_and_args = [
 			'sql'  => '',
-			'args' => [ $author_taxonomy ],
+			'args' => [ $author_taxonomy, self::SKIP_POST_FOR_BACKFILL_META_KEY ],
 		];
 
 		$post_status_placeholder = implode( ',', array_fill( 0, count( $post_statuses ), '%s' ) );
@@ -1183,6 +1217,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			  	WHERE tt.taxonomy = %s
 			  	GROUP BY tr.object_id
 			  	)
+			  AND ID NOT IN (
+			      SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s
+			  )
 			  $specific_id_constraint
 			ORDER BY ID";
 
@@ -1256,22 +1293,16 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * This function will obtain the first admin user available on the site.
+	 * This function will insert a postmeta row for posts that should be skipped for processing in the author term
+	 * backfill command ('create-author-terms-for-posts' or function name `create_author_terms_for_posts`).
 	 *
-	 * @return WP_User
+	 * @param int    $post_id The Post ID that needs to be skipped.
+	 * @param string $reason The reason the post needs to be skipped.
+	 *
+	 * @return void;
 	 */
-	private function get_first_admin_user() {
-		if ( ! wp_cache_get( 'co-authors-plus-most-prolific-author', 'co-authors-plus' ) ) {
-			$admin_user_query = new WP_User_Query(
-				[
-					'role' => 'Administrator',
-				]
-			);
-
-			wp_cache_set( 'co-authors-plus-most-prolific-author', $admin_user_query->get_results()[0], 'co-authors-plus', HOUR_IN_SECONDS );
-		}
-
-		return wp_cache_get( 'co-authors-plus-most-prolific-author', 'co-authors-plus' );
+	private function skip_backfill_for_post( $post_id, $reason ) {
+		add_post_meta( $post_id, self::SKIP_POST_FOR_BACKFILL_META_KEY, $reason, true );
 	}
 
 	/**
