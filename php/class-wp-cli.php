@@ -137,7 +137,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand create-author-terms-for-posts
 	 * @synopsis [--post-types=<csv>] [--post-statuses=<csv>] [--unbatched] [--records-per-batch=<records-per-batch>] [--specific-post-ids=<csv>] [--above-post-id=<above-post-id>] [--below-post-id=<below-post-id>]
 	 * @return void
-	 * @throws Exception If above-post-id is greater than or equal to below-post-id, or if unable to obtain a prolific author account.
+	 * @throws Exception If above-post-id is greater than or equal to below-post-id.
 	 */
 	public function create_author_terms_for_posts( $args, $assoc_args ) {
 		$post_types        = isset( $assoc_args['post-types'] ) ? explode( ',', $assoc_args['post-types'] ) : [ 'post' ];
@@ -162,7 +162,6 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		WP_CLI::line( sprintf( 'Found %d posts with missing author terms.', $count_of_posts_with_missing_author_terms ) );
 
 		$authors      = [];
-		$author_trans = [];
 		$author_terms = [];
 		$count        = 0;
 		$affected     = 0;
