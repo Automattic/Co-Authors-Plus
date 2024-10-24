@@ -192,6 +192,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					$author = get_user_by( 'id', $record->post_author );
 
 					if ( false === $author ) {
+						// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.user_meta__wpdb__users -- This is just trying to convey where the root problem should be resolved.
 						WP_CLI::warning( sprintf( 'Post Author ID %d does not exist in %s table, inserting skip postmeta (`%s`).', $record->post_author, $wpdb->users, self::SKIP_POST_FOR_BACKFILL_META_KEY ) );
 						$this->skip_backfill_for_post( $record->post_id, 'nonexistent_post_author_id' );
 						continue;
