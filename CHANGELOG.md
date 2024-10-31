@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.3](https://github.com/Automattic/Co-Authors-Plus/compare/3.6.2..3.6.3) - 2024-10-28
+
+### Fixed
+* Prevent terms backfill CLI command to enter an infinite loop when a post is assigned to a user that no longer exists #1065
+
+## [3.6.2](https://github.com/automattic/co-authors-plus/compare/3.6.1..3.6.2) - 2024-10-10
+
+### Added
+* Support for Yoast Name variable #1046
+* New CLI cmd to backfill missing author terms for posts #1060
+
+### Fixed
+* Correctly populates the post_author column for linked authors #988
+
+### Maintenance
+* Increase minimum supported WordPress version to 5.9 #1035
+
 ## [3.6.1] - 2024-04-25
 
 ### Fixed
