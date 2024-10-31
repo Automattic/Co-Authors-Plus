@@ -67,4 +67,4 @@ Yes! You can disable guest authors entirely through a filter. Having the followi
 
 ## Change Log
 
-[View the change log](https://github.com/Automattic/Co-Authors-Plus/blob/master/CHANGELOG.md).
+[View the change log](https://github.com/Automattic/Co-Authors-Plus/blob/develop/CHANGELOG.md).
