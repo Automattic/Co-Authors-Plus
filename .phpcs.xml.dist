@@ -2,12 +2,18 @@
 <ruleset name="WordPress Coding Standards for Plugins">
 	<description>Generally-applicable sniffs for WordPress plugins</description>
 
-	<rule ref="WordPress-Extra" />
-	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-VIP-Go" />
-	<rule ref="WordPress">
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
-	</rule>
+
+	<!-- Rules: WordPress Coding Standards - see
+		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
+<!--	<rule ref="WordPress-Extra">--> <!-- Includes WordPress-Core -->
+<!--		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />-->
+<!--	</rule>-->
+	<!--<rule ref="WordPress-Docs"/>-->
+	<!-- For help in understanding this minimum_supported_wp_version:
+		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties#setting-minimum-supported-wp-version-for-all-sniffs-in-one-go-wpcs-0140 -->
+	<config name="minimum_supported_wp_version" value="5.9"/>
+
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
@@ -17,12 +23,15 @@
 	</rule>
 
 	<rule ref="PHPCompatibilityWP"/>
-	<config name="testVersion" value="7.2-"/>
+	<config name="testVersion" value="7.4-"/>
 
-	<arg name="extensions" value="php"/>
-
-	<!-- Show sniff codes in all reports -->
-	<arg value="s"/>
+	<!-- How to scan -->
+	<arg value="sp"/> <!-- Show sniff and progress -->
+	<arg value="n"/> <!-- No warnings -->
+	<arg name="colors"/> <!-- Show results with colors. Disable if working on Windows -->
+	<arg name="basepath" value="."/> <!-- Strip the file paths down to the relevant bit -->
+	<arg name="parallel" value="8"/> <!-- Enables parallel processing when available for faster results -->
+	<arg name="extensions" value="php"/> <!-- Limit to PHP files -->
 
 	<!-- Allow invoking just `phpcs` on command line without assuming STDIN for file input. -->
 	<file>.</file>
@@ -30,5 +39,6 @@
 	<exclude-pattern>*/dev-lib/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
 	<exclude-pattern>*/dist/*</exclude-pattern>
 </ruleset>

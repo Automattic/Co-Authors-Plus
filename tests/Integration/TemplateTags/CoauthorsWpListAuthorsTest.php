@@ -12,7 +12,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with default args.
 	 */
-	public function test_list_authors_with_default_args() {
+	public function test_list_authors_with_default_args(): void {
 
 		global $coauthors_plus;
 
@@ -57,7 +57,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with optioncount option.
 	 */
-	public function test_list_authors_with_optioncount_arg_enabled() {
+	public function test_list_authors_with_optioncount_arg_enabled(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
@@ -75,7 +75,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with show_fullname option.
 	 */
-	public function test_list_authors_with_show_fullname_arg_enabled() {
+	public function test_list_authors_with_show_fullname_arg_enabled(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
@@ -105,7 +105,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with hide_empty option.
 	 */
-	public function test_list_authors_with_hide_empty_arg_enabled() {
+	public function test_list_authors_with_hide_empty_arg_enabled(): void {
 
 		global $coauthors_plus;
 
@@ -130,7 +130,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with feed option.
 	 */
-	public function test_list_authors_with_feed_arg_enabled() {
+	public function test_list_authors_with_feed_arg_enabled(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
@@ -149,7 +149,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with feed_image option.
 	 */
-	public function test_list_authors_with_feed_image_arg_enabled() {
+	public function test_list_authors_with_feed_image_arg_enabled(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
@@ -168,7 +168,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with feed_type option.
 	 */
-	public function test_list_authors_with_feed_type_arg_enabled() {
+	public function test_list_authors_with_feed_type_arg_enabled(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
@@ -190,7 +190,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with style option.
 	 */
-	public function test_list_authors_with_style_arg_enabled() {
+	public function test_list_authors_with_style_arg_enabled(): void {
 
 		$coauthors = coauthors_wp_list_authors(
 			array(
@@ -206,7 +206,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with html option.
 	 */
-	public function test_list_authors_with_html_arg_enabled() {
+	public function test_list_authors_with_html_arg_enabled(): void {
 		global $coauthors_plus;
 
 		$author = $this->create_author();
@@ -228,7 +228,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 	/**
 	 * Checks all the co-authors of the blog with guest_authors_only option.
 	 */
-	public function test_list_authors_with_guest_authors_only_arg_enabled() {
+	public function test_list_authors_with_guest_authors_only_arg_enabled(): void {
 
 		global $coauthors_plus;
 

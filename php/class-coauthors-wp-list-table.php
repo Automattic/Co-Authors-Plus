@@ -215,7 +215,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render display name, e.g. author name
 	 */
-	public function column_display_name( $item ) {
+	public function column_display_name( $item ): string {
 
 		$item_edit_link   = get_edit_post_link( $item->ID );
 		$args             = array(
@@ -251,7 +251,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render linked account
 	 */
-	public function column_linked_account( $item ) {
+	public function column_linked_account( $item ): string {
 		if ( $item->linked_account ) {
 			$account = get_user_by( 'login', $item->linked_account );
 			if ( $account ) {
@@ -267,7 +267,7 @@ class CoAuthors_WP_List_Table extends WP_List_Table {
 	/**
 	 * Render the published post count column
 	 */
-	public function column_posts( $item ) {
+	public function column_posts( $item ): string {
 		global $coauthors_plus;
 		$count = $coauthors_plus->get_guest_author_post_count( $item );
 

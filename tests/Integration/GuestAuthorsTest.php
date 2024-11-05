@@ -50,7 +50,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_guest_author_by()
 	 */
-	public function test_get_guest_author_by_with_empty_key_or_value() {
+	public function test_get_guest_author_by_with_empty_key_or_value(): void {
 
 		global $coauthors_plus;
 
@@ -72,7 +72,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_guest_author_by()
 	 */
-	public function test_get_guest_author_by_using_cache() {
+	public function test_get_guest_author_by_using_cache(): void {
 
 		global $coauthors_plus;
 
@@ -98,7 +98,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_guest_author_by()
 	 */
-	public function test_get_guest_author_by_with_different_keys() {
+	public function test_get_guest_author_by_with_different_keys(): void {
 
 		global $coauthors_plus;
 
@@ -135,7 +135,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_guest_author_thumbnail()
 	 */
-	public function test_get_guest_author_thumbnail() {
+	public function test_get_guest_author_thumbnail(): void {
 
 		global $coauthors_plus;
 
@@ -170,7 +170,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_guest_author_fields()
 	 */
-	public function test_get_guest_author_fields() {
+	public function test_get_guest_author_fields(): void {
 
 		global $coauthors_plus;
 
@@ -232,7 +232,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_all_linked_accounts()
 	 */
-	public function test_get_all_linked_accounts() {
+	public function test_get_all_linked_accounts(): void {
 
 		global $coauthors_plus;
 
@@ -266,7 +266,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::get_all_linked_accounts()
 	 */
-	public function test_get_all_linked_accounts_with_cache() {
+	public function test_get_all_linked_accounts_with_cache(): void {
 
 		global $coauthors_plus;
 
@@ -291,7 +291,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::create_guest_author_from_user_id()
 	 */
-	public function test_create_guest_author_from_user_id() {
+	public function test_create_guest_author_from_user_id(): void {
 
 		global $coauthors_plus;
 
@@ -315,7 +315,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_when_post_args_not_as_expected() {
+	public function test_handle_delete_guest_author_action_when_post_args_not_as_expected(): void {
 
 		global $coauthors_plus;
 
@@ -370,7 +370,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_with_nonce() {
+	public function test_handle_delete_guest_author_action_with_nonce(): void {
 
 		global $coauthors_plus;
 
@@ -417,7 +417,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_with_list_users_capability() {
+	public function test_handle_delete_guest_author_action_with_list_users_capability(): void {
 
 		global $coauthors_plus;
 
@@ -475,7 +475,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_with_guest_author_existence() {
+	public function test_handle_delete_guest_author_action_with_guest_author_existence(): void {
 
 		global $coauthors_plus;
 
@@ -529,7 +529,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_with_reassign_not_as_expected() {
+	public function test_handle_delete_guest_author_action_with_reassign_not_as_expected(): void {
 
 		global $coauthors_plus;
 
@@ -573,7 +573,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_with_reassign_is_leave_assigned() {
+	public function test_handle_delete_guest_author_action_with_reassign_is_leave_assigned(): void {
 
 		global $coauthors_plus;
 
@@ -619,7 +619,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_with_reassign_is_reassign_another() {
+	public function test_handle_delete_guest_author_action_with_reassign_is_reassign_another(): void {
 
 		global $coauthors_plus;
 
@@ -682,7 +682,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::handle_delete_guest_author_action()
 	 */
-	public function test_handle_delete_guest_author_action_with_reassign_is_remove_byline() {
+	public function test_handle_delete_guest_author_action_with_reassign_is_remove_byline(): void {
 
 		global $coauthors_plus;
 
@@ -736,7 +736,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @return void
 	 **/
-	public function catch_redirect_destination( $location, $status ) {
+	public function catch_redirect_destination( $location, $status ): void {
 
 		throw new \Exception( $location, $status );
 	}
@@ -746,7 +746,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_when_guest_author_not_exist() {
+	public function test_delete_when_guest_author_not_exist(): void {
 
 		global $coauthors_plus;
 
@@ -763,7 +763,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_without_reassign() {
+	public function test_delete_without_reassign(): void {
 
 		global $coauthors_plus;
 
@@ -786,7 +786,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_with_reassign_author_not_exist() {
+	public function test_delete_with_reassign_author_not_exist(): void {
 
 		global $coauthors_plus;
 
@@ -807,7 +807,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_with_reassign_when_linked_account_and_author_are_same_user() {
+	public function test_delete_with_reassign_when_linked_account_and_author_are_same_user(): void {
 
 		global $coauthors_plus;
 
@@ -830,7 +830,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_with_reassign_when_linked_account_and_author_are_different_user() {
+	public function test_delete_with_reassign_when_linked_account_and_author_are_different_user(): void {
 
 		global $coauthors_plus;
 
@@ -864,7 +864,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_with_reassign_without_linked_account_and_author_is_same_user() {
+	public function test_delete_with_reassign_without_linked_account_and_author_is_same_user(): void {
 
 		global $coauthors_plus;
 
@@ -891,7 +891,7 @@ class GuestAuthorsTest extends TestCase {
 	 *
 	 * @covers CoAuthors_Guest_Authors::delete()
 	 */
-	public function test_delete_with_reassign_without_linked_account_and_author_is_other_user() {
+	public function test_delete_with_reassign_without_linked_account_and_author_is_other_user(): void {
 
 		global $coauthors_plus;
 

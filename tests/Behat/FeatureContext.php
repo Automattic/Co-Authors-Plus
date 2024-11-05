@@ -25,7 +25,7 @@ final class FeatureContext extends WP_CLI_FeatureContext {
 	 * Adapted from https://github.com/wearerequired/traduttore/blob/master/tests/phpunit/tests/Behat/FeatureContext.php
 	 * with credit and thanks to them.
 	 */
-	public function given_a_wp_installation_with_the_cap_plugin() {
+	public function given_a_wp_installation_with_the_cap_plugin(): void {
 		$this->install_wp();
 
 		// Symlink the current project folder into the WP folder as a plugin.
@@ -46,7 +46,7 @@ final class FeatureContext extends WP_CLI_FeatureContext {
 	 * @param string $directory Directory to ensure the existence of.
 	 * @throws \RuntimeException Directory could not be created.
 	 */
-	private function ensure_dir_exists( $directory ) {
+	private function ensure_dir_exists( $directory ): void {
 		$parent = dirname( $directory );
 
 		if ( ! empty( $parent ) && ! is_dir( $parent ) ) {
@@ -65,7 +65,7 @@ final class FeatureContext extends WP_CLI_FeatureContext {
 	 *
 	 * @param string $post_name Post name to use.
 	 */
-	public function there_is_a_published_post( $post_name ) {
+	public function there_is_a_published_post( $post_name ): void {
 		$this->proc( "wp post create --post_title='{$post_name}' --post_name='{$post_name}' --post_status='publish'" )->run_check();
 	}
 }

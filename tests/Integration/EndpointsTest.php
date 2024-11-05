@@ -29,7 +29,7 @@ class EndpointsTest extends TestCase {
 	/**
 	 * @covers \CoAuthors\API\Endpoints::__construct
 	 */
-	public function test_construct() {
+	public function test_construct(): void {
 
 		$this->assertEquals(
 			10,
@@ -58,7 +58,7 @@ class EndpointsTest extends TestCase {
 	/**
 	 * @covers \CoAuthors\API\Endpoints::add_endpoints
 	 */
-	public function test_add_endpoints() {
+	public function test_add_endpoints(): void {
 
 		$rest_server = rest_get_server();
 
@@ -117,7 +117,7 @@ class EndpointsTest extends TestCase {
 	/**
 	 * @covers \CoAuthors\API\Endpoints::get_coauthors_search_results
 	 */
-	public function test_get_coauthors_search_results() {
+	public function test_get_coauthors_search_results(): void {
 		$author1 = $this->create_author( 'author1' );
 		$author2 = $this->create_author( 'author2' );
 		$guest_author1 = $this->create_guest_author( 'guest_author1' );
@@ -165,7 +165,7 @@ class EndpointsTest extends TestCase {
 	/**
 	 * @covers \CoAuthors\API\Endpoints::get_coauthors
 	 */
-	public function test_authors_get_coauthors() {
+	public function test_authors_get_coauthors(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
@@ -183,7 +183,7 @@ class EndpointsTest extends TestCase {
 	/**
 	 * @covers \CoAuthors\API\Endpoints::update_coauthors
 	 */
-	public function test_update_coauthors() {
+	public function test_update_coauthors(): void {
 		$author       = $this->create_author();
 		$editor       = $this->create_editor();
 		$guest_author = $this->create_guest_author();
@@ -203,7 +203,7 @@ class EndpointsTest extends TestCase {
 		$this->assertCount( 2, $update_response->data );
 	}
 
-	public function data_only_editor_role_can_edit_coauthors() {
+	public function data_only_editor_role_can_edit_coauthors(): array {
 		return array(
 			'Subscriber' => array(
 				'subscriber',
@@ -231,7 +231,7 @@ class EndpointsTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_which_role_can_edit_coauthors( $role_name, $outcome ) {
+	public function test_which_role_can_edit_coauthors( $role_name, $outcome ): void {
 		$role = $this->{"create_$role_name"}();
 		wp_set_current_user( $role->ID );
 		$this->assertEquals( $outcome, $this->_api->can_edit_coauthors() );
@@ -240,7 +240,7 @@ class EndpointsTest extends TestCase {
 	/**
 	 * @covers \CoAuthors\API\Endpoints::remove_author_link
 	 */
-	public function test_remove_author_link() {
+	public function test_remove_author_link(): void {
 		$editor = $this->create_editor();
 		$post   = $this->create_post( $editor );
 
@@ -276,7 +276,7 @@ class EndpointsTest extends TestCase {
 	/**
 	 * @covers \CoAuthors\API\Endpoints::modify_responses
 	 */
-	public function test_modify_response() {
+	public function test_modify_response(): void {
 		$this->_api->modify_responses();
 
 		foreach ( $this->_cap->supported_post_types() as $post_type ) {

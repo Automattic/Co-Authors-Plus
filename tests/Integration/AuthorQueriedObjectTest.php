@@ -16,7 +16,7 @@ class AuthorQueriedObjectTest extends TestCase {
 	 *
 	 * @group ms-required
 	 */
-	public function test__author_queried_object_fix() {
+	public function test__author_queried_object_fix(): void {
 
 		global $wp_rewrite, $coauthors_plus;
 
@@ -91,7 +91,7 @@ class AuthorQueriedObjectTest extends TestCase {
 	 *
 	 * @group ms-required
 	 */
-	public function test__author_non_existent_page_throws_404() {
+	public function test__author_non_existent_page_throws_404(): void {
 		global $wp_rewrite;
 
 		/**

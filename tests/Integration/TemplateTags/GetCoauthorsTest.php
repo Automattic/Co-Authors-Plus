@@ -12,14 +12,14 @@ class GetCoauthorsTest extends TestCase {
 	/**
 	 * Checks coauthors when post not exist.
 	 */
-	public function test_get_coauthors_when_post_not_exists() {
+	public function test_get_coauthors_when_post_not_exists(): void {
 		$this->assertEmpty( get_coauthors() );
 	}
 
 	/**
 	 * Checks coauthors when post exist (not global).
 	 */
-	public function test_get_coauthors_when_post_exists() {
+	public function test_get_coauthors_when_post_exists(): void {
 		$author = $this->create_author();
 		$editor = $this->create_editor();
 		$post   = $this->create_post( $author );
@@ -43,7 +43,7 @@ class GetCoauthorsTest extends TestCase {
 	/**
 	 * Checks coauthors when terms for post not exist.
 	 */
-	public function test_get_coauthors_when_terms_for_post_not_exists() {
+	public function test_get_coauthors_when_terms_for_post_not_exists(): void {
 
 		$post_id = $this->factory()->post->create();
 		$this->assertEmpty( get_coauthors( $post_id ) );
@@ -52,7 +52,7 @@ class GetCoauthorsTest extends TestCase {
 	/**
 	 * Checks coauthors when post not exist but global post does.
 	 */
-	public function test_get_coauthors_when_global_post_exists() {
+	public function test_get_coauthors_when_global_post_exists(): void {
 
 		global $post;
 
@@ -80,7 +80,7 @@ class GetCoauthorsTest extends TestCase {
 	/**
 	 * Checks coauthors when post not exist but global post_ID does.
 	 */
-	public function test_get_coauthors_when_global_post_id_exists() {
+	public function test_get_coauthors_when_global_post_id_exists(): void {
 
 		global $post_ID;
 
@@ -111,7 +111,7 @@ class GetCoauthorsTest extends TestCase {
 	/**
 	 * Checks coauthors order.
 	 */
-	public function test_coauthors_order() {
+	public function test_coauthors_order(): void {
 
 		global $coauthors_plus;
 

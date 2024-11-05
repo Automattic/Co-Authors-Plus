@@ -12,7 +12,7 @@ class CoauthorsPostsLinksTest extends TestCase {
 	/**
 	 * Test the author filter is retained.
 	 */
-	public function test_the_author_filter_is_retained() {
+	public function test_the_author_filter_is_retained(): void {
 		global $coauthors_plus_template_filters;
 		$coauthors_plus_template_filters = new \CoAuthors_Template_Filters();
 		$this->assertEquals( 10, has_filter( 'the_author', array( $coauthors_plus_template_filters, 'filter_the_author' ) ) );
@@ -24,7 +24,7 @@ class CoauthorsPostsLinksTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/279
 	 */
-	public function test_coauthors_posts_links_for_single_author() {
+	public function test_coauthors_posts_links_for_single_author(): void {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 		$GLOBALS['post'] = $post;
@@ -41,7 +41,7 @@ class CoauthorsPostsLinksTest extends TestCase {
 	/**
 	 * Test co-author posts links are retrieved for multiple authors and default args.
 	 */
-	public function test_coauthors_posts_links_for_multiple_authors_with_default_args() {
+	public function test_coauthors_posts_links_for_multiple_authors_with_default_args(): void {
 		global $coauthors_plus;
 
 		$author = $this->create_author();
@@ -62,7 +62,7 @@ class CoauthorsPostsLinksTest extends TestCase {
 	/**
 	 * Test that co-author posts link is retrieved via coauthors_posts_links_single() but for multiple authors.
 	 */
-	public function test_coauthors_posts_links_for_multiple_authors_with_amended_args() {
+	public function test_coauthors_posts_links_for_multiple_authors_with_amended_args(): void {
 		global $coauthors_plus;
 
 		$author1 = $this->create_author( 'author1' );

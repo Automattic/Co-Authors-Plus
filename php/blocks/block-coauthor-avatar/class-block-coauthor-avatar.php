@@ -6,7 +6,7 @@
  * @since 3.6.0
  */
 
-namespace CoAuthors\Blocks; 
+namespace CoAuthors\Blocks;
 
 use WP_Block;
 /**
@@ -52,12 +52,12 @@ class Block_CoAuthor_Avatar {
 		if ( empty( $avatar_urls ) ) {
 			return '';
 		}
-		
+
 		$display_name = esc_html( $author['display_name'] ?? '' );
 		$link         = esc_url( $author['link'] ?? '' );
 		$is_link      = '' !== $link && $attributes['isLink'] ?? false;
 		$rel          = $attributes['rel'] ?? '';
-		$size         = $attributes['size'] ?? array_keys( $avatar_urls )[0];
+		$size         = $attributes['size'] ?? array_key_first( $avatar_urls );
 		$align        = esc_attr( $attributes['align'] ?? '' );
 
 		$srcset = array_map(

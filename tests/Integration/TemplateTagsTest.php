@@ -52,7 +52,7 @@ class TemplateTagsTest extends TestCase {
 	 *
 	 * @covers ::coauthors_links()
 	 */
-	public function test_coauthors_links() {
+	public function test_coauthors_links(): void {
 
 		global $coauthors_plus, $coauthors_plus_template_filters;
 
@@ -102,7 +102,7 @@ class TemplateTagsTest extends TestCase {
 	 * @covers ::coauthors()
 	 * @covers ::coauthors__echo()
 	 **/
-	public function test_coauthors() {
+	public function test_coauthors(): void {
 
 		global $post, $coauthors_plus;
 
@@ -141,7 +141,7 @@ class TemplateTagsTest extends TestCase {
 	 * @covers ::coauthors_firstnames()
 	 * @covers ::coauthors__echo()
 	 */
-	public function test_coauthors_firstnames() {
+	public function test_coauthors_firstnames(): void {
 
 		global $post, $coauthors_plus;
 
@@ -196,7 +196,7 @@ class TemplateTagsTest extends TestCase {
 	 * @covers ::coauthors_lastnames()
 	 * @covers ::coauthors__echo()
 	 */
-	public function test_coauthors_lastnames() {
+	public function test_coauthors_lastnames(): void {
 
 		global $post, $coauthors_plus;
 
@@ -251,7 +251,7 @@ class TemplateTagsTest extends TestCase {
 	 * @covers ::coauthors_nicknames()
 	 * @covers ::coauthors__echo()
 	 */
-	public function test_coauthors_nicknames() {
+	public function test_coauthors_nicknames(): void {
 
 		global $post, $coauthors_plus;
 
@@ -306,7 +306,7 @@ class TemplateTagsTest extends TestCase {
 	 * @covers ::coauthors_emails()
 	 * @covers ::coauthors__echo()
 	 */
-	public function test_coauthors_emails() {
+	public function test_coauthors_emails(): void {
 
 		global $post, $coauthors_plus;
 
@@ -358,7 +358,7 @@ class TemplateTagsTest extends TestCase {
 	 *
 	 * @covers ::coauthors_links_single()
 	 */
-	public function test_coauthors_links_single_when_guest_author() {
+	public function test_coauthors_links_single_when_guest_author(): void {
 
 		global $post, $authordata;
 
@@ -408,7 +408,7 @@ class TemplateTagsTest extends TestCase {
 	 *
 	 * @covers ::coauthors_links_single()
 	 */
-	public function test_coauthors_links_single_author_url_is_set() {
+	public function test_coauthors_links_single_author_url_is_set(): void {
 
 		global $post, $authordata;
 
@@ -449,7 +449,7 @@ class TemplateTagsTest extends TestCase {
 	 *
 	 * @covers ::coauthors_links_single()
 	 */
-	public function test_coauthors_links_single_when_url_not_exist() {
+	public function test_coauthors_links_single_when_url_not_exist(): void {
 		global $wp_version;
 		if ( PHP_VERSION_ID >= 80100 && version_compare( $wp_version, '6.3.0', '<' ) ) {
 			/*
@@ -494,7 +494,7 @@ class TemplateTagsTest extends TestCase {
 	 * @covers ::coauthors_ids()
 	 * @covers ::coauthors__echo()
 	 */
-	public function test_coauthors_ids() {
+	public function test_coauthors_ids(): void {
 
 		global $post, $coauthors_plus;
 
@@ -530,7 +530,7 @@ class TemplateTagsTest extends TestCase {
 	 *
 	 * @covers ::get_the_coauthor_meta()
 	 */
-	public function test_get_the_coauthor_meta() {
+	public function test_get_the_coauthor_meta(): void {
 
 		global $post;
 

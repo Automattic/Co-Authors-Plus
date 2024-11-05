@@ -34,7 +34,7 @@ class CoAuthorsIterator {
 		$this->count               = count( $this->authordata_array );
 	}
 
-	public function iterate() {
+	public function iterate(): bool {
 		global $authordata;
 
 		$this->position++;
@@ -63,15 +63,15 @@ class CoAuthorsIterator {
 		return $this->position === - 1 ? false : $this->position;
 	}
 
-	public function is_last() {
+	public function is_last(): bool {
 		return $this->position === $this->count - 1;
 	}
 
-	public function is_first() {
+	public function is_first(): bool {
 		return $this->position === 0;
 	}
 
-	public function count() {
+	public function count(): int {
 		return $this->count;
 	}
 
