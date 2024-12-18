@@ -993,6 +993,8 @@ class CoAuthors_Plus {
 				}
 			}
 		}
+		do_action('cap_finished', $post_id);
+
 	}
 
 	public function has_author_terms( $post_id ): bool {
