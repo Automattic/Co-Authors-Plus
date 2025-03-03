@@ -243,6 +243,7 @@ class CoAuthors_Plus {
 
 		// Apply some targeted filters
 		add_action( 'load-edit.php', array( $this, 'load_edit' ) );
+		add_action( 'load-users.php', array( $this, 'load_users_screen' ) );
 	}
 
 	/**
@@ -1507,6 +1508,16 @@ class CoAuthors_Plus {
 		$views        = array_reverse( $views );
 
 		return $views;
+	}
+
+	/**
+	 * Prevent WordPress from counting users' posts for Users table column that
+	 * is removed by the `_filter_manage_users_columns` method.
+	 *
+	 * @return void
+	 */
+	public function load_users_screen(): void {
+		add_filter( 'pre_count_many_users_posts', '__return_false' );
 	}
 
 	/**
