@@ -429,8 +429,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		$post_types = implode(
 			', ',
 			array_map(
-				function ( $type ) {
-					return "'{$type}'";
+				function ( $post_type ) {
+					return "'{$post_type}'";
 				},
 				$coauthors_plus->supported_post_types()
 			)
