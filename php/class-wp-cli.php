@@ -426,7 +426,16 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			WP_CLI::error( __( 'Please specify a valid co-author login', 'co-authors-plus' ) );
 		}
 
-		$post_types = implode( "','", $coauthors_plus->supported_post_types() );
+		$post_types = implode(
+			', ',
+			array_map(
+				function ( $type ) {
+					return "'{$type}'";
+				},
+				$coauthors_plus->supported_post_types()
+			)
+		);
+
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$posts    = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_author=%d AND post_type IN ({$post_types})", $user->ID ) );
 		$affected = 0;
