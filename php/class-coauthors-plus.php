@@ -1517,7 +1517,22 @@ class CoAuthors_Plus {
 	 * @return void
 	 */
 	public function load_users_screen(): void {
-		add_filter( 'pre_count_many_users_posts', '__return_false' );
+		add_filter( 'pre_count_many_users_posts', array( $this, 'bypass_user_post_count' ), 10, 2 );
+	}
+
+	/**
+	 * Return empty counts for `count_users_many_posts()`, to bypass the heavy
+	 * and unused query results.
+	 *
+	 * @param string[]|null $counts   Post counts.
+	 * @param array         $user_ids User IDs to return counts for.
+	 * @return array
+	 */
+	public function bypass_user_post_count( $counts, $user_ids ) {
+		return array_fill_keys(
+			array_map( 'absint', $user_ids ),
+			0
+		);
 	}
 
 	/**
