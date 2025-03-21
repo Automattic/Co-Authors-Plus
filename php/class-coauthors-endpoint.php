@@ -150,12 +150,12 @@ class Endpoints {
 	 * @return WP_REST_Response
 	 */
 	public function get_coauthors( $request ): WP_REST_Response {
-		if ( $this->request_is_for_wp_block_post_type( $request ) || $this->is_pattern_sync_operation() ) {
-			return rest_ensure_response( array() );
+		$response = array();
+
+		if ( ! $this->request_is_for_wp_block_post_type( $request ) && ! $this->is_pattern_sync_operation() ) {
+			$this->_build_authors_response( $response, $request );
 		}
 
-		$response = array();
-		$this->_build_authors_response( $response, $request );
 		return rest_ensure_response( $response );
 	}
 
