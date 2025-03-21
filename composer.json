@@ -22,7 +22,7 @@
 		"forum": "https://wordpress.org/support/plugin/co-authors-plus"
 	},
 	"require": {
-		"composer/installers": "~1.0",
+		"composer/installers": "^2",
 		"php": ">=7.4"
 	},
 	"require-dev": {
