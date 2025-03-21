@@ -150,24 +150,8 @@ class Endpoints {
 	 * @return WP_REST_Response
 	 */
 	public function get_coauthors( $request ): WP_REST_Response {
-		$post_id   = $request->get_param( 'post_id' );
-		$post_type = get_post_type( $post_id );
-
-		// Return empty array for patterns
-		if ( 'wp_block' === $post_type ) {
+		if ( $this->request_is_for_wp_block_post_type( $request ) || $this->is_pattern_sync_operation() ) {
 			return rest_ensure_response( array() );
-		}
-
-		// Check if this is a pattern sync operation
-		$referer = wp_get_referer();
-		if ( $referer ) {
-			$query_string = wp_parse_url( $referer, PHP_URL_QUERY );
-			if ( $query_string ) {
-				parse_str( $query_string, $query_vars );
-				if ( ! empty( $query_vars['post'] ) && 'wp_block' === get_post_type( $query_vars['post'] ) ) {
-					return rest_ensure_response( array() );
-				}
-			}
 		}
 
 		$response = array();
@@ -249,6 +233,36 @@ class Endpoints {
 				$response[] = $this->_format_author_data( $author );
 			}
 		}
+	}
+
+	/**
+	 * Check if the request is for a wp_block post type.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return bool
+	 */
+	private function request_is_for_wp_block_post_type( WP_REST_Request $request ): bool {
+		return 'wp_block' === get_post_type( $request->get_param( 'post_id' ) );
+	}
+
+	/**
+	 * Check if this is a pattern sync operation.
+	 *
+	 * @return bool
+	 */
+	private function is_pattern_sync_operation(): bool {
+		$referer = wp_get_referer();
+		if ( ! $referer ) {
+			return false;
+		}
+
+		$query_string = wp_parse_url( $referer, PHP_URL_QUERY );
+		if ( ! $query_string ) {
+			return false;
+		}
+
+		parse_str( $query_string, $query_vars );
+		return ! empty( $query_vars['post'] ) && 'wp_block' === get_post_type( $query_vars['post'] );
 	}
 
 	/**
