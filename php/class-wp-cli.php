@@ -10,6 +10,8 @@ WP_CLI::add_command( 'co-authors-plus', 'CoAuthorsPlus_Command' );
 
 class CoAuthorsPlus_Command extends WP_CLI_Command {
 
+	const SKIP_POST_FOR_BACKFILL_META_KEY = '_cap_skip_backfill';
+
 	private $args;
 
 	/**
@@ -178,14 +180,26 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		do {
 			foreach ( $posts_with_missing_author_terms as $record ) {
+				$record->post_author = intval( $record->post_author );
 				++$count;
 				$complete_percentage = $this->get_formatted_complete_percentage( $count, $count_of_posts_with_missing_author_terms );
 				WP_CLI::line( sprintf( 'Processing post %d (%d/%d or %s)', $record->post_id, $count, $count_of_posts_with_missing_author_terms, $complete_percentage ) );
 
-				$author                          = ( ! empty( $authors[ $record->post_author ] ) ) ?
-					$authors[ $record->post_author ] :
-					get_user_by( 'id', $record->post_author );
-				$authors[ $record->post_author ] = $author;
+				$author = null;
+				if ( isset( $authors[ $record->post_author ] ) ) {
+					$author = $authors[ $record->post_author ];
+				} else {
+					$author = get_user_by( 'id', $record->post_author );
+
+					if ( false === $author ) {
+						// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.user_meta__wpdb__users -- This is just trying to convey where the root problem should be resolved.
+						WP_CLI::warning( sprintf( 'Post Author ID %d does not exist in %s table, inserting skip postmeta (`%s`).', $record->post_author, $wpdb->users, self::SKIP_POST_FOR_BACKFILL_META_KEY ) );
+						$this->skip_backfill_for_post( $record->post_id, 'nonexistent_post_author_id' );
+						continue;
+					}
+
+					$authors[ $record->post_author ] = $author;
+				}
 
 				$author_term                          = ( ! empty( $author_terms[ $record->post_author ] ) ) ?
 					$author_terms[ $record->post_author ] :
@@ -209,6 +223,10 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 					++$affected;
 				}
 
+				if ( $count >= $count_of_posts_with_missing_author_terms ) {
+					break;
+				}
+
 				if ( $count && 0 === $count % 500 ) {
 					sleep( 1 ); // Sleep for a second every 500 posts to avoid overloading the database.
 				}
@@ -216,7 +234,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 			$posts_with_missing_author_terms = [];
 
-			if ( $batched ) {
+			if ( $batched && $count < $count_of_posts_with_missing_author_terms ) {
 				++$page;
 				WP_CLI::line( sprintf( 'Processing page %d.', $page ) );
 				$posts_with_missing_author_terms = $this->get_posts_with_missing_terms(
@@ -250,6 +268,44 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		}
 
 		WP_CLI::success( 'Done!' );
+	}
+
+	/**
+	 * This command will delete the postmeta rows that were created in order to skip posts for processing in the author
+	 * term backfill command ('create-author-terms-for-posts' or function named `create_author_terms_for_posts`).
+	 *
+	 * @param array $args Positional arguments.
+	 * @param array $assoc_args Associative arguments.
+	 *
+	 * @subcommand delete-postmeta-that-skip-author-term-backfill
+	 * @synopsis [--specific-post-ids=<csv>]
+	 * @return void
+	 */
+	public function delete_postmeta_skipping_author_term_backfill( $args, $assoc_args ) {
+		$specific_post_ids = isset( $assoc_args['specific-post-ids'] ) ? explode( ',', $assoc_args['specific-post-ids'] ) : [];
+
+		if ( empty( $specific_post_ids ) ) {
+			$query = new WP_Query(
+				[
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_key' => self::SKIP_POST_FOR_BACKFILL_META_KEY,
+					'fields'   => 'ids',
+				]
+			);
+
+			$specific_post_ids = $query->get_posts();
+		}
+
+		foreach ( $specific_post_ids as $post_id ) {
+			WP_CLI::line( sprintf( 'Deleting postmeta key `%s` for Post ID %d', self::SKIP_POST_FOR_BACKFILL_META_KEY, $post_id ) );
+			$result = delete_post_meta( $post_id, self::SKIP_POST_FOR_BACKFILL_META_KEY );
+
+			if ( $result ) {
+				WP_CLI::success( '👍' );
+			} else {
+				WP_CLI::error( '👎' );
+			}
+		}
 	}
 
 	/**
@@ -1109,7 +1165,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		$sql_and_args = [
 			'sql'  => '',
-			'args' => [ $author_taxonomy ],
+			'args' => [ $author_taxonomy, self::SKIP_POST_FOR_BACKFILL_META_KEY ],
 		];
 
 		$post_status_placeholder = implode( ',', array_fill( 0, count( $post_statuses ), '%s' ) );
@@ -1161,6 +1217,9 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 			  	WHERE tt.taxonomy = %s
 			  	GROUP BY tr.object_id
 			  	)
+			  AND ID NOT IN (
+			      SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s
+			  )
 			  $specific_id_constraint
 			ORDER BY ID";
 
@@ -1231,6 +1290,19 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		// phpcs:disable -- Query is properly prepared
 		return $wpdb->get_results( $wpdb->prepare( $sql, $args ) );
 		// phpcs:enable
+	}
+
+	/**
+	 * This function will insert a postmeta row for posts that should be skipped for processing in the author term
+	 * backfill command ('create-author-terms-for-posts' or function name `create_author_terms_for_posts`).
+	 *
+	 * @param int    $post_id The Post ID that needs to be skipped.
+	 * @param string $reason The reason the post needs to be skipped.
+	 *
+	 * @return void;
+	 */
+	private function skip_backfill_for_post( $post_id, $reason ) {
+		add_post_meta( $post_id, self::SKIP_POST_FOR_BACKFILL_META_KEY, $reason, true );
 	}
 
 	/**
