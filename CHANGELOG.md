@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.6.4] - 2025-03-24
 
 ### Fixed
-
 * Protect against duplicate authors being added to patterns and parent posts when a synced pattern is edited. #1103
+
+### Maintenance
+* Increase composer/installers version #1104
+* Add SVN install to integrate workflow #1105
 
 ## [3.6.3] - 2024-10-25
 
