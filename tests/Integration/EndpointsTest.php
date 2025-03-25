@@ -181,6 +181,35 @@ class EndpointsTest extends TestCase {
 	}
 
 	/**
+	 * @covers CoAuthors\API\Endpoints::get_coauthors
+	 */
+	public function test_get_coauthors_wp_block_post_type(): void {
+		$post_id = self::factory()->post->create( array( 'post_type' => 'wp_block' ) );
+		$request = new \WP_REST_Request( 'GET', '/coauthors/v1/authors/' . $post_id );
+		$request->set_param( 'post_id', $post_id );
+
+		$response = $this->_api->get_coauthors( $request );
+		$this->assertEmpty( $response->get_data() );
+	}
+
+	/**
+	 * @covers CoAuthors\API\Endpoints::get_coauthors
+	 */
+	public function test_get_coauthors_pattern_sync(): void {
+		$post_id = self::factory()->post->create();
+		$block_id = self::factory()->post->create( array( 'post_type' => 'wp_block' ) );
+		$_SERVER['HTTP_REFERER'] = admin_url( sprintf( 'post.php?post=%d&action=edit', $block_id ) );
+
+		$request = new \WP_REST_Request( 'GET', '/coauthors/v1/authors/' . $post_id );
+		$request->set_param( 'post_id', $post_id );
+
+		$response = $this->_api->get_coauthors( $request );
+		$this->assertEmpty( $response->get_data() );
+
+		unset( $_SERVER['HTTP_REFERER'] );
+	}
+
+	/**
 	 * @covers \CoAuthors\API\Endpoints::update_coauthors
 	 */
 	public function test_update_coauthors(): void {

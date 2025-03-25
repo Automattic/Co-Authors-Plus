@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.4] - 2025-03-24
+
+### Fixed
+* Protect against duplicate authors being added to patterns and parent posts when a synced pattern is edited. #1103
+
+### Maintenance
+* Increase composer/installers version #1104
+* Add SVN install to integrate workflow #1105
+
 ## [3.6.3] - 2024-10-25
 
 ### Fixed
@@ -514,6 +523,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.6.4]: https://github.com/automattic/co-authors-plus/compare/3.6.3...3.6.4
 [3.6.3]: https://github.com/automattic/co-authors-plus/compare/3.6.2...3.6.3
 [3.6.2]: https://github.com/automattic/co-authors-plus/compare/3.6.1...3.6.2
 [3.6.1]: https://github.com/automattic/co-authors-plus/compare/3.6.0...3.6.1
