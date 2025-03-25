@@ -5,14 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.6.4] - 2025-03-24
+## [3.6.4] - 2025-03-25
+
+### Changed
+* Use WordPress 6.8 filter to skip heavy, unnecessary query by @ethitter in https://github.com/Automattic/Co-Authors-Plus/pull/1098
 
 ### Fixed
-* Protect against duplicate authors being added to patterns and parent posts when a synced pattern is edited. #1103
+* Protect against pattern edits by @NickGreen in https://github.com/Automattic/Co-Authors-Plus/pull/1103
 
 ### Maintenance
-* Increase composer/installers version #1104
-* Add SVN install to integrate workflow #1105
+* Increase composer/installers version by @NickGreen in https://github.com/Automattic/Co-Authors-Plus/pull/1104
+* Add SVN install to integrate workflow by @NickGreen in https://github.com/Automattic/Co-Authors-Plus/pull/1105
+* Update GitHub action to install SVN before deploy to WordPress.org by @raamdev in https://github.com/Automattic/Co-Authors-Plus/pull/1077
+* Update WP_CLI::line() to WP_CLI::log() by @raamdev in https://github.com/Automattic/Co-Authors-Plus/pull/1089
 
 ## [3.6.3] - 2024-10-25
 
