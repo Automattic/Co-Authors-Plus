@@ -87,14 +87,14 @@ class ManageCoAuthorsTest extends TestCase {
 		$this->author1_page2 = wp_insert_post( $page );
 	}
 
-	public function tear_down() {
+	public function tear_down(): void {
 		parent::tear_down();
 	}
 
 	/**
 	 * Test assigning a Co-Author to a post
 	 */
-	public function test_add_coauthor_to_post() {
+	public function test_add_coauthor_to_post(): void {
 		global $coauthors_plus;
 
 		$coauthors = get_coauthors( $this->author1_post1 );
@@ -119,7 +119,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/140
 	 */
-	public function test_add_coauthor_updates_post_author() {
+	public function test_add_coauthor_updates_post_author(): void {
 		global $coauthors_plus;
 
 		// append = true, preserves existing post_author
@@ -138,7 +138,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @see https://github.com/Automattic/Co-Authors-Plus/issues/170
 	 */
-	public function test_post_publish_count_for_coauthor() {
+	public function test_post_publish_count_for_coauthor(): void {
 		global $coauthors_plus;
 
 		$editor1 = get_user_by( 'id', $this->editor1 );
@@ -191,7 +191,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
-	public function test_coauthors_set_post_author_field_when_post_type_is_attachment() {
+	public function test_coauthors_set_post_author_field_when_post_type_is_attachment(): void {
 
 		global $coauthors_plus;
 
@@ -233,7 +233,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
-	public function test_coauthors_set_post_author_field_when_coauthor_is_not_set() {
+	public function test_coauthors_set_post_author_field_when_coauthor_is_not_set(): void {
 
 		global $coauthors_plus;
 
@@ -257,7 +257,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
-	public function test_coauthors_set_post_author_field_when_coauthor_is_set() {
+	public function test_coauthors_set_post_author_field_when_coauthor_is_set(): void {
 
 		global $coauthors_plus;
 
@@ -310,7 +310,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
-	public function test_coauthors_set_post_author_field_when_guest_author_is_linked_with_wp_user() {
+	public function test_coauthors_set_post_author_field_when_guest_author_is_linked_with_wp_user(): void {
 
 		global $coauthors_plus;
 
@@ -354,7 +354,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_set_post_author_field
 	 */
-	public function test_coauthors_set_post_author_field_when_post_author_is_not_set() {
+	public function test_coauthors_set_post_author_field_when_post_author_is_not_set(): void {
 
 		global $coauthors_plus;
 
@@ -392,7 +392,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
-	public function test_coauthors_update_post_when_post_type_is_attachment() {
+	public function test_coauthors_update_post_when_post_type_is_attachment(): void {
 
 		global $coauthors_plus;
 
@@ -427,7 +427,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
-	public function test_coauthors_update_post_when_current_user_can_set_authors() {
+	public function test_coauthors_update_post_when_current_user_can_set_authors(): void {
 
 		global $coauthors_plus;
 
@@ -473,7 +473,7 @@ class ManageCoAuthorsTest extends TestCase {
 	 *
 	 * @covers \CoAuthors_Plus::coauthors_update_post
 	 */
-	public function test_coauthors_update_post_when_post_has_not_author_terms() {
+	public function test_coauthors_update_post_when_post_has_not_author_terms(): void {
 
 		global $coauthors_plus;
 

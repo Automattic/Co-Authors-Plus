@@ -1,7 +1,7 @@
 <?php
 /**
  * Blocks
- * 
+ *
  * @package Automattic\CoAuthorsPlus
  * @since 3.6.0
  */
@@ -13,7 +13,7 @@ use WP_Block_Type_Registry;
 
 /**
  * Blocks
- * 
+ *
  * @package CoAuthors
  */
 class Blocks {
@@ -101,14 +101,14 @@ class Blocks {
 
 	/**
 	 * Block Uses Author Context
-	 * 
+	 *
 	 * @param string $block_name Block name to check for use of author context.
 	 * @return bool Whether the `uses_context` property of the registered block type includes `'co-authors-plus/author'`
 	 */
 	public static function block_uses_author_context( string $block_name ): bool {
 		$block = WP_Block_Type_Registry::get_instance()->get_registered( $block_name );
 
-		if ( ! is_a( $block, 'WP_Block_Type' ) ) {
+		if ( ! $block instanceof \WP_Block_Type ) {
 			return false;
 		}
 
@@ -165,7 +165,7 @@ class Blocks {
 	 * @return null|array Either an array of data about an author, or null.
 	 */
 	public static function get_author_with_api_schema( $author ): ?array {
-		if ( ! ( is_a( $author, 'stdClass' ) || is_a( $author, 'WP_User' ) ) ) {
+		if ( ! ( $author instanceof \stdClass || $author instanceof \WP_User ) ) {
 			return null;
 		}
 
@@ -199,10 +199,10 @@ class Blocks {
 
 	/**
 	 * Get CoAuthors with API Schema
-	 * 
+	 *
 	 * Use the global WP_REST_Server to fetch co-authors for a post,
 	 * so that it matches what a user would see in the editor.
-	 * 
+	 *
 	 * @since 3.6.0
 	 * @param int   $post_id Post ID for querying co-authors.
 	 * @param array $data Co-authors as returned by the REST API.

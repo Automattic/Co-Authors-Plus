@@ -19,7 +19,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand create-guest-authors
 	 */
-	public function create_guest_authors( $args, $assoc_args ) {
+	public function create_guest_authors( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults = array(
@@ -48,11 +48,13 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Create author terms for all posts that don't have them
+	 * Create author terms for all posts that don't have them. However, please see `create_author_terms_for_posts` for an
+	 * alternative approach that not only allows for more granular control over which posts are targeted, but
+	 * is also faster in most cases.
 	 *
 	 * @subcommand create-terms-for-posts
 	 */
-	public function create_terms_for_posts() {
+	public function create_terms_for_posts(): void {
 		global $coauthors_plus, $wp_post_types;
 
 		// Cache these to prevent repeated lookups
@@ -118,6 +120,139 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Creates missing author terms for posts. `create_terms_for_posts` does exactly the same thing as this one,
+	 * except with some key differences:
+	 * 1. This command will only ever target posts that are missing* author terms, whereas create_terms_for_posts
+	 * always will start from the beginning of the posts table and work its way through all posts.
+	 * 2. Since this command only targets posts that are missing author terms, it will be faster than
+	 * create_terms_for_posts in most cases. If the command is ever interrupted, it can be restarted without
+	 * reprocessing posts that already have author terms.
+	 * 3. This command allows one to target specific post types and statuses, as well as specific post IDs.
+	 *
+	 * @param array $args Positional arguments.
+	 * @param array $assoc_args Associative arguments.
+	 *
+	 * @subcommand create-author-terms-for-posts
+	 * @synopsis [--post-types=<csv>] [--post-statuses=<csv>] [--unbatched] [--records-per-batch=<records-per-batch>] [--specific-post-ids=<csv>] [--above-post-id=<above-post-id>] [--below-post-id=<below-post-id>]
+	 * @return void
+	 * @throws Exception If above-post-id is greater than or equal to below-post-id.
+	 */
+	public function create_author_terms_for_posts( $args, $assoc_args ) {
+		$post_types        = isset( $assoc_args['post-types'] ) ? explode( ',', $assoc_args['post-types'] ) : [ 'post' ];
+		$post_statuses     = isset( $assoc_args['post-statuses'] ) ? explode( ',', $assoc_args['post-statuses'] ) : [ 'publish' ];
+		$batched           = ! isset( $assoc_args['unbatched'] );
+		$records_per_batch = $assoc_args['records-per-batch'] ?? 250;
+		$specific_post_ids = isset( $assoc_args['specific-post-ids'] ) ? explode( ',', $assoc_args['specific-post-ids'] ) : [];
+		$above_post_id     = $assoc_args['above-post-id'] ?? null;
+		$below_post_id     = $assoc_args['below-post-id'] ?? null;
+
+		global $coauthors_plus, $wpdb;
+
+		$count_of_posts_with_missing_author_terms = $this->get_count_of_posts_with_missing_terms(
+			$coauthors_plus->coauthor_taxonomy,
+			$post_types,
+			$post_statuses,
+			$specific_post_ids,
+			$above_post_id,
+			$below_post_id
+		);
+
+		WP_CLI::line( sprintf( 'Found %d posts with missing author terms.', $count_of_posts_with_missing_author_terms ) );
+
+		$authors      = [];
+		$author_terms = [];
+		$count        = 0;
+		$affected     = 0;
+		$page         = 1;
+
+		$posts_with_missing_author_terms = $this->get_posts_with_missing_terms(
+			$coauthors_plus->coauthor_taxonomy,
+			$post_types,
+			$post_statuses,
+			$batched,
+			$records_per_batch,
+			$specific_post_ids,
+			$above_post_id,
+			$below_post_id
+		);
+
+		do {
+			foreach ( $posts_with_missing_author_terms as $record ) {
+				++$count;
+				$complete_percentage = $this->get_formatted_complete_percentage( $count, $count_of_posts_with_missing_author_terms );
+				WP_CLI::line( sprintf( 'Processing post %d (%d/%d or %s)', $record->post_id, $count, $count_of_posts_with_missing_author_terms, $complete_percentage ) );
+
+				$author                          = ( ! empty( $authors[ $record->post_author ] ) ) ?
+					$authors[ $record->post_author ] :
+					get_user_by( 'id', $record->post_author );
+				$authors[ $record->post_author ] = $author;
+
+				$author_term                          = ( ! empty( $author_terms[ $record->post_author ] ) ) ?
+					$author_terms[ $record->post_author ] :
+					$coauthors_plus->update_author_term( $author );
+				$author_terms[ $record->post_author ] = $author_term;
+
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				$insert_author_term_relationship = $wpdb->insert(
+					$wpdb->term_relationships,
+					[
+						'object_id'        => $record->post_id,
+						'term_taxonomy_id' => $author_term->term_taxonomy_id,
+						'term_order'       => 0,
+					]
+				);
+
+				if ( false === $insert_author_term_relationship ) {
+					WP_CLI::warning( sprintf( 'Failed to insert term relationship for post %d and author %d.', $record->post_id, $record->post_author ) );
+				} else {
+					WP_CLI::success( sprintf( 'Inserted term relationship for post %d and author %d (%s).', $record->post_id, $record->post_author, $author->user_nicename ) );
+					++$affected;
+				}
+
+				if ( $count && 0 === $count % 500 ) {
+					sleep( 1 ); // Sleep for a second every 500 posts to avoid overloading the database.
+				}
+			}
+
+			$posts_with_missing_author_terms = [];
+
+			if ( $batched ) {
+				++$page;
+				WP_CLI::line( sprintf( 'Processing page %d.', $page ) );
+				$posts_with_missing_author_terms = $this->get_posts_with_missing_terms(
+					$coauthors_plus->coauthor_taxonomy,
+					$post_types,
+					$post_statuses,
+					$batched,
+					$records_per_batch,
+					$specific_post_ids,
+					$above_post_id,
+					$below_post_id
+				);
+			}
+		} while ( ! empty( $posts_with_missing_author_terms ) );
+
+		WP_CLI::line( sprintf( '%d records affected', $affected ) );
+
+		WP_CLI::line( 'Updating author terms with new counts' );
+		$count_of_authors = count( $authors );
+		$count            = 0;
+		foreach ( $authors as $author ) {
+			++$count;
+			$result = $coauthors_plus->update_author_term( $author );
+
+			if ( is_wp_error( $result ) || false === $result ) {
+				WP_CLI::warning( sprintf( 'Failed to update author term for author %d (%s).', $author->ID, $author->user_nicename ) );
+			} else {
+				$percentage = $this->get_formatted_complete_percentage( $count, $count_of_authors );
+				WP_CLI::success( sprintf( 'Updated author term for author %d (%s) (%s).', $author->ID, $author->user_nicename, $percentage ) );
+			}
+		}
+
+		WP_CLI::success( 'Done!' );
+	}
+
+	/**
 	 * Subcommand to assign co-authors to a post based on a given meta key
 	 *
 	 * @since 3.0
@@ -125,7 +260,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand assign-coauthors
 	 * @synopsis [--meta_key=<key>] [--post_type=<ptype>] [--append_coauthors]
 	 */
-	public function assign_coauthors( $args, $assoc_args ) {
+	public function assign_coauthors( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -215,7 +350,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand assign-user-to-coauthor
 	 * @synopsis --user_login=<user-login> --coauthor=<co-author>
 	 */
-	public function assign_user_to_coauthor( $args, $assoc_args ) {
+	public function assign_user_to_coauthor( $args, $assoc_args ): void {
 		global $coauthors_plus, $wpdb;
 
 		$defaults   = array(
@@ -290,7 +425,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand reassign-terms
 	 * @synopsis [--author-mapping=<file>] [--old_term=<slug>] [--new_term=<slug>]
 	 */
-	public function reassign_terms( $args, $assoc_args ) {
+	public function reassign_terms( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -382,7 +517,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand rename-coauthor
 	 * @synopsis --from=<user-login> --to=<user-login>
 	 */
-	public function rename_coauthor( $args, $assoc_args ) {
+	public function rename_coauthor( $args, $assoc_args ): void {
 		global $coauthors_plus, $wpdb;
 
 		$defaults   = array(
@@ -434,7 +569,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand swap-coauthors
 	 * @synopsis --from=<user-login> --to=<user-login> [--post_type=<ptype>] [--dry=<dry>]
 	 */
-	public function swap_coauthors( $args, $assoc_args ) {
+	public function swap_coauthors( $args, $assoc_args ): void {
 		global $coauthors_plus, $wpdb;
 
 		$defaults = array(
@@ -550,7 +685,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand list-posts-without-terms
 	 * @synopsis [--post_type=<ptype>]
 	 */
-	public function list_posts_without_terms( $args, $assoc_args ) {
+	public function list_posts_without_terms( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -599,7 +734,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand migrate-author-terms
 	 */
-	public function migrate_author_terms( $args, $assoc_args ) {
+	public function migrate_author_terms( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
@@ -637,7 +772,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand update-author-terms
 	 */
-	public function update_author_terms() {
+	public function update_author_terms(): void {
 		global $coauthors_plus;
 		$author_terms = get_terms( $coauthors_plus->coauthor_taxonomy, array( 'hide_empty' => false ) );
 		WP_CLI::line( 'Now updating ' . count( $author_terms ) . ' terms' );
@@ -712,7 +847,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand remove-terms-from-revisions
 	 */
-	public function remove_terms_from_revisions() {
+	public function remove_terms_from_revisions(): void {
 		global $wpdb;
 
 		$ids = $wpdb->get_col( "SELECT ID FROM $wpdb->posts WHERE post_type='revision' AND post_status='inherit'" );
@@ -739,7 +874,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand create-guest-authors-from-wxr
 	 * @synopsis --file=<file>
 	 */
-	public function create_guest_authors_from_wxr( $args, $assoc_args ) {
+	public function create_guest_authors_from_wxr( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -798,7 +933,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * [--user_email=<user_email>]
 	 * [--description=<description>]
 	 */
-	public function create_author( $args, $assoc_args ) {
+	public function create_author( $args, $assoc_args ): void {
 		$this->create_guest_author( $assoc_args );
 	}
 
@@ -808,7 +943,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @subcommand create-guest-authors-from-csv
 	 * @synopsis --file=<file>
 	 */
-	public function create_guest_authors_from_csv( $args, $assoc_args ) {
+	public function create_guest_authors_from_csv( $args, $assoc_args ): void {
 		global $coauthors_plus;
 
 		$defaults   = array(
@@ -889,7 +1024,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 * @param $author array author args. Required: display_name, user_login
 	 * @return void
 	 */
-	private function create_guest_author( $author ) {
+	private function create_guest_author( $author ): void {
 		global $coauthors_plus;
 		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email', $author['user_email'], true );
 
@@ -899,7 +1034,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		if ( $guest_author ) {
 			/* translators: Guest Author ID. */
-			return WP_CLI::warning( sprintf( esc_html__( '-- Author already exists (ID #%s); skipping.', 'co-authors-plus' ), $guest_author->ID ) );
+			WP_CLI::warning( sprintf( esc_html__( '-- Author already exists (ID #%s); skipping.', 'co-authors-plus' ), $guest_author->ID ) );
+			return;
 		}
 
 		WP_CLI::line( esc_html__( '-- Not found; creating profile.', 'co-authors-plus' ) );
@@ -919,7 +1055,8 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 
 		if ( is_wp_error( $guest_author_id ) ) {
 			/* translators: The error message. */
-			return WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
+			WP_CLI::warning( sprintf( esc_html__( '-- Failed to create guest author: %s', 'co-authors-plus' ), $guest_author_id->get_error_message() ) );
+			return;
 		}
 
 		if ( isset( $author['author_id'] ) ) {
@@ -935,7 +1072,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	/**
 	 * Clear all the caches for memory management.
 	 */
-	private function stop_the_insanity() {
+	private function stop_the_insanity(): void {
 		global $wpdb, $wp_object_cache;
 
 		$wpdb->queries = array(); // or define( 'WP_IMPORTING', true );
@@ -952,5 +1089,159 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 		if ( is_callable( $wp_object_cache, '__remoteset' ) ) {
 			$wp_object_cache->__remoteset(); // important
 		}
+	}
+
+	/**
+	 * Obtains the raw SQL for posts that are missing a specific term.
+	 *
+	 * @param string   $author_taxonomy The author taxonomy to search for.
+	 * @param string[] $post_types The post types to search for.
+	 * @param string[] $post_statuses The post statuses to search for.
+	 * @param int[]    $specific_post_ids The specific post IDs to search for.
+	 * @param int|null $above_post_id The post ID to start from.
+	 * @param int|null $below_post_id The post ID to end at.
+	 *
+	 * @return array
+	 * @throws Exception If the $above_post_id is greater than or equal to the $below_post_id.
+	 */
+	private function get_sql_for_posts_with_missing_terms( $author_taxonomy, $post_types = [ 'post' ], $post_statuses = [ 'publish' ], $specific_post_ids = [], $above_post_id = null, $below_post_id = null ) {
+		global $wpdb;
+
+		$sql_and_args = [
+			'sql'  => '',
+			'args' => [ $author_taxonomy ],
+		];
+
+		$post_status_placeholder = implode( ',', array_fill( 0, count( $post_statuses ), '%s' ) );
+		$sql_and_args['args']    = array_merge( $post_statuses, $sql_and_args['args'] );
+		$post_types_placeholder  = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
+		$sql_and_args['args']    = array_merge( $post_types, $sql_and_args['args'] );
+
+		$from = $wpdb->posts;
+
+		$specific_id_constraint = '';
+
+		if ( ! empty( $specific_post_ids ) ) {
+			$specific_post_ids_placeholder = implode( ',', array_fill( 0, count( $specific_post_ids ), '%d' ) );
+			$specific_id_constraint        = "AND ID IN ( $specific_post_ids_placeholder )";
+			$sql_and_args['args']          = array_merge( $sql_and_args['args'], $specific_post_ids );
+		} elseif ( null !== $above_post_id || null !== $below_post_id ) {
+			if ( null !== $above_post_id && null !== $below_post_id && ( $below_post_id <= $above_post_id ) ) {
+				throw new Exception( 'The $above_post_id param must be less than the $below_post_id param.' );
+			}
+
+			$ids_between_constraint = [];
+
+			if ( null !== $above_post_id ) {
+				array_unshift( $ids_between_constraint, 'ID > %d' );
+				array_unshift( $sql_and_args['args'], $above_post_id );
+			}
+
+			if ( null !== $below_post_id ) {
+				array_unshift( $ids_between_constraint, 'ID < %d' );
+				array_unshift( $sql_and_args['args'], $below_post_id );
+			}
+
+			$from = "( SELECT * FROM $wpdb->posts WHERE " . implode( ' AND ', $ids_between_constraint ) . ' ) as sub';
+		}
+
+		$sql_and_args['sql'] = "SELECT
+				ID as post_id,
+				post_author
+			FROM $from
+			WHERE post_type IN ( $post_types_placeholder )
+			  AND post_status IN ( $post_status_placeholder )
+			  AND post_author <> 0
+			  AND ID NOT IN (
+			  	SELECT
+			  	    tr.object_id
+			  	FROM $wpdb->term_relationships tr
+			  	    LEFT JOIN $wpdb->term_taxonomy tt
+			  	        ON tr.term_taxonomy_id = tt.term_taxonomy_id
+			  	WHERE tt.taxonomy = %s
+			  	GROUP BY tr.object_id
+			  	)
+			  $specific_id_constraint
+			ORDER BY ID";
+
+		return $sql_and_args;
+	}
+
+	/**
+	 * Obtains the count of posts that are missing a specific term.
+	 *
+	 * @param string   $author_taxonomy The author taxonomy to search for.
+	 * @param string[] $post_types The post types to search for.
+	 * @param string[] $post_statuses The post statuses to search for.
+	 * @param int[]    $specific_post_ids The specific post IDs to search for.
+	 * @param int|null $above_post_id The post ID to start from.
+	 * @param int|null $below_post_id The post ID to end at.
+	 *
+	 * @return int
+	 * @throws Exception If the $above_post_id is greater than or equal to the $below_post_id.
+	 */
+	private function get_count_of_posts_with_missing_terms( $author_taxonomy, $post_types = [ 'post' ], $post_statuses = [ 'publish' ], $specific_post_ids = [], $above_post_id = null, $below_post_id = null ) {
+		global $wpdb;
+
+		[
+			$sql,
+			$args,
+		] = array_values( $this->get_sql_for_posts_with_missing_terms( $author_taxonomy, $post_types, $post_statuses, $specific_post_ids, $above_post_id, $below_post_id ) );
+
+		// Replace the first SELECT with SELECT COUNT(*).
+		$sql = preg_replace(
+			'/^(SELECT(?s)(.*?)FROM)/',
+			'SELECT COUNT(*) FROM',
+			$sql,
+			1
+		);
+
+		// phpcs:disable -- Query is properly prepared
+		return intval( $wpdb->get_var( $wpdb->prepare( $sql, $args ) ) );
+		// phpcs:enable
+	}
+
+	/**
+	 * Obtains posts that are missing a specific term.
+	 *
+	 * @param string   $author_taxonomy The author taxonomy to search for.
+	 * @param string[] $post_types The post types to search for.
+	 * @param string[] $post_statuses The post statuses to search for.
+	 * @param bool     $batched Whether to process the records in batches.
+	 * @param int      $records_per_batch The number of posts to retrieve per page.
+	 * @param int[]    $specific_post_ids The specific post IDs to search for.
+	 * @param int|null $above_post_id The post ID to start from.
+	 * @param int|null $below_post_id The post ID to end at.
+	 *
+	 * @return array
+	 * @throws Exception If the $above_post_id is greater than or equal to the $below_post_id.
+	 */
+	private function get_posts_with_missing_terms( $author_taxonomy, $post_types = [ 'post' ], $post_statuses = [ 'publish' ], $batched = false, $records_per_batch = 250, $specific_post_ids = [], $above_post_id = null, $below_post_id = null ) {
+		global $wpdb;
+
+		[
+			$sql,
+			$args,
+		] = array_values( $this->get_sql_for_posts_with_missing_terms( $author_taxonomy, $post_types, $post_statuses, $specific_post_ids, $above_post_id, $below_post_id ) );
+
+		if ( $batched ) {
+			$sql .= " LIMIT $records_per_batch";
+		}
+
+		// phpcs:disable -- Query is properly prepared
+		return $wpdb->get_results( $wpdb->prepare( $sql, $args ) );
+		// phpcs:enable
+	}
+
+	/**
+	 * Convenience function to generate a formatted percentage string.
+	 *
+	 * @param int $completed Number of completed cycles.
+	 * @param int $total Total number of cycles.
+	 *
+	 * @return string
+	 */
+	private function get_formatted_complete_percentage( $completed, $total ) {
+		return number_format( ( $completed / $total ) * 100, 2 ) . '%';
 	}
 }

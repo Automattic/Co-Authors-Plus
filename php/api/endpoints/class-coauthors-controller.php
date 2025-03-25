@@ -164,7 +164,7 @@ class CoAuthors_Controller extends WP_REST_Controller {
 	 * @param WP_User|stdClass $coauthor
 	 */
 	public static function is_coauthor( $coauthor ): bool {
-		return is_a( $coauthor, 'WP_User' ) || self::is_guest_author( $coauthor );
+		return $coauthor instanceof \WP_User || self::is_guest_author( $coauthor );
 	}
 
 	/**
@@ -320,10 +320,10 @@ class CoAuthors_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function prepare_item_for_response( $author, $request ) {
-	
+
 		$fields = $this->get_fields_for_response( $request );
 
-		if ( is_a( $author, 'WP_User' ) ) {
+		if ( $author instanceof \WP_User ) {
 			$author              = $author->data;
 			$author->description = get_user_meta( $author->ID, 'description', true );
 		}

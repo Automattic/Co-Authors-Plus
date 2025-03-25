@@ -109,21 +109,21 @@ class CoAuthors_Guest_Authors {
 		$args = array(
 			'label'               => $this->labels['singular'],
 			'labels'              => array(
-				'name'                  => isset( $this->labels['plural'] ) ? $this->labels['plural'] : '',
-				'singular_name'         => isset( $this->labels['singular'] ) ? $this->labels['singular'] : '',
+				'name'                  => $this->labels['plural'] ?? '',
+				'singular_name'         => $this->labels['singular'] ?? '',
 				'add_new'               => _x( 'Add New', 'guest author', 'co-authors-plus' ),
-				'all_items'             => isset( $this->labels['all_items'] ) ? $this->labels['all_items'] : '',
-				'add_new_item'          => isset( $this->labels['add_new_item'] ) ? $this->labels['add_new_item'] : '',
-				'edit_item'             => isset( $this->labels['edit_item'] ) ? $this->labels['edit_item'] : '',
-				'new_item'              => isset( $this->labels['new_item'] ) ? $this->labels['new_item'] : '',
-				'view_item'             => isset( $this->labels['view_item'] ) ? $this->labels['view_item'] : '',
-				'search_items'          => isset( $this->labels['search_items'] ) ? $this->labels['search_items'] : '',
-				'not_found'             => isset( $this->labels['not_found'] ) ? $this->labels['not_found'] : '',
-				'not_found_in_trash'    => isset( $this->labels['not_found_in_trash'] ) ? $this->labels['not_found_in_trash'] : '',
-				'featured_image'        => isset( $this->labels['featured_image'] ) ? $this->labels['featured_image'] : '',
-				'set_featured_image'    => isset( $this->labels['set_featured_image'] ) ? $this->labels['set_featured_image'] : '',
-				'use_featured_image'    => isset( $this->labels['use_featured_image'] ) ? $this->labels['use_featured_image'] : '',
-				'remove_featured_image' => isset( $this->labels['remove_featured_image'] ) ? $this->labels['remove_featured_image'] : '',
+				'all_items'             => $this->labels['all_items'] ?? '',
+				'add_new_item'          => $this->labels['add_new_item'] ?? '',
+				'edit_item'             => $this->labels['edit_item'] ?? '',
+				'new_item'              => $this->labels['new_item'] ?? '',
+				'view_item'             => $this->labels['view_item'] ?? '',
+				'search_items'          => $this->labels['search_items'] ?? '',
+				'not_found'             => $this->labels['not_found'] ?? '',
+				'not_found_in_trash'    => $this->labels['not_found_in_trash'] ?? '',
+				'featured_image'        => $this->labels['featured_image'] ?? '',
+				'set_featured_image'    => $this->labels['set_featured_image'] ?? '',
+				'use_featured_image'    => $this->labels['use_featured_image'] ?? '',
+				'remove_featured_image' => $this->labels['remove_featured_image'] ?? '',
 			),
 			'public'              => true,
 			'publicly_queryable'  => false,
@@ -195,7 +195,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function handle_create_guest_author_action() {
+	public function handle_create_guest_author_action(): void {
 
 		if ( ! isset( $_GET['action'], $_GET['nonce'], $_GET['user_id'] ) || 'cap-create-guest-author' !== $_GET['action'] ) {
 			return;
@@ -232,7 +232,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function handle_delete_guest_author_action() {
+	public function handle_delete_guest_author_action(): void {
 		global $coauthors_plus;
 
 		if ( ! isset( $_POST['action'], $_POST['reassign'], $_POST['_wpnonce'], $_POST['id'] ) || 'delete-guest-author' != $_POST['action'] ) {
@@ -305,7 +305,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function handle_ajax_search_coauthors_to_assign() {
+	public function handle_ajax_search_coauthors_to_assign(): void {
 		global $coauthors_plus;
 
 		if ( ! current_user_can( $this->list_guest_authors_cap ) ) {
@@ -377,7 +377,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function action_admin_menu() {
+	public function action_admin_menu(): void {
 
 		add_submenu_page( $this->parent_page, $this->labels['plural'], $this->labels['plural'], $this->list_guest_authors_cap, 'view-guest-authors', array( $this, 'view_guest_authors_list' ) );
 
@@ -388,7 +388,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function action_admin_enqueue_scripts() {
+	public function action_admin_enqueue_scripts(): void {
 		global $pagenow;
 		// Enqueue our guest author CSS on the related pages
 		if ( $this->parent_page === $pagenow && isset( $_GET['page'] ) && 'view-guest-authors' === $_GET['page'] ) {
@@ -408,7 +408,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0.1
 	 */
-	public function change_title_icon() {
+	public function change_title_icon(): void {
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
@@ -423,7 +423,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function action_admin_notices() {
+	public function action_admin_notices(): void {
 		global $pagenow;
 
 		if ( $this->parent_page != $pagenow || ! isset( $_REQUEST['message'] ) ) {
@@ -442,7 +442,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function action_add_meta_boxes() {
+	public function action_add_meta_boxes(): void {
 		global $coauthors_plus;
 
 		if ( get_post_type() == $this->post_type ) {
@@ -463,7 +463,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function view_guest_authors_list() {
+	public function view_guest_authors_list(): void {
 
 		// Allow guest authors to be deleted
 		if ( isset( $_GET['action'], $_GET['id'], $_GET['_wpnonce'] ) && 'delete' == $_GET['action'] ) {
@@ -576,7 +576,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function metabox_manage_guest_author_save() {
+	public function metabox_manage_guest_author_save(): void {
 		global $post, $coauthors_plus;
 
 		if ( in_array( $post->post_status, array( 'pending', 'publish', 'draft' ) ) ) {
@@ -596,7 +596,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function metabox_manage_guest_author_slug() {
+	public function metabox_manage_guest_author_slug(): void {
 		global $post;
 
 		$pm_key        = $this->get_post_meta_key( 'user_login' );
@@ -658,7 +658,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function metabox_manage_guest_author_name() {
+	public function metabox_manage_guest_author_name(): void {
 		global $post;
 
 		$fields = $this->get_guest_author_fields( 'name' );
@@ -691,7 +691,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function metabox_manage_guest_author_contact_info() {
+	public function metabox_manage_guest_author_contact_info(): void {
 		global $post;
 
 		$fields = $this->get_guest_author_fields( 'contact-info' );
@@ -724,7 +724,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function metabox_manage_guest_author_bio() {
+	public function metabox_manage_guest_author_bio(): void {
 		global $post;
 
 		$fields = $this->get_guest_author_fields( 'about' );
@@ -814,7 +814,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function manage_guest_author_save_meta_fields( $post_id, $post ) {
+	public function manage_guest_author_save_meta_fields( $post_id, $post ): void {
 		global $coauthors_plus;
 
 		if ( $post->post_type != $this->post_type ) {
@@ -989,7 +989,7 @@ class CoAuthors_Guest_Authors {
 	 * @param   array|string  Optional. An array or string of additional classes. Default null.
 	 * @return  string        The thumbnail image tag, or null if one doesn't exist.
 	 */
-	public function get_guest_author_thumbnail( $guest_author, $size, $class = null ) {
+	public function get_guest_author_thumbnail( $guest_author, $size, $class = null ): ?string {
 		// See if the guest author has an avatar
 		if ( ! has_post_thumbnail( $guest_author->ID ) ) {
 			return null;
@@ -1110,7 +1110,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @return string The generated cache key
 	 */
-	public function get_cache_key( $key, $value ) {
+	public function get_cache_key( $key, $value ): string {
 		// Normalize $key and $value
 		switch ( $key ) {
 			case 'post_name':
@@ -1197,7 +1197,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @param int|object $guest_author The guest author ID or object
 	 */
-	public function delete_guest_author_cache( $id_or_object ) {
+	public function delete_guest_author_cache( $id_or_object ): void {
 
 		if ( is_object( $id_or_object ) ) {
 			$guest_author = $id_or_object;
@@ -1419,7 +1419,7 @@ class CoAuthors_Guest_Authors {
 	 * @param object $user_object A WP_User object
 	 * @return array $actions Modified actions
 	 */
-	public function filter_user_row_actions( $actions, $user_object ) {
+	public function filter_user_row_actions( $actions, $user_object ): array {
 
 		if ( ! current_user_can( $this->list_guest_authors_cap ) || is_network_admin() ) {
 			return $actions;
@@ -1474,7 +1474,7 @@ class CoAuthors_Guest_Authors {
 	 *
 	 * @since 3.0
 	 */
-	public function filter_author_link( $link, $author_id, $author_nicename ) {
+	public function filter_author_link( $link, $author_id, $author_nicename ): ?string {
 
 		// If we're using this at the top of the loop on author.php,
 		// our queried object should be set correctly
@@ -1506,7 +1506,7 @@ class CoAuthors_Guest_Authors {
 	 * @param string $feed Required. Type of feed being generated.
 	 * @return string Feed link for the author.
 	 */
-	public function filter_author_feed_link( $feed_link, $feed ) {
+	public function filter_author_feed_link( $feed_link, $feed ): string {
 		if ( ! is_author() ) {
 			return $feed_link;
 		}
@@ -1559,7 +1559,7 @@ class CoAuthors_Guest_Authors {
 	 * @param string $email_address  The guest author email address.
 	 * @return array An array of personal data.
 	 */
-	public function personal_data_exporter( $email_address ) {
+	public function personal_data_exporter( $email_address ): array {
 		$email_address = trim( $email_address );
 
 		$data_to_export = array();
@@ -1643,7 +1643,7 @@ class CoAuthors_Guest_Authors {
 	 * @param WP_Post $menu_item The current menu item object.
 	 * @return array
 	 */
-	public function filter_nav_menu_attributes( $atts, $menu_item ) {
+	public function filter_nav_menu_attributes( $atts, $menu_item ): array {
 		if ( ! empty( $menu_item->object ) && 'guest-author' === $menu_item->object ) {
 			$author = $this->get_guest_author_by( 'ID', $menu_item->object_id );
 			if ( ! empty( $author->type ) && $author->type === 'guest-author' ) {
