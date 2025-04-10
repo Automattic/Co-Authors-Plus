@@ -66,9 +66,10 @@ export const addItemByValue = (
  * Format the author option object.
  *
  * @param {Object} root0              An author object from the API endpoint.
- * @param {Object} root0.displayName  Name to display in the UI.
- * @param {Object} root0.userNicename The unique username.
- * @param {Object} root0.email
+ * @param {string} root0.id           The author ID.
+ * @param {string} root0.displayName  Name to display in the UI.
+ * @param {string} root0.userNicename The unique username.
+ * @param {string} root0.email        The author's email address.
  *
  * @return {Object} The object containing data relevant to the Coauthors component.
  */
