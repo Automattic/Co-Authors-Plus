@@ -70,7 +70,7 @@ export const addItemByValue = (
  * @param {string} root0.displayName  Name to display in the UI.
  * @param {string} root0.userNicename The unique username.
  * @param {string} root0.email        The author's email address.
- * @param {string} root0.userType     The entity type, either 'wp-user' or 'guest-user'.
+ * @param {string} root0.userType     The entity type, either 'wpuser' or 'guest-user'.
  *
  * @return {Object} The object containing data relevant to the Coauthors component.
  */
