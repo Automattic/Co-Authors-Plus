@@ -216,7 +216,7 @@ class Endpoints {
 			'email'        => sanitize_email( $author->user_email ),
 			'displayName'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
 			'avatar'       => esc_url( get_avatar_url( $author->ID ) ),
-			'userType'     => $author->type,
+			'userType'     => esc_html( $author->type ),
 		);
 	}
 
