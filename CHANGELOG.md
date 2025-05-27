@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.6] - 2025-05-27
+
+### Fixed
+* Prevent the wrong title on author archives on Yoast's Title_Presenter by @justinmaurerdotdev and eddiesshop https://github.com/Automattic/Co-Authors-Plus/pull/1116
+
 ## [3.6.5] - 2025-04-15
 
 ### Changed
@@ -533,6 +538,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.6.6]: https://github.com/automattic/co-authors-plus/compare/3.6.5...3.6.6
 [3.6.5]: https://github.com/automattic/co-authors-plus/compare/3.6.4...3.6.5
 [3.6.4]: https://github.com/automattic/co-authors-plus/compare/3.6.3...3.6.4
 [3.6.3]: https://github.com/automattic/co-authors-plus/compare/3.6.2...3.6.3
