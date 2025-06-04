@@ -2044,24 +2044,15 @@ class CoAuthors_Plus {
 	 * @return array $post_data The modified post data.
 	 */
 	public function action_bulk_edit_update_coauthors( array $post_data, array $postarr ): array {
-		if ( ( ! isset( $postarr['post'] ) ) || ( ! $this->is_post_type_enabled( $post_data['post_type'] ) ) ) {
+		if ( empty( $postarr['post'] ) || ! $this->is_post_type_enabled( $postarr['post_type'] ) ) {
 			return $post_data;
 		}
 
 		foreach( $postarr['post'] as $post_id ) {
 			$post = get_post( $post_id );
-
-			if ( $this->current_user_can_set_authors( $post ) && isset( $postarr['coauthors'] ) ) {
-					$coauthors = array_map( 'sanitize_title', (array) $postarr['coauthors'] );
-					$this->add_coauthors( $post_id, $coauthors );
-			} else {
-				// If a Co-Author isn't currently set, explicitly set one.
-				if ( ! $this->has_author_terms( $post_id ) ) {
-					$user = get_userdata( $post->post_author );
-					if ( $user ) {
-						$this->add_coauthors( $post_id, array( $user->user_nicename ) );
-					}
-				}
+			if ( $this->current_user_can_set_authors( $post ) && ! empty( $postarr['coauthors'] ) ) {
+				$coauthors = array_map( 'sanitize_title', (array) $postarr['coauthors'] );
+				$this->add_coauthors( $post_id, $coauthors );
 			}
 		}
 
