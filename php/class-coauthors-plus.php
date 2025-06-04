@@ -112,13 +112,7 @@ class CoAuthors_Plus {
 		add_action( 'bulk_edit_custom_box', array( $this, '_action_bulk_edit_custom_box' ), 10, 2 );
 
 		// Update Co-Authors when bulk editing posts.
-		// bulk_edit_posts was introduced in WordPress 6.3, so we need to check the version.
-		global $wp_version;
-		if ( version_compare( $wp_version, '6.3', '>=' ) ) {
-			add_action( 'bulk_edit_posts', array( $this, 'action_bulk_edit_update_coauthors' ), 10, 2 );
-		} else {
-			add_action( 'wp_insert_post_data', array( $this, 'action_bulk_edit_update_coauthors' ), 10, 2 );
-		}
+		add_action( 'bulk_edit_posts', array( $this, 'action_bulk_edit_update_coauthors' ), 10, 2 );
 	}
 
 	/**
