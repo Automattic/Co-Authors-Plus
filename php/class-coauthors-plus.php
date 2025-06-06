@@ -2022,7 +2022,7 @@ class CoAuthors_Plus {
 	 * @return void
 	 */
 	public function _action_bulk_edit_custom_box( string $column_name, string $post_type ): void {
-		if ( 'coauthors' != $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
+		if ( 'coauthors' !== $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
 			return;
 		}
 		?>
