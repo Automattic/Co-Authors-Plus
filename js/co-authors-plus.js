@@ -395,6 +395,7 @@ jQuery( document ).ready(function () {
 
 		var wpInlineEdit = inlineEditPost.edit;
 
+		// Inline editing
 		inlineEditPost.edit = function( id ) {
 
 			wpInlineEdit.apply( this, arguments )
@@ -427,6 +428,29 @@ jQuery( document ).ready(function () {
 
 				coauthors_initialize( post_coauthors );
 
+			}
+		}
+
+		// Bulk editing
+		var coauthors_initialized_on_bulk_edit = false;
+		var wpBulkEdit = inlineEditPost.setBulk;
+
+		inlineEditPost.setBulk = function() {
+
+			wpBulkEdit.apply( this, arguments );
+
+			// Initialize co-authors, but only on the first 'Bulk edit' interaction.
+			if ( ! coauthors_initialized_on_bulk_edit ) {
+				var bulk_right_column = jQuery( '#bulk-edit .inline-edit-col-right' );
+
+				// Move the Co-Authors section in the right column of the Bulk section.
+				jQuery( '#bulk-edit .bulk-edit-coauthors' ).appendTo( bulk_right_column );
+				// Give the last column its 'real' height because the float:left; for the
+				// Post Format dropdown does not help positioning the Co-Authors section
+				bulk_right_column.find( 'div.inline-edit-col' ).addClass( 'wp-clearfix' );
+
+				coauthors_initialize( [] );
+				coauthors_initialized_on_bulk_edit = true;
 			}
 		}
 	}
