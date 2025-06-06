@@ -51,7 +51,7 @@ class Endpoints {
 	/**
 	 * Register endpoints.
 	 */
-	public function add_endpoints() {
+	public function add_endpoints(): void {
 		register_rest_route(
 			static::NS,
 			static::SEARCH_ROUTE,
@@ -67,7 +67,7 @@ class Endpoints {
 							'type'        => 'string',
 						),
 						'existing_authors' => array(
-							'description' => __( 'Names of existing coauthors to exclude from search results.', 'co-authors-plus' ),
+							'description' => __( 'Names of existing co-authors to exclude from search results.', 'co-authors-plus' ),
 							'type'        => 'string',
 							'required'    => false,
 						),
@@ -126,11 +126,11 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function get_coauthors_search_results( $request ) {
+	public function get_coauthors_search_results( $request ): WP_REST_Response {
 		$response = array();
 
 		$search  = strtolower( $request->get_param( 'q' ) );
-		$ignorable = null === $request->get_param( 'existing_authors' ) ? '' : $request->get_param( 'existing_authors' );
+		$ignorable = $request->get_param( 'existing_authors' ) ?? '';
 		$ignore  = explode( ',', $ignorable );
 		$authors = $this->coauthors->search_authors( $search, $ignore );
 
@@ -149,21 +149,23 @@ class Endpoints {
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function get_coauthors( $request ) {
+	public function get_coauthors( $request ): WP_REST_Response {
 		$response = array();
 
-		$this->_build_authors_response( $response, $request );
+		if ( ! $this->request_is_for_wp_block_post_type( $request ) && ! $this->is_pattern_sync_operation() ) {
+			$this->_build_authors_response( $response, $request );
+		}
 
 		return rest_ensure_response( $response );
 	}
 
 	/**
-	 * Update coauthors.
+	 * Update co-authors.
 	 *
 	 * @param WP_REST_Request   $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function update_coauthors( $request ) {
+	public function update_coauthors( $request ): WP_REST_Response {
 
 		$response = array();
 
@@ -185,16 +187,16 @@ class Endpoints {
 	 * @param mixed $param Value to validate.
 	 * @return bool
 	 */
-	public function validate_numeric( $param ) {
+	public function validate_numeric( $param ): bool {
 		return is_numeric( $param );
 	}
 
 	/**
-	 * Permissions for updating coauthors.
+	 * Permissions for updating co-authors.
 	 *
 	 * @return bool
 	 */
-	public function can_edit_coauthors() {
+	public function can_edit_coauthors(): bool {
 		return $this->coauthors->current_user_can_set_authors();
 	}
 
@@ -202,10 +204,10 @@ class Endpoints {
 	 * Helper function to consistently format the author data for
 	 * the response.
 	 *
-	 * @param object  $author The result from coauthors methods.
+	 * @param object  $author The result from co-authors methods.
 	 * @return array
 	 */
-	public function _format_author_data( $author ) {
+	public function _format_author_data( $author ): array {
 
 		return array(
 			'id'           => esc_html( $author->ID ),
@@ -214,6 +216,7 @@ class Endpoints {
 			'email'        => sanitize_email( $author->user_email ),
 			'displayName'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
 			'avatar'       => esc_url( get_avatar_url( $author->ID ) ),
+			'userType'     => esc_html( $author->type ),
 		);
 	}
 
@@ -223,7 +226,7 @@ class Endpoints {
 	 * @param array The response array.
 	 * @param int   The post ID from the request.
 	 */
-	public function _build_authors_response( &$response, $request ) {
+	public function _build_authors_response( &$response, $request ): void {
 		$authors = get_coauthors( $request->get_param( 'post_id' ) );
 
 		if ( ! empty( $authors ) ) {
@@ -234,12 +237,42 @@ class Endpoints {
 	}
 
 	/**
-	 * Add filters to REST endpoints for each post that
-	 * supports coauthors.
+	 * Check if the request is for a wp_block post type.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return bool
 	 */
-	public function modify_responses() {
+	private function request_is_for_wp_block_post_type( WP_REST_Request $request ): bool {
+		return 'wp_block' === get_post_type( $request->get_param( 'post_id' ) );
+	}
 
-		$post_types = $this->coauthors->supported_post_types;
+	/**
+	 * Check if this is a pattern sync operation.
+	 *
+	 * @return bool
+	 */
+	private function is_pattern_sync_operation(): bool {
+		$referer = wp_get_referer();
+		if ( ! $referer ) {
+			return false;
+		}
+
+		$query_string = wp_parse_url( $referer, PHP_URL_QUERY );
+		if ( ! $query_string ) {
+			return false;
+		}
+
+		parse_str( $query_string, $query_vars );
+		return ! empty( $query_vars['post'] ) && 'wp_block' === get_post_type( $query_vars['post'] );
+	}
+
+	/**
+	 * Add filters to REST endpoints for each post that
+	 * supports co-authors.
+	 */
+	public function modify_responses(): void {
+
+		$post_types = $this->coauthors->supported_post_types();
 
 		if ( empty( $post_types ) || ! is_array( $post_types ) ) {
 			return;
@@ -266,7 +299,7 @@ class Endpoints {
 	 * @param WP_REST_Request   $request  Request object.
 	 * @return WP_REST_Response
 	 */
-	public function remove_author_link( $response, $post, $request ) {
+	public function remove_author_link( $response, $post, $request ): WP_REST_Response {
 		if (
 			! isset( $request['context'] )
 			|| 'edit' !== $request['context']

@@ -1,6 +1,6 @@
 <?php
 /**
- * The CoAuthor Schema class used by Yoast integration
+ * The Co-Author Schema class used by Yoast integration
  */
 
 namespace CoAuthors\Integrations\Yoast;
@@ -25,7 +25,7 @@ class CoAuthor extends Author {
 	 *
 	 * @return bool
 	 */
-	public function is_needed() {
+	public function is_needed(): bool {
 		return true;
 	}
 
@@ -100,11 +100,11 @@ class CoAuthor extends Author {
 	 * Builds our array of Schema Person data for a given Guest Author.
 	 *
 	 * @param object $guest_author The Guest Author object.
-	 * @param bool   $add_hash Wether or not the person's image url hash should be added to the image id.
+	 * @param bool   $add_hash Whether the person's image url hash should be added to the image id.
 	 *
 	 * @return array An array of Schema Person data.
 	 */
-	protected function build_person_data_for_guest_author( $guest_author, $add_hash = false ) {
+	protected function build_person_data_for_guest_author( $guest_author, $add_hash = false ): array {
 		$schema_id = $this->context->site_url . Schema_IDs::PERSON_LOGO_HASH;
 		$data      = [
 			'@type' => $this->type,
@@ -143,10 +143,10 @@ class CoAuthor extends Author {
 	 *
 	 * @return array The Person schema data.
 	 */
-	protected function add_guest_author_same_as_urls( $data, $guest_author ) {
+	protected function add_guest_author_same_as_urls( $data, $guest_author ): array {
 		$same_as_urls = [];
 
-		// Add the "Website" field from CoAuthors' contact info.
+		// Add the "Website" field from co-authors' contact info.
 		if ( ! empty( $guest_author->website ) ) {
 			$same_as_urls[] = $guest_author->website;
 		}

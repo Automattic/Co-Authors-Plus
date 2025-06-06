@@ -1,534 +1,659 @@
-# Translation of co-authors-plus in Dutch
-# This file is distributed under the same license as the co-authors-plus package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2013-09-03 23:09+0100\n"
+"Project-Id-Version: Plugins - Co-Authors Plus - Stable (latest release)\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-09-18T17:14:46+00:00\n"
+"PO-Revision-Date: 2023-08-28 09:25:11+0000\n"
+"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.5.7\n"
-"Project-Id-Version: co-authors-plus\n"
-
-#: php/class-coauthors-wp-list-table.php:207
-msgid "View Posts"
-msgstr "Bekijk Berichten"
-
-#: co-authors-plus.php:993
-msgid "Mine"
-msgstr "Mijn"
-
-msgid "Mohammad Jangda, Daniel Bachhuber, Automattic"
-msgstr "Mohammad Jangda, Daniel Bachhuber, Automattic</a>, Translation by <a href=\"http://kar.im\">Karim"
-
-#: co-authors-plus.php:481
-msgid "No co-author exists for that term"
-msgstr "Geen co-auteur"
-
-#: co-authors-plus.php:1230
-msgid "New comment on your post \"%s\""
-msgstr "Nieuwe reactie op je bericht \"%s\""
-
-#: co-authors-plus.php:1232 co-authors-plus.php:1349
-msgid "Author : %1$s (IP: %2$s , %3$s)"
-msgstr "Auteur : %1$s (IP: %2$s , %3$s)"
-
-#: co-authors-plus.php:1233 co-authors-plus.php:1350
-msgid "E-mail : %s"
-msgstr "E-Mail: %s"
-
-#: co-authors-plus.php:1234 co-authors-plus.php:1244 co-authors-plus.php:1253
-#: co-authors-plus.php:1336 co-authors-plus.php:1343 co-authors-plus.php:1351
-msgid "URL    : %s"
-msgstr "URL: %s"
-
-#: co-authors-plus.php:1235 co-authors-plus.php:1352
-msgid "Whois  : http://whois.arin.net/rest/ip/%s"
-msgstr "Whois  : http://whois.arin.net/rest/ip/%s"
-
-#: co-authors-plus.php:1236 co-authors-plus.php:1353
-msgid "Comment: "
-msgstr "Reactie:"
-
-#: co-authors-plus.php:1237
-msgid "You can see all comments on this post here: "
-msgstr "Je kan hier alle reacties op dit bericht zien:"
-
-#: co-authors-plus.php:1239
-msgid "[%1$s] Comment: \"%2$s\""
-msgstr "[%1$s] Reacties: \"%2$s\""
-
-#: co-authors-plus.php:1241
-msgid "New trackback on your post \"%s\""
-msgstr "Nieuwe trackback op je bericht \"%s\""
-
-#: co-authors-plus.php:1243 co-authors-plus.php:1252
-msgid "Website: %1$s (IP: %2$s , %3$s)"
-msgstr "Website: %1$s (IP: %2$s , %3$s)"
-
-#: co-authors-plus.php:1245 co-authors-plus.php:1254
-msgid "Excerpt: "
-msgstr "Fragment:"
-
-#: co-authors-plus.php:1246
-msgid "You can see all trackbacks on this post here: "
-msgstr "Je kan hier alle trackbacks op dit bericht zien:"
-
-#: co-authors-plus.php:1248
-msgid "[%1$s] Trackback: \"%2$s\""
-msgstr "[%1$s] Trackback: \"%2$s\""
-
-#: co-authors-plus.php:1250
-msgid "New pingback on your post \"%s\""
-msgstr "Nieuwe pingback op je bericht \"%s\""
-
-#: co-authors-plus.php:1255
-msgid "You can see all pingbacks on this post here: "
-msgstr "Je kan hier alle pingbacks op dit bericht zien:"
-
-#: co-authors-plus.php:1257
-msgid "[%1$s] Pingback: \"%2$s\""
-msgstr "[%1$s] Pingback: \"%2$s\""
-
-#: co-authors-plus.php:1260
-msgid "Permalink: %s"
-msgstr "Permalink: %s"
-
-#: co-authors-plus.php:1262 co-authors-plus.php:1359
-msgid "Trash it: %s"
-msgstr "In de prullebak: %s"
-
-#: co-authors-plus.php:1264 co-authors-plus.php:1361
-msgid "Delete it: %s"
-msgstr "Verwijder het: %s"
-
-#: co-authors-plus.php:1265 co-authors-plus.php:1362
-msgid "Spam it: %s"
-msgstr "Als Spam markeren: %s"
-
-#: co-authors-plus.php:1333
-msgid "A new trackback on the post \"%s\" is waiting for your approval"
-msgstr "Een nieuwe trackback op dit bericht \"%s\" wacht op goedkeuring"
-
-#: co-authors-plus.php:1335 co-authors-plus.php:1342
-msgid "Website : %1$s (IP: %2$s , %3$s)"
-msgstr "Website : %1$s (IP: %2$s , %3$s)"
-
-#: co-authors-plus.php:1337
-msgid "Trackback excerpt: "
-msgstr "Trackback fragment:"
-
-#: co-authors-plus.php:1340
-msgid "A new pingback on the post \"%s\" is waiting for your approval"
-msgstr "Een nieuwe pingback op dit bericht \"%s\" wacht op goedkeuring"
-
-#: co-authors-plus.php:1344
-msgid "Pingback excerpt: "
-msgstr "Pingback fragment:"
-
-#: co-authors-plus.php:1347
-msgid "A new comment on the post \"%s\" is waiting for your approval"
-msgstr "Een nieuwe reactie op dit bericht \"%s\" wacht op goedkeuring"
-
-#: co-authors-plus.php:1357
-msgid "Approve it: %s"
-msgstr "Goedkeuren: %s"
-
-#: co-authors-plus.php:1364
-msgid "Currently %s comment is waiting for approval. Please visit the moderation panel:"
-msgid_plural "Currently %s comments are waiting for approval. Please visit the moderation panel:"
-msgstr[0] "Er wacht momenteel %s reactie op goedkeuring. Bezoek het moderatiepaneel:"
-msgstr[1] "Er wachten momenteel %s reacties op goedkeuring. Bezoek het moderatiepaneel:"
-
-#: co-authors-plus.php:1368
-msgid "[%1$s] Please moderate: \"%2$s\""
-msgstr "[%1$s] Alsjeblieft modereren: \"%2$s\""
-
-#: php/class-coauthors-guest-authors.php:77
-msgid "Guest Author"
-msgstr "Gastauteur"
-
-#: php/class-coauthors-guest-authors.php:78
-msgid "Guest Authors"
-msgstr "Gastauteurs"
-
-#: php/class-coauthors-guest-authors.php:79
-msgid "All Guest Authors"
-msgstr "Alle Gastauteurs"
-
-#: php/class-coauthors-guest-authors.php:80
-msgid "Add New Guest Author"
-msgstr "Een nieuwe gastauteur toevoegen"
-
-#: php/class-coauthors-guest-authors.php:81
-msgid "Edit Guest Author"
-msgstr "Gastauteur bewerken"
-
-#: php/class-coauthors-guest-authors.php:82
-msgid "New Guest Author"
-msgstr "Nieuwe Gastauteur"
-
-#: php/class-coauthors-guest-authors.php:83
-msgid "View Guest Author"
-msgstr "Gastauteur bekijken"
-
-#: php/class-coauthors-guest-authors.php:84
-msgid "Search Guest Authors"
-msgstr "Gastauteur zoeken"
-
-#: php/class-coauthors-guest-authors.php:85
-msgid "No guest authors found"
-msgstr "Geen gastauteurs gevonden"
-
-#: php/class-coauthors-guest-authors.php:86
-msgid "No guest authors found in Trash"
-msgstr "Geen gastauteurs gevonden in de prullebak"
-
-#: php/class-coauthors-guest-authors.php:87
-msgid "Update Guest Author"
-msgstr "Gastauteur bijwerken"
-
-#: php/class-coauthors-guest-authors.php:88
-#: php/class-coauthors-guest-authors.php:97
-msgctxt "co-authors-plus"
-msgid "Add New"
-msgstr "Toevoegen"
-
-#: php/class-coauthors-guest-authors.php:153
-#: php/class-coauthors-guest-authors.php:159
-msgid "Guest author updated. <a href=\"%s\">View profile</a>"
-msgstr "Gastauteur bewerkt. <a href=\"%s\">Bekijk profiel</a>"
-
-#: php/class-coauthors-guest-authors.php:154
-msgid "Custom field updated."
-msgstr "veld bewerkt."
-
-#: php/class-coauthors-guest-authors.php:155
-msgid "Custom field deleted."
-msgstr "Veld verwijderd"
-
-#: php/class-coauthors-guest-authors.php:156
-msgid "Guest author updated."
-msgstr "Gastauteur bewerkt."
-
-#: php/class-coauthors-guest-authors.php:158
-msgid "Guest author restored to revision from %s"
-msgstr "Gastauteur hersteld revisie van %s"
-
-#: php/class-coauthors-guest-authors.php:160
-msgid "Guest author saved."
-msgstr "Gastauteur bewaard"
-
-#: php/class-coauthors-guest-authors.php:161
-msgid "Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
-msgstr "Gastauteur toegevoegd. <a target=\"_blank\" href=\"%s\">Bekijk profiel</a> "
-
-#: php/class-coauthors-guest-authors.php:162
-msgid "Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview profile</a>"
-msgstr "Gastauteur gepland &uuml; <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Bekijk profiel</a>"
-
-#: php/class-coauthors-guest-authors.php:164
-msgid "M j, Y @ G:i"
-msgstr "M j, Y @ G:i"
-
-#: php/class-coauthors-guest-authors.php:165
-msgid "Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
-msgstr "Gastauteur bewerkt. <a target=\"_blank\" href=\"%s\">Bekijk profiel</a>"
-
-#: php/class-coauthors-guest-authors.php:182
-#: php/class-coauthors-guest-authors.php:215
-#: php/class-coauthors-guest-authors.php:430
-msgid "Doin' something fishy, huh?"
-msgstr "Ben je iets raars aan het doen?"
-
-#: php/class-coauthors-guest-authors.php:185
-#: php/class-coauthors-guest-authors.php:219
-msgid "You don't have permission to perform this action."
-msgstr "Je hebt geen rechten om deze actie uit te voeren."
-
-#: php/class-coauthors-guest-authors.php:224
-#: php/class-coauthors-guest-authors.php:435
-msgid "Guest author can't be deleted because it doesn't exist."
-msgstr "Deze gastauteur kan niet worden verwijderd omdat deze niet bestaat."
-
-#: php/class-coauthors-guest-authors.php:238
-msgid "Co-author does not exists. Try again?"
-msgstr "Co-auteur bestaat niet. Probeer het nogmaals"
-
-#: php/class-coauthors-guest-authors.php:246
-msgid "Please make sure to pick an option."
-msgstr "Kies een optie."
-
-#: php/class-coauthors-guest-authors.php:386
-msgid "Guest author deleted."
-msgstr " Gastauteur verwijderd"
-
-#: php/class-coauthors-guest-authors.php:410
-msgid "Save"
-msgstr "Bewaren"
-
-#: php/class-coauthors-guest-authors.php:411
-msgid "Unique Slug"
-msgstr "Unieke Slug"
-
-#: php/class-coauthors-guest-authors.php:413
-msgid "Name"
-msgstr "Naam"
-
-#: php/class-coauthors-guest-authors.php:414
-msgid "Contact Info"
-msgstr "Contact Informatie"
-
-#: php/class-coauthors-guest-authors.php:439
-msgid "Delete %s"
-msgstr "Verwijderen %s"
-
-#: php/class-coauthors-guest-authors.php:440
-msgid "You have specified this guest author for deletion:"
-msgstr "Je heb deze gastauteur geselecteerd om te verwijderen"
-
-#: php/class-coauthors-guest-authors.php:442
-msgid "What should be done with posts assigned to this guest author?"
-msgstr "Wat moet er met de berichten gebeuren die aan deze gastauteur zijn gekoppeld"
-
-#: php/class-coauthors-guest-authors.php:443
-msgid "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author."
-msgstr "Als je gastauteur en al zijn berichten wilt verwijderen dan moet je eerst de berichten verwijderen en dan de gastauteur."
-
-#: php/class-coauthors-guest-authors.php:452
-msgid "Reassign to another co-author:"
-msgstr "Toewijzen aan een andere co-auteur:"
-
-#: php/class-coauthors-guest-authors.php:458
-msgid "Leave posts assigned to the mapped user, %s."
-msgstr "Laat berichten toegewezen aan de verbonden gebruiker "
-
-#: php/class-coauthors-guest-authors.php:463
-msgid "Remove byline from posts (but leave each post in its current status)."
-msgstr "Verwijder de bijzin van berichten (maar behoud de status van elk bericht)"
-
-#: php/class-coauthors-guest-authors.php:466
-msgid "Confirm Deletion"
-msgstr "Bevestig verwijdering"
-
-#: php/class-coauthors-guest-authors.php:536
-msgid "WordPress User Mapping"
-msgstr "WordPress gebruikersverbinding"
-
-#: php/class-coauthors-guest-authors.php:538
-msgid "-- Not mapped --"
-msgstr "– Niet verbonden –"
-
-#: php/class-coauthors-guest-authors.php:651
-msgid "Guest authors cannot be created without display names."
-msgstr "Gastauteur kan niet worden aangemaakt zonder de beeldschermnaam."
-
-#: php/class-coauthors-guest-authors.php:658
-msgid "Guest authors cannot be created with the same user_login value as a user. Try creating a profile from the user instead.
-msgstr "Gastauteur kan niet worden aangemaakt met dezelfde login naam als de gebruiker. Maak inplaats daarvan een profiel aan voor de gebruiker"
-
-#: php/class-coauthors-guest-authors.php:663
-msgid "Display name conflicts with another guest author display name."
-msgstr "De beelschermnaam geeft een conflict met de gastauteur beeldschermnaam"
-
-#: php/class-coauthors-guest-authors.php:829
-#: php/class-coauthors-wp-list-table.php:144
-msgid "First Name"
-msgstr "Voornaam"
-
-#: php/class-coauthors-guest-authors.php:834
-#: php/class-coauthors-wp-list-table.php:145
-msgid "Last Name"
-msgstr "Achternaam"
-
-#: php/class-coauthors-guest-authors.php:839
-msgid "Slug"
-msgstr "Slug"
-
-#: php/class-coauthors-guest-authors.php:846
-#: php/class-coauthors-wp-list-table.php:146
-msgid "E-mail"
-msgstr "E-mail"
-
-#: php/class-coauthors-guest-authors.php:851
-#: php/class-coauthors-wp-list-table.php:147
-msgid "Linked Account"
-msgstr "Verbonden Account"
-
-#: php/class-coauthors-guest-authors.php:856
-msgid "Website"
-msgstr "Website"
-
-#: php/class-coauthors-guest-authors.php:861
-msgid "AIM"
-msgstr "AIM"
-
-#: php/class-coauthors-guest-authors.php:866
-msgid "Yahoo IM"
-msgstr "Yahoo IM"
-
-#: php/class-coauthors-guest-authors.php:871
-msgid "Jabber / Google Talk"
-msgstr "Jabber / Google Talk"
-
-#: php/class-coauthors-guest-authors.php:876
-msgid "Biographical Info"
-msgstr "Biografie Informatie"
-
-#: php/class-coauthors-guest-authors.php:1006
-msgid "%s is a required field"
-msgstr "%s is een verplicht veld"
-
-#: php/class-coauthors-guest-authors.php:1012
-msgid "user_login cannot duplicate existing guest author or mapped user"
-msgstr "user_login kan niet worden gedupliceert met de bestaande gastauteur of verbonden gebruiker"
-
-#: php/class-coauthors-guest-authors.php:1057
-msgid "Guest author does not exist"
-msgstr "Gastauteur bestaat niet"
-
-#: php/class-coauthors-guest-authors.php:1069
-msgid "Reassignment co-author does not exist"
-msgstr "Deze co-auteur bestaat niet"
-
-#: php/class-coauthors-guest-authors.php:1101
-msgid "No user exists with that ID"
-msgstr "Er bestaat geen gebruiker met deze ID"
-
-#: php/class-coauthors-guest-authors.php:1158
-msgid "Edit Profile"
-msgstr "Bewerk Profiel"
-
-#: php/class-coauthors-guest-authors.php:1166
-msgid "Create Profile"
-msgstr "Profiel aanmaken"
-
-#: php/class-coauthors-wp-list-table.php:19
-msgid "Co-Authors"
-msgstr "Co-Auteurs"
-
-#: php/class-coauthors-wp-list-table.php:20
-msgid "Co-Author"
-msgstr "Co-Auteur"
-
-#: php/class-coauthors-wp-list-table.php:81
-msgid "Show all"
-msgstr "Bekijk alles"
-
-#: php/class-coauthors-wp-list-table.php:82
-msgid "With linked account"
-msgstr "Met verbonden Account"
-
-#: php/class-coauthors-wp-list-table.php:83
-msgid "Without linked account"
-msgstr "Zonder verbonden account"
-
-#: php/class-coauthors-wp-list-table.php:135
-msgid "No matching guest authors were found."
-msgstr "Er zijn geen matches tussen gastauteurs gevonden."
-
-#: php/class-coauthors-wp-list-table.php:257
-msgid "Filter"
-msgstr "Filter"
-
-#: php/class-wp-cli.php:153
-msgid "Please specify a valid user_login"
-msgstr "Geef een geldige user_login op"
-
-#: php/class-wp-cli.php:156
-msgid "Please specify a valid co-author login"
-msgstr "Geef een geldige co-auteur login op"
-
-#: php/class-wp-cli.php:163
-msgid "Skipping - Post #%d already has co-authors assigned: %s"
-msgstr "&Sla over- Bericht #%d heeft al co-auteurs: %s"
-
-#: php/class-wp-cli.php:168
-msgid "Updating - Adding %s's byline to post #%d"
-msgstr "Updaten - %s's bijzin toevoegen op bericht #%d"
-
-#: php/class-wp-cli.php:173
-msgid "All done! %d posts were affected."
-msgstr "Klaart! %d berichten zijn aangepast."
-
-#: php/class-coauthors-guest-authors.php:475
-msgid "Add New"
-msgstr "Voeg nieuwe toe"
-
-#: php/class-coauthors-wp-list-table.php:206
-msgid "Delete"
-msgstr "Verwijderen"
-
-#: php/class-coauthors-guest-authors.php:823
-#: php/class-coauthors-wp-list-table.php:143
-msgid "Display Name"
-msgstr "Beeldschermnaam"
-
-#: php/class-coauthors-guest-authors.php:817
-msgid "ID"
-msgstr "ID"
-
-#: template-tags.php:136
-msgid " and "
-msgstr "en"
-
-#: co-authors-plus.php:342
-msgid "<strong>Note:</strong> To edit post authors, please enable javascript or use a javascript-capable browser"
-msgstr "<strong>Notitie:</strong> activeer javascript of gebruikt een browser die javascript ondersrteund om bericht auteurs te bewerken"
-
-#: co-authors-plus.php:349 co-authors-plus.php:956
-msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
-msgstr "Klik op een auteur om deze te bewerken. Sleep om de volgorde aan te passen. Klik op <strong>Verwijderen</strong> om ze te verwijderen."
-
-#: co-authors-plus.php:287 co-authors-plus.php:382 co-authors-plus.php:1158
-msgid "Authors"
-msgstr "Auteurs"
-
-#: co-authors-plus.php:425 php/class-coauthors-wp-list-table.php:148
-msgid "Posts"
-msgstr "Artikelen"
-
-#: co-authors-plus.php:442
-msgid "View posts by this author"
-msgstr "Bekijk berichten van deze auteur"
-
-#: co-authors-plus.php:951 php/class-coauthors-wp-list-table.php:205
-msgid "Edit"
-msgstr "Bewerken"
-
-#: co-authors-plus.php:952
-msgid "Remove"
-msgstr "Verwijderen"
-
-#: co-authors-plus.php:953
-msgid "Are you sure you want to remove this author?"
-msgstr "Weet je zeker dat je deze auteur wilt verwijderen?"
-
-#: co-authors-plus.php:954
-msgid "Click to change this author, or drag to change their position"
-msgstr "Klik om deze auteur te bewerken of sleep om de positie aan te passen"
-
-#: co-authors-plus.php:955
-msgid "Search for an author"
-msgstr "Zoek voor een auteur"
-
-#: template-tags.php:82
-msgid "No post ID provided for CoAuthorsIterator constructor. Are you not in a loop or is $post not set?"
-msgstr "Geen bericht ID gevonden voor CoAuthorsIterator constructor. Is er geen $post ingesteld?"
-
-#: template-tags.php:208 template-tags.php:365
+"X-Generator: GlotPress/4.0.0-alpha.7\n"
+
+#. translators: Author display name.
+#: template-tags.php:239
+#: template-tags.php:635
 msgid "Posts by %s"
-msgstr "Artikelen van %s"
+msgstr "Berichten van %s"
 
-#: template-tags.php:257
+#. translators: Author display name.
+#: template-tags.php:409
+#: template-tags.php:419
 msgid "Visit %s&#8217;s website"
-msgstr "Bezoek %s&#8217;s website"
+msgstr "Bezoek %s&#8217;s site"
 
+#. Author of the plugin
+msgid "Mohammad Jangda, Daniel Bachhuber, Automattic"
+msgstr "Mohammad Jangda, Daniel Bachhuber, Automattic"
+
+#. Description of the plugin
+msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
+msgstr "Sta toe om meerdere auteurs toe te wijzen aan een bericht. Deze plugin is een uitgebreide versie van de co-auteurs plugin ontwikkeld door Weston Ruter"
+
+#: template-tags.php:91
+msgid " and "
+msgstr " en "
+
+#. Plugin Name of the plugin
 msgid "Co-Authors Plus"
 msgstr "Co-Authors Plus"
 
-msgid "http://wordpress.org/extend/plugins/co-authors-plus/"
-msgstr "http://wordpress.org/extend/plugins/co-authors-plus/"
+#. translators: 1: Co-author login, 2: Post ID
+#: php/class-wp-cli.php:258
+msgid "Updating - Adding %1$s's byline to post #%2$d"
+msgstr "Aan het updaten - Toevoegen van %1$s's auteursnaam aan bericht #%2$d."
 
-msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
-msgstr "Sta toe om meerdere auteurs toe te wijzen aan een bericht. Deze plugin is een uitgebreide versie van de Co-Authors plugin ontwikkeld door Weston Ruter"
+#. translators: 1: Post ID, 2: Comma-separated list of co-author slugs.
+#: php/class-wp-cli.php:248
+msgid "Skipping - Post #%1$d already has co-authors assigned: %2$s"
+msgstr "Overslaan - Bericht #%1$d heeft al medeauteurs toegewezen: %2$s."
+
+#. translators: Count of posts.
+#: php/class-wp-cli.php:267
+msgid "All done! %d post was affected."
+msgid_plural "All done! %d posts were affected."
+msgstr[0] "Klaar! %d bericht is beïnvloed."
+msgstr[1] "Klaar! %d berichten zijn beïnvloed."
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/co-authors-plus/"
+msgstr "https://wordpress.org/plugins/co-authors-plus/"
+
+#: php/class-coauthors-guest-authors.php:556
+msgid "Add New"
+msgstr "Nieuwe toevoegen"
+
+#: php/class-coauthors-wp-list-table.php:242
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: php/class-coauthors-plus.php:1395
+#: php/class-coauthors-wp-list-table.php:239
+msgid "Edit"
+msgstr "Bewerken"
+
+#: php/class-coauthors-guest-authors.php:1074
+#: php/class-coauthors-guest-authors.php:1587
+msgid "Biographical Info"
+msgstr "Biografische informatie"
+
+#: php/class-coauthors-guest-authors.php:455
+msgid "Name"
+msgstr "Naam"
+
+#: php/class-coauthors-guest-authors.php:1050
+msgid "Slug"
+msgstr "Slug"
+
+#: php/class-coauthors-plus.php:1396
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: php/class-coauthors-wp-list-table.php:291
+msgid "Filter"
+msgstr "Filteren"
+
+#: php/class-coauthors-guest-authors.php:456
+msgid "Contact Info"
+msgstr "Contactinformatie"
+
+#: php/class-coauthors-guest-authors.php:1027
+#: php/class-coauthors-guest-authors.php:1577
+msgid "ID"
+msgstr "ID"
+
+#: php/class-coauthors-plus.php:197
+#: php/class-coauthors-plus.php:395
+#: php/class-coauthors-plus.php:515
+#: php/class-coauthors-plus.php:604
+#: php/class-coauthors-plus.php:1649
+#: build/index.js:1
+#: src/index.js:20
+msgid "Authors"
+msgstr "Auteurs"
+
+#. translators: Publish box date format, see http://php.net/date
+#: php/class-coauthors-guest-authors.php:183
+msgid "M j, Y @ G:i"
+msgstr "j M Y @ H:i"
+
+#: php/class-coauthors-guest-authors.php:170
+msgid "Custom field deleted."
+msgstr ""
+"Aangepast veld verwijderd\n"
+"."
+
+#: php/class-coauthors-plus.php:567
+#: php/class-coauthors-wp-list-table.php:177
+msgid "Posts"
+msgstr "Berichten"
+
+#: php/class-coauthors-guest-authors.php:169
+msgid "Custom field updated."
+msgstr "Aangepast veld bijgewerkt."
+
+#: php/class-coauthors-guest-authors.php:433
+msgid "Guest author deleted."
+msgstr "Gastauteur verwijderd."
+
+#: php/class-coauthors-guest-authors.php:453
+msgid "Unique Slug"
+msgstr "Unieke slug"
+
+#: php/class-coauthors-guest-authors.php:494
+msgid "Note: If you'd like to delete the guest author and all of their posts, you should delete their posts first and then come back to delete the guest author."
+msgstr "Opmerking: Als je gastauteur en al zijn berichten wilt verwijderen dan moet je eerst de berichten verwijderen en dan de gastauteur."
+
+#: php/class-coauthors-guest-authors.php:523
+msgid "Reassign to another co-author:"
+msgstr "Toewijzen aan een andere co-auteur:"
+
+#. translators: Name of a linked user account.
+#: php/class-coauthors-guest-authors.php:530
+msgid "Leave posts assigned to the mapped user, %s."
+msgstr "Laat berichten toegewezen aan de verbonden gebruiker, %s."
+
+#: php/class-coauthors-guest-authors.php:535
+msgid "Remove byline from posts (but leave each post in its current status)."
+msgstr "Verwijder de bijzin van berichten (maar behoud de status van elk bericht)."
+
+#: php/class-coauthors-guest-authors.php:543
+#: php/class-coauthors-guest-authors.php:545
+msgid "Confirm Deletion"
+msgstr "Verwijdering bevestigen"
+
+#: php/class-coauthors-guest-authors.php:626
+msgid "WordPress User Mapping"
+msgstr "WordPress gebruikersverbinding"
+
+#: php/class-coauthors-guest-authors.php:631
+msgid "-- Not mapped --"
+msgstr "– Niet verbonden –"
+
+#: php/class-coauthors-guest-authors.php:775
+#: php/class-coauthors-guest-authors.php:786
+msgid "Guest authors cannot be created without display names."
+msgstr "Gastauteur kan niet worden aangemaakt zonder de schermnaam."
+
+#: php/class-coauthors-guest-authors.php:806
+msgid "Display name conflicts with another guest author display name."
+msgstr "De schermnaam geeft een conflict met de gastauteur schermnaam."
+
+#: php/class-coauthors-guest-authors.php:1034
+#: php/class-coauthors-guest-authors.php:1579
+#: php/class-coauthors-wp-list-table.php:172
+msgid "Display Name"
+msgstr "Schermnaam"
+
+#: php/class-coauthors-guest-authors.php:1040
+#: php/class-coauthors-guest-authors.php:1581
+#: php/class-coauthors-wp-list-table.php:173
+msgid "First Name"
+msgstr "Voornaam"
+
+#: php/class-coauthors-guest-authors.php:1045
+#: php/class-coauthors-guest-authors.php:1582
+#: php/class-coauthors-wp-list-table.php:174
+msgid "Last Name"
+msgstr "Achternaam"
+
+#: php/class-coauthors-guest-authors.php:1584
+msgid "AIM"
+msgstr "AIM"
+
+#: php/class-coauthors-guest-authors.php:1585
+msgid "Yahoo IM"
+msgstr "Yahoo IM"
+
+#: php/class-coauthors-guest-authors.php:1586
+msgid "Jabber / Google Talk"
+msgstr "Jabber / Google Talk"
+
+#. translators: Name of a form field.
+#: php/class-coauthors-guest-authors.php:1251
+msgid "%s is a required field"
+msgstr "%s is een verplicht veld"
+
+#: php/class-coauthors-guest-authors.php:1431
+msgid "Edit Profile"
+msgstr "Wijzig profiel"
+
+#: php/class-coauthors-wp-list-table.php:244
+msgid "View Posts"
+msgstr "Berichten bekijken"
+
+#: php/class-coauthors-guest-authors.php:1063
+#: php/class-coauthors-wp-list-table.php:176
+msgid "Linked Account"
+msgstr "Verbonden account"
+
+#: php/class-coauthors-guest-authors.php:1313
+msgid "Guest author does not exist"
+msgstr "Gastauteur bestaat niet"
+
+#: php/class-coauthors-guest-authors.php:1368
+msgid "No user exists with that ID"
+msgstr "Er bestaat geen gebruiker met deze ID"
+
+#: php/class-coauthors-guest-authors.php:1440
+msgid "Create Profile"
+msgstr "Profiel aanmaken"
+
+#: php/class-coauthors-wp-list-table.php:23
+msgid "Co-Authors"
+msgstr "Co-auteurs"
+
+#: php/class-coauthors-wp-list-table.php:24
+msgid "Co-Author"
+msgstr "Co-auteur"
+
+#: php/class-coauthors-wp-list-table.php:89
+msgid "Show all"
+msgstr "Bekijk alles"
+
+#: php/class-coauthors-wp-list-table.php:90
+msgid "With linked account"
+msgstr "Met verbonden account"
+
+#: php/class-coauthors-wp-list-table.php:91
+msgid "Without linked account"
+msgstr "Zonder verbonden account"
+
+#: php/class-wp-cli.php:231
+msgid "Please specify a valid user_login"
+msgstr "Geef een geldige user_login op"
+
+#: php/class-wp-cli.php:235
+msgid "Please specify a valid co-author login"
+msgstr "Geef een geldige co-auteur login op"
+
+#: php/class-coauthors-guest-authors.php:1257
+msgid "user_login cannot duplicate existing guest author or mapped user"
+msgstr "user_login kan niet worden gedupliceerd met de bestaande gastauteur of verbonden gebruiker"
+
+#. translators: URL for marking a comment as spam.
+#: co-authors-plus.php:137
+msgid "Spam it: %s"
+msgstr "Markeren als spam: %s"
+
+#. translators: 1: blog name, 2: post title
+#: co-authors-plus.php:124
+msgid "[%1$s] Pingback: \"%2$s\""
+msgstr "[%1$s] Pingback: \"%2$s\""
+
+#. translators: Comment URL.
+#: co-authors-plus.php:128
+msgid "Permalink: %s"
+msgstr "Permalink: %s"
+
+#. translators: URL for trashing a comment.
+#: co-authors-plus.php:131
+msgid "Trash it: %s"
+msgstr "Naar de prullenbak: %s"
+
+#. translators: URL for deleting a comment.
+#: co-authors-plus.php:134
+msgid "Delete it: %s"
+msgstr "Verwijderen: %s"
+
+#: co-authors-plus.php:110
+#: co-authors-plus.php:121
+msgid "Excerpt: "
+msgstr "Samenvatting:"
+
+#: co-authors-plus.php:111
+msgid "You can see all trackbacks on this post here: "
+msgstr "Hier kun je alle trackbacks op dit bericht zien:"
+
+#. translators: 1: blog name, 2: post title
+#: co-authors-plus.php:113
+msgid "[%1$s] Trackback: \"%2$s\""
+msgstr "[%1$s] Trackback: \"%2$s\""
+
+#. translators: Post title.
+#: co-authors-plus.php:116
+msgid "New pingback on your post \"%s\""
+msgstr "Nieuwe pingback op bericht \"%s\""
+
+#: co-authors-plus.php:122
+msgid "You can see all pingbacks on this post here: "
+msgstr "Hier kun je alle pingbacks op dit bericht zien:"
+
+#. translators: 1: comment author, 2: author IP, 3: author domain
+#: co-authors-plus.php:92
+msgid "Author : %1$s (IP: %2$s , %3$s)"
+msgstr "Auteur : %1$s (IP: %2$s , %3$s)"
+
+#. translators: Comment author URL.
+#: co-authors-plus.php:96
+#: co-authors-plus.php:109
+#: co-authors-plus.php:120
+msgid "URL    : %s"
+msgstr "URL    : %s"
+
+#: co-authors-plus.php:99
+msgid "Comment: "
+msgstr "Reactie:"
+
+#: co-authors-plus.php:100
+msgid "You can see all comments on this post here: "
+msgstr "Hier kun je alle reacties op dit bericht zien:"
+
+#. translators: 1: blog name, 2: post title
+#: co-authors-plus.php:102
+msgid "[%1$s] Comment: \"%2$s\""
+msgstr "[%1$s] Reactie: \"%2$s\""
+
+#. translators: Post title.
+#: co-authors-plus.php:105
+msgid "New trackback on your post \"%s\""
+msgstr "Nieuwe trackback op je bericht \"%s\""
+
+#. translators: 1: comment author, 2: author IP, 3: author domain
+#: co-authors-plus.php:107
+#: co-authors-plus.php:118
+msgid "Website: %1$s (IP: %2$s , %3$s)"
+msgstr "Website: %1$s (IP: %2$s , %3$s)"
+
+#. translators: Post title.
+#: co-authors-plus.php:90
+msgid "New comment on your post \"%s\""
+msgstr "Nieuwe reactie op je bericht \"%s\""
+
+#: php/class-coauthors-plus.php:1441
+msgid "Mine"
+msgstr "Van mij"
+
+#: php/class-coauthors-guest-authors.php:114
+msgctxt "guest author"
+msgid "Add New"
+msgstr "Nieuwe toevoegen"
+
+#: php/class-coauthors-plus.php:586
+msgid "View posts by this author"
+msgstr "Berichten van deze auteur bekijken"
+
+#: php/class-coauthors-guest-authors.php:90
+msgid "Guest Authors"
+msgstr "Gastauteurs"
+
+#: php/class-coauthors-guest-authors.php:91
+msgid "All Guest Authors"
+msgstr "Alle gastauteurs"
+
+#: php/class-coauthors-guest-authors.php:89
+#: php/class-coauthors-guest-authors.php:1547
+#: php/class-coauthors-guest-authors.php:1620
+msgid "Guest Author"
+msgstr "Gastauteur"
+
+#: php/class-coauthors-guest-authors.php:96
+msgid "Search Guest Authors"
+msgstr "Gastauteurs zoeken"
+
+#: php/class-coauthors-guest-authors.php:93
+msgid "Edit Guest Author"
+msgstr "Gastauteur bewerken"
+
+#: php/class-coauthors-guest-authors.php:94
+msgid "New Guest Author"
+msgstr "Nieuwe gastauteur"
+
+#: php/class-coauthors-guest-authors.php:95
+msgid "View Guest Author"
+msgstr "Gastauteur bekijken"
+
+#: php/class-coauthors-guest-authors.php:92
+msgid "Add New Guest Author"
+msgstr "Nieuwe gastauteur toevoegen"
+
+#: php/class-coauthors-guest-authors.php:97
+msgid "No guest authors found"
+msgstr "Geen gastauteurs gevonden"
+
+#: php/class-coauthors-guest-authors.php:98
+msgid "No guest authors found in Trash"
+msgstr "Geen gastauteurs gevonden in de prullenbak "
+
+#: php/class-coauthors-guest-authors.php:99
+msgid "Update Guest Author"
+msgstr "Gastauteur bijwerken"
+
+#: php/class-coauthors-guest-authors.php:100
+msgid "About the guest author"
+msgstr "Over de gastauteur"
+
+#. translators: Guest author URL
+#: php/class-coauthors-guest-authors.php:168
+#: php/class-coauthors-guest-authors.php:175
+msgid "Guest author updated. <a href=\"%s\">View profile</a>"
+msgstr "Gastauteur bijgewerkt. <a href=\"%s\">Profiel bekijken</a>"
+
+#: php/class-coauthors-guest-authors.php:171
+msgid "Guest author updated."
+msgstr "Gastauteur bijgewerkt."
+
+#. translators: Guest author profile preview URL.
+#: php/class-coauthors-guest-authors.php:187
+msgid "Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+msgstr "Gastauteur bijgewerkt. <a target=\"_blank\" href=\"%s\">Voorbeeld profiel</a>"
+
+#. translators: %s: date and time of the revision
+#: php/class-coauthors-guest-authors.php:173
+msgid "Guest author restored to revision from %s"
+msgstr "Gastauteur hersteld naar revisie van %s"
+
+#: php/class-coauthors-guest-authors.php:176
+msgid "Guest author saved."
+msgstr "Gastauteur opgeslagen."
+
+#: php/class-coauthors-guest-authors.php:205
+#: php/class-coauthors-guest-authors.php:244
+#: php/class-coauthors-guest-authors.php:472
+msgid "Doin' something fishy, huh?"
+msgstr "Ben je iets raars aan het doen?"
+
+#: php/class-coauthors-guest-authors.php:209
+#: php/class-coauthors-guest-authors.php:249
+msgid "You don't have permission to perform this action."
+msgstr "Je hebt geen rechten om deze actie uit te voeren."
+
+#: php/class-coauthors-guest-authors.php:255
+#: php/class-coauthors-guest-authors.php:478
+msgid "Guest author can't be deleted because it doesn't exist."
+msgstr "Deze gastauteur kan niet worden verwijderd omdat deze niet bestaat."
+
+#: php/class-coauthors-guest-authors.php:271
+msgid "Co-author does not exists. Try again?"
+msgstr "Co-auteur bestaat niet. Probeer het nogmaals."
+
+#. translators: Guest author URL
+#: php/class-coauthors-guest-authors.php:178
+msgid "Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
+msgstr "Gastauteur toegevoegd. <a target=\"_blank\" href=\"%s\">Bekijk profiel</a> "
+
+#: php/class-coauthors-plus.php:472
+#: php/class-coauthors-plus.php:606
+#: php/class-coauthors-plus.php:1400
+msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
+msgstr "Klik op een auteur om deze te bewerken. Sleep om de volgorde aan te passen. Klik op <strong>Verwijderen</strong> om ze te verwijderen."
+
+#: php/class-coauthors-plus.php:1399
+msgid "Search for an author"
+msgstr "Zoek voor een auteur"
+
+#: php/class-coauthors-plus.php:1398
+msgid "Click to change this author, or drag to change their position"
+msgstr "Klik om deze auteur te bewerken of sleep om de positie aan te passen"
+
+#: php/class-coauthors-plus.php:1397
+msgid "Are you sure you want to remove this author?"
+msgstr "Weet je zeker dat je deze auteur wilt verwijderen?"
+
+#: php/class-coauthors-guest-authors.php:281
+msgid "Please make sure to pick an option."
+msgstr "Kies een optie."
+
+#: php/class-coauthors-guest-authors.php:488
+msgid "You have specified this guest author for deletion:"
+msgstr "Je heb deze gastauteur geselecteerd om te verwijderen:"
+
+#: php/class-coauthors-plus.php:649
+#: php/class-coauthors-plus.php:667
+msgid "No co-author exists for that term"
+msgstr "Er bestaat geen co-auteur met deze term"
+
+#. translators: Guest author profile preview URL.
+#: php/class-coauthors-guest-authors.php:181
+msgid "Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview profile</a>"
+msgstr "Gastauteur gepland op: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Voorbeeld profiel</a>"
+
+#: php/class-coauthors-guest-authors.php:1328
+msgid "Reassignment co-author does not exist"
+msgstr "Toegewezen co-auteur bestaat niet"
+
+#: php/class-coauthors-guest-authors.php:1068
+#: php/class-coauthors-guest-authors.php:1583
+msgid "Website"
+msgstr "Site"
+
+#: php/class-coauthors-guest-authors.php:1057
+#: php/class-coauthors-wp-list-table.php:175
+msgid "E-mail"
+msgstr "E-mail"
+
+#: php/class-coauthors-guest-authors.php:452
+msgid "Save"
+msgstr "Opslaan"
+
+#: php/class-coauthors-wp-list-table.php:164
+msgid "No matching co-authors were found."
+msgstr "Er werden geen overeenkomende medeauteurs gevonden."
+
+#. translators: Comment author email address.
+#: co-authors-plus.php:94
+msgid "Email : %s"
+msgstr "E-mail: %s"
+
+#: php/class-coauthors-plus.php:465
+msgid "<strong>Note:</strong> To edit post authors, please enable JavaScript or use a JavaScript-capable browser"
+msgstr "<strong>Let op:</strong> activeer javascript of gebruikt een browser die javascript ondersteund om bericht auteurs te bewerken"
+
+#. Author URI of the plugin
+msgid "https://automattic.com"
+msgstr ""
+
+#. translators: Comment author IP address.
+#: co-authors-plus.php:98
+msgid "Whois  : https://whois.arin.net/rest/ip/%s"
+msgstr ""
+
+#: php/class-coauthors-endpoint.php:65
+msgid "Text to search."
+msgstr ""
+
+#: php/class-coauthors-endpoint.php:70
+msgid "Names of existing co-authors to exclude from search results."
+msgstr ""
+
+#: php/class-coauthors-endpoint.php:113
+msgid "Names of co-authors to save."
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:101
+msgid "Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:102
+msgid "Set Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:103
+msgid "Use Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:104
+msgid "Remove Avatar"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:486
+msgid "Delete Guest Authors"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:492
+msgid "There are no posts associated with this guest author."
+msgstr ""
+
+#. translators: Count of posts
+#: php/class-coauthors-guest-authors.php:497
+msgid "There is %d post associated with this guest author. What should be done with the post assigned to this Guest Author?"
+msgid_plural "There are %d posts associated with this guest author. What should be done with the posts assigned to this Guest Author?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: php/class-coauthors-guest-authors.php:800
+msgid "There is a WordPress user with the same username as this guest author, please go back and link them in order to update."
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:1578
+msgid "Login Name"
+msgstr ""
+
+#: php/class-coauthors-guest-authors.php:1580
+msgid "Email"
+msgstr ""
+
+#: php/class-coauthors-plus.php:198
+msgid "All Authors"
+msgstr ""
+
+#. translators: Author display name.
+#: php/class-coauthors-plus.php:1805
+msgid "Author: %s"
+msgstr ""
+
+#. translators: Guest Author ID.
+#: php/class-wp-cli.php:902
+msgid "-- Author already exists (ID #%s); skipping."
+msgstr ""
+
+#: php/class-wp-cli.php:905
+msgid "-- Not found; creating profile."
+msgstr ""
+
+#. translators: The error message.
+#: php/class-wp-cli.php:922
+msgid "-- Failed to create guest author: %s"
+msgstr ""
+
+#. translators: Guest Author ID.
+#: php/class-wp-cli.php:932
+msgid "-- Created as guest author #%s"
+msgstr ""
+
+#: php/integrations/yoast.php:258
+msgid "Written by"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/author-selection/index.jsx:74
+msgid "Move Up"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/author-selection/index.jsx:85
+msgid "Move down"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/author-selection/index.jsx:102
+msgid "Remove Author"
+msgstr ""
+
+#: build/index.js:1
+#: src/components/co-authors/index.jsx:189
+msgid "Select An Author"
+msgstr ""
