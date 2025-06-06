@@ -81,7 +81,7 @@ export const formatAuthorData = ( author ) => {
 
 	return {
 		id,
-		label: applyFilters( 'coAuthors.author.label.formatted', `${ displayName } | ${ email }`, author ),
+		label: applyFilters( 'coAuthors.formatAuthorData.label', `${ displayName } | ${ email }`, author ),
 		display: displayName,
 		value: userNicename,
 		userType,
