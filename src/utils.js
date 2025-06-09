@@ -1,3 +1,5 @@
+import { applyFilters } from '@wordpress/hooks';
+
 /**
  * Move an item up or down in an array.
  *
@@ -74,10 +76,12 @@ export const addItemByValue = (
  *
  * @return {Object} The object containing data relevant to the Coauthors component.
  */
-export const formatAuthorData = ( { id, displayName, userNicename, email, userType } ) => {
+export const formatAuthorData = ( author ) => {
+	const { id, displayName, userNicename, email, userType } = author;
+
 	return {
 		id,
-		label: `${ displayName } | ${ email }`,
+		label: applyFilters( 'coAuthors.formatAuthorData.label', `${ displayName } | ${ email }`, author ),
 		display: displayName,
 		value: userNicename,
 		userType,
