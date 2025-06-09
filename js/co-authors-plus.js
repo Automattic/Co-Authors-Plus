@@ -186,6 +186,13 @@ jQuery( document ).ready(function () {
 				.on( 'blur', function(){ $co.val( coAuthorsPlusStrings.search_box_text ) } )
 				;
 
+		if ( coauthors_initialized_on_bulk_edit )
+			$co.attr({
+				'aria-labelledby': 'coauthors-bulk-edit-label',
+				'aria-describedby': 'coauthors-bulk-edit-desc'
+			})
+			;
+
 		return $co;
 
 	}
@@ -452,8 +459,8 @@ jQuery( document ).ready(function () {
 				// Move the autosuggest input box under the Co-Authors label.
 				jQuery( '#coauthors-edit' ).appendTo( coauthors_authors_label );
 
-				coauthors_initialize( [] );
 				coauthors_initialized_on_bulk_edit = true;
+				coauthors_initialize( [] );
 			}
 		}
 	}
