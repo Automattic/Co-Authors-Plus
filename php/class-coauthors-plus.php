@@ -2026,7 +2026,7 @@ class CoAuthors_Plus {
 			return;
 		}
 		?>
-		<label class="bulk-edit-group bulk-edit-coauthors" aria-labelledby="coauthors-edit-desc">
+		<label class="bulk-edit-group bulk-edit-coauthors">
 			<span class="title"><?php esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
 		</label>
 		<div id="coauthors-edit" class="inline-edit-group wp-clearfix hide-if-no-js">
