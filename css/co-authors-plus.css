@@ -6,6 +6,15 @@
 	margin-left: 5em;
 }
 
+#bulk-edit label.bulk-edit-group {
+	clear: both;
+	margin-top: .5em;
+}
+
+#bulk-edit #coauthors-list {
+	padding: 0;
+}
+
 #coauthors-list {
 	width: 100%;
 	padding: 0 5px;
