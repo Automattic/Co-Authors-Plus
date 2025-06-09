@@ -442,12 +442,15 @@ jQuery( document ).ready(function () {
 			// Initialize co-authors, but only on the first 'Bulk edit' interaction.
 			if ( ! coauthors_initialized_on_bulk_edit ) {
 				var bulk_right_column = jQuery( '#bulk-edit .inline-edit-col-right' );
+				var coauthors_authors_label = jQuery( '#bulk-edit .bulk-edit-coauthors' );
 
-				// Move the Co-Authors section in the right column of the Bulk section.
-				jQuery( '#bulk-edit .bulk-edit-coauthors' ).appendTo( bulk_right_column );
-				// Give the last column its 'real' height because the float:left; for the
-				// Post Format dropdown does not help positioning the Co-Authors section
+				// Move the Co-Authors section to the right-hand column of the Bulk section.
+				coauthors_authors_label.appendTo( bulk_right_column );
+				// Give the right-hand column its 'real' height because the float:left;
+				// The Post Format dropdown does not help positioning the Co-Authors section.
 				bulk_right_column.find( 'div.inline-edit-col' ).addClass( 'wp-clearfix' );
+				// Move the autosuggest input box under the Co-Authors label.
+				jQuery( '#coauthors-edit' ).appendTo( coauthors_authors_label );
 
 				coauthors_initialize( [] );
 				coauthors_initialized_on_bulk_edit = true;

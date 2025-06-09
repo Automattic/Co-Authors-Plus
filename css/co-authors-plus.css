@@ -8,12 +8,11 @@
 
 #bulk-edit label.bulk-edit-group {
 	clear: both;
-	padding: 0 .5em;
 	margin-top: .5em;
 }
 
-#bulk-edit label.bulk-edit-group #coauthors-list {
-	margin-left: 5.6em;
+#bulk-edit #coauthors-list {
+	padding: 0;
 }
 
 #coauthors-list {

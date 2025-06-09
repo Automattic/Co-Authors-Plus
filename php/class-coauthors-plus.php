@@ -2026,13 +2026,13 @@ class CoAuthors_Plus {
 			return;
 		}
 		?>
-		<label class="bulk-edit-group bulk-edit-coauthors">
+		<label class="bulk-edit-group bulk-edit-coauthors" aria-labelledby="coauthors-edit-desc">
 			<span class="title"><?php esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
-			<div id="coauthors-edit" class="hide-if-no-js">
-				<p><?php echo wp_kses( __( 'Leave the field below blank to keep the Authors unchanged. Any change here will overwrite all previously assigned Authors.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
-			</div>
-			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
 		</label>
+		<div id="coauthors-edit" class="inline-edit-group wp-clearfix hide-if-no-js">
+			<p id="coauthors-edit-desc"><?php echo wp_kses( __( 'Leave the field below blank to keep the Authors unchanged. Any change here will overwrite all previously assigned Authors.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
+		</div>
 		<?php
 	}
 
