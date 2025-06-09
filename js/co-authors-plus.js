@@ -446,7 +446,7 @@ jQuery( document ).ready(function () {
 
 				// Move the Co-Authors section to the right-hand column of the Bulk section.
 				coauthors_authors_label.appendTo( bulk_right_column );
-				// Give the right-hand column its 'real' height because the float:left;
+				// Give the right-hand column its 'real' height because of float:left;
 				// The Post Format dropdown does not help positioning the Co-Authors section.
 				bulk_right_column.find( 'div.inline-edit-col' ).addClass( 'wp-clearfix' );
 				// Move the autosuggest input box under the Co-Authors label.
