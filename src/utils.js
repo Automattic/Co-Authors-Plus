@@ -71,15 +71,17 @@ export const addItemByValue = (
  * @param {string} root0.userNicename The unique username.
  * @param {string} root0.email        The author's email address.
  * @param {string} root0.userType     The entity type, either 'wpuser' or 'guest-user'.
+ * @param {string} root0.termID       The ID for the user's term in the "author" taxonomy
  *
  * @return {Object} The object containing data relevant to the Coauthors component.
  */
-export const formatAuthorData = ( { id, displayName, userNicename, email, userType } ) => {
+export const formatAuthorData = ( { id, displayName, userNicename, email, userType, termID } ) => {
 	return {
 		id,
 		label: `${ displayName } | ${ email }`,
 		display: displayName,
 		value: userNicename,
 		userType,
+		termID,
 	};
 };

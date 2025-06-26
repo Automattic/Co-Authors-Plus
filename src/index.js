@@ -29,21 +29,21 @@ registerPlugin( 'plugin-coauthors-document-setting', {
 	icon: 'users',
 } );
 
-// Save authors when the post is saved.
+//Save authors when the post is saved.
 // https://github.com/WordPress/gutenberg/issues/17632
-const { isSavingPost, getCurrentPost } = select("core/editor");
-const { getAuthors, saveAuthors } = select("cap/authors");
+//const { isSavingPost, getCurrentPost } = select("core/editor");
+//const { getAuthors, saveAuthors } = select("cap/authors");
 
-let checked = true; // Start in a checked state.
+//let checked = true; // Start in a checked state.
 
-subscribe(() => {
-	if (isSavingPost()) {
-		checked = false;
-	} else if (!checked) {
-		const { id } = getCurrentPost();
-		const authors = getAuthors(id);
-		saveAuthors(id, authors);
-		checked = true;
-	}
-});
+//subscribe(() => {
+	//if (isSavingPost()) {
+		//checked = false;
+	//} else if (!checked) {
+	//	const { id } = getCurrentPost();
+	//	const authors = getAuthors(id);
+	//	saveAuthors(id, authors);
+	//	checked = true;
+//	}
+//});
 
