@@ -1,13 +1,13 @@
 ﻿# Co-Authors Plus
 
-Stable tag: 3.6.6
-Requires at least: 5.9
-Tested up to: 6.6
-Requires PHP: 7.4
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Tags: authors, users, multiple authors, co-authors, multi-author, publishing
-Contributors: batmoo, danielbachhuber, automattic, GaryJ
+Stable tag: 3.6.6  
+Requires at least: 5.9  
+Tested up to: 6.6  
+Requires PHP: 7.4  
+License: GPLv2 or later  
+License URI: https://www.gnu.org/licenses/gpl-2.0.html  
+Tags: authors, users, multiple authors, co-authors, multi-author, publishing  
+Contributors: batmoo, danielbachhuber, automattic, GaryJ  
 
 Assign multiple bylines to posts, pages, and custom post types with a search-as-you-type input box.
 
