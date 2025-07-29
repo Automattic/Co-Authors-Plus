@@ -186,6 +186,13 @@ jQuery( document ).ready(function () {
 				.on( 'blur', function(){ $co.val( coAuthorsPlusStrings.search_box_text ) } )
 				;
 
+		if ( coauthors_initialized_on_bulk_edit )
+			$co.attr({
+				'aria-labelledby': 'coauthors-bulk-edit-label',
+				'aria-describedby': 'coauthors-bulk-edit-desc'
+			})
+			;
+
 		return $co;
 
 	}
@@ -395,6 +402,7 @@ jQuery( document ).ready(function () {
 
 		var wpInlineEdit = inlineEditPost.edit;
 
+		// Inline editing
 		inlineEditPost.edit = function( id ) {
 
 			wpInlineEdit.apply( this, arguments )
@@ -427,6 +435,32 @@ jQuery( document ).ready(function () {
 
 				coauthors_initialize( post_coauthors );
 
+			}
+		}
+
+		// Bulk editing
+		var coauthors_initialized_on_bulk_edit = false;
+		var wpBulkEdit = inlineEditPost.setBulk;
+
+		inlineEditPost.setBulk = function() {
+
+			wpBulkEdit.apply( this, arguments );
+
+			// Initialize co-authors, but only on the first 'Bulk edit' interaction.
+			if ( ! coauthors_initialized_on_bulk_edit ) {
+				var bulk_right_column = jQuery( '#bulk-edit .inline-edit-col-right' );
+				var coauthors_authors_label = jQuery( '#bulk-edit .bulk-edit-coauthors' );
+
+				// Move the Co-Authors section to the right-hand column of the Bulk section.
+				coauthors_authors_label.appendTo( bulk_right_column );
+				// Give the right-hand column its 'real' height because of float:left;
+				// The Post Format dropdown does not help positioning the Co-Authors section.
+				bulk_right_column.find( 'div.inline-edit-col' ).addClass( 'wp-clearfix' );
+				// Move the autosuggest input box under the Co-Authors label.
+				jQuery( '#coauthors-edit' ).appendTo( coauthors_authors_label );
+
+				coauthors_initialized_on_bulk_edit = true;
+				coauthors_initialize( [] );
 			}
 		}
 	}

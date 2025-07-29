@@ -339,7 +339,7 @@ class Yoast {
 	 * @return array   Modified $replacements.
 	 */
 	public static function filter_author_name_variable( $replacements, $args ): array {
-		if ( isset( $replacements['%%name%%'], $args->ID ) ) {
+		if ( isset( $replacements['%%name%%'], $args->ID ) && is_single() ) {
 			$author_objects = get_coauthors( $args->ID );
 
 			// Fallback in case of error.

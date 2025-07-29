@@ -107,6 +107,16 @@ class CoAuthors_Plus {
 
 		// REST API: Depending on user capabilities, hide author term description.
 		add_action( 'rest_prepare_author', array( $this, 'conditionally_hide_author_term_description' ) );
+
+		// Add Bulk Edit support on supported versions of WordPress.
+		global $wp_version;
+		if ( version_compare( $wp_version, '6.3', '>=' ) ) {
+			// Add Co-Author select field to the Bulk Edit actions form.
+			add_action( 'bulk_edit_custom_box', array( $this, '_action_bulk_edit_custom_box' ), 10, 2 );
+
+			// Update Co-Authors when bulk editing posts.
+			add_action( 'bulk_edit_posts', array( $this, 'action_bulk_edit_update_coauthors' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -1999,5 +2009,58 @@ class CoAuthors_Plus {
 		$response->set_data( $data );
 
 		return $response;
+	}
+
+	/**
+	 * Create Bulk Edit Co-Authors box.
+	 *
+	 * This is used in the Bulk Edit screen to allow users to set Co-Authors
+	 * for multiple posts at once.
+	 *
+	 * @link https://github.com/Automattic/Co-Authors-Plus/issues/551
+	 * @param string $column_name The name of the column being edited.
+	 * @param string $post_type The post type being edited.
+	 * @return void
+	 */
+	public function _action_bulk_edit_custom_box( string $column_name, string $post_type ): void {
+		if ( 'coauthors' !== $column_name || ! $this->is_post_type_enabled( $post_type ) || ! $this->current_user_can_set_authors() ) {
+			return;
+		}
+		?>
+		<label class="bulk-edit-group bulk-edit-coauthors">
+			<span id="coauthors-bulk-edit-label" class="title"><?php esc_html_e( 'Authors', 'co-authors-plus' ) ?></span>
+		</label>
+		<div id="coauthors-edit" class="inline-edit-group wp-clearfix hide-if-no-js">
+			<p id="coauthors-bulk-edit-desc"><?php echo wp_kses( __( 'Leave the field below blank to keep the Authors unchanged. Any change here will overwrite all previously assigned Authors.', 'co-authors-plus' ), array( 'strong' => array() ) ); ?></p>
+			<?php wp_nonce_field( 'coauthors-edit', 'coauthors-nonce' ); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Assign Co-Authors from the bulk edit screen.
+	 *
+	 * This function is called when the Bulk Edit form is submitted.
+	 * It processes the submitted data and updates the Co-Authors for each post.
+	 *
+	 * @link https://github.com/Automattic/Co-Authors-Plus/issues/551
+	 * @param array $post_data The post data from the bulk edit form.
+	 * @param array $postarr The post array containing the posts being edited.
+	 * @return array $post_data The modified post data.
+	 */
+	public function action_bulk_edit_update_coauthors( array $post_data, array $postarr ): array {
+		if ( empty( $postarr['post'] ) || ! $this->is_post_type_enabled( $postarr['post_type'] ) ) {
+			return $post_data;
+		}
+
+		foreach( $postarr['post'] as $post_id ) {
+			$post = get_post( $post_id );
+			if ( $this->current_user_can_set_authors( $post ) && ! empty( $postarr['coauthors'] ) ) {
+				$coauthors = array_map( 'sanitize_title', (array) $postarr['coauthors'] );
+				$this->add_coauthors( $post_id, $coauthors );
+			}
+		}
+
+		return $post_data;
 	}
 }
