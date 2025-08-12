@@ -102,7 +102,20 @@ const CoAuthors = () => {
 	const updateAuthors = ( newAuthors ) => {
 		setAuthorsStore( newAuthors );
 		setSelectedAuthors( newAuthors );
+		setPostTerms( newAuthors );
 	};
+
+	const setPostTerms = ( newAuthors ) => {
+
+		var authorTerms = [];
+
+		newAuthors.forEach(( author ) => {
+
+			authorTerms.push( author.termID );
+		});
+
+		wp.data.dispatch('core/editor').editPost({ coauthors: authorTerms } );
+	}
 
 	/**
 	 * Change handler for adding new item by value.

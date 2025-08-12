@@ -275,6 +275,12 @@ class CoAuthors_Controller extends WP_REST_Controller {
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
+				'term_id' => array(
+					'description' => __( 'Term ID for the Authors Taxonomy', 'co-authors-plus' ),
+					'type'        => 'integer',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+				),
 			),
 		);
 

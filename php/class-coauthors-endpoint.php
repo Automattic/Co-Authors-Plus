@@ -209,6 +209,8 @@ class Endpoints {
 	 */
 	public function _format_author_data( $author ): array {
 
+		$term = $this -> coauthors -> get_author_term( $author );
+
 		return array(
 			'id'           => esc_html( $author->ID ),
 			'userNicename' => esc_html( rawurldecode( $author->user_nicename ) ),
@@ -217,6 +219,7 @@ class Endpoints {
 			'displayName'  => esc_html( str_replace( '∣', '|', $author->display_name ) ),
 			'avatar'       => esc_url( get_avatar_url( $author->ID ) ),
 			'userType'     => esc_html( $author->type ),
+			'termID'	   => absint( $term -> term_id ),
 		);
 	}
 

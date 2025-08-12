@@ -123,6 +123,7 @@ AuthorsSelection.propTypes = {
 			email: PropTypes.string,
 			displayName: PropTypes.string,
 			avatar: PropTypes.string,
+			termID: PropTypes.number,
 		} ),
 	] ).isRequired,
 	updateAuthors: PropTypes.func.isRequired,
