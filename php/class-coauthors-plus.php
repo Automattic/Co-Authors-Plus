@@ -986,17 +986,15 @@ class CoAuthors_Plus {
 			return;
 		}
 
-		if ( $this->current_user_can_set_authors() ) {
+		if ( isset( $_POST['coauthors-nonce'], $_POST['coauthors'] ) && $this->current_user_can_set_authors() ) {
 			// if current_user_can_set_authors and nonce valid
-			if ( isset( $_POST['coauthors-nonce'], $_POST['coauthors'] ) ) {
-				check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
+			check_admin_referer( 'coauthors-edit', 'coauthors-nonce' );
 
-				$coauthors = (array) $_POST['coauthors'];
-				$coauthors = array_map( 'sanitize_title', $coauthors );
-				$this->add_coauthors( $post_id, $coauthors );
-			}
+			$coauthors = (array) $_POST['coauthors'];
+			$coauthors = array_map( 'sanitize_title', $coauthors );
+			$this->add_coauthors( $post_id, $coauthors );
 		} else {
-			// If the user can't set authors and a co-author isn't currently set, we need to explicity set one
+			// If a co-author isn't currently set, we need to explicity set one
 			if ( ! $this->has_author_terms( $post_id ) ) {
 				$user = get_userdata( $post->post_author );
 				if ( $user ) {
