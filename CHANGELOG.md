@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.0] - 2025-10-20
+
+### Added
+
+* Add bulk editing support for Co-Authors in the admin interface by @mattradford-sage in https://github.com/Automattic/Co-Authors-Plus/pull/1120
+* Filter author label during selection by @Ritesh-patel in https://github.com/Automattic/Co-Authors-Plus/pull/1121
+
+### Fixed
+
+* fix: avoid posts without authors on CLI and REST by @leogermani in https://github.com/Automattic/Co-Authors-Plus/pull/1137
+
+### Maintenance
+
+* refactor: Update create_post method to allow nullable WP_User parameter by @GaryJones in https://github.com/Automattic/Co-Authors-Plus/pull/1122
+
+### Documentation
+
+* Update README.md by @GaryJones in https://github.com/Automattic/Co-Authors-Plus/pull/1130
+
 ## [3.6.6] - 2025-05-27
 
 ### Fixed
@@ -538,6 +557,7 @@ Props to the many people who helped make this release possible: [catchmyfame](ht
 **1.1.0 (Apr. 14, 2009)**
 * Initial beta release.
 
+[3.7.0]: https://github.com/automattic/co-authors-plus/compare/3.6.6...3.7.0
 [3.6.6]: https://github.com/automattic/co-authors-plus/compare/3.6.5...3.6.6
 [3.6.5]: https://github.com/automattic/co-authors-plus/compare/3.6.4...3.6.5
 [3.6.4]: https://github.com/automattic/co-authors-plus/compare/3.6.3...3.6.4
