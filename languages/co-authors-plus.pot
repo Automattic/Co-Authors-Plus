@@ -1,136 +1,243 @@
-# Copyright (C) 2023 Mohammad Jangda, Daniel Bachhuber, Automattic
+# Copyright (C) 2025 Mohammad Jangda, Daniel Bachhuber, Automattic
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Co-Authors Plus 3.5.15\n"
+"Project-Id-Version: Co-Authors Plus 3.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/co-authors-plus\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-09-27T13:28:21+00:00\n"
+"POT-Creation-Date: 2025-10-17T22:41:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: co-authors-plus\n"
 
 #. Plugin Name of the plugin
+#: co-authors-plus.php
 msgid "Co-Authors Plus"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: co-authors-plus.php
 msgid "https://wordpress.org/plugins/co-authors-plus/"
 msgstr ""
 
 #. Description of the plugin
+#: co-authors-plus.php
 msgid "Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter."
 msgstr ""
 
 #. Author of the plugin
+#: co-authors-plus.php
 msgid "Mohammad Jangda, Daniel Bachhuber, Automattic"
 msgstr ""
 
 #. Author URI of the plugin
+#: co-authors-plus.php
 msgid "https://automattic.com"
 msgstr ""
 
 #. translators: Post title.
-#: co-authors-plus.php:90
+#: co-authors-plus.php:97
+#, php-format
 msgid "New comment on your post \"%s\""
 msgstr ""
 
 #. translators: 1: comment author, 2: author IP, 3: author domain
-#: co-authors-plus.php:92
+#: co-authors-plus.php:99
+#, php-format
 msgid "Author : %1$s (IP: %2$s , %3$s)"
 msgstr ""
 
 #. translators: Comment author email address.
-#: co-authors-plus.php:94
+#: co-authors-plus.php:101
+#, php-format
 msgid "Email : %s"
 msgstr ""
 
 #. translators: Comment author URL.
-#: co-authors-plus.php:96
-#: co-authors-plus.php:109
-#: co-authors-plus.php:120
+#: co-authors-plus.php:103
+#: co-authors-plus.php:116
+#: co-authors-plus.php:127
+#, php-format
 msgid "URL    : %s"
 msgstr ""
 
 #. translators: Comment author IP address.
-#: co-authors-plus.php:98
+#: co-authors-plus.php:105
+#, php-format
 msgid "Whois  : https://whois.arin.net/rest/ip/%s"
 msgstr ""
 
-#: co-authors-plus.php:99
+#: co-authors-plus.php:106
 msgid "Comment: "
 msgstr ""
 
-#: co-authors-plus.php:100
+#: co-authors-plus.php:107
 msgid "You can see all comments on this post here: "
 msgstr ""
 
 #. translators: 1: blog name, 2: post title
-#: co-authors-plus.php:102
+#: co-authors-plus.php:109
+#, php-format
 msgid "[%1$s] Comment: \"%2$s\""
 msgstr ""
 
 #. translators: Post title.
-#: co-authors-plus.php:105
+#: co-authors-plus.php:112
+#, php-format
 msgid "New trackback on your post \"%s\""
 msgstr ""
 
 #. translators: 1: comment author, 2: author IP, 3: author domain
-#: co-authors-plus.php:107
-#: co-authors-plus.php:118
+#: co-authors-plus.php:114
+#: co-authors-plus.php:125
+#, php-format
 msgid "Website: %1$s (IP: %2$s , %3$s)"
 msgstr ""
 
-#: co-authors-plus.php:110
-#: co-authors-plus.php:121
+#: co-authors-plus.php:117
+#: co-authors-plus.php:128
 msgid "Excerpt: "
 msgstr ""
 
-#: co-authors-plus.php:111
+#: co-authors-plus.php:118
 msgid "You can see all trackbacks on this post here: "
 msgstr ""
 
 #. translators: 1: blog name, 2: post title
-#: co-authors-plus.php:113
+#: co-authors-plus.php:120
+#, php-format
 msgid "[%1$s] Trackback: \"%2$s\""
 msgstr ""
 
 #. translators: Post title.
-#: co-authors-plus.php:116
+#: co-authors-plus.php:123
+#, php-format
 msgid "New pingback on your post \"%s\""
 msgstr ""
 
-#: co-authors-plus.php:122
+#: co-authors-plus.php:129
 msgid "You can see all pingbacks on this post here: "
 msgstr ""
 
 #. translators: 1: blog name, 2: post title
-#: co-authors-plus.php:124
+#: co-authors-plus.php:131
+#, php-format
 msgid "[%1$s] Pingback: \"%2$s\""
 msgstr ""
 
 #. translators: Comment URL.
-#: co-authors-plus.php:128
+#: co-authors-plus.php:135
+#, php-format
 msgid "Permalink: %s"
 msgstr ""
 
 #. translators: URL for trashing a comment.
-#: co-authors-plus.php:131
+#: co-authors-plus.php:138
+#, php-format
 msgid "Trash it: %s"
 msgstr ""
 
 #. translators: URL for deleting a comment.
-#: co-authors-plus.php:134
+#: co-authors-plus.php:141
+#, php-format
 msgid "Delete it: %s"
 msgstr ""
 
 #. translators: URL for marking a comment as spam.
-#: co-authors-plus.php:137
+#: co-authors-plus.php:144
+#, php-format
 msgid "Spam it: %s"
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:71
+msgid "Unique identifier for a post."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:107
+msgid "Nicename / slug for co-author."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:144
+msgid "Sorry, we could not find that co-author."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:152
+#: php/api/endpoints/class-coauthors-controller.php:194
+msgid "Sorry, an unusable response was produced."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:229
+msgid "Either user ID or guest author ID."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:235
+msgid "Author name for display."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:241
+msgid "Author description."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:247
+msgid "Author description as stored in database."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:253
+msgid "Author description as rendered in HTML content."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:261
+msgid "Unique author slug."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:267
+msgid "URL of author archive."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:273
+msgid "ID of guest author featured image."
+msgstr ""
+
+#: php/api/endpoints/class-coauthors-controller.php:283
+msgid "URL for author avatar."
+msgstr ""
+
+#. translators: %s: register_rest_field
+#: php/api/endpoints/class-coauthors-controller.php:302
+#, php-format
+msgid "Please use %s to add new schema properties."
+msgstr ""
+
+#. translators: Author display name.
+#: php/blocks/block-coauthor-avatar/class-block-coauthor-avatar.php:116
+#: php/blocks/block-coauthor-image/class-block-coauthor-image.php:119
+#: php/blocks/block-coauthor-name/class-block-coauthor-name.php:72
+#: template-tags.php:243
+#: template-tags.php:639
+#, php-format
+msgid "Posts by %s"
+msgstr ""
+
+#: php/blocks/block-coauthors/class-block-coauthors.php:63
+msgid "By "
+msgstr ""
+
+#: php/blocks/block-coauthors/class-block-coauthors.php:71
+#: template-tags.php:95
+msgid " and "
+msgstr ""
+
+#: php/blocks/class-blocks.php:138
+msgid "FirstName LastName"
+msgstr ""
+
+#: php/blocks/class-blocks.php:140
+#: php/blocks/class-blocks.php:141
+msgid "Placeholder description from Co-Authors block."
 msgstr ""
 
 #: php/class-coauthors-endpoint.php:65
@@ -219,6 +326,7 @@ msgstr ""
 #. translators: Guest author URL
 #: php/class-coauthors-guest-authors.php:168
 #: php/class-coauthors-guest-authors.php:175
+#, php-format
 msgid "Guest author updated. <a href=\"%s\">View profile</a>"
 msgstr ""
 
@@ -236,6 +344,7 @@ msgstr ""
 
 #. translators: %s: date and time of the revision
 #: php/class-coauthors-guest-authors.php:173
+#, php-format
 msgid "Guest author restored to revision from %s"
 msgstr ""
 
@@ -245,11 +354,13 @@ msgstr ""
 
 #. translators: Guest author URL
 #: php/class-coauthors-guest-authors.php:178
+#, php-format
 msgid "Guest author submitted. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
 msgstr ""
 
 #. translators: Guest author profile preview URL.
 #: php/class-coauthors-guest-authors.php:181
+#, php-format
 msgid "Guest author scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview profile</a>"
 msgstr ""
 
@@ -260,6 +371,7 @@ msgstr ""
 
 #. translators: Guest author profile preview URL.
 #: php/class-coauthors-guest-authors.php:187
+#, php-format
 msgid "Guest author updated. <a target=\"_blank\" href=\"%s\">Preview profile</a>"
 msgstr ""
 
@@ -325,6 +437,7 @@ msgstr ""
 
 #. translators: Count of posts
 #: php/class-coauthors-guest-authors.php:497
+#, php-format
 msgid "There is %d post associated with this guest author. What should be done with the post assigned to this Guest Author?"
 msgid_plural "There are %d posts associated with this guest author. What should be done with the posts assigned to this Guest Author?"
 msgstr[0] ""
@@ -336,6 +449,7 @@ msgstr ""
 
 #. translators: Name of a linked user account.
 #: php/class-coauthors-guest-authors.php:530
+#, php-format
 msgid "Leave posts assigned to the mapped user, %s."
 msgstr ""
 
@@ -422,6 +536,7 @@ msgstr ""
 
 #. translators: Name of a form field.
 #: php/class-coauthors-guest-authors.php:1251
+#, php-format
 msgid "%s is a required field"
 msgstr ""
 
@@ -469,72 +584,78 @@ msgstr ""
 msgid "Jabber / Google Talk"
 msgstr ""
 
-#: php/class-coauthors-plus.php:197
-#: php/class-coauthors-plus.php:395
-#: php/class-coauthors-plus.php:515
-#: php/class-coauthors-plus.php:604
-#: php/class-coauthors-plus.php:1649
+#: php/class-coauthors-plus.php:204
+#: php/class-coauthors-plus.php:440
+#: php/class-coauthors-plus.php:570
+#: php/class-coauthors-plus.php:659
+#: php/class-coauthors-plus.php:1743
+#: php/class-coauthors-plus.php:2025
 #: build/index.js:1
 #: src/index.js:20
 msgid "Authors"
 msgstr ""
 
-#: php/class-coauthors-plus.php:198
+#: php/class-coauthors-plus.php:205
 msgid "All Authors"
 msgstr ""
 
-#: php/class-coauthors-plus.php:465
+#: php/class-coauthors-plus.php:510
 msgid "<strong>Note:</strong> To edit post authors, please enable JavaScript or use a JavaScript-capable browser"
 msgstr ""
 
-#: php/class-coauthors-plus.php:472
-#: php/class-coauthors-plus.php:606
-#: php/class-coauthors-plus.php:1400
+#: php/class-coauthors-plus.php:517
+#: php/class-coauthors-plus.php:661
+#: php/class-coauthors-plus.php:1469
 msgid "Click on an author to change them. Drag to change their order. Click on <strong>Remove</strong> to remove them."
 msgstr ""
 
-#: php/class-coauthors-plus.php:567
+#: php/class-coauthors-plus.php:622
 #: php/class-coauthors-wp-list-table.php:177
 msgid "Posts"
 msgstr ""
 
-#: php/class-coauthors-plus.php:586
+#: php/class-coauthors-plus.php:641
 msgid "View posts by this author"
 msgstr ""
 
-#: php/class-coauthors-plus.php:649
-#: php/class-coauthors-plus.php:667
+#: php/class-coauthors-plus.php:704
+#: php/class-coauthors-plus.php:722
 msgid "No co-author exists for that term"
 msgstr ""
 
-#: php/class-coauthors-plus.php:1395
+#: php/class-coauthors-plus.php:1464
 #: php/class-coauthors-wp-list-table.php:239
 msgid "Edit"
 msgstr ""
 
-#: php/class-coauthors-plus.php:1396
+#: php/class-coauthors-plus.php:1465
 msgid "Remove"
 msgstr ""
 
-#: php/class-coauthors-plus.php:1397
+#: php/class-coauthors-plus.php:1466
 msgid "Are you sure you want to remove this author?"
 msgstr ""
 
-#: php/class-coauthors-plus.php:1398
+#: php/class-coauthors-plus.php:1467
 msgid "Click to change this author, or drag to change their position"
 msgstr ""
 
-#: php/class-coauthors-plus.php:1399
+#: php/class-coauthors-plus.php:1468
 msgid "Search for an author"
 msgstr ""
 
-#: php/class-coauthors-plus.php:1441
+#: php/class-coauthors-plus.php:1510
 msgid "Mine"
 msgstr ""
 
 #. translators: Author display name.
-#: php/class-coauthors-plus.php:1805
+#: php/class-coauthors-plus.php:1899
+#, php-format
 msgid "Author: %s"
+msgstr ""
+
+#: php/class-coauthors-plus.php:2028
+msgid "Leave the field below blank to keep the Authors unchanged. Any change here will overwrite all previously assigned Authors."
 msgstr ""
 
 #: php/class-coauthors-wp-list-table.php:23
@@ -573,68 +694,231 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: php/class-wp-cli.php:231
+#: php/class-wp-cli.php:422
 msgid "Please specify a valid user_login"
 msgstr ""
 
-#: php/class-wp-cli.php:235
+#: php/class-wp-cli.php:426
 msgid "Please specify a valid co-author login"
 msgstr ""
 
 #. translators: 1: Post ID, 2: Comma-separated list of co-author slugs.
-#: php/class-wp-cli.php:248
+#: php/class-wp-cli.php:439
+#, php-format
 msgid "Skipping - Post #%1$d already has co-authors assigned: %2$s"
 msgstr ""
 
 #. translators: 1: Co-author login, 2: Post ID
-#: php/class-wp-cli.php:258
+#: php/class-wp-cli.php:449
+#, php-format
 msgid "Updating - Adding %1$s's byline to post #%2$d"
 msgstr ""
 
 #. translators: Count of posts.
-#: php/class-wp-cli.php:267
+#: php/class-wp-cli.php:458
+#, php-format
 msgid "All done! %d post was affected."
 msgid_plural "All done! %d posts were affected."
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: Guest Author ID.
-#: php/class-wp-cli.php:902
+#: php/class-wp-cli.php:1093
+#, php-format
 msgid "-- Author already exists (ID #%s); skipping."
 msgstr ""
 
-#: php/class-wp-cli.php:905
+#: php/class-wp-cli.php:1097
 msgid "-- Not found; creating profile."
 msgstr ""
 
 #. translators: The error message.
-#: php/class-wp-cli.php:922
+#: php/class-wp-cli.php:1114
+#, php-format
 msgid "-- Failed to create guest author: %s"
 msgstr ""
 
 #. translators: Guest Author ID.
-#: php/class-wp-cli.php:932
+#: php/class-wp-cli.php:1125
+#, php-format
 msgid "-- Created as guest author #%s"
 msgstr ""
 
-#: php/integrations/yoast.php:258
+#: php/integrations/yoast.php:259
 msgid "Written by"
 msgstr ""
 
-#: template-tags.php:91
-msgid " and "
-msgstr ""
-
 #. translators: Author display name.
-#: template-tags.php:239
-#: template-tags.php:635
-msgid "Posts by %s"
-msgstr ""
-
-#. translators: Author display name.
-#: template-tags.php:409
-#: template-tags.php:419
+#: template-tags.php:413
+#: template-tags.php:423
+#, php-format
 msgid "Visit %s&#8217;s website"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:95
+msgid "Avatar Settings"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:97
+msgid "Avatar size"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:107
+msgid "Make avatar a link to author archive."
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: build/blocks/block-coauthor-name/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:117
+#: src/blocks/block-coauthor-image/edit.js:176
+#: src/blocks/block-coauthor-name/edit.js:86
+msgid "Link rel"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: build/blocks/block-coauthors/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:128
+#: src/blocks/block-coauthor-image/edit.js:187
+#: src/blocks/block-coauthors/edit.js:265
+msgid "Co-Authors Layout"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:131
+#: src/blocks/block-coauthor-image/edit.js:190
+msgid "Vertical align"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:136
+#: src/blocks/block-coauthor-image/edit.js:195
+msgid "Default"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:140
+#: src/blocks/block-coauthor-image/edit.js:199
+msgid "Baseline"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:144
+#: src/blocks/block-coauthor-image/edit.js:203
+msgid "Bottom"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:148
+#: src/blocks/block-coauthor-image/edit.js:207
+msgid "Middle"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:152
+#: src/blocks/block-coauthor-image/edit.js:211
+msgid "Sub"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:156
+#: src/blocks/block-coauthor-image/edit.js:215
+msgid "Super"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:160
+#: src/blocks/block-coauthor-image/edit.js:219
+msgid "Text Bottom"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:164
+#: src/blocks/block-coauthor-image/edit.js:223
+msgid "Text Top"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:168
+#: src/blocks/block-coauthor-image/edit.js:227
+msgid "Top"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/index.js:1
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-avatar/edit.js:176
+#: src/blocks/block-coauthor-image/edit.js:235
+msgid "Vertical alignment defaults to bottom in the block layout and middle in the inline layout."
+msgstr ""
+
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-image/edit.js:129
+msgid "Author featured image"
+msgstr ""
+
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-image/edit.js:163
+msgid "Image Settings"
+msgstr ""
+
+#: build/blocks/block-coauthor-image/index.js:1
+#: src/blocks/block-coauthor-image/edit.js:166
+msgid "Make featured image a link to author archive."
+msgstr ""
+
+#: build/blocks/block-coauthor-name/index.js:1
+#: src/blocks/block-coauthor-name/edit.js:72
+msgid "Settings"
+msgstr ""
+
+#: build/blocks/block-coauthor-name/index.js:1
+#: src/blocks/block-coauthor-name/edit.js:75
+msgid "Make co-author name a link"
+msgstr ""
+
+#: build/blocks/block-coauthor-name/index.js:1
+#: src/blocks/block-coauthor-name/edit.js:99
+msgid "HTML element"
+msgstr ""
+
+#: build/blocks/block-coauthors/index.js:1
+#: src/blocks/block-coauthors/edit.js:194
+#: src/blocks/block-coauthors/edit.js:196
+msgid "Prefix"
+msgstr ""
+
+#: build/blocks/block-coauthors/index.js:1
+#: src/blocks/block-coauthors/edit.js:269
+msgid "Separator"
+msgstr ""
+
+#: build/blocks/block-coauthors/index.js:1
+#: src/blocks/block-coauthors/edit.js:274
+msgid "Enter character(s) used to separate authors."
+msgstr ""
+
+#: build/blocks/block-coauthors/index.js:1
+#: src/blocks/block-coauthors/edit.js:281
+msgid "Last Separator"
+msgstr ""
+
+#: build/blocks/block-coauthors/index.js:1
+#: src/blocks/block-coauthors/edit.js:286
+msgid "Enter character(s) used to separate the last author."
 msgstr ""
 
 #: build/index.js:1
@@ -655,4 +939,94 @@ msgstr ""
 #: build/index.js:1
 #: src/components/co-authors/index.jsx:189
 msgid "Select An Author"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/block.json
+#: src/blocks/block-coauthor-avatar/block.json
+msgctxt "block title"
+msgid "Co-Author Avatar"
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/block.json
+#: src/blocks/block-coauthor-avatar/block.json
+msgctxt "block description"
+msgid "Displays a small scale version of a co-author's avatar. Utilizes fallbacks from Gravatar so everyone has an avatar."
+msgstr ""
+
+#: build/blocks/block-coauthor-avatar/block.json
+#: build/blocks/block-coauthor-description/block.json
+#: build/blocks/block-coauthor-image/block.json
+#: build/blocks/block-coauthor-name/block.json
+#: src/blocks/block-coauthor-avatar/block.json
+#: src/blocks/block-coauthor-description/block.json
+#: src/blocks/block-coauthor-image/block.json
+#: src/blocks/block-coauthor-name/block.json
+msgctxt "block keyword"
+msgid "coauthors"
+msgstr ""
+
+#: build/blocks/block-coauthor-description/block.json
+#: src/blocks/block-coauthor-description/block.json
+msgctxt "block title"
+msgid "Co-Author Biography"
+msgstr ""
+
+#: build/blocks/block-coauthor-description/block.json
+#: src/blocks/block-coauthor-description/block.json
+msgctxt "block description"
+msgid "Displays a co-author's biographical description."
+msgstr ""
+
+#: build/blocks/block-coauthor-description/block.json
+#: src/blocks/block-coauthor-description/block.json
+msgctxt "block keyword"
+msgid "description"
+msgstr ""
+
+#: build/blocks/block-coauthor-description/block.json
+#: src/blocks/block-coauthor-description/block.json
+msgctxt "block keyword"
+msgid "bio"
+msgstr ""
+
+#: build/blocks/block-coauthor-description/block.json
+#: src/blocks/block-coauthor-description/block.json
+msgctxt "block keyword"
+msgid "biography"
+msgstr ""
+
+#: build/blocks/block-coauthor-image/block.json
+#: src/blocks/block-coauthor-image/block.json
+msgctxt "block title"
+msgid "Co-Author Featured Image"
+msgstr ""
+
+#: build/blocks/block-coauthor-image/block.json
+#: src/blocks/block-coauthor-image/block.json
+msgctxt "block description"
+msgid "Uses your theme's image sizes to display a scalable avatar for a co-author with a guest author profile. Does not fallback to Gravatar images."
+msgstr ""
+
+#: build/blocks/block-coauthor-name/block.json
+#: src/blocks/block-coauthor-name/block.json
+msgctxt "block title"
+msgid "Co-Author Name"
+msgstr ""
+
+#: build/blocks/block-coauthor-name/block.json
+#: src/blocks/block-coauthor-name/block.json
+msgctxt "block description"
+msgid "Displays a co-author's display name and optionally links to their author archive."
+msgstr ""
+
+#: build/blocks/block-coauthors/block.json
+#: src/blocks/block-coauthors/block.json
+msgctxt "block title"
+msgid "Co-Authors"
+msgstr ""
+
+#: build/blocks/block-coauthors/block.json
+#: src/blocks/block-coauthors/block.json
+msgctxt "block description"
+msgid "Displays the co-authors of a post by using blocks to create a template. Start with co-author name and add any other co-author blocks."
 msgstr ""
