@@ -40,7 +40,7 @@
 	},
 	"devDependencies": {
 		"@wordpress/icons": "^9.33.0",
-		"@wordpress/scripts": "^24.0.0",
+		"@wordpress/scripts": "^30.26.0",
 		"classnames": "^2.3.2",
 		"prettier": "npm:wp-prettier@^2.2.1-beta-1",
 		"prop-types": "^15.8.1",
