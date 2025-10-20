@@ -263,6 +263,10 @@ class CoAuthors_Plus {
 	 * @return array Supported post types.
 	 */
 	public function supported_post_types(): array {
+		if ( ! empty( $this->supported_post_types ) ) {
+			return $this->supported_post_types;
+		}
+
 		$post_types = array_values( get_post_types() );
 
 		$excluded_built_in = array(
