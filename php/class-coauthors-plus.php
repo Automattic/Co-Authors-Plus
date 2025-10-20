@@ -125,9 +125,6 @@ class CoAuthors_Plus {
 	 */
 	public function action_init(): void {
 
-		// Allow Co-Authors Plus to be easily translated
-		load_plugin_textdomain( 'co-authors-plus', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-
 		// Load the Guest Authors functionality if needed
 		if ( $this->is_guest_authors_enabled() ) {
 			require_once dirname( COAUTHORS_PLUS_FILE ) . '/php/class-coauthors-guest-authors.php';
