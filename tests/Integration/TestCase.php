@@ -65,7 +65,7 @@ class TestCase extends \Yoast\WPTestUtils\WPIntegration\TestCase {
 		);
 	}
 
-	protected function create_post( \WP_User $author = null ) {
+	protected function create_post( ?\WP_User $author = null ) {
 		if ( null === $author ) {
 			$author = $this->create_author();
 		}
