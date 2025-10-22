@@ -125,7 +125,7 @@ function coauthors__echo( $tag, $type = 'tag', $separators = array(), $tag_args 
 		}
 
 		// Fallback to user_login if we get something empty
-		if ( empty( $author_text ) ) {
+		if ( empty( $author_text ) && is_object( $i->current_author ) && ! empty( $i->current_author->user_login ) ) {
 			if(!is_bool($i->current_author)){
 				$author_text = $i->current_author->user_login;
 			}
