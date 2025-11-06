@@ -12,7 +12,7 @@
  * Plugin URI:        https://wordpress.org/plugins/co-authors-plus/
  * Description:       Allows multiple authors to be assigned to a post. This plugin is an extended version of the Co-Authors plugin developed by Weston Ruter.
  * Version:           3.7.0
- * Requires at least: 5.9
+ * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Mohammad Jangda, Daniel Bachhuber, Automattic
  * Author URI:        https://automattic.com
