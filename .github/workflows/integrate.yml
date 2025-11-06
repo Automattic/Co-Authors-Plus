@@ -15,15 +15,15 @@ jobs:
       matrix:
         include:
           # Check lowest supported WP version, with the lowest supported PHP.
-          - wordpress: '5.9'
+          - wordpress: '6.4'
             php: '7.4'
             allowed_failure: false
           # Check latest WP with the highest supported PHP.
-          - wordpress: 'latest'
+          - wordpress: '6.8'
             php: 'latest'
             allowed_failure: false
           # Check upcoming WP.
-          - wordpress: 'trunk'
+          - wordpress: 'master'
             php: 'latest'
             allowed_failure: true
           # Check upcoming PHP - only needed when a new version has been forked (typically Sep-Nov)
@@ -72,7 +72,7 @@ jobs:
         run: composer prepare ${{ matrix.wordpress }}
 
       - name: Run integration tests (single site)
-        run: composer integration
+        run: composer test-integration
 
       - name: Run integration tests (multisite)
-        run: composer integration-ms
+        run: composer test-integration-ms
