@@ -80,8 +80,8 @@
 			"@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git --checkstyle"
 		],
 		"prepare-behat-tests": "install-package-tests",
-		"test-integration": "wp-env run tests-cli --env-cwd=wp-content/plugins/co-authors-plus vendor/bin/phpunit --exclude=ms-required --no-coverage",
-		"test-integration-ms": "wp-env run tests-cli --env-cwd=wp-content/plugins/co-authors-plus bash -c 'WP_MULTISITE=1 vendor/bin/phpunit --exclude=ms-excluded --no-coverage'"
+		"test-integration": "wp-env run tests-cli --env-cwd=wp-content/plugins/co-authors-plus ./vendor/bin/phpunit --exclude=ms-required --no-coverage",
+		"test-integration-ms": "wp-env run tests-cli --env-cwd=wp-content/plugins/co-authors-plus /bin/bash -c 'WP_MULTISITE=1 ./vendor/bin/phpunit --exclude=ms-excluded --no-coverage'"
 	},
 	"scripts-descriptions": {
 		"behat": "Run Behat tests",
