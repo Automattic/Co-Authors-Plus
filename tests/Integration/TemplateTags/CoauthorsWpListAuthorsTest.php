@@ -153,7 +153,7 @@ class CoauthorsWpListAuthorsTest extends TestCase {
 		$author = $this->create_author();
 		$post   = $this->create_post( $author );
 
-		$feed_image = WP_TESTS_DOMAIN . '/path/to/a/graphic.png';
+		$feed_image = home_url( '/path/to/a/graphic.png' );
 		$coauthors  = coauthors_wp_list_authors(
 			array(
 				'echo'       => false,
