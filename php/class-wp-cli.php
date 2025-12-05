@@ -981,13 +981,7 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand create-author
 	 * @synopsis
-	 * [--display_name=<display_name>]
-	 * [--user_login=<user_login>]
-	 * [--first_name=<first_name>]
-	 * [--last_name=<last_name>]
-	 * [--website=<website>]
-	 * [--user_email=<user_email>]
-	 * [--description=<description>]
+	 * [--display_name=<display_name>] [--user_login=<user_login>] [--first_name=<first_name>] [--last_name=<last_name>] [--website=<website>] [--user_email=<user_email>] [--description=<description>]
 	 */
 	public function create_author( $args, $assoc_args ): void {
 		$this->create_guest_author( $assoc_args );
@@ -1082,10 +1076,21 @@ class CoAuthorsPlus_Command extends WP_CLI_Command {
 	 */
 	private function create_guest_author( $author ): void {
 		global $coauthors_plus;
-		$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email', $author['user_email'], true );
 
-		if ( ! $guest_author ) {
+		if ( ! empty( $author['user_email'] ) ) {
+			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_email', $author['user_email'], true );
+		}
+
+		if ( ! $guest_author && ! empty ( $author['user_login'] ) ) {
 			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'user_login', $author['user_login'], true );
+		}
+
+		if ( ! $guest_author && ! empty ( $author['display_name'] ) ) {
+			$guest_author = $coauthors_plus->guest_authors->get_guest_author_by( 'display_name', $author['display_name'], true );
+
+			if ( $guest_author->user_email !== $author['user_email'] || $guest_author->user_login !== $author['user_login'] ) {
+				$guest_author = null;
+			}
 		}
 
 		if ( $guest_author ) {
